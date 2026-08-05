@@ -184,6 +184,151 @@ The User Domain succeeds when:
 - users naturally transition into household participation;
 - friction throughout the user journey continually decreases.
 ---
+## 10.2 Household Domain
+
+### Purpose
+
+The Household Domain manages collaborative living by allowing multiple users to organise, plan, purchase, budget and manage household resources together.
+
+While every customer begins as an individual, the long-term objective of the platform is to help users transition naturally into household participation where AI can deliver significantly greater value through shared intelligence, collaboration and planning.
+
+The Household Domain represents the platform's primary collaborative environment.
+
+---
+
+### Responsibilities
+
+The Household Domain is responsible for:
+
+- Household creation
+- Household membership
+- Household roles and permissions
+- Household settings
+- Household Wallet
+- Shared shopping lists
+- Smart Pantry ownership
+- Household budgets
+- Household goals
+- Household planning
+- Household activity timeline
+
+---
+
+### Owns
+
+The Household Domain owns:
+
+- Household
+- Household Member
+- Household Role
+- Household Wallet
+- Household Budget
+- Shared Shopping Lists
+- Household Preferences
+- Household Goals
+- Household Timeline
+
+---
+
+### Does Not Own
+
+The Household Domain does not own:
+
+- User authentication (Identity & Access)
+- Individual user profiles (User)
+- Orders (Commerce)
+- Product catalogue (Product Intelligence)
+- Stock management (Inventory Intelligence)
+- Loyalty rewards (Engagement Intelligence)
+
+---
+
+### Primary Events
+
+The Household Domain publishes events including:
+
+- Household Created
+- Household Updated
+- Member Invited
+- Member Joined
+- Member Removed
+- Household Wallet Created
+- Household Budget Updated
+- Shared Shopping List Created
+- Household Goal Created
+
+---
+
+### Consumes Events
+
+The Household Domain listens to events from:
+
+- User
+- Commerce
+- Community
+- Inventory Intelligence
+- Customer Intelligence
+
+---
+
+### Collaborates With
+
+The Household Domain collaborates closely with:
+
+- User
+- Commerce
+- Community
+- Inventory Intelligence
+- AI Society
+- Customer Intelligence
+
+---
+
+### AI Society Relationship
+
+Primary AI Agent:
+
+**Household Intelligence Agent**
+
+Responsibilities include:
+
+- Coordinating household activities
+- Understanding household routines
+- Supporting Household Wallet decisions
+- Managing Smart Pantry intelligence
+- Monitoring household consumption patterns
+- Recommending collaborative purchasing opportunities
+- Supporting long-term household planning
+
+The Household Intelligence Agent assists household members but never removes their authority over household decisions.
+
+---
+
+### Architectural Principles
+
+The Household Domain must:
+
+- promote collaboration;
+- preserve transparency between members;
+- protect household privacy;
+- support multiple household structures;
+- remain independent of commerce implementation.
+
+A household may contain one or many users.
+
+A user may belong to multiple households only where explicitly permitted by future business rules.
+
+---
+
+### Success Criteria
+
+The Household Domain succeeds when:
+
+- users naturally choose to create households;
+- collaboration reduces shopping effort;
+- Household Wallet simplifies budgeting;
+- Smart Pantry becomes increasingly accurate;
+- households feel genuinely supported rather than merely managed.
 
 # 11. Domain Philosophy
 
