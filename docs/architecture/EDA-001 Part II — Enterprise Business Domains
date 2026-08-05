@@ -330,6 +330,150 @@ The Household Domain succeeds when:
 - Smart Pantry becomes increasingly accurate;
 - households feel genuinely supported rather than merely managed.
 
+## 10.3 Identity & Access Domain
+
+### Purpose
+
+The Identity & Access Domain establishes, verifies and protects the identity of every user interacting with the Essentials Mart platform.
+
+Its responsibility is to ensure that every authenticated action is secure, traceable and appropriately authorised while providing a frictionless customer experience.
+
+This domain forms the security foundation of the entire platform.
+
+---
+
+### Responsibilities
+
+The Identity & Access Domain is responsible for:
+
+- User authentication
+- User authorisation
+- Account verification
+- Session management
+- Device management
+- Password management
+- Multi-factor authentication
+- Role management
+- Permission management
+- Security auditing
+- Account recovery
+
+---
+
+### Owns
+
+The Identity & Access Domain owns:
+
+- Authentication Credentials
+- Sessions
+- Refresh Tokens
+- Device Registrations
+- Login History
+- Roles
+- Permissions
+- Security Policies
+- Account Verification Status
+
+---
+
+### Does Not Own
+
+The Identity & Access Domain does not own:
+
+- User profile information (User)
+- Household membership (Household)
+- Orders (Commerce)
+- Customer preferences (User)
+- Rewards (Engagement Intelligence)
+
+---
+
+### Primary Events
+
+The Identity & Access Domain publishes events including:
+
+- User Authenticated
+- User Logged Out
+- Session Created
+- Session Expired
+- Device Registered
+- Device Removed
+- Password Changed
+- Role Assigned
+- Permission Updated
+- Account Verified
+
+---
+
+### Consumes Events
+
+The Identity & Access Domain listens to events from:
+
+- User
+- System
+
+---
+
+### Collaborates With
+
+The Identity & Access Domain collaborates with every domain that requires authenticated access.
+
+Its strongest relationships are with:
+
+- User
+- Household
+- Commerce
+- Enterprise
+- System
+
+---
+
+### AI Society Relationship
+
+Primary AI Agent:
+
+**Security Intelligence Agent**
+
+Responsibilities include:
+
+- Detecting unusual login behaviour
+- Monitoring suspicious authentication attempts
+- Identifying potential account compromise
+- Recommending additional verification where necessary
+- Supporting fraud prevention
+
+The Security Intelligence Agent may recommend security actions but must never permanently deny customer access without explicit platform security policies.
+
+---
+
+### Architectural Principles
+
+The Identity & Access Domain must:
+
+- minimise customer friction;
+- maximise platform security;
+- support zero-trust architecture principles;
+- remain independently scalable;
+- provide complete auditability.
+
+Authentication determines identity.
+
+Authorisation determines capability.
+
+These responsibilities must never be mixed.
+
+---
+
+### Success Criteria
+
+The Identity & Access Domain succeeds when:
+
+- customers authenticate effortlessly;
+- unauthorised access is prevented;
+- security events are fully traceable;
+- authentication remains reliable under scale;
+- customer trust in platform security continues to increase.
+
 # 11. Domain Philosophy
 
 Every business capability belongs to one and only one primary domain.
