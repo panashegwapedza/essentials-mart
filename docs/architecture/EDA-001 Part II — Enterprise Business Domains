@@ -1,0 +1,187 @@
+# Part II – Enterprise Business Domains
+
+## 9. Business Domain Architecture
+
+### 9.1 Overview
+
+The Essentials Mart platform is organised into independent business domains.
+
+Each domain represents a distinct business capability with clearly defined responsibilities, ownership boundaries, enterprise events, and data models.
+
+A domain owns its data.
+
+A domain exposes behaviour.
+
+A domain collaborates with other domains through well-defined interfaces and events.
+
+No domain should become responsible for functionality that belongs to another domain.
+
+This separation ensures scalability, maintainability, explainability, and future modularisation.
+
+---
+
+# 10. Enterprise Domain Catalogue
+
+The platform currently consists of thirteen primary business domains.
+
+| Domain | Primary Responsibility |
+|---------|------------------------|
+| User | Individual customer lifecycle and experience |
+| Identity & Access | Authentication, authorisation and security |
+| Commerce | Shopping lifecycle from Cart to Order |
+| Product Intelligence | Products, pricing, catalogues and recommendations |
+| Retail Intelligence | Stores, operations and retailer optimisation |
+| Household | Household collaboration and shared resources |
+| Community | Club Plans and collaborative purchasing |
+| Inventory Intelligence | Stock visibility, Smart Pantry and replenishment |
+| Engagement Intelligence | Rewards, loyalty, reactivation and customer engagement |
+| Customer Intelligence | Learning engine, reviews, feedback and behavioural understanding |
+| AI Society | Intelligent agents and orchestration |
+| Enterprise | ERP, reporting and operational intelligence |
+| System | Notifications, audit, configuration and platform infrastructure |
+
+---
+
+# 11. Domain Philosophy
+
+Every business capability belongs to one and only one primary domain.
+
+Domains communicate through events rather than sharing responsibility.
+
+Each domain should answer one business question exceptionally well.
+
+Examples:
+
+User Domain
+
+"Who is this customer?"
+
+Household Domain
+
+"Which household is this person part of?"
+
+Commerce Domain
+
+"What is this customer trying to purchase?"
+
+Inventory Intelligence
+
+"Can the requested products be fulfilled?"
+
+AI Society
+
+"What should happen next?"
+
+Customer Intelligence
+
+"What have we learned?"
+
+Enterprise
+
+"How should the business respond?"
+
+---
+
+# 12. Enterprise Domain Relationships
+
+The User domain is the entry point into the platform.
+
+Every journey begins with an individual.
+
+The Household domain extends the individual experience into collaborative household management.
+
+Commerce manages shopping activities.
+
+Product Intelligence provides commercial knowledge.
+
+Inventory Intelligence determines product availability.
+
+Community enables collaborative purchasing.
+
+Customer Intelligence continuously learns from every interaction.
+
+Engagement Intelligence strengthens long-term customer relationships.
+
+AI Society coordinates intelligent decision making across all domains.
+
+Enterprise transforms operational data into business intelligence.
+
+System provides the infrastructure required to support all domains.
+
+---
+
+# 13. Domain Ownership Principles
+
+Every domain must satisfy the following ownership rules.
+
+• Own its own data.
+
+• Own its own business rules.
+
+• Own its own events.
+
+• Never duplicate another domain's responsibilities.
+
+• Expose services rather than internal implementation.
+
+• Remain independently scalable.
+
+These principles are mandatory throughout the platform.
+
+---
+
+# 14. Domain Dependency Rules
+
+Dependencies should always move toward business collaboration rather than business ownership.
+
+For example:
+
+User
+↓
+
+Household
+↓
+
+Commerce
+↓
+
+Inventory Intelligence
+↓
+
+Order
+
+Customer Intelligence may observe every domain.
+
+AI Society may coordinate every domain.
+
+Enterprise may analyse every domain.
+
+However, observation does not imply ownership.
+
+Ownership always remains within the originating domain.
+
+---
+
+# 15. Future Domain Expansion
+
+The architecture intentionally allows additional enterprise domains without disrupting existing responsibilities.
+
+Future domains may include:
+
+Healthcare
+
+Education
+
+Insurance
+
+Mobility
+
+Financial Services
+
+Government Services
+
+Energy
+
+Home Automation
+
+These domains should integrate through the same architectural principles defined within EDA-001.
