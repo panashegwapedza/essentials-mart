@@ -233,7 +233,7 @@ The following principles govern every architectural decision.
 9. Continuous Learning.
 10. Architecture Drives Implementation.
 
-These principles are considered constitutional and apply across all future architecture documents.
+These principles are considered constitutional and apply across all future architecture documents. 
 
 ---
 
