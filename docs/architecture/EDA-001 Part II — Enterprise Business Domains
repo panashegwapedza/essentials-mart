@@ -40,6 +40,149 @@ The platform currently consists of thirteen primary business domains.
 | Enterprise | ERP, reporting and operational intelligence |
 | System | Notifications, audit, configuration and platform infrastructure |
 
+## 10.1 User Domain
+
+### Purpose
+
+The User Domain manages the complete lifecycle of an individual customer within the Essentials Mart platform.
+
+Every interaction begins with a user.
+
+The platform earns trust at the individual level before encouraging participation in households, communities, and other collaborative experiences.
+
+The User Domain is therefore the primary entry point into the platform.
+
+---
+
+### Responsibilities
+
+The User Domain is responsible for:
+
+- User profiles
+- Customer preferences
+- Personal shopping behaviour
+- Walk Mode experience
+- User onboarding
+- User settings
+- Personal favourites
+- Personal shopping history
+- Personal notification preferences
+- Individual goals and preferences
+
+---
+
+### Owns
+
+The User Domain owns:
+
+- User
+- User Profile
+- Preferences
+- Shopping Preferences
+- Saved Items
+- Favourite Products
+- Recently Viewed Products
+- Personal Shopping Lists
+- Personal Activity Timeline
+
+---
+
+### Does Not Own
+
+The User Domain does not own:
+
+- Authentication (Identity & Access)
+- Household membership (Household)
+- Orders (Commerce)
+- Product catalogue (Product Intelligence)
+- Inventory (Inventory Intelligence)
+- Rewards (Engagement Intelligence)
+
+---
+
+### Primary Events
+
+The User Domain publishes events including:
+
+- User Registered
+- User Updated
+- Walk Mode Activated
+- Preferences Updated
+- Favourite Added
+- Favourite Removed
+- Shopping List Created
+- Shopping List Updated
+
+---
+
+### Consumes Events
+
+The User Domain listens to events from:
+
+- Identity & Access
+- Commerce
+- Engagement Intelligence
+- Customer Intelligence
+
+---
+
+### Collaborates With
+
+The User Domain collaborates closely with:
+
+- Household
+- Commerce
+- Engagement Intelligence
+- Customer Intelligence
+- AI Society
+
+---
+
+### AI Society Relationship
+
+Primary AI Agent:
+
+**User Experience Agent**
+
+Responsibilities include:
+
+- Understanding customer behaviour
+- Learning preferences
+- Personalising recommendations
+- Improving onboarding
+- Supporting Walk Mode
+- Identifying friction within the user journey
+
+The User Experience Agent does not make purchasing decisions on behalf of the customer.
+
+It provides recommendations while preserving customer autonomy.
+
+---
+
+### Architectural Principles
+
+The User Domain must always remain:
+
+- customer-first;
+- privacy-aware;
+- explainable;
+- independently scalable;
+- independent of retail operations.
+
+No other domain may modify User-owned information directly.
+
+Changes must occur through User Domain services.
+
+---
+
+### Success Criteria
+
+The User Domain succeeds when:
+
+- new users quickly understand the platform;
+- customers trust the platform;
+- users naturally transition into household participation;
+- friction throughout the user journey continually decreases.
 ---
 
 # 11. Domain Philosophy
