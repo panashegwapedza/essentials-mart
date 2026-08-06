@@ -654,6 +654,191 @@ These experiences may generate shopping decisions but never execute commercial t
 
 All purchasing decisions enter Commerce through the Cart.
 
+## 10.5 Product Intelligence Domain
+
+### Purpose
+
+The Product Intelligence Domain is responsible for managing, enriching and continuously evolving the knowledge associated with every product available on the Essentials Mart platform.
+
+Rather than treating products as simple catalogue entries, this domain establishes each product as an intelligent digital asset capable of supporting commerce, artificial intelligence, household decision-making, health awareness, operational excellence and immersive shopping experiences.
+
+The Product Intelligence Domain serves as the single source of truth for all product knowledge across the enterprise.
+
+---
+
+### Responsibilities
+
+The Product Intelligence Domain is responsible for:
+
+- Product catalogue management
+- Product specifications
+- Brand management
+- Category management
+- Nutritional information
+- Ingredient information
+- Allergen information
+- Dietary suitability
+- Product attributes
+- Product media
+- Product documentation
+- Product relationships
+- Product substitutions
+- Product compatibility
+- Recipe associations
+- Sustainability information
+- Packaging information
+- Digital product assets
+- Product semantic knowledge
+
+---
+
+### Owns
+
+The Product Intelligence Domain owns:
+
+- Product
+- Product Category
+- Brand
+- Product Attribute
+- Product Specification
+- Product Nutrition
+- Product Ingredient
+- Product Allergen
+- Product Dietary Profile
+- Product Media
+- Product Digital Asset
+- Product Relationship
+- Product Substitute
+- Product Tag
+- Product Knowledge
+
+---
+
+### Does Not Own
+
+The Product Intelligence Domain does not own:
+
+- Inventory quantities (Inventory Intelligence)
+- Pricing (Retail Intelligence)
+- Promotions (Engagement Intelligence)
+- Orders (Commerce)
+- Customer preferences (Customer Intelligence)
+- Household pantry (Household)
+
+---
+
+### Primary Events
+
+The Product Intelligence Domain publishes events including:
+
+- Product Created
+- Product Updated
+- Product Retired
+- Product Category Updated
+- Product Media Updated
+- Product Specification Updated
+- Product Nutrition Updated
+- Product Relationship Updated
+- Product Substitute Added
+- Product Knowledge Enhanced
+
+---
+
+### Consumes Events
+
+The Product Intelligence Domain listens to events from:
+
+- Enterprise
+- Inventory Intelligence
+- Retail Intelligence
+- Customer Intelligence
+- AI Society
+
+---
+
+### Collaborates With
+
+The Product Intelligence Domain collaborates closely with:
+
+- Commerce
+- Inventory Intelligence
+- Retail Intelligence
+- Customer Intelligence
+- Household
+- AI Society
+
+---
+
+### AI Society Relationship
+
+Primary AI Agent:
+
+**Product Intelligence Agent**
+
+Responsibilities include:
+
+- Explaining products in natural language
+- Comparing similar products
+- Recommending appropriate substitutes
+- Understanding customer questions
+- Enriching product knowledge
+- Supporting Walk Mode interactions
+- Assisting other AI agents with product reasoning
+
+The Product Intelligence Agent explains products.
+
+It never decides what customers should purchase.
+
+---
+
+### Architectural Principles
+
+The Product Intelligence Domain must:
+
+- maintain a single authoritative product record;
+- separate knowledge from inventory;
+- separate knowledge from pricing;
+- continuously enrich product information;
+- remain explainable;
+- support multilingual product understanding;
+- support future global product catalogues.
+
+Every product should become increasingly intelligent as the platform learns more about it.
+
+---
+
+### Success Criteria
+
+The Product Intelligence Domain succeeds when:
+
+- every product is consistently understood across the platform;
+- AI agents accurately reason about products;
+- customers receive trustworthy product information;
+- substitutions remain reliable;
+- product knowledge continuously improves.
+
+---
+
+### Digital Product Vision
+
+Every product within Essentials Mart should evolve into a rich digital representation rather than a simple catalogue record.
+
+Over time, products may include:
+
+- realistic digital models for Walk Mode;
+- manufacturer-provided assets;
+- AI-generated semantic understanding;
+- nutritional intelligence;
+- household suitability profiles;
+- recipe compatibility;
+- sustainability indicators;
+- historical knowledge;
+- multilingual descriptions.
+
+Products are not merely items that can be purchased.
+
+They become intelligent digital entities that support the entire Household Care Platform.
+
 # 11. Domain Philosophy
 
 Every business capability belongs to one and only one primary domain.
