@@ -474,6 +474,186 @@ The Identity & Access Domain succeeds when:
 - authentication remains reliable under scale;
 - customer trust in platform security continues to increase.
 
+## 10.4 Commerce Domain
+
+### Purpose
+
+The Commerce Domain is responsible for transforming customer purchase decisions into trusted, secure and efficient commercial transactions.
+
+Unlike traditional retail systems, the Commerce Domain does not attempt to influence customer decisions. Instead, it provides the services required to convert an already-made purchasing decision into successful fulfilment while preserving transparency, customer autonomy and trust.
+
+The Commerce Domain represents the transactional backbone of the Essentials Mart platform.
+
+---
+
+### Responsibilities
+
+The Commerce Domain is responsible for:
+
+- Shopping Cart management
+- Checkout
+- Order creation
+- Order lifecycle management
+- Payment orchestration
+- Household Wallet payment integration
+- Club Plan payment coordination
+- Delivery option selection
+- Collection option selection
+- Order fulfilment orchestration
+- Returns initiation
+- Refund initiation
+- Order status tracking
+
+---
+
+### Owns
+
+The Commerce Domain owns:
+
+- Cart
+- Cart Item
+- Checkout Session
+- Order
+- Order Item
+- Payment Transaction
+- Delivery Selection
+- Collection Selection
+- Fulfilment Request
+- Return Request
+- Refund Request
+
+---
+
+### Does Not Own
+
+The Commerce Domain does not own:
+
+- User identity (Identity & Access)
+- Customer profiles (User)
+- Household membership (Household)
+- Product catalogue (Product Intelligence)
+- Inventory availability (Inventory Intelligence)
+- Promotions and rewards (Engagement Intelligence)
+- Shopping experiences (Shopping Experience Platform)
+
+---
+
+### Primary Events
+
+The Commerce Domain publishes events including:
+
+- Cart Created
+- Cart Updated
+- Checkout Started
+- Checkout Completed
+- Order Created
+- Order Confirmed
+- Payment Authorised
+- Payment Failed
+- Order Cancelled
+- Order Fulfilled
+- Return Requested
+- Refund Issued
+
+---
+
+### Consumes Events
+
+The Commerce Domain listens to events from:
+
+- User
+- Household
+- Product Intelligence
+- Inventory Intelligence
+- Engagement Intelligence
+- Enterprise
+- Customer Intelligence
+
+---
+
+### Collaborates With
+
+The Commerce Domain collaborates closely with:
+
+- Household
+- Inventory Intelligence
+- Product Intelligence
+- Engagement Intelligence
+- Customer Intelligence
+- Enterprise
+- AI Society
+
+---
+
+### AI Society Relationship
+
+Primary AI Agent:
+
+**Commerce Intelligence Agent**
+
+Responsibilities include:
+
+- Coordinating commercial workflows
+- Monitoring transaction integrity
+- Explaining checkout information
+- Assisting with delivery choices
+- Supporting payment guidance
+- Coordinating fulfilment with other AI agents
+
+The Commerce Intelligence Agent does not make purchasing decisions for customers.
+
+Its role is to simplify commerce while preserving complete customer control.
+
+---
+
+### Architectural Principles
+
+The Commerce Domain must:
+
+- remain transaction-focused;
+- never manipulate purchasing behaviour;
+- remain independent of shopping experiences;
+- provide complete transactional traceability;
+- support multiple payment methods;
+- remain horizontally scalable.
+
+Commerce begins when a customer intentionally places an item into a cart.
+
+Everything before Cart belongs to the Shopping Experience Platform.
+
+---
+
+### Success Criteria
+
+The Commerce Domain succeeds when:
+
+- checkout is frictionless;
+- transactions are trustworthy;
+- fulfilment is reliable;
+- payments are secure;
+- customers retain confidence throughout the purchasing process.
+
+---
+
+### Domain Boundary
+
+The Commerce Domain owns transactional execution.
+
+The Shopping Experience Platform owns customer shopping experiences.
+
+Shopping experiences include:
+
+- Walk Mode
+- Browse Mode
+- Express Mode
+- AI Companion interactions
+- Context awareness
+- Navigation
+
+These experiences may generate shopping decisions but never execute commercial transactions directly.
+
+All purchasing decisions enter Commerce through the Cart.
+
 # 11. Domain Philosophy
 
 Every business capability belongs to one and only one primary domain.
