@@ -839,6 +839,257 @@ Products are not merely items that can be purchased.
 
 They become intelligent digital entities that support the entire Household Care Platform.
 
+## 10.6 Inventory Intelligence Domain
+
+### Purpose
+
+The Inventory Intelligence Domain is responsible for continuously understanding, predicting, optimising and coordinating inventory throughout the Essentials Mart ecosystem.
+
+Unlike traditional inventory management systems that primarily record stock levels, the Inventory Intelligence Domain transforms inventory into an intelligent enterprise capability capable of supporting commerce, household care, operational excellence, AI reasoning and immersive shopping experiences.
+
+Inventory Intelligence provides real-time awareness, predictive insight and optimisation while ensuring inventory information remains accurate, explainable and trustworthy.
+
+---
+
+### Responsibilities
+
+The Inventory Intelligence Domain is responsible for:
+
+- Inventory visibility
+- Real-time stock availability
+- Shelf availability
+- Warehouse availability
+- Multi-store inventory coordination
+- Inventory forecasting
+- Demand prediction
+- Replenishment intelligence
+- Stock redistribution recommendations
+- Product substitution intelligence
+- Expiry monitoring
+- Waste reduction intelligence
+- Shelf occupancy monitoring
+- Digital shelf synchronisation
+- Inventory anomaly detection
+- Inventory analytics
+
+---
+
+### Owns
+
+The Inventory Intelligence Domain owns:
+
+- Inventory Record
+- Inventory Movement
+- Inventory Forecast
+- Inventory Reservation
+- Stock Availability
+- Shelf Availability
+- Warehouse Inventory
+- Replenishment Recommendation
+- Redistribution Recommendation
+- Expiry Monitoring
+- Inventory Alert
+- Inventory Insight
+
+---
+
+### Does Not Own
+
+The Inventory Intelligence Domain does not own:
+
+- Product knowledge (Product Intelligence)
+- Pricing (Retail Intelligence)
+- Orders (Commerce)
+- Customer behaviour (Customer Intelligence)
+- Household pantry (Household)
+- Promotions (Engagement Intelligence)
+
+---
+
+### Primary Events
+
+The Inventory Intelligence Domain publishes events including:
+
+- Inventory Updated
+- Stock Available
+- Stock Unavailable
+- Low Stock Detected
+- Out Of Stock
+- Shelf Replenished
+- Inventory Forecast Updated
+- Redistribution Recommended
+- Product Expiring Soon
+- Inventory Alert Generated
+
+---
+
+### Consumes Events
+
+The Inventory Intelligence Domain listens to events from:
+
+- Commerce
+- Product Intelligence
+- Retail Intelligence
+- Enterprise
+- Customer Intelligence
+- AI Society
+
+---
+
+### Collaborates With
+
+The Inventory Intelligence Domain collaborates closely with:
+
+- Commerce
+- Product Intelligence
+- Retail Intelligence
+- Customer Intelligence
+- Household
+- Enterprise
+- AI Society
+
+---
+
+### Inventory Intelligence Engine
+
+The Inventory Intelligence Engine continuously analyses inventory information across the enterprise.
+
+Its responsibilities include:
+
+- predicting future inventory demand;
+- forecasting stock depletion;
+- recommending replenishment;
+- recommending inventory redistribution;
+- identifying substitute availability;
+- monitoring expiry risk;
+- supporting digital shelf synchronisation;
+- providing inventory reasoning to AI Society.
+
+The Inventory Intelligence Engine continuously reasons about inventory.
+
+It never communicates directly with customers.
+
+---
+
+### AI Society Relationship
+
+Primary AI Agent:
+
+**Inventory Intelligence Agent**
+
+Responsibilities include:
+
+- explaining inventory availability;
+- answering stock-related questions;
+- assisting Walk Mode;
+- recommending suitable alternatives;
+- supporting fulfilment decisions;
+- coordinating with Commerce Intelligence;
+- assisting Household Intelligence.
+
+The Inventory Intelligence Agent explains inventory.
+
+It never manipulates purchasing behaviour.
+
+---
+
+### Walk Mode Integration
+
+Inventory Intelligence powers the Living Digital Supermarket.
+
+Walk Mode should accurately represent inventory conditions whenever practical.
+
+Examples include:
+
+- empty shelves reflecting real inventory shortages;
+- low-stock indicators;
+- recently replenished shelves;
+- substitute product availability;
+- branch-specific availability.
+
+The objective is to improve customer confidence through transparency rather than artificial presentation.
+
+---
+
+### Enterprise Intelligence Pattern
+
+The Inventory Intelligence Domain follows the Essentials Intelligence Pattern.
+
+```
+Inventory Domain
+
+↓
+
+Inventory Intelligence Engine
+
+↓
+
+Inventory Intelligence Agent
+
+↓
+
+AI Society
+
+↓
+
+Customer
+```
+
+The Domain owns inventory.
+
+The Engine owns inventory reasoning.
+
+The Agent owns inventory communication.
+
+AI Society coordinates enterprise collaboration.
+
+---
+
+### Architectural Principles
+
+The Inventory Intelligence Domain must:
+
+- remain inventory-focused;
+- separate inventory from product knowledge;
+- separate inventory from pricing;
+- support predictive inventory management;
+- support global retail operations;
+- remain horizontally scalable;
+- maintain explainable inventory decisions;
+- preserve customer trust through inventory transparency.
+
+---
+
+### Success Criteria
+
+The Inventory Intelligence Domain succeeds when:
+
+- inventory information is consistently accurate;
+- AI agents reason correctly about stock;
+- replenishment becomes increasingly proactive;
+- inventory waste is reduced;
+- customers trust inventory availability;
+- Walk Mode accurately reflects store conditions.
+
+---
+
+### Future Vision
+
+Inventory should evolve beyond stock management into enterprise awareness.
+
+The Inventory Intelligence Domain should eventually support:
+
+- autonomous replenishment recommendations;
+- intelligent warehouse coordination;
+- predictive supplier planning;
+- cross-country inventory optimisation;
+- digital shelf intelligence;
+- enterprise-wide inventory simulation.
+
+Inventory is no longer viewed as stock.
+
+It becomes an enterprise intelligence capability that continuously improves household care, operational efficiency and customer trust.
+
 # 11. Domain Philosophy
 
 Every business capability belongs to one and only one primary domain.
