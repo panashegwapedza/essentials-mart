@@ -1545,6 +1545,289 @@ Future capabilities may include:
 - AI-assisted community moderation.
 
 Community exists to strengthen trust, belonging and collective improvement rather than maximise engagement metrics.
+
+## 10.9 Engagement Intelligence Domain
+
+### Purpose
+
+The Engagement Intelligence Domain is responsible for continuously strengthening long-term customer relationships through meaningful, personalised and trust-preserving engagement.
+
+Rather than encouraging excessive platform usage or transactional behaviour, the Engagement Intelligence Domain exists to recognise customer value, reward genuine participation, encourage household wellbeing and gently re-engage customers when appropriate.
+
+Engagement exists to reinforce trust rather than maximise attention.
+
+---
+
+### Responsibilities
+
+The Engagement Intelligence Domain is responsible for:
+
+- Customer rewards
+- Recognition programmes
+- Treasure Hunts
+- Club Plan incentives
+- Household achievements
+- Surprise rewards
+- Free product campaigns
+- Free delivery rewards
+- Personalised appreciation
+- Customer milestone recognition
+- Re-engagement strategies
+- Engagement journey management
+- Loyalty intelligence
+- Engagement analytics
+- Behavioural learning integration
+
+---
+
+### Owns
+
+The Engagement Intelligence Domain owns:
+
+- Reward
+- Achievement
+- Treasure Hunt
+- Recognition Event
+- Re-engagement Campaign
+- Customer Milestone
+- Reward Rule
+- Reward Eligibility
+- Loyalty Insight
+- Engagement Journey
+- Engagement Profile
+
+---
+
+### Does Not Own
+
+The Engagement Intelligence Domain does not own:
+
+- Orders (Commerce)
+- Customer identity (User)
+- Household ownership (Household)
+- Community reviews (Community)
+- Product information (Product Intelligence)
+- Inventory (Inventory Intelligence)
+
+---
+
+### Primary Events
+
+The Engagement Intelligence Domain publishes events including:
+
+- Reward Granted
+- Achievement Unlocked
+- Treasure Hunt Started
+- Treasure Hunt Completed
+- Customer Recognised
+- Free Product Awarded
+- Free Delivery Awarded
+- Re-engagement Initiated
+- Loyalty Milestone Reached
+- Engagement Insight Generated
+
+---
+
+### Consumes Events
+
+The Engagement Intelligence Domain listens to events from:
+
+- Commerce
+- Customer Intelligence
+- Community
+- Household
+- AI Society
+- Enterprise
+
+---
+
+### Collaborates With
+
+The Engagement Intelligence Domain collaborates closely with:
+
+- Customer Intelligence
+- Community
+- Household
+- Commerce
+- AI Society
+- Enterprise
+
+---
+
+### Engagement Intelligence Engine
+
+The Engagement Intelligence Engine continuously reasons about how Essentials Mart can strengthen long-term customer trust.
+
+Its responsibilities include:
+
+- identifying meaningful recognition opportunities;
+- selecting appropriate rewards;
+- determining reward eligibility;
+- recommending surprise appreciation;
+- identifying declining engagement;
+- generating respectful re-engagement strategies;
+- analysing long-term relationship health;
+- supporting AI Society.
+
+The Engagement Intelligence Engine optimises relationships rather than platform usage.
+
+---
+
+### AI Society Relationship
+
+Primary AI Agent:
+
+**Engagement Intelligence Agent**
+
+Responsibilities include:
+
+- presenting rewards naturally;
+- congratulating customers;
+- introducing Treasure Hunts;
+- assisting loyalty programmes;
+- gently re-engaging inactive customers;
+- coordinating with Customer Intelligence.
+
+The Engagement Intelligence Agent must never pressure customers into shopping.
+
+---
+
+### Customer Recognition Philosophy
+
+Recognition should feel earned.
+
+Rewards should feel thoughtful.
+
+Customers should never feel manipulated.
+
+The platform may recognise:
+
+- consistent participation;
+- constructive reviews;
+- household collaboration;
+- Club Plan activity;
+- long-term loyalty;
+- community contribution;
+- household milestones;
+- seasonal celebrations.
+
+Recognition should strengthen trust rather than create dependency.
+
+---
+
+### Re-engagement Philosophy
+
+If a customer has been inactive for approximately forty days, the Engagement Intelligence Engine may initiate a personalised re-engagement journey.
+
+The strategy should be based upon Customer Intelligence rather than generic marketing.
+
+Examples include:
+
+- products the customer previously valued;
+- household needs;
+- pantry history;
+- preferred shopping methods;
+- Club Plan interests;
+- seasonal relevance.
+
+Re-engagement should always respect customer autonomy.
+
+---
+
+### Reward Philosophy
+
+Rewards extend beyond discounts.
+
+Possible rewards include:
+
+- complimentary products;
+- complimentary delivery;
+- Club Plan benefits;
+- exclusive experiences;
+- household recognition;
+- personalised appreciation;
+- surprise gifts;
+- Treasure Hunts.
+
+The objective is to create memorable moments that reinforce customer trust.
+
+---
+
+### Enterprise Intelligence Pattern
+
+```
+Engagement Domain
+
+↓
+
+Engagement Intelligence Engine
+
+↓
+
+Engagement Intelligence Agent
+
+↓
+
+AI Society
+
+↓
+
+Customer
+```
+
+The Domain owns engagement.
+
+The Engine owns engagement reasoning.
+
+The Agent owns engagement communication.
+
+AI Society coordinates enterprise collaboration.
+
+---
+
+### Architectural Principles
+
+The Engagement Intelligence Domain must:
+
+- reward genuine value;
+- remain transparent;
+- avoid manipulation;
+- personalise respectfully;
+- support long-term trust;
+- encourage household wellbeing;
+- remain explainable.
+
+---
+
+### Success Criteria
+
+The Engagement Intelligence Domain succeeds when:
+
+- customers feel genuinely appreciated;
+- recognition feels authentic;
+- rewards strengthen trust;
+- inactive customers return voluntarily;
+- loyalty grows naturally;
+- customer relationships deepen over time.
+
+---
+
+### Future Vision
+
+Engagement should evolve into an intelligent relationship platform that continuously strengthens customer trust.
+
+Future capabilities may include:
+
+- adaptive household recognition;
+- AI-designed appreciation experiences;
+- collaborative household challenges;
+- community Treasure Hunts;
+- retailer-sponsored rewards;
+- predictive appreciation moments;
+- life-event recognition.
+
+The Engagement Intelligence Domain exists to make customers feel valued, respected and genuinely cared for rather than merely retained.
+
 # 11. Domain Philosophy
 
 Every business capability belongs to one and only one primary domain.
