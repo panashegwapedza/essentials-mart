@@ -1334,6 +1334,217 @@ Future capabilities may include:
 
 Retail Intelligence transforms stores from static locations into continuously improving environments that support household care, operational excellence and customer trust.
 
+## 10.8 Community Domain
+
+### Purpose
+
+The Community Domain is responsible for fostering trusted relationships between customers, households and the wider Essentials Mart ecosystem.
+
+Rather than focusing on transactions, the Community Domain exists to encourage collaboration, shared experiences, meaningful interactions and customer participation while preserving privacy, respect and customer control.
+
+The Community Domain strengthens long-term trust by helping customers feel part of a living community rather than users of a shopping application.
+
+---
+
+### Responsibilities
+
+The Community Domain is responsible for:
+
+- Customer connections
+- Household collaboration
+- Club Plan collaboration
+- Product reviews
+- Store reviews
+- Delivery reviews
+- Household recommendations
+- Shared shopping experiences
+- Privacy-controlled customer presence
+- Live shopper visibility
+- Community participation
+- Customer suggestions
+- Community moderation
+- Community reputation
+- Community insights
+
+---
+
+### Owns
+
+The Community Domain owns:
+
+- Connection
+- Friendship
+- Household Collaboration
+- Club Membership
+- Product Review
+- Store Review
+- Delivery Review
+- Suggestion
+- Community Contribution
+- Community Reputation
+- Privacy Preference
+- Live Presence
+- Community Insight
+
+---
+
+### Does Not Own
+
+The Community Domain does not own:
+
+- Customer profiles (User)
+- Rewards (Engagement Intelligence)
+- Orders (Commerce)
+- Household ownership (Household)
+- AI reasoning (AI Society)
+- Product information (Product Intelligence)
+
+---
+
+### Primary Events
+
+The Community Domain publishes events including:
+
+- Review Submitted
+- Suggestion Submitted
+- Customer Connected
+- Club Joined
+- Community Contribution Created
+- Live Presence Updated
+- Privacy Settings Updated
+- Community Insight Generated
+
+---
+
+### Consumes Events
+
+The Community Domain listens to events from:
+
+- User
+- Household
+- Commerce
+- Customer Intelligence
+- Engagement Intelligence
+- AI Society
+
+---
+
+### Collaborates With
+
+The Community Domain collaborates closely with:
+
+- Customer Intelligence
+- Engagement Intelligence
+- Household
+- AI Society
+- Enterprise
+
+---
+
+### Community Intelligence Engine
+
+The Community Intelligence Engine continuously analyses community behaviour.
+
+Its responsibilities include:
+
+- identifying healthy community interactions;
+- recognising valuable contributors;
+- detecting harmful behaviour;
+- identifying collaboration opportunities;
+- supporting customer trust;
+- analysing community sentiment;
+- providing community insights to AI Society.
+
+The Community Intelligence Engine reasons about relationships rather than transactions.
+
+---
+
+### AI Society Relationship
+
+Primary AI Agent:
+
+**Community Intelligence Agent**
+
+Responsibilities include:
+
+- assisting community interactions;
+- explaining community features;
+- supporting collaboration;
+- encouraging constructive participation;
+- helping resolve community issues;
+- coordinating with Customer Intelligence and Engagement Intelligence.
+
+The Community Intelligence Agent strengthens belonging while preserving customer autonomy.
+
+---
+
+### Enterprise Intelligence Pattern
+
+```
+Community Domain
+
+↓
+
+Community Intelligence Engine
+
+↓
+
+Community Intelligence Agent
+
+↓
+
+AI Society
+
+↓
+
+Customer
+```
+
+---
+
+### Architectural Principles
+
+The Community Domain must:
+
+- encourage genuine participation;
+- never manipulate social behaviour;
+- preserve customer privacy;
+- remain respectful;
+- reward constructive contribution;
+- strengthen household relationships;
+- increase long-term customer trust.
+
+---
+
+### Success Criteria
+
+The Community Domain succeeds when:
+
+- customers willingly contribute;
+- reviews remain trustworthy;
+- suggestions improve the platform;
+- households collaborate naturally;
+- community participation strengthens trust;
+- customers feel part of the Essentials Mart ecosystem.
+
+---
+
+### Future Vision
+
+Community should evolve into a trusted ecosystem where customers help improve products, stores, households and the platform itself.
+
+Future capabilities may include:
+
+- trusted product experts;
+- verified household mentors;
+- collaborative shopping sessions;
+- shared meal planning;
+- community knowledge sharing;
+- privacy-controlled live shopping experiences;
+- neighbourhood collaboration;
+- AI-assisted community moderation.
+
+Community exists to strengthen trust, belonging and collective improvement rather than maximise engagement metrics.
 # 11. Domain Philosophy
 
 Every business capability belongs to one and only one primary domain.
