@@ -1090,6 +1090,250 @@ Inventory is no longer viewed as stock.
 
 It becomes an enterprise intelligence capability that continuously improves household care, operational efficiency and customer trust.
 
+## 10.7 Retail Intelligence Domain
+
+### Purpose
+
+The Retail Intelligence Domain is responsible for understanding, coordinating and optimising the physical and digital retail environment across the Essentials Mart ecosystem.
+
+It manages stores, layouts, departments, shelves, customer navigation and retail operations while maintaining synchronisation between physical stores and their corresponding digital representations.
+
+The Retail Intelligence Domain enables the Living Digital Supermarket by ensuring customers experience an accurate, trustworthy and intelligent representation of every participating store.
+
+---
+
+### Responsibilities
+
+The Retail Intelligence Domain is responsible for:
+
+- Store management
+- Store configuration
+- Department management
+- Aisle management
+- Shelf management
+- Store layout management
+- Digital store synchronisation
+- Walk Mode environment management
+- Customer navigation intelligence
+- Store operating hours
+- Store service availability
+- Branch capabilities
+- In-store announcements
+- Queue monitoring
+- Retail operational analytics
+- Store performance insights
+
+---
+
+### Owns
+
+The Retail Intelligence Domain owns:
+
+- Store
+- Department
+- Aisle
+- Shelf
+- Store Layout
+- Floor Plan
+- Digital Store Model
+- Navigation Path
+- Service Point
+- Checkout Lane
+- Queue Status
+- Branch Capability
+- Store Insight
+
+---
+
+### Does Not Own
+
+The Retail Intelligence Domain does not own:
+
+- Products (Product Intelligence)
+- Inventory quantities (Inventory Intelligence)
+- Orders (Commerce)
+- Household information (Household)
+- Customer preferences (Customer Intelligence)
+- Promotions (Engagement Intelligence)
+
+---
+
+### Primary Events
+
+The Retail Intelligence Domain publishes events including:
+
+- Store Opened
+- Store Closed
+- Layout Updated
+- Shelf Updated
+- Department Updated
+- Queue Updated
+- Navigation Updated
+- Service Availability Updated
+- Walk Mode Synchronised
+- Store Insight Generated
+
+---
+
+### Consumes Events
+
+The Retail Intelligence Domain listens to events from:
+
+- Inventory Intelligence
+- Commerce
+- Enterprise
+- Customer Intelligence
+- AI Society
+
+---
+
+### Collaborates With
+
+The Retail Intelligence Domain collaborates closely with:
+
+- Product Intelligence
+- Inventory Intelligence
+- Commerce
+- Customer Intelligence
+- Enterprise
+- AI Society
+
+---
+
+### Retail Intelligence Engine
+
+The Retail Intelligence Engine continuously analyses the retail environment.
+
+Its responsibilities include:
+
+- optimising customer navigation;
+- analysing store traffic;
+- identifying operational bottlenecks;
+- improving shelf organisation;
+- synchronising digital and physical stores;
+- supporting Walk Mode realism;
+- providing retail reasoning to AI Society.
+
+The Retail Intelligence Engine reasons about retail operations.
+
+It never communicates directly with customers.
+
+---
+
+### AI Society Relationship
+
+Primary AI Agent:
+
+**Retail Intelligence Agent**
+
+Responsibilities include:
+
+- assisting customer navigation;
+- explaining store services;
+- supporting Walk Mode guidance;
+- helping locate departments;
+- coordinating with Inventory Intelligence;
+- coordinating with Commerce during collection and fulfilment.
+
+The Retail Intelligence Agent assists customers without interrupting their shopping experience.
+
+---
+
+### Walk Mode Integration
+
+Retail Intelligence is responsible for maintaining the Living Digital Supermarket.
+
+This includes:
+
+- realistic store layouts;
+- department organisation;
+- shelf positioning;
+- service locations;
+- digital navigation;
+- branch-specific environments;
+- synchronisation with physical stores.
+
+Walk Mode should represent the actual retail environment rather than a fictional simulation.
+
+---
+
+### Enterprise Intelligence Pattern
+
+The Retail Intelligence Domain follows the Essentials Intelligence Pattern.
+
+```
+Retail Domain
+
+↓
+
+Retail Intelligence Engine
+
+↓
+
+Retail Intelligence Agent
+
+↓
+
+AI Society
+
+↓
+
+Customer
+```
+
+The Domain owns retail information.
+
+The Engine owns retail reasoning.
+
+The Agent owns customer interaction.
+
+AI Society coordinates collaboration.
+
+---
+
+### Architectural Principles
+
+The Retail Intelligence Domain must:
+
+- accurately represent physical stores;
+- maintain synchronisation between digital and physical environments;
+- support multiple retail formats;
+- remain geographically scalable;
+- support future augmented reality experiences;
+- remain explainable;
+- preserve customer trust.
+
+---
+
+### Success Criteria
+
+The Retail Intelligence Domain succeeds when:
+
+- customers easily navigate stores;
+- Walk Mode accurately reflects reality;
+- digital and physical stores remain synchronised;
+- operational efficiency improves;
+- AI navigation becomes increasingly intelligent;
+- customers trust the retail environment.
+
+---
+
+### Future Vision
+
+Retail should evolve into an intelligent, adaptive environment.
+
+Future capabilities may include:
+
+- dynamic navigation assistance;
+- intelligent store layout optimisation;
+- digital twin simulation;
+- branch performance comparison;
+- augmented reality integration;
+- enterprise retail analytics;
+- autonomous operational recommendations.
+
+Retail Intelligence transforms stores from static locations into continuously improving environments that support household care, operational excellence and customer trust.
+
 # 11. Domain Philosophy
 
 Every business capability belongs to one and only one primary domain.
