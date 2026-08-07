@@ -1828,6 +1828,594 @@ Future capabilities may include:
 
 The Engagement Intelligence Domain exists to make customers feel valued, respected and genuinely cared for rather than merely retained.
 
+## 10.10 Customer Intelligence Domain
+
+# Purpose
+
+The Customer Intelligence Domain is responsible for continuously developing an accurate, respectful and evidence-based understanding of each customer throughout their relationship with Essentials Mart.
+
+Its purpose is not to maximise transactions or influence behaviour.
+
+Its purpose is to help the platform understand how best to support each customer and, ultimately, every household.
+
+Customer Intelligence enables Essentials Mart to provide assistance that feels personal, relevant and trustworthy while ensuring customers always remain in control of their own decisions.
+
+---
+
+# Customer Understanding Philosophy
+
+Customer Intelligence exists to understand customers rather than observe them.
+
+Understanding means recognising preferences, behaviours, goals and changing household needs through evidence gathered with customer knowledge and permission.
+
+Understanding is an act of service.
+
+Surveillance is an act of control.
+
+Essentials Mart will always choose understanding.
+
+The platform should never attempt to predict behaviour simply to increase sales.
+
+Instead, Customer Intelligence exists to improve customer wellbeing by reducing effort, simplifying decisions and strengthening trust.
+
+---
+
+# Trust Philosophy
+
+Trust is considered the most valuable outcome produced by Customer Intelligence.
+
+Every recommendation, reminder and personalised experience should strengthen customer confidence that Essentials Mart genuinely understands their needs.
+
+Trust cannot be requested.
+
+Trust cannot be purchased.
+
+Trust must be earned repeatedly through helpful, accurate and respectful interactions.
+
+Whenever uncertainty exists between increasing commercial performance and preserving customer trust, trust must take precedence.
+
+---
+
+# Privacy Philosophy
+
+Customer Intelligence is designed around customer ownership of personal information.
+
+Customers should understand:
+
+- what information is collected;
+- why it is collected;
+- how it benefits them;
+- how it is used;
+- how it can be controlled.
+
+Customer information exists to improve household care rather than to maximise behavioural influence.
+
+The platform should always prefer collecting less information with greater value instead of collecting excessive information with little benefit.
+
+---
+
+# Customer Autonomy
+
+Customer Intelligence assists.
+
+It never controls.
+
+The platform may:
+
+- recommend;
+- remind;
+- explain;
+- organise;
+- simplify.
+
+The platform must never:
+
+- pressure;
+- manipulate;
+- exploit urgency;
+- artificially influence purchasing decisions;
+- reduce customer freedom of choice.
+
+Customers remain the final decision makers.
+
+Artificial Intelligence exists to support those decisions rather than replace them.
+
+---
+
+# Evidence-Based Understanding
+
+Customer Intelligence develops knowledge through observable evidence rather than assumptions.
+
+Examples of evidence include:
+
+- shopping behaviour;
+- household activity;
+- customer preferences;
+- explicit feedback;
+- pantry usage;
+- Club Plan participation;
+- Walk Mode interactions;
+- customer permissions;
+- community participation.
+
+Customer Intelligence should avoid assumptions based upon:
+
+- stereotypes;
+- demographic generalisations;
+- inferred personal characteristics unrelated to customer benefit;
+- speculative behavioural profiling.
+
+Evidence should always outweigh assumption.
+
+---
+
+# Learning Philosophy
+
+Customer Intelligence continuously evolves.
+
+Understanding should improve gradually as the customer chooses to interact with the platform.
+
+Learning is viewed as a long-term relationship rather than a one-time profile creation.
+
+The objective is not to know everything about a customer.
+
+The objective is to remember what genuinely helps them.
+
+---
+
+# Relationship Philosophy
+
+Customer Intelligence measures the health of the relationship rather than the intensity of customer engagement.
+
+A successful relationship is characterised by:
+
+- increasing trust;
+- increasing usefulness;
+- increasing confidence;
+- reduced shopping effort;
+- improved household wellbeing.
+
+High engagement alone should never be considered a measure of success.
+
+---
+
+# Architectural Principles
+
+Customer Intelligence follows the following principles:
+
+1. Understand before recommending.
+2. Evidence before assumption.
+3. Trust before commercial optimisation.
+4. Assistance before automation.
+5. Customer control before platform convenience.
+6. Explainability before prediction.
+7. Privacy by design.
+8. Continuous learning through evidence.
+9. Household wellbeing before individual transactions.
+10. Relationships before engagement.
+
+These principles govern every future component of the Customer Intelligence Domain.
+---
+
+# Responsibilities
+
+The Customer Intelligence Domain is responsible for developing and maintaining an evidence-based understanding of each customer's evolving relationship with the Essentials Mart ecosystem.
+
+Its responsibilities include understanding:
+
+- shopping behaviour;
+- shopping preferences;
+- preferred shopping modes;
+- household participation;
+- budgeting behaviour;
+- pantry management habits;
+- planning behaviour;
+- AI interaction preferences;
+- assistance preferences;
+- communication preferences;
+- delivery preferences;
+- store preferences;
+- engagement patterns;
+- community participation;
+- trust development;
+- long-term relationship health;
+- customer lifecycle progression.
+
+Customer Intelligence continuously transforms observations into understanding while preserving customer privacy and autonomy.
+
+---
+
+# Owns
+
+The Customer Intelligence Domain owns:
+
+- Customer Digital Twin
+- Customer Preference
+- Shopping Behaviour
+- Shopping Pattern
+- Shopping Context
+- Assistance Preference
+- AI Interaction Preference
+- Communication Preference
+- Household Participation Profile
+- Trust Profile
+- Relationship Health
+- Customer Journey
+- Behavioural Insight
+- Customer Understanding
+- Customer Context
+- Customer Learning Profile
+
+---
+
+# Does Not Own
+
+The Customer Intelligence Domain does not own:
+
+- Customer Identity (User Domain)
+- Household Ownership (Household Domain)
+- Orders (Commerce Domain)
+- Product Information (Product Intelligence Domain)
+- Inventory (Inventory Intelligence Domain)
+- Rewards (Engagement Intelligence Domain)
+- Community Content (Community Domain)
+
+Customer Intelligence understands these domains.
+
+It never becomes their source of truth.
+
+---
+
+# Primary Events
+
+The Customer Intelligence Domain publishes events including:
+
+- Customer Understanding Updated
+- Preference Updated
+- Behaviour Pattern Identified
+- Shopping Mode Changed
+- Assistance Preference Updated
+- Trust Profile Updated
+- Relationship Health Updated
+- Customer Context Updated
+- Customer Learning Updated
+- Customer Journey Updated
+
+---
+
+# Consumes Events
+
+The Customer Intelligence Domain continuously learns from events generated by:
+
+- User
+- Household
+- Commerce
+- Product Intelligence
+- Inventory Intelligence
+- Retail Intelligence
+- Community
+- Engagement Intelligence
+- Enterprise
+- AI Society
+
+Every event contributes to improving customer understanding where appropriate.
+
+---
+
+# Collaborates With
+
+The Customer Intelligence Domain collaborates closely with:
+
+- Household
+- Commerce
+- Product Intelligence
+- Inventory Intelligence
+- Retail Intelligence
+- Community
+- Engagement Intelligence
+- Enterprise
+- AI Society
+
+Customer Intelligence exists to support enterprise decision making rather than replace it.
+
+---
+
+# Customer Digital Twin
+
+The Customer Digital Twin represents the platform's continuously evolving understanding of a customer.
+
+It is not merely a customer profile.
+
+It is a living enterprise representation developed through evidence, permissions and customer interaction.
+
+The Customer Digital Twin evolves as customers:
+
+- shop;
+- plan;
+- build households;
+- manage pantries;
+- interact with AI;
+- participate in communities;
+- engage with Club Plans;
+- provide feedback.
+
+The Digital Twin should always reflect the customer's current relationship with Essentials Mart rather than historical assumptions.
+
+---
+
+# Customer Understanding Model
+
+Customer Intelligence develops understanding across multiple dimensions.
+
+These include:
+
+## Identity Understanding
+
+Understanding who the customer is within the Essentials Mart ecosystem.
+
+---
+
+## Preference Understanding
+
+Understanding what customers prefer without requiring repeated configuration.
+
+---
+
+## Behaviour Understanding
+
+Understanding how customers naturally interact with shopping, planning and household management.
+
+---
+
+## Context Understanding
+
+Understanding the customer's current situation rather than relying solely on historical behaviour.
+
+---
+
+## Household Understanding
+
+Understanding how the customer's household evolves over time.
+
+---
+
+## Trust Understanding
+
+Understanding the level of confidence customers have in recommendations, AI assistance and platform services.
+
+---
+
+## Growth Understanding
+
+Understanding how customers progress from individual users towards collaborative household management and wider ecosystem participation.
+
+---
+
+Customer Intelligence combines these dimensions to support every other Intelligence Engine throughout the enterprise.
+
+---
+
+# Customer Intelligence Engine
+
+The Customer Intelligence Engine is responsible for transforming customer interactions into meaningful understanding that improves household care while preserving customer trust, privacy and autonomy.
+
+Unlike traditional recommendation engines that optimise for transactions or engagement, the Customer Intelligence Engine optimises for long-term customer wellbeing and relationship quality.
+
+The Engine continuously develops understanding through observable evidence while ensuring every conclusion remains explainable.
+
+The Engine never makes commercial decisions.
+
+Its responsibility is understanding.
+
+Enterprise decisions remain the responsibility of collaborating domains and AI Society.
+
+---
+
+# Intelligence Objectives
+
+The Customer Intelligence Engine continuously seeks to answer questions such as:
+
+- How does this customer naturally prefer to shop?
+- Which shopping mode best suits them today?
+- How much assistance do they prefer?
+- How has their household changed?
+- What routines have become established?
+- What causes unnecessary shopping effort?
+- How much does the customer trust AI assistance?
+- Which recommendations have genuinely helped them?
+- What has changed since the previous interaction?
+
+The objective is understanding rather than prediction.
+
+---
+
+# Intelligence Capabilities
+
+The Customer Intelligence Engine develops understanding across multiple intelligence capabilities.
+
+## Preference Intelligence
+
+Understands customer preferences including:
+
+- preferred shopping mode;
+- preferred stores;
+- preferred brands;
+- preferred fulfilment options;
+- preferred communication style;
+- preferred AI interaction level.
+
+Preferences evolve through evidence rather than assumptions.
+
+---
+
+## Behaviour Intelligence
+
+Develops understanding of recurring customer behaviour including:
+
+- shopping routines;
+- planning habits;
+- purchasing patterns;
+- pantry maintenance;
+- household participation;
+- seasonal changes.
+
+Behaviour Intelligence identifies patterns without attempting to manipulate them.
+
+---
+
+## Context Intelligence
+
+Recognises the customer's current situation.
+
+Examples include:
+
+- preparing for a family gathering;
+- returning to school;
+- seasonal shopping;
+- pantry replenishment;
+- budget-conscious shopping;
+- travelling;
+- moving home.
+
+Current context should always take precedence over historical behaviour when providing assistance.
+
+---
+
+## Trust Intelligence
+
+Trust Intelligence measures the health of the relationship between the customer and Essentials Mart.
+
+Indicators may include:
+
+- acceptance of recommendations;
+- rejection of recommendations;
+- AI interaction frequency;
+- manual shopping preference;
+- customer feedback;
+- continued platform usage.
+
+Trust Intelligence is used only to improve the quality and appropriateness of assistance.
+
+It must never be used to exploit customer behaviour.
+
+---
+
+## Household Intelligence
+
+Understands how the customer's household develops over time.
+
+Examples include:
+
+- household size;
+- planning maturity;
+- collaborative shopping;
+- pantry management;
+- budgeting practices;
+- Club Plan participation.
+
+Household Intelligence supports the platform's mission of helping households feel taken care of.
+
+---
+
+## Growth Intelligence
+
+Recognises how customers naturally evolve within the ecosystem.
+
+Possible stages include:
+
+Individual User
+
+↓
+
+Household Collaboration
+
+↓
+
+Planning Optimisation
+
+↓
+
+Community Participation
+
+↓
+
+Club Plans
+
+↓
+
+Advanced Household Care
+
+The purpose is understanding progression rather than encouraging progression.
+
+Customers should always move at their own pace.
+
+---
+
+# Evidence Model
+
+Every conclusion generated by the Customer Intelligence Engine must be supported by evidence.
+
+Evidence may include:
+
+- observed customer behaviour;
+- explicit customer preferences;
+- shopping history;
+- pantry activity;
+- household decisions;
+- customer feedback;
+- reviews;
+- AI interactions;
+- permissions granted by the customer.
+
+No conclusion should rely solely upon assumptions or opaque statistical inference.
+
+---
+
+# Confidence Model
+
+Every understanding maintained by the Customer Intelligence Engine should carry an internal confidence level.
+
+Confidence increases as supporting evidence grows.
+
+Confidence decreases when behaviour changes or evidence becomes outdated.
+
+The Engine should remain comfortable saying:
+
+"We are not yet confident."
+
+Uncertainty is preferable to inaccurate understanding.
+
+---
+
+# Continuous Learning
+
+Learning occurs gradually throughout the customer's relationship with Essentials Mart.
+
+The Engine continuously:
+
+- validates previous understanding;
+- updates preferences;
+- detects behavioural change;
+- removes outdated assumptions;
+- adapts to changing household needs.
+
+Learning is continuous rather than event-based.
+
+---
+
+# Explainability
+
+Every insight produced by the Customer Intelligence Engine must be explainable.
+
+The Engine should always be capable of identifying:
+
+- which observations contributed;
+- why the conclusion was reached;
+- how confident the conclusion is;
+- when the conclusion was last validated.
+
+Explainability strengthens customer trust and supports responsible AI throughout the platform.
+
 # 11. Domain Philosophy
 
 Every business capability belongs to one and only one primary domain.
