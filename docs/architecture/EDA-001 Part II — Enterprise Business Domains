@@ -4122,7 +4122,917 @@ It is:
 
 > **A household that increasingly feels taken care of because Essentials Mart continuously learns how to serve it better.**
 
+# Commit 009 — Enterprise Domain Integration & Boundary Map
 
+## Purpose
+
+The Enterprise Domain Integration & Boundary Map establishes how the business domains defined within EDA-001 relate to one another without creating unnecessary coupling.
+
+The objective is to ensure that Essentials Mart can evolve from:
+
+* 1 store → 10,000+ stores;
+* 100 users → 100 million+ users;
+* 1 country → global deployment;
+
+without requiring the enterprise architecture to be fundamentally redesigned.
+
+This section establishes:
+
+* domain ownership;
+* data ownership;
+* domain responsibilities;
+* bounded-context boundaries;
+* cross-domain communication;
+* integration contracts;
+* domain events;
+* integration events;
+* governed data consumption;
+* AI Society boundaries;
+* Trust Engine boundaries;
+* Learning Engine boundaries;
+* failure isolation;
+* and architectural review requirements.
+
+---
+
+# 1. Enterprise Boundary Principle
+
+Each major business domain must have a clearly defined responsibility and an authoritative source of truth.
+
+Domains may collaborate extensively.
+
+They must not become dependent upon one another's internal implementation.
+
+The following principle therefore applies:
+
+> **A domain may depend on another domain's capability or published contract, but it must not depend on that domain's internal implementation.**
+
+This allows individual domains to evolve, scale, or eventually be separated into independent services without forcing changes throughout the enterprise.
+
+---
+
+# 2. Bounded Context Principle
+
+Each major business domain represents a bounded architectural context.
+
+A bounded context defines the boundary within which a particular business model, terminology, rules and data ownership apply.
+
+Different domains may therefore represent the same real-world concept differently when their business responsibilities require it.
+
+Essentials Mart will not attempt to force every domain into one universal internal model.
+
+This prevents the enterprise from becoming one tightly coupled model.
+
+---
+
+# 3. Enterprise Domain Map
+
+The current conceptual enterprise structure is:
+
+```text
+                         ESSENTIALS MART
+                               │
+             ┌─────────────────┴─────────────────┐
+             │                                   │
+        CUSTOMER /                           HOUSEHOLD
+        IDENTITY                              DOMAIN
+             │                                   │
+             └─────────────────┬─────────────────┘
+                               │
+          ┌────────────────────┼────────────────────┐
+          │                    │                    │
+       COMMERCE            OPERATIONS            FINANCE
+          │                    │                    │
+     Product              Inventory              Wallet
+     Shopping             Fulfilment             Payments
+     Orders               Delivery               Club Plans
+          │                    │                    │
+          └────────────────────┼────────────────────┘
+                               │
+                         ENGAGEMENT
+                               │
+          ┌────────────────────┼────────────────────┐
+          │                    │                    │
+     Relationship         Recognition           Learning
+     Intelligence         Intelligence           Engine
+          │                    │                    │
+          └────────────────────┼────────────────────┘
+                               │
+                          TRUST ENGINE
+                               │
+                          AI SOCIETY
+                               │
+                    CUSTOMER / HOUSEHOLD
+```
+
+This map is conceptual.
+
+The final domain catalogue remains governed by the completed EDA-001 architecture.
+
+---
+
+# 4. Domain Ownership
+
+Each domain owns the authoritative representation of the business concepts within its responsibility.
+
+A consuming domain may:
+
+* request information;
+* invoke an approved capability;
+* subscribe to published events;
+* maintain a derived read model;
+* perform its own analysis;
+* generate domain-specific intelligence.
+
+A consuming domain must not directly modify another domain's authoritative data.
+
+---
+
+# 5. Customer / Identity Domain
+
+The Customer / Identity Domain is responsible for:
+
+* customer identity;
+* authentication identity;
+* customer profile;
+* identity relationships;
+* privacy preferences;
+* consent;
+* identity lifecycle.
+
+It does not own:
+
+* orders;
+* inventory;
+* wallet balances;
+* rewards;
+* product information;
+* delivery records.
+
+Those concepts belong to their respective domains.
+
+---
+
+# 6. Household Domain
+
+The Household Domain is responsible for:
+
+* household identity;
+* household membership;
+* household relationships;
+* household roles;
+* household preferences;
+* household coordination.
+
+The Household Domain does not replace individual customer identity.
+
+A customer may belong to a household while retaining an independently governed identity.
+
+---
+
+# 7. Commerce Domain
+
+The Commerce Domain is responsible for:
+
+* product discovery;
+* shopping journeys;
+* baskets;
+* orders;
+* purchasing;
+* commerce transactions.
+
+Commerce consumes product, inventory, pricing and fulfilment capabilities through defined contracts.
+
+Commerce must not directly manipulate the internal data structures of those domains.
+
+---
+
+# 8. Product Intelligence Domain
+
+Product Intelligence is responsible for:
+
+* product knowledge;
+* product attributes;
+* product intelligence;
+* product relationships;
+* product-related evidence;
+* product interpretation.
+
+Other domains consume product information through governed capabilities or representations.
+
+Product Intelligence remains authoritative for the product knowledge it owns.
+
+---
+
+# 9. Inventory Intelligence Domain
+
+Inventory Intelligence is responsible for:
+
+* inventory state;
+* product availability;
+* stock intelligence;
+* stock signals;
+* inventory forecasting;
+* inventory-related operational intelligence.
+
+Inventory Intelligence provides governed availability information to domains such as:
+
+* Commerce;
+* Walk Mode;
+* Smart Pantry;
+* Fulfilment;
+* Engagement Intelligence.
+
+Consumers do not directly modify inventory state.
+
+---
+
+# 10. Fulfilment and Delivery Domain
+
+The Fulfilment and Delivery Domain is responsible for:
+
+* order fulfilment;
+* delivery;
+* collection;
+* pickup;
+* delivery status;
+* fulfilment coordination;
+* delivery lifecycle.
+
+Delivery information may be consumed by:
+
+* Commerce;
+* Customer Experience;
+* Engagement Intelligence;
+* Finance;
+* Learning Engine;
+* Customer Support.
+
+The delivery domain remains responsible for the authoritative delivery state.
+
+---
+
+# 11. Finance Domain
+
+The Finance Domain is responsible for:
+
+* Household Wallet;
+* payments;
+* financial transactions;
+* Club Plan financial relationships;
+* financial records.
+
+Financial information is authoritative within the Finance Domain.
+
+Other domains may request approved financial capabilities but may not directly modify financial records.
+
+---
+
+# 12. Engagement Intelligence Domain
+
+Engagement Intelligence is responsible for:
+
+* Relationship Intelligence;
+* Recognition Intelligence;
+* Achievement Intelligence;
+* Reward coordination;
+* Re-engagement Intelligence;
+* customer feedback learning;
+* engagement learning;
+* relationship learning.
+
+Engagement Intelligence may consume information from multiple domains.
+
+It does not become the owner of the underlying operational data belonging to those domains.
+
+---
+
+# 13. Learning Engine Boundary
+
+The Learning Engine is a cross-domain intelligence capability.
+
+It may receive governed evidence from:
+
+* Customer;
+* Household;
+* Commerce;
+* Product Intelligence;
+* Inventory Intelligence;
+* Fulfilment;
+* Delivery;
+* Finance;
+* Engagement Intelligence;
+* Walk Mode;
+* AI interactions;
+* customer feedback.
+
+The Learning Engine does not replace domain sources of truth.
+
+Its role is:
+
+```text
+Domain
+   ↓
+Evidence
+   ↓
+Learning Engine
+   ↓
+Learned Insight
+   ↓
+Domain Intelligence
+   ↓
+Improved Decision
+```
+
+Learned information must retain appropriate provenance, confidence and contextual information.
+
+---
+
+# 14. Trust Engine Boundary
+
+The Trust Engine is a cross-cutting governance capability.
+
+It does not own:
+
+* customer profiles;
+* shopping history;
+* financial records;
+* inventory;
+* product data;
+* rewards;
+* household data.
+
+Instead, it evaluates proposed decisions and actions against established trust principles and guardrails.
+
+Conceptually:
+
+```text
+Domain Decision
+       ↓
+Trust Evaluation
+       ↓
+Approved
+Modified
+Deferred
+Rejected
+```
+
+The Trust Engine must not become a hidden customer-worth score.
+
+Its purpose is to govern the quality and trustworthiness of platform behaviour.
+
+---
+
+# 15. AI Society Boundary
+
+The AI Society coordinates the specialised AI Agents operating throughout Essentials Mart.
+
+AI Agents do not become enterprise data owners.
+
+Agents operate through approved domain capabilities.
+
+The preferred architecture is:
+
+```text
+AI Agent
+   ↓
+Domain Capability
+   ↓
+Domain-Owned Data
+   ↓
+Decision / Result
+   ↓
+AI Society
+```
+
+The AI Society must not become an unrestricted access layer to every enterprise database.
+
+This preserves:
+
+* domain ownership;
+* security;
+* explainability;
+* replaceability;
+* scalability;
+* governance.
+
+---
+
+# 16. Cross-Domain Communication
+
+Domains communicate through explicit mechanisms.
+
+The principal mechanisms are:
+
+### 16.1 Synchronous Capability Request
+
+Used when an immediate response is required.
+
+Example:
+
+```text
+Walk Mode
+    ↓
+Product Capability
+    ↓
+Product Information
+```
+
+The consuming domain receives the information required for the specific use case.
+
+---
+
+### 16.2 Domain Event
+
+A domain event represents a meaningful occurrence inside a domain.
+
+Examples:
+
+* Order Created;
+* Delivery Completed;
+* Reward Issued;
+* Pantry Updated;
+* Household Created.
+
+Domain events primarily coordinate behaviour within the originating domain.
+
+---
+
+### 16.3 Integration Event
+
+An integration event communicates a committed business occurrence to another domain or external system.
+
+Examples include:
+
+```text
+OrderCompleted
+DeliveryCompleted
+PaymentCompleted
+ProductUpdated
+InventoryChanged
+RewardIssued
+CustomerFeedbackSubmitted
+```
+
+Integration events crossing bounded-context boundaries should be asynchronous and published only after the originating transaction has successfully committed. This separation between internal domain events and cross-context integration events is consistent with established DDD guidance.
+
+---
+
+# 17. Prohibited Integration Pattern
+
+The following pattern is prohibited:
+
+```text
+Domain A
+   ↓
+Direct access to Domain B database
+   ↓
+Domain B
+```
+
+This creates hidden coupling.
+
+Instead:
+
+```text
+Domain A
+   ↓
+Capability / Contract / Integration Event
+   ↓
+Domain B
+```
+
+This allows Domain B to change its internal implementation without forcing Domain A to change with it.
+
+---
+
+# 18. Data Consumption
+
+A domain may consume another domain's information through:
+
+* approved API or capability contracts;
+* integration events;
+* governed read models;
+* approved data products.
+
+A consuming domain may maintain a local representation of externally owned information when required for:
+
+* performance;
+* resilience;
+* search;
+* analytics;
+* offline operation;
+* AI inference.
+
+Such a representation does not transfer ownership.
+
+---
+
+# 19. Authoritative Data Rule
+
+The following rule is constitutional:
+
+> **The domain that owns a business concept owns the authoritative version of its data and business rules.**
+
+Other domains may maintain:
+
+* projections;
+* caches;
+* read models;
+* analytical representations;
+* AI-derived representations.
+
+They must not silently become competing sources of truth.
+
+---
+
+# 20. Walk Mode Integration Example
+
+Walk Mode demonstrates why clear boundaries are necessary.
+
+It may consume:
+
+```text
+Product Intelligence
+        ↓
+Product information
+
+Inventory Intelligence
+        ↓
+Availability
+
+Commerce
+        ↓
+Basket / purchase
+
+Engagement Intelligence
+        ↓
+Personalised assistance
+
+AI Society
+        ↓
+Agent coordination
+
+Trust Engine
+        ↓
+Customer-facing decision governance
+```
+
+Walk Mode does not own these underlying concepts.
+
+It orchestrates them into the Living Digital Supermarket experience.
+
+---
+
+# 21. Smart Pantry Integration Example
+
+Smart Pantry may consume:
+
+```text
+Household
+   ↓
+Household context
+
+Commerce
+   ↓
+Purchase history
+
+Product Intelligence
+   ↓
+Product knowledge
+
+Inventory Intelligence
+   ↓
+Availability
+
+Learning Engine
+   ↓
+Observed patterns
+
+AI Society
+   ↓
+Assistance
+```
+
+The Pantry capability remains responsible for pantry-specific state and rules.
+
+---
+
+# 22. Recognition Integration Example
+
+Recognition may consume:
+
+```text
+Engagement Signals
+        ↓
+Recognition Intelligence
+
+Learning Evidence
+        ↓
+Context
+
+Trust Engine
+        ↓
+Decision Governance
+
+Reward Intelligence
+        ↓
+Optional Benefit
+
+Recognition Agent
+        ↓
+Customer Experience
+```
+
+Recognition does not directly modify:
+
+* Commerce;
+* Finance;
+* Inventory;
+* Household;
+
+unless an approved capability or integration contract explicitly permits the interaction.
+
+---
+
+# 23. Delivery Integration Example
+
+A completed delivery may produce:
+
+```text
+Fulfilment / Delivery
+        ↓
+DeliveryCompleted
+        ↓
+Integration Event
+        │
+        ├── Commerce
+        ├── Customer Experience
+        ├── Engagement Intelligence
+        ├── Learning Engine
+        └── Finance
+```
+
+The Delivery domain does not need to know how each consuming domain responds.
+
+Each consumer owns its own reaction to the event.
+
+---
+
+# 24. Anti-Corruption Principle
+
+When two domains use different internal models for the same real-world concept, an explicit translation boundary should exist.
+
+Example:
+
+```text
+Commerce Order Model
+        ↓
+Integration Contract
+        ↓
+Finance Transaction Model
+```
+
+Neither domain should be forced to adopt the other's internal representation.
+
+This protects domain autonomy and prevents one domain's internal model from contaminating another domain.
+
+---
+
+# 25. Failure Isolation
+
+Failure in one domain should not unnecessarily disable unrelated capabilities.
+
+For example:
+
+```text
+Learning Engine unavailable
+        ↓
+Shopping continues
+```
+
+and:
+
+```text
+Recognition unavailable
+        ↓
+Checkout continues
+```
+
+Non-critical intelligence must degrade gracefully.
+
+Critical transactional capabilities should remain operational according to their own availability requirements.
+
+---
+
+# 26. AI Failure Isolation
+
+AI must not become a single point of failure for core commerce.
+
+If AI services become unavailable, customers should still be able to:
+
+* browse;
+* shop;
+* checkout;
+* pay;
+* collect;
+* receive deliveries;
+* return products;
+* access essential account functions.
+
+AI enhances Essentials Mart.
+
+AI must not make Essentials Mart fundamentally unusable.
+
+---
+
+# 27. Event Ownership
+
+The originating domain owns the meaning of an event.
+
+Consumers own their response to that event.
+
+For example:
+
+```text
+Delivery Domain
+        ↓
+owns
+        ↓
+DeliveryCompleted
+```
+
+while:
+
+```text
+Learning Engine
+        ↓
+owns
+        ↓
+how the event affects learning
+```
+
+and:
+
+```text
+Engagement Intelligence
+        ↓
+owns
+        ↓
+whether the event warrants customer engagement
+```
+
+This prevents consuming domains from redefining another domain's business meaning.
+
+---
+
+# 28. Enterprise Integration Rules
+
+The following rules apply across Essentials Mart:
+
+1. Domains must have explicit ownership.
+2. Domains must own their authoritative data.
+3. Domains must not directly modify another domain's authoritative data.
+4. Cross-domain communication must use explicit contracts.
+5. Integration events crossing domain boundaries must be asynchronous.
+6. Integration events must represent committed business occurrences.
+7. Consumers must remain independent of publishers' internal implementations.
+8. AI Agents must not become enterprise data owners.
+9. The Trust Engine governs platform actions rather than customer worth.
+10. The Learning Engine consumes evidence without replacing domain sources of truth.
+11. Non-critical intelligence must degrade gracefully.
+12. New cross-domain dependencies require architectural review.
+
+---
+
+# 29. Architectural Review Trigger
+
+A feature must trigger architectural review when it:
+
+* crosses multiple domains;
+* introduces a new source of truth;
+* introduces a new integration event;
+* gives an AI Agent access to a new domain;
+* changes Trust Engine authority;
+* changes Learning Engine evidence flows;
+* introduces persistent cross-domain state;
+* creates a dependency between previously independent domains.
+
+This prevents architecture from evolving through accidental coupling.
+
+---
+
+# 30. Scalability Principle
+
+The domain architecture must remain valid as Essentials Mart expands across:
+
+```text
+1 Store
+   ↓
+10 Stores
+   ↓
+1,000 Stores
+   ↓
+10,000+ Stores
+```
+
+and:
+
+```text
+100 Users
+   ↓
+1 Million Users
+   ↓
+100 Million+ Users
+```
+
+and:
+
+```text
+1 Country
+   ↓
+Multiple Countries
+   ↓
+Global Platform
+```
+
+Domain boundaries must therefore be established independently of current deployment scale.
+
+---
+
+# 31. Final Enterprise Boundary Pattern
+
+The consolidated pattern is:
+
+```text
+                         ESSENTIALS MART
+                               │
+                    ┌──────────┴──────────┐
+                    │                     │
+                 DOMAINS             CROSS-CUTTING
+                    │                 CAPABILITIES
+                    │                     │
+        ┌───────────┼───────────┐     ┌───┴────────┐
+        │           │           │     │            │
+     Commerce   Operations   Finance  Trust      Learning
+        │           │           │    Engine       Engine
+        └───────────┼───────────┘      │            │
+                    │                  └─────┬──────┘
+                    │                        │
+               CUSTOMER /               AI SOCIETY
+               HOUSEHOLD                    │
+                    │                        │
+                    └──────────┬─────────────┘
+                               │
+                          CUSTOMER /
+                           HOUSEHOLD
+```
+
+The exact domain inventory remains governed by the complete EDA-001 Business Domain architecture.
+
+---
+
+# 32. Architectural Laws Added by Commit 009
+
+Commit 009 establishes the following enterprise laws:
+
+> **Domains own their truth.**
+
+> **Contracts connect domains.**
+
+> **Events communicate meaningful change.**
+
+> **Consumers own their response to events.**
+
+> **Intelligence interprets evidence but does not replace domain ownership.**
+
+> **AI coordinates assistance but does not become the enterprise source of truth.**
+
+> **Trust governs platform actions rather than customer worth.**
+
+> **Failure in non-critical intelligence must not unnecessarily disable core commerce.**
+
+> **Cross-domain dependencies must be deliberate and reviewable.**
+
+> **Scale must not require the enterprise to abandon its domain boundaries.**
+
+---
+
+# End of Commit 009
+
+Commit 009 completes the Enterprise Domain Integration & Boundary Map required for the continued development of EDA-001 Part II.
+
+It does not define:
+
+* event catalogue implementation;
+* aggregate design;
+* entity models;
+* API contracts;
+* Flutter architecture;
+* backend implementation;
+* infrastructure deployment.
+
+Those remain subsequent architectural stages in the Essentials Mart roadmap.
 
 # 11. Domain Philosophy
 
