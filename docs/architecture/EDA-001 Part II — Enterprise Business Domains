@@ -3369,6 +3369,760 @@ It is to create the most thoughtful and sustainable recognition system possible.
 >
 > **The platform should optimise for long-term relationship value while preserving customer autonomy, fairness and economic sustainability.**
 
+## Relationship Intelligence
+
+### Purpose
+
+Relationship Intelligence evaluates the evolving relationship between a customer, household and Essentials Mart.
+
+It does not rank customers.
+
+It does not assign customer worth.
+
+It does not replace customer identity or household identity.
+
+Its purpose is to understand whether the relationship is:
+
+* developing;
+* healthy;
+* strengthening;
+* weakening;
+* dormant;
+* or returning.
+
+This allows Essentials Mart to respond appropriately without treating every customer interaction as a commercial opportunity.
+
+---
+
+## Relationship Context
+
+Relationship Intelligence may consider signals including:
+
+* recency of meaningful interaction;
+* frequency of interaction;
+* consistency of household activity;
+* shopping patterns;
+* Smart Pantry activity;
+* Club Plan participation;
+* Walk Mode participation;
+* Household Wallet activity;
+* feedback contributions;
+* product reviews;
+* service interactions;
+* delivery experiences;
+* AI interactions;
+* community participation;
+* previous recognition;
+* customer preferences;
+* explicit customer requests.
+
+No individual signal should be interpreted in isolation.
+
+---
+
+## Relationship State
+
+Relationship Intelligence maintains an internal contextual state rather than a public loyalty level.
+
+Conceptual states may include:
+
+```text
+New
+
+↓
+
+Developing
+
+↓
+
+Established
+
+↓
+
+Strong
+
+↓
+
+Quiet
+
+↓
+
+Dormant
+
+↓
+
+Returning
+```
+
+These states are operational concepts.
+
+They must never become customer-facing status tiers.
+
+---
+
+# Relationship Strength
+
+Relationship Strength represents the quality and continuity of the relationship between the customer and Essentials Mart.
+
+It is not equivalent to:
+
+* spending;
+* order count;
+* app usage;
+* session duration;
+* or engagement frequency.
+
+A customer may have a strong relationship with Essentials Mart while interacting infrequently.
+
+For example, a household that uses Essentials Mart primarily for reliable monthly household shopping may demonstrate strong trust without daily application activity.
+
+---
+
+## Relationship Strength Inputs
+
+Relationship Strength may be informed by:
+
+* trust signals;
+* satisfaction;
+* successful service experiences;
+* household utility;
+* continuity;
+* meaningful participation;
+* constructive feedback;
+* successful problem resolution;
+* customer preference alignment;
+* reliability of Essentials Mart services.
+
+Negative experiences must also be considered.
+
+A customer who has recently experienced a failed delivery should not be treated as a healthy relationship simply because they continue purchasing.
+
+---
+
+# Relationship Health
+
+Relationship Intelligence should distinguish between:
+
+### Engagement
+
+What the customer is doing.
+
+### Relationship
+
+How the customer relates to Essentials Mart.
+
+### Trust
+
+Whether the customer believes Essentials Mart will act in their interests.
+
+These concepts are related but not interchangeable.
+
+A highly active customer may have declining trust.
+
+A quiet customer may have strong trust.
+
+This distinction is fundamental.
+
+---
+
+# Re-engagement Intelligence
+
+### Purpose
+
+Re-engagement Intelligence identifies customers whose relationship with Essentials Mart may be weakening or becoming dormant and determines whether intervention would genuinely benefit the customer.
+
+The purpose is not to recover every inactive user.
+
+The purpose is to determine:
+
+> **"Is there a meaningful reason to reconnect with this customer?"**
+
+---
+
+## Inactivity Threshold
+
+If a customer has not meaningfully participated in Essentials Mart for **40 days**, the Engagement Intelligence system may begin evaluating whether engagement-intelligence questions or other appropriate re-engagement mechanisms should be introduced.
+
+The 40-day threshold is a trigger for evaluation, not an automatic communication rule.
+
+The system must first evaluate context.
+
+---
+
+## Re-engagement Evaluation
+
+The system may consider:
+
+* what the customer previously used;
+* what they appeared interested in;
+* household needs;
+* unfinished journeys;
+* previous AI conversations;
+* Smart Pantry state;
+* Club Plan state;
+* previous shopping patterns;
+* Walk Mode activity;
+* product interests;
+* feedback history;
+* previous service issues;
+* seasonal relevance;
+* recent household context.
+
+The system should identify the **closest useful reason to return** rather than simply sending a generic reminder.
+
+---
+
+# Tailored Re-engagement
+
+Re-engagement must be based on probable customer interest rather than generic inactivity messaging.
+
+For example:
+
+A customer who frequently used Smart Pantry may receive:
+
+> "Your pantry has been quiet for a while. Would you like me to take a quick look at what may need attention?"
+
+A customer who regularly used Walk Mode may receive:
+
+> "It's been a little while since we walked the store together. Would you like to take another look around?"
+
+A customer who frequently ordered online may receive:
+
+> "Welcome back. Would you like me to help you pick up where you left off?"
+
+These are examples only.
+
+The actual message should be dynamically generated according to customer context.
+
+---
+
+# Engagement Intelligence Questions
+
+After sufficient inactivity, the platform may gently introduce questions designed to understand why engagement has declined.
+
+These questions must not feel like surveys imposed on the customer.
+
+Possible objectives include identifying:
+
+* what customers value;
+* what they stopped using;
+* what became inconvenient;
+* what they expected but did not find;
+* what features are unclear;
+* what services they want;
+* what could make Essentials Mart more useful.
+
+The Learning Engine receives these responses as evidence.
+
+---
+
+# Customer Influence and Feedback
+
+Engagement Intelligence must never use customer influence as a gate that determines whether feedback deserves consideration.
+
+Every legitimate customer suggestion is potentially valuable.
+
+A new customer may identify a problem that experienced customers have become accustomed to.
+
+Therefore:
+
+> **Influence may affect prioritisation, but never determines whether information is heard.**
+
+Feedback evaluation should consider:
+
+* severity;
+* frequency;
+* affected users;
+* trust implications;
+* usability impact;
+* safety;
+* operational feasibility;
+* strategic relevance;
+* evidence quality.
+
+This ensures that a low-influence customer can still surface a high-priority problem.
+
+---
+
+# Learning Engine
+
+### Purpose
+
+The Learning Engine continuously converts customer and operational evidence into improved understanding of the platform.
+
+It learns from:
+
+* customer suggestions;
+* customer comments;
+* product reviews;
+* store reviews;
+* delivery reviews;
+* service interactions;
+* AI conversations;
+* Walk Mode behaviour;
+* shopping behaviour;
+* Smart Pantry activity;
+* Club Plan activity;
+* Household activity;
+* reward outcomes;
+* recognition outcomes;
+* re-engagement outcomes;
+* customer satisfaction signals.
+
+---
+
+## Evidence Hierarchy
+
+The Learning Engine must distinguish between different forms of evidence.
+
+Examples include:
+
+```text
+Explicit Customer Statement
+
+↓
+
+Observed Behaviour
+
+↓
+
+Repeated Pattern
+
+↓
+
+Single Event
+
+↓
+
+Prediction
+```
+
+The system must not treat predictions as facts.
+
+---
+
+# Learning From Failure
+
+The Learning Engine must learn from unsuccessful experiences.
+
+Examples:
+
+* a recommendation ignored repeatedly;
+* a re-engagement message ignored;
+* a reward consistently unused;
+* a Walk Mode suggestion dismissed;
+* a delivery problem;
+* a product repeatedly returned;
+* a customer suggestion associated with later dissatisfaction.
+
+Failure is evidence.
+
+It should improve future decisions rather than simply disappear from the system.
+
+---
+
+# Learning From Positive Outcomes
+
+The Learning Engine must also identify successful patterns.
+
+Examples include:
+
+* useful recommendations;
+* successful re-engagement;
+* helpful AI assistance;
+* successful household coordination;
+* useful pantry predictions;
+* positive Walk Mode interactions;
+* meaningful recognition;
+* successful reward selection.
+
+The system should identify why an outcome worked before attempting to reproduce it.
+
+---
+
+# Customer Feedback Learning
+
+Customer feedback should influence the platform at multiple levels.
+
+```text
+Customer
+
+↓
+
+Feedback
+
+↓
+
+Learning Engine
+
+↓
+
+Evidence Evaluation
+
+↓
+
+Domain Intelligence
+
+↓
+
+Architecture / Product / Operations
+
+↓
+
+Improved Experience
+```
+
+Feedback must not automatically become a product requirement.
+
+It becomes evidence that can influence decisions.
+
+---
+
+# Product Review Intelligence
+
+Product reviews are not merely displayed to other shoppers.
+
+They become learning signals.
+
+The Learning Engine may identify:
+
+* recurring quality problems;
+* packaging problems;
+* sizing issues;
+* product satisfaction;
+* substitution problems;
+* value perceptions;
+* product-specific complaints;
+* product-specific strengths.
+
+These signals may inform:
+
+* Product Intelligence;
+* Commerce Intelligence;
+* Inventory Intelligence;
+* Supplier Intelligence;
+* Customer Intelligence.
+
+---
+
+# Service and Delivery Review Intelligence
+
+Customer reviews of:
+
+* delivery;
+* collection;
+* returns;
+* service desk;
+* support;
+* store experience;
+
+may be incorporated into the Learning Engine.
+
+This allows operational problems to become enterprise learning rather than isolated complaints.
+
+---
+
+# Re-engagement Guardrails
+
+Re-engagement must follow the Trust Engine principles.
+
+### No Spam
+
+Repeated ignored messages should reduce intervention frequency.
+
+### No Artificial Urgency
+
+The platform must not manufacture scarcity or urgency simply to bring customers back.
+
+### No Emotional Manipulation
+
+The system must not exploit guilt, fear or anxiety.
+
+### Relevance Before Frequency
+
+A meaningful reason to contact a customer is more important than maintaining a communication schedule.
+
+### Respect Silence
+
+If a customer repeatedly ignores engagement attempts, the platform should reduce intervention.
+
+### Service Issues Take Priority
+
+If inactivity may have resulted from a negative experience, the system should prioritise understanding or resolving that issue before attempting commercial re-engagement.
+
+---
+
+# Engagement Learning Loop
+
+The complete system becomes:
+
+```text
+Customer Behaviour
+
+↓
+
+Observation
+
+↓
+
+Learning Engine
+
+↓
+
+Evidence Evaluation
+
+↓
+
+Relationship Intelligence
+
+↓
+
+Recognition Intelligence
+
+↓
+
+Trust Engine
+
+↓
+
+Reward / Re-engagement Decision
+
+↓
+
+Customer Experience
+
+↓
+
+Outcome
+
+↓
+
+Learning Engine
+```
+
+This creates a continuous learning cycle.
+
+---
+
+# Recognition Learning
+
+The Learning Engine should evaluate whether recognition actually created value.
+
+For example:
+
+```text
+Recognition Delivered
+
+↓
+
+Customer Response
+
+↓
+
+Reward Usage
+
+↓
+
+Subsequent Relationship Signals
+
+↓
+
+Learning
+```
+
+A reward that is repeatedly ignored should not simply be issued again.
+
+The system should learn that the reward may have low relevance.
+
+---
+
+# Re-engagement Learning
+
+The system should evaluate:
+
+* whether the customer returned;
+* what caused the return;
+* whether the return produced meaningful value;
+* whether the customer remained engaged;
+* whether the intervention caused irritation;
+* whether the customer subsequently disengaged.
+
+The objective is not merely:
+
+> "Did they open the app?"
+
+The more important question is:
+
+> **"Did the intervention genuinely improve the relationship?"**
+
+---
+
+# Engagement Intelligence Agent
+
+The Engagement Intelligence Agent coordinates the customer-facing engagement experience.
+
+It may collaborate with:
+
+* Recognition Agent;
+* Commerce Agent;
+* Pantry Agent;
+* Household Agent;
+* Delivery Agent;
+* Walk Mode Agent;
+* Community Agent;
+* Customer Support Agent.
+
+The Engagement Intelligence Agent must not independently override domain ownership.
+
+It orchestrates appropriate assistance while respecting domain boundaries.
+
+---
+
+# AI Society Integration
+
+Engagement Intelligence participates in the AI Society through structured signals and requests.
+
+Example:
+
+```text
+Smart Pantry Agent
+        ↓
+"Household may need replenishment."
+
+        ↓
+
+Engagement Intelligence
+
+        ↓
+
+Trust Engine
+
+        ↓
+
+Context Evaluation
+
+        ↓
+
+Recognition / Assistance / No Action
+```
+
+The system does not automatically message the customer simply because another agent has detected an opportunity.
+
+The opportunity must pass through contextual and trust evaluation.
+
+---
+
+# Enterprise Learning Memory
+
+The Learning Engine should maintain structured learning memory across:
+
+* customer;
+* household;
+* product;
+* store;
+* service;
+* region;
+* country;
+* enterprise.
+
+Learning memory must preserve provenance.
+
+The system should know:
+
+* where a learning signal originated;
+* when it occurred;
+* how reliable it is;
+* whether it has been corroborated;
+* what decision it influenced;
+* and whether the resulting decision succeeded.
+
+---
+
+# Learning Governance
+
+Learned information must not silently become permanent truth.
+
+Important learned patterns should have:
+
+* provenance;
+* confidence;
+* recency;
+* evidence count;
+* expiry or review conditions;
+* responsible domain;
+* model/rule version.
+
+This prevents outdated assumptions from becoming permanent customer profiles.
+
+---
+
+# Relationship Intelligence Success Criteria
+
+The system succeeds when:
+
+* customers receive fewer irrelevant interventions;
+* re-engagement becomes more useful;
+* customer feedback influences meaningful improvements;
+* customer trust is preserved;
+* recognition becomes more relevant;
+* the platform learns from failure;
+* customer silence is respected;
+* household value increases;
+* intelligence improves without becoming intrusive.
+
+---
+
+# Final Engagement Intelligence Architecture
+
+The complete domain now forms:
+
+```text
+                    ENGAGEMENT INTELLIGENCE
+                              │
+          ┌───────────────────┼───────────────────┐
+          │                   │                   │
+   Relationship         Recognition          Learning
+   Intelligence         Intelligence          Engine
+          │                   │                   │
+   Re-engagement       Achievement          Evidence
+   Intelligence        Intelligence         Evaluation
+          │                   │                   │
+          └──────────────┬────┴──────────────────┘
+                         │
+                    TRUST ENGINE
+                         │
+                 Reward Intelligence
+                         │
+                Celebration Intelligence
+                         │
+                  Recognition Agent
+                         │
+                      AI Society
+                         │
+                      Customer
+                         │
+                     Household
+                         │
+                       Learning
+                         │
+                         └───────────────→
+```
+
+---
+
+# Architectural Principle
+
+> **Essentials Mart should learn from customers without making customers feel studied.**
+
+The platform should become more useful as it learns, while becoming no more intrusive than necessary.
+
+The ultimate objective is not maximum engagement.
+
+It is:
+
+> **A household that increasingly feels taken care of because Essentials Mart continuously learns how to serve it better.**
+
+
 
 # 11. Domain Philosophy
 
