@@ -5033,6 +5033,1133 @@ It does not define:
 * infrastructure deployment.
 
 Those remain subsequent architectural stages in the Essentials Mart roadmap.
+# Commit 010 — Enterprise Intelligence & Enterprise Society
+
+## Purpose
+
+Commit 010 establishes the Enterprise Intelligence architecture of Essentials Mart and formally defines the Enterprise Society as a coordinated collection of specialised enterprise intelligence capabilities.
+
+The Enterprise Society exists because Essentials Mart cannot become a globally scalable Household Care Platform while relying on disconnected operational systems and isolated intelligence tools.
+
+Enterprise Intelligence must operate as part of the platform's architecture rather than as a collection of unrelated dashboards.
+
+The architecture must allow intelligence generated in one enterprise domain to become useful evidence for another domain while preserving:
+
+* domain ownership;
+* explainability;
+* human authority;
+* trust;
+* privacy;
+* auditability;
+* economic sustainability;
+* scalability.
+
+---
+
+# 1. Why Enterprise Intelligence Exists
+
+Enterprise Intelligence exists to help Essentials Mart understand, operate and continuously improve the enterprise itself.
+
+It provides intelligence across:
+
+* supply;
+* inventory;
+* warehouses;
+* logistics;
+* finance;
+* people;
+* compliance;
+* marketing;
+* operations;
+* retailers;
+* suppliers;
+* executives;
+* workforce;
+* customer experience.
+
+Enterprise Intelligence is therefore not a single system.
+
+It is an interconnected set of specialised capabilities operating within clearly defined boundaries.
+
+---
+
+# 2. The Five Enterprise Domain Questions
+
+Every Enterprise Intelligence capability must answer five questions before it is considered architecturally complete.
+
+### 2.1 Why does it exist?
+
+The capability must solve a meaningful enterprise problem.
+
+It must not exist merely because the technology makes it possible.
+
+### 2.2 What does it own?
+
+Every capability must have clearly defined responsibility and authoritative data boundaries.
+
+It must not become a competing source of truth for another domain.
+
+### 2.3 How does it build trust?
+
+Enterprise Intelligence must be:
+
+* explainable;
+* auditable;
+* governed;
+* fair;
+* privacy-conscious;
+* economically responsible.
+
+### 2.4 How does AI make it better?
+
+AI may improve:
+
+* detection;
+* forecasting;
+* pattern recognition;
+* prioritisation;
+* anomaly identification;
+* scenario analysis;
+* decision support.
+
+AI must assist enterprise decision-makers rather than silently replace them.
+
+### 2.5 Can it operate at 100 million users?
+
+The capability must remain architecturally viable as Essentials Mart expands across:
+
+* millions of households;
+* thousands of stores;
+* multiple warehouses;
+* multiple countries;
+* multiple currencies;
+* multiple regulatory environments;
+* large supplier networks.
+
+---
+
+# 3. Enterprise Intelligence Principle
+
+> **Enterprise Intelligence informs the enterprise; it does not become the enterprise's unchecked decision-maker.**
+
+Intelligence should surface:
+
+* evidence;
+* patterns;
+* forecasts;
+* anomalies;
+* risks;
+* opportunities;
+* relationships.
+
+Human decision-makers retain authority over consequential enterprise decisions.
+
+---
+
+# 4. Enterprise Society
+
+The Enterprise Society is the coordinated system through which the enterprise intelligence capabilities operate.
+
+It mirrors the architectural principle used by the AI Society:
+
+```text
+Specialised Intelligence
+        ↓
+Shared Evidence
+        ↓
+Coordination
+        ↓
+Human Decision
+        ↓
+Action
+        ↓
+Observed Outcome
+        ↓
+Learning
+```
+
+The Enterprise Society is therefore not one large AI model.
+
+It is not one giant analytics dashboard.
+
+It is not a centralised decision-making engine.
+
+It is a network of specialised intelligence capabilities.
+
+---
+
+# 5. Enterprise Intelligence Capabilities
+
+The Enterprise Society contains seventeen enterprise capabilities.
+
+## 5.1 Embedded ERP
+
+Embedded ERP provides the foundational enterprise operational capabilities required by Essentials Mart.
+
+It covers enterprise operational areas such as:
+
+* inventory;
+* finance;
+* HR-adjacent operations;
+* enterprise records;
+* operational coordination.
+
+Embedded ERP is part of the platform's architecture rather than a bolted-on third-party enterprise system.
+
+### Ownership
+
+Embedded ERP owns the enterprise operational capabilities explicitly assigned to it.
+
+It must not absorb the responsibilities of specialised intelligence domains.
+
+### Trust
+
+Enterprise operational records must be:
+
+* auditable;
+* permission-controlled;
+* traceable;
+* governed.
+
+### AI Enhancement
+
+AI may assist with:
+
+* anomaly detection;
+* workflow prioritisation;
+* forecasting;
+* reconciliation;
+* operational analysis.
+
+AI must not silently alter authoritative enterprise records.
+
+---
+
+# 6. Supply Chain Intelligence Cluster
+
+The Supply Chain cluster consists of:
+
+* Procurement Intelligence;
+* Warehouse Intelligence;
+* Inventory Intelligence;
+* Logistics Intelligence;
+* Supplier Intelligence.
+
+The cluster exists to provide end-to-end visibility across the movement of goods into and through Essentials Mart.
+
+---
+
+## 6.1 Procurement Intelligence
+
+### Purpose
+
+Procurement Intelligence provides insight and forecasting into how Essentials Mart purchases goods from suppliers for its own operated stores.
+
+It is distinct from Supplier Intelligence, which serves supplier-facing relationships.
+
+### Ownership
+
+It owns procurement intelligence, analysis and forecasting relevant to Essentials Mart's purchasing decisions.
+
+It does not own:
+
+* supplier identity;
+* warehouse inventory;
+* store inventory;
+* customer purchasing behaviour.
+
+### Trust
+
+Procurement intelligence must make material recommendations explainable to the responsible procurement decision-maker.
+
+### AI Enhancement
+
+AI may identify:
+
+* purchasing patterns;
+* demand signals;
+* supplier performance patterns;
+* purchasing opportunities;
+* potential supply risks.
+
+### Scale
+
+The capability must support procurement across thousands of stores, warehouses, categories and markets.
+
+---
+
+## 6.2 Warehouse Intelligence
+
+### Purpose
+
+Warehouse Intelligence provides operational visibility into:
+
+* storage;
+* throughput;
+* capacity;
+* fulfilment capability;
+* warehouse performance.
+
+### Ownership
+
+It owns warehouse intelligence and warehouse operational analysis.
+
+It does not become the authoritative owner of store inventory or customer orders.
+
+### AI Enhancement
+
+AI may identify:
+
+* capacity pressure;
+* throughput bottlenecks;
+* unusual warehouse behaviour;
+* expected fulfilment constraints;
+* operational opportunities.
+
+### Trust
+
+Warehouse recommendations must remain explainable and must not become covert workforce surveillance.
+
+---
+
+## 6.3 Inventory Intelligence
+
+### Purpose
+
+Inventory Intelligence provides real-time and predictive visibility into stock across stores and warehouses.
+
+It is the enterprise counterpart to the household's Smart Pantry.
+
+### Ownership
+
+It owns:
+
+* inventory intelligence;
+* availability intelligence;
+* stock signals;
+* stock forecasting.
+
+The authoritative inventory state remains within the inventory domain.
+
+### AI Enhancement
+
+AI may support:
+
+* demand prediction;
+* stock-out prediction;
+* replenishment forecasting;
+* anomaly detection;
+* inventory optimisation.
+
+### Customer Trust
+
+Inventory Intelligence is particularly important to the Essentials Mart trust promise.
+
+The digital supermarket must not knowingly represent unavailable products as available.
+
+---
+
+## 6.4 Logistics Intelligence
+
+### Purpose
+
+Logistics Intelligence provides forecasting and optimisation for movement between:
+
+* suppliers;
+* warehouses;
+* stores.
+
+### Ownership
+
+It owns logistics intelligence and logistics forecasting.
+
+### AI Enhancement
+
+AI may analyse:
+
+* delivery patterns;
+* route conditions;
+* supply delays;
+* capacity constraints;
+* expected arrival patterns.
+
+### Enterprise Society Relationship
+
+Logistics Intelligence consumes evidence from:
+
+```text
+Procurement
+     ↓
+Warehouse
+     ↓
+Inventory
+     ↓
+Logistics
+```
+
+Its outputs can then become evidence for other capabilities.
+
+---
+
+## 6.5 Supplier Intelligence
+
+### Purpose
+
+Supplier Intelligence provides analytics and forecasting to support supplier relationships.
+
+It extends the platform's transparency principles beyond retailers and households.
+
+### Ownership
+
+It owns supplier-facing intelligence and supplier performance analysis.
+
+### Trust
+
+Supplier Intelligence must remain explainable.
+
+Suppliers should not be presented with unexplained enterprise scores that materially affect their relationship with Essentials Mart.
+
+### AI Enhancement
+
+AI may identify:
+
+* supply patterns;
+* performance trends;
+* forecasting signals;
+* potential risks;
+* opportunities for collaboration.
+
+---
+
+# 7. People & Governance Intelligence Cluster
+
+The People & Governance cluster consists of:
+
+* HR Intelligence;
+* Compliance Intelligence;
+* Workforce Intelligence.
+
+This cluster exists to help Essentials Mart operate responsibly while supporting the people who operate the enterprise.
+
+---
+
+## 7.1 HR Intelligence
+
+### Purpose
+
+HR Intelligence provides insight into:
+
+* workforce planning;
+* hiring;
+* organisational development;
+* staffing needs.
+
+### Ownership
+
+It owns HR intelligence rather than individual employee identity or personal records belonging to other systems.
+
+### Trust
+
+HR Intelligence must not become a mechanism for unrestricted employee surveillance.
+
+AI-generated workforce recommendations must remain explainable and reviewable.
+
+### AI Enhancement
+
+AI may support:
+
+* workforce forecasting;
+* recruitment analysis;
+* organisational planning;
+* skills analysis.
+
+Final consequential employment decisions remain subject to appropriate human oversight.
+
+---
+
+## 7.2 Compliance Intelligence
+
+### Purpose
+
+Compliance Intelligence tracks regulatory and policy obligations across every market in which Essentials Mart operates.
+
+### Ownership
+
+It owns compliance intelligence and regulatory monitoring.
+
+### Trust
+
+Compliance must be:
+
+* traceable;
+* auditable;
+* market-aware;
+* explainable.
+
+### AI Enhancement
+
+AI may help identify:
+
+* regulatory changes;
+* potential compliance gaps;
+* conflicting requirements;
+* emerging risks.
+
+AI does not determine legal compliance without appropriate human review.
+
+---
+
+## 7.3 Workforce Intelligence
+
+### Purpose
+
+Workforce Intelligence provides operational insight into:
+
+* staffing;
+* scheduling;
+* store-level performance;
+* workforce capacity.
+
+It exists to help people operate stores effectively.
+
+### Trust Principle
+
+> **Workforce Intelligence exists to support the workforce, not to surveil it.**
+
+Performance intelligence must therefore be governed against:
+
+* excessive monitoring;
+* unfair inference;
+* inappropriate profiling;
+* opaque automated decisions.
+
+---
+
+# 8. Commercial Intelligence Cluster
+
+The Commercial cluster consists of:
+
+* Retail Intelligence;
+* Marketing Intelligence;
+* Customer Experience Intelligence.
+
+This cluster connects enterprise operations to the experience of households and retail partners.
+
+---
+
+## 8.1 Retail Intelligence
+
+### Purpose
+
+Retail Intelligence provides analytics and forecasting to retail partners.
+
+A retailer should be able to understand not only what is happening, but where the underlying signals come from.
+
+### Ownership
+
+Retail Intelligence owns retailer-facing intelligence.
+
+It does not become the owner of household private data.
+
+### Trust
+
+Retail transparency must not compromise household privacy.
+
+Retail intelligence should use appropriate aggregation, governance and access controls.
+
+### AI Enhancement
+
+AI may help explain:
+
+* performance changes;
+* demand patterns;
+* stock signals;
+* customer experience trends.
+
+---
+
+## 8.2 Marketing Intelligence
+
+### Purpose
+
+Marketing Intelligence evaluates:
+
+* messaging;
+* positioning;
+* campaigns;
+* enterprise marketing outcomes.
+
+### Trust
+
+Marketing optimisation must not use dark patterns.
+
+The objective is not to maximise manipulation.
+
+It is to understand what communication is genuinely useful and effective.
+
+### AI Enhancement
+
+AI may analyse:
+
+* campaign performance;
+* audience response;
+* messaging patterns;
+* channel effectiveness.
+
+AI must not optimise marketing at the expense of customer autonomy or trust.
+
+---
+
+## 8.3 Customer Experience Intelligence
+
+### Purpose
+
+Customer Experience Intelligence provides enterprise visibility into how the Household Platform and Commerce Platform perform for real households.
+
+It is the enterprise counterpart to the platform's customer trust and experience principles.
+
+### Ownership
+
+It owns enterprise-level customer experience intelligence.
+
+It does not own the underlying customer or household records.
+
+### AI Enhancement
+
+AI may identify:
+
+* experience regressions;
+* recurring service problems;
+* friction;
+* satisfaction patterns;
+* emerging customer concerns.
+
+---
+
+# 9. Financial & Executive Intelligence Cluster
+
+The Financial & Executive cluster consists of:
+
+* Finance Intelligence;
+* Operations Intelligence;
+* Executive Intelligence;
+* Embedded ERP.
+
+---
+
+## 9.1 Finance Intelligence
+
+### Purpose
+
+Finance Intelligence provides financial forecasting and reporting for Essentials Mart itself.
+
+It is explicitly distinct from Household Wallet.
+
+### Ownership
+
+It owns enterprise financial intelligence.
+
+Household financial records remain within the appropriate household/finance boundaries.
+
+### AI Enhancement
+
+AI may support:
+
+* financial forecasting;
+* anomaly detection;
+* scenario modelling;
+* trend analysis.
+
+Material financial decisions remain under human authority.
+
+---
+
+## 9.2 Operations Intelligence
+
+### Purpose
+
+Operations Intelligence provides cross-cutting insight into how Essentials Mart operates day to day.
+
+It connects:
+
+* Warehouse;
+* Inventory;
+* Logistics;
+* Workforce;
+* store operations.
+
+### Ownership
+
+Operations Intelligence owns cross-operational intelligence.
+
+It does not replace the source domains.
+
+### AI Enhancement
+
+AI may identify relationships that are difficult to see within a single operational domain.
+
+---
+
+## 9.3 Executive Intelligence
+
+### Purpose
+
+Executive Intelligence provides cross-cutting insight for Essentials Mart leadership.
+
+It is the enterprise counterpart to the Executive Agent in the AI Society.
+
+### Ownership
+
+Executive Intelligence owns executive-level intelligence and synthesis.
+
+It does not own the source data used to produce its conclusions.
+
+### Trust
+
+Executive recommendations must remain:
+
+* explainable;
+* traceable;
+* evidence-based;
+* auditable.
+
+An executive recommendation without a defensible evidence trail is incomplete.
+
+### AI Enhancement
+
+AI may synthesise information from multiple enterprise domains and surface:
+
+* systemic risks;
+* emerging opportunities;
+* recurring problems;
+* cross-domain relationships;
+* enterprise-level trends.
+
+AI does not autonomously make consequential corporate decisions.
+
+---
+
+# 10. Analytics Foundation
+
+Analytics is the general-purpose enterprise data and reporting foundation underneath the intelligence capabilities.
+
+It provides shared analytical infrastructure without becoming the owner of every domain's business meaning.
+
+Conceptually:
+
+```text
+                 ANALYTICS
+                     │
+       ┌─────────────┼─────────────┐
+       │             │             │
+   Supply Chain   Commercial   Governance
+       │             │             │
+       └─────────────┼─────────────┘
+                     │
+               Enterprise
+                Intelligence
+```
+
+Analytics must preserve domain ownership.
+
+A central analytical platform does not mean central ownership of every domain's source data.
+
+---
+
+# 11. Forecasting Foundation
+
+Forecasting provides predictive capability across:
+
+* demand;
+* supply;
+* categories;
+* stores;
+* warehouses;
+* markets.
+
+Forecasting is a shared intelligence capability, not a replacement for domain-specific intelligence.
+
+Conceptually:
+
+```text
+Domain Evidence
+      ↓
+Analytics
+      ↓
+Forecasting
+      ↓
+Domain Intelligence
+      ↓
+Decision Support
+```
+
+Forecasting models must retain:
+
+* provenance;
+* model version;
+* confidence;
+* relevant assumptions;
+* timestamp;
+* applicable scope.
+
+---
+
+# 12. Enterprise Society Clusters
+
+The Enterprise Society is organised into four major clusters.
+
+```text
+                         ENTERPRISE SOCIETY
+                                │
+       ┌────────────────────────┼────────────────────────┐
+       │                        │                        │
+ SUPPLY CHAIN             PEOPLE &                 COMMERCIAL
+                           GOVERNANCE
+       │                        │                        │
+ Procurement              HR                       Retail
+ Warehouse                Compliance                Marketing
+ Inventory                Workforce                 Customer Experience
+ Logistics
+ Supplier
+       │                        │                        │
+       └────────────────────────┼────────────────────────┘
+                                │
+                    FINANCIAL & EXECUTIVE
+                                │
+                     Finance / Operations
+                     Executive / Embedded ERP
+                                │
+                                ▼
+                    ANALYTICS + FORECASTING
+```
+
+The clusters are deliberately porous.
+
+They are not independent silos.
+
+---
+
+# 13. Enterprise Intelligence Flow
+
+The Enterprise Society should allow information to move through a traceable chain.
+
+Example:
+
+```text
+Supplier
+   ↓
+Procurement Intelligence
+   ↓
+Warehouse Intelligence
+   ↓
+Inventory Intelligence
+   ↓
+Logistics Intelligence
+   ↓
+Retail Intelligence
+   ↓
+Customer Experience Intelligence
+   ↓
+Executive Intelligence
+```
+
+This does not mean each domain directly calls the next domain.
+
+The actual integration mechanism remains governed by Commit 009.
+
+The important architectural principle is that the enterprise can preserve the causal chain without creating direct coupling between every capability.
+
+---
+
+# 14. Self-Improving Enterprise
+
+The Enterprise Society introduces a controlled feedback loop.
+
+```text
+Observe
+   ↓
+Analyse
+   ↓
+Detect
+   ↓
+Explain
+   ↓
+Route
+   ↓
+Human Decision
+   ↓
+Action
+   ↓
+Outcome
+   ↓
+Learn
+   ↓
+Improve
+```
+
+A self-improving enterprise therefore does **not** mean an autonomous company.
+
+It means the enterprise becomes progressively better at:
+
+* noticing problems;
+* understanding causes;
+* routing evidence;
+* measuring outcomes;
+* learning from verified results.
+
+---
+
+# 15. Human Authority
+
+Human oversight is mandatory for consequential enterprise decisions.
+
+The Enterprise Society may:
+
+* detect;
+* analyse;
+* forecast;
+* recommend;
+* prioritise;
+* route.
+
+It must not silently assume authority over:
+
+* employment decisions;
+* major financial decisions;
+* regulatory determinations;
+* supplier termination;
+* material commercial decisions;
+* strategic corporate decisions.
+
+The responsible human decision-maker remains accountable.
+
+---
+
+# 16. Enterprise Society and AI Society
+
+The Enterprise Society and AI Society are architecturally parallel but serve different purposes.
+
+### AI Society
+
+Reasons primarily on behalf of:
+
+* households;
+* shoppers;
+* retail partners.
+
+### Enterprise Society
+
+Reasons on behalf of:
+
+* Essentials Mart operations;
+* leadership;
+* internal teams;
+* enterprise relationships.
+
+They may interact through explicit, governed boundaries.
+
+They must not become one unrestricted intelligence system.
+
+Conceptually:
+
+```text
+AI SOCIETY
+    │
+    │ governed boundary
+    ▼
+ENTERPRISE SOCIETY
+```
+
+The boundary must remain:
+
+* explicit;
+* auditable;
+* privacy-aware;
+* permission-controlled.
+
+---
+
+# 17. Enterprise Intelligence Trust Principles
+
+Enterprise Intelligence must satisfy the following principles:
+
+1. Evidence before assumption.
+2. Explainability before automation.
+3. Human authority before autonomous corporate action.
+4. Domain ownership before centralisation.
+5. Privacy before convenience.
+6. Fairness before optimisation.
+7. Long-term trust before short-term performance.
+8. Auditability before consequential action.
+9. Reversibility before irreversible automation.
+10. Enterprise scalability from day one.
+
+---
+
+# 18. Enterprise Intelligence Guardrails
+
+The Enterprise Society must contain guardrails against:
+
+### 18.1 Automation Creep
+
+A recommendation must not silently become an automated decision merely because automation is technically possible.
+
+### 18.2 Data Centralisation Creep
+
+Analytics must not gradually become an excuse for removing domain ownership.
+
+### 18.3 Surveillance Creep
+
+Workforce and operational intelligence must not become unrestricted employee monitoring.
+
+### 18.4 Dark-Pattern Optimisation
+
+Marketing and commercial intelligence must not optimise for manipulation.
+
+### 18.5 Explainability Loss
+
+Cross-domain intelligence must preserve the evidence chain required to understand how an important conclusion was reached.
+
+### 18.6 Model Drift
+
+Forecasting and AI systems must be monitored for degradation as:
+
+* markets change;
+* customer behaviour changes;
+* product ranges change;
+* regulations change;
+* countries are added.
+
+---
+
+# 19. Enterprise Intelligence Auditability
+
+Material intelligence decisions should retain an internal decision record containing, where appropriate:
+
+* originating domain;
+* evidence sources;
+* relevant signals;
+* model or rule version;
+* confidence;
+* recommendation;
+* responsible intelligence capability;
+* human decision-maker;
+* final decision;
+* outcome;
+* timestamp.
+
+This creates institutional memory and makes later review possible.
+
+---
+
+# 20. Global Scale Requirement
+
+Enterprise Intelligence must be designed for:
+
+```text
+1 Store
+   ↓
+10 Stores
+   ↓
+1,000 Stores
+   ↓
+10,000+ Stores
+```
+
+and:
+
+```text
+100 Users
+   ↓
+1 Million Users
+   ↓
+100 Million+ Users
+```
+
+and:
+
+```text
+1 Country
+   ↓
+Multiple Markets
+   ↓
+Global Platform
+```
+
+The architecture must therefore support:
+
+* regional data boundaries;
+* market-specific rules;
+* localisation;
+* currency differences;
+* regulatory differences;
+* time zones;
+* language differences;
+* differing operating models.
+
+Global deployment must extend the architecture rather than require its replacement.
+
+---
+
+# 21. Enterprise Intelligence Success Criteria
+
+Enterprise Intelligence succeeds when:
+
+* enterprise problems are detected earlier;
+* decisions are better informed;
+* operational relationships become more visible;
+* forecasting improves planning;
+* customer experience improves;
+* supplier and retailer relationships become more transparent;
+* workforce intelligence supports rather than surveils;
+* compliance becomes more proactive;
+* enterprise learning becomes continuous;
+* human decision-makers retain meaningful authority.
+
+---
+
+# 22. Architectural Laws Added by Commit 010
+
+Commit 010 establishes the following laws:
+
+> **Enterprise Intelligence is specialised, not monolithic.**
+
+> **Analytics supports domains without owning their meaning.**
+
+> **Forecasting supports decisions without becoming the decision-maker.**
+
+> **The Enterprise Society coordinates intelligence without eliminating domain boundaries.**
+
+> **AI may recommend enterprise action but does not silently assume corporate authority.**
+
+> **Human oversight remains mandatory for consequential enterprise decisions.**
+
+> **Enterprise Intelligence must improve the enterprise without turning employees or customers into surveillance subjects.**
+
+> **Enterprise intelligence must remain explainable at every scale.**
+
+> **The Enterprise Society and AI Society may collaborate, but neither becomes an unrestricted intelligence layer over the other.**
+
+> **A self-improving enterprise means a better learning loop, not an autonomous corporation.**
+
+---
+
+# End of Commit 010
+
+Commit 010 formally establishes the Enterprise Intelligence and Enterprise Society architecture within EDA-001 Part II.
+
+It does not define:
+
+* enterprise entities;
+* aggregates;
+* database schemas;
+* API contracts;
+* event schemas;
+* service implementations;
+* AI model implementations;
+* infrastructure.
+
+Those remain subsequent architectural stages.
 
 # 11. Domain Philosophy
 
