@@ -2684,6 +2684,690 @@ Recognition Intelligence publishes events including:
 
 These events are consumed by Reward Intelligence and Celebration Intelligence for further evaluation.
 
+## Reward Intelligence
+
+### Purpose
+
+Reward Intelligence is responsible for determining whether and how an act of recognition should be expressed through a tangible or experiential benefit.
+
+Recognition Intelligence determines that a customer, household or community contribution merits acknowledgement.
+
+Reward Intelligence determines the most appropriate expression of that acknowledgement.
+
+A reward is therefore an optional expression of appreciation rather than the definition of recognition itself.
+
+---
+
+## Reward Philosophy
+
+Reward Intelligence follows the following principles.
+
+### Recognition Is Not Conditional on a Reward
+
+A customer may be recognised without receiving a monetary or material benefit.
+
+Recognition may be expressed through:
+
+* acknowledgement;
+* celebration;
+* access;
+* information;
+* experiences;
+* household benefits;
+* service improvements;
+* or tangible rewards.
+
+---
+
+### Rewards Must Be Earned Through Meaningful Behaviour
+
+Rewards must be associated with legitimate, meaningful signals.
+
+The platform must not create arbitrary reward opportunities simply to increase engagement.
+
+---
+
+### Rewards Must Be Economically Sustainable
+
+Every tangible reward creates a cost for Essentials Mart.
+
+Reward Intelligence must therefore evaluate the expected business cost before authorising a reward.
+
+The objective is not to maximise the value distributed to customers.
+
+The objective is to maximise meaningful customer appreciation while maintaining sustainable economics.
+
+---
+
+### Rewards Must Be Valuable to the Recipient
+
+The most appropriate reward is not necessarily the most expensive reward.
+
+A low-cost benefit that is highly relevant to a customer may create greater appreciation than a more expensive generic benefit.
+
+Examples include:
+
+* free delivery for a frequent online shopper;
+* a complimentary household essential for a customer who regularly purchases that category;
+* early access to a useful feature;
+* an experiential Walk Mode discovery;
+* priority access to a service;
+* or a personalised acknowledgement.
+
+---
+
+## Reward Evaluation
+
+A completed recognition event triggers Reward Intelligence evaluation rather than an automatic reward.
+
+The evaluation process is:
+
+```text
+Recognition Event
+
+↓
+
+Eligibility Evaluation
+
+↓
+
+Business Cost Evaluation
+
+↓
+
+Customer Relevance Evaluation
+
+↓
+
+Relationship Context Evaluation
+
+↓
+
+Recognition History Evaluation
+
+↓
+
+Appreciation Budget Evaluation
+
+↓
+
+Trust Engine Evaluation
+
+↓
+
+Reward Selection
+
+↓
+
+Celebration
+```
+
+A reward may be:
+
+* approved;
+* deferred;
+* substituted;
+* reduced;
+* replaced with non-monetary recognition;
+* or declined.
+
+Declining a reward does not invalidate the underlying recognition.
+
+---
+
+## Reward Eligibility
+
+Reward eligibility may consider multiple signals, including:
+
+* milestone completion;
+* customer participation;
+* household participation;
+* community contribution;
+* validated feedback;
+* long-term relationship;
+* legitimate commerce activity;
+* service usage;
+* previous recognition;
+* customer preferences;
+* reward history;
+* business economics.
+
+No single signal should automatically determine reward eligibility.
+
+Spending may be considered where appropriate, but spending alone must not define customer worth or recognition.
+
+---
+
+## Reward Cost
+
+Every reward has an estimated business cost.
+
+Examples include:
+
+### Low-Cost Recognition
+
+* acknowledgement;
+* digital celebration;
+* profile recognition;
+* feature discovery;
+* early-access opportunities.
+
+### Low-to-Moderate Cost
+
+* complimentary low-cost product;
+* selected household essential;
+* small service benefit.
+
+### Moderate Cost
+
+* free delivery;
+* larger household benefit;
+* Club Plan benefit;
+* experiential reward.
+
+### High Cost
+
+* high-value physical products;
+* major household benefits;
+* exceptional experiences.
+
+High-cost rewards must require stronger eligibility evidence and additional economic controls.
+
+---
+
+## Customer Appreciation Value
+
+Reward Intelligence evaluates the expected relevance of a reward to the recipient.
+
+Customer Appreciation Value may consider:
+
+* demonstrated preferences;
+* household needs;
+* shopping behaviour;
+* service usage;
+* reward history;
+* contextual relevance;
+* customer-selected preferences;
+* and the customer's current relationship with the platform.
+
+The objective is to select rewards that are meaningful rather than merely expensive.
+
+---
+
+## Appreciation Efficiency
+
+Reward Intelligence should seek high appreciation relative to business cost.
+
+Conceptually:
+
+```text
+Appreciation Efficiency
+
+=
+
+Customer Appreciation Value
+
+÷
+
+Business Reward Cost
+```
+
+This is an internal optimisation concept.
+
+It must never be exposed to customers as a score.
+
+The purpose is to help Essentials Mart identify benefits that create meaningful value without unnecessary expenditure.
+
+---
+
+# Trust Engine
+
+### Purpose
+
+The Trust Engine is a cross-cutting enterprise capability responsible for evaluating whether customer-facing decisions are consistent with Essentials Mart's trust principles.
+
+It is not a customer loyalty score.
+
+It is not a customer ranking system.
+
+It does not determine the worth of a customer.
+
+It acts as a governance and decision-quality layer.
+
+---
+
+## Trust Engine Principle
+
+> Every act of appreciation must strengthen long-term trust while remaining economically sustainable, emotionally meaningful, fair and resistant to manipulation.
+
+---
+
+## Trust Evaluation
+
+Before a significant recognition action is delivered, the Trust Engine evaluates whether the action:
+
+* respects customer autonomy;
+* is relevant to the customer;
+* is economically defensible;
+* is consistent with platform principles;
+* avoids manipulative behaviour;
+* avoids unfair treatment;
+* does not create unhealthy expectations;
+* does not exploit sensitive information;
+* remains explainable internally.
+
+If the proposed action fails a trust requirement, the action should be modified, deferred or rejected.
+
+---
+
+# Trust Guardrails
+
+## 1. Sustainability Guardrail
+
+The platform must maintain economically sustainable recognition.
+
+The Trust Engine must prevent uncontrolled reward expenditure.
+
+---
+
+## 2. Anti-Exploitation Guardrail
+
+The platform must detect and suppress attempts to manipulate recognition systems.
+
+Potential indicators include:
+
+* fraudulent reviews;
+* duplicate accounts;
+* artificial household creation;
+* reward farming;
+* manipulated referrals;
+* coordinated low-value activity;
+* automated abuse;
+* suspicious milestone completion.
+
+Suspected abuse should be investigated through appropriate fraud and risk systems rather than automatically punishing legitimate customers.
+
+---
+
+## 3. Fairness Guardrail
+
+Customers must have meaningful opportunities for recognition across different legitimate patterns of platform use.
+
+The system must not systematically favour:
+
+* online shoppers over physical-store shoppers;
+* high spenders over low spenders;
+* highly active customers over less frequent but valuable customers;
+* technologically sophisticated customers over less technically engaged customers.
+
+Different forms of participation must be recognised.
+
+---
+
+## 4. Autonomy Guardrail
+
+Recognition must never pressure customers into:
+
+* spending more;
+* increasing app usage;
+* purchasing unnecessary products;
+* sharing unnecessary personal information;
+* joining communities;
+* completing repetitive activities.
+
+Customers must remain free to ignore suggestions and rewards.
+
+---
+
+## 5. No Visible Reward Hierarchy
+
+Customers must not be presented with internal reward tiers such as:
+
+* Bronze;
+* Silver;
+* Gold;
+* Platinum.
+
+There must be no visible progression system that encourages customers to believe they must continually spend or participate to reach a higher status.
+
+Internal decision bands may exist for operational control, but they are not customer-facing loyalty levels.
+
+---
+
+## 6. Recognition Diversity Guardrail
+
+The platform should avoid repeatedly providing the same form of recognition.
+
+If a customer recently received free delivery, the next recognition event should not automatically produce another free delivery.
+
+Alternative forms of appreciation should be considered.
+
+---
+
+## 7. Recognition Frequency Guardrail
+
+Recognition must remain meaningful.
+
+Excessive recognition can reduce perceived authenticity and create customer expectations.
+
+The Trust Engine should therefore consider:
+
+* recent recognition;
+* recognition frequency;
+* reward frequency;
+* reward value;
+* reward type;
+* customer context.
+
+---
+
+## 8. Marketing Independence Guardrail
+
+Marketing systems may propose opportunities for customer appreciation.
+
+Marketing must not override Recognition Intelligence or the Trust Engine.
+
+Commercial objectives cannot independently trigger recognition.
+
+---
+
+## 9. Explainability Guardrail
+
+Every material reward decision must be explainable internally.
+
+The platform must be able to determine:
+
+* why the customer qualified;
+* which signals were considered;
+* which reward options were evaluated;
+* why the selected reward was chosen;
+* what business cost was estimated;
+* which guardrails were applied;
+* and which system authorised the decision.
+
+Internal explainability is mandatory even when the customer is not shown the underlying decision logic.
+
+This is particularly important as AI becomes responsible for increasingly consequential customer decisions. Current enterprise AI governance practice similarly emphasises validation, evidence and defensible decisions before scaling automated decisions.
+
+---
+
+# Appreciation Budget
+
+The Appreciation Budget represents the resources Essentials Mart is willing to allocate toward customer recognition.
+
+It is an internal economic control.
+
+Customers never see their Appreciation Budget.
+
+The budget may be managed across:
+
+* customer;
+* household;
+* campaign-independent recognition;
+* store;
+* region;
+* country;
+* business unit;
+* and enterprise.
+
+The budget should account for:
+
+* reward cost;
+* forecasted recognition demand;
+* financial sustainability;
+* customer relevance;
+* reward availability;
+* supplier contributions;
+* operational capacity.
+
+---
+
+## Reward Substitution
+
+If the preferred reward is economically inappropriate, unavailable or unsuitable, Reward Intelligence should evaluate alternatives.
+
+For example:
+
+```text
+Preferred Reward
+
+Free Delivery
+
+↓
+
+Cost Too High
+
+↓
+
+Evaluate Alternatives
+
+↓
+
+Complimentary Household Product
+
+OR
+
+Experiential Benefit
+
+OR
+
+Early Access
+
+OR
+
+Personal Recognition
+```
+
+The customer should experience a thoughtful outcome rather than an internal budget restriction.
+
+---
+
+# Reward Milestone Economics
+
+Some rewards may be associated with measurable thresholds.
+
+For example:
+
+```text
+Customer reaches qualifying spend
+
+↓
+
+Eligibility achieved
+
+↓
+
+Reward evaluation
+
+↓
+
+Free delivery considered
+```
+
+The threshold is an internal business rule.
+
+Not every customer-facing milestone needs to expose the exact economic threshold.
+
+Where a public milestone requires a known threshold, the threshold should be clear and honest.
+
+Where a Discovery Milestone is intentionally secret, the customer should not be told the underlying qualification criteria.
+
+---
+
+# Recognition Agent
+
+The Recognition Agent is the customer-facing AI component responsible for delivering recognition and appreciation.
+
+It receives decisions from Recognition Intelligence and Reward Intelligence.
+
+It does not independently invent rewards.
+
+It does not manipulate customers into qualifying for rewards.
+
+It does not expose internal reward tiers or scoring.
+
+---
+
+## Recognition Agent Responsibilities
+
+The Recognition Agent may:
+
+* celebrate achievements;
+* explain a reward;
+* deliver a surprise;
+* acknowledge meaningful contributions;
+* present a complimentary benefit;
+* explain relevant conditions;
+* personalise the communication;
+* coordinate with other AI agents where appropriate.
+
+---
+
+## Recognition Agent Behaviour
+
+Recognition should feel:
+
+* warm;
+* subtle;
+* personal;
+* natural;
+* respectful;
+* non-commercial.
+
+The system should avoid language that creates pressure.
+
+For example, avoid:
+
+> "You're only £20 away from your next reward."
+
+Prefer:
+
+> "We noticed something worth celebrating."
+
+Or:
+
+> "We thought we'd make this one a little easier for your household."
+
+---
+
+# Reward Events
+
+Reward Intelligence publishes events including:
+
+* Reward Evaluation Started
+* Reward Approved
+* Reward Deferred
+* Reward Substituted
+* Reward Declined
+* Reward Issued
+* Reward Redeemed
+* Reward Expired
+* Reward Reversed
+* Appreciation Delivered
+
+These events are retained for auditing, analytics and continuous learning.
+
+---
+
+# Auditability
+
+Every material reward decision should produce an internal decision record containing, where applicable:
+
+* recognition event;
+* eligibility signals;
+* reward candidates;
+* estimated business costs;
+* selected reward;
+* applicable guardrails;
+* decision rationale;
+* model or rule version;
+* timestamp;
+* responsible service;
+* outcome.
+
+Audit records must be protected from customer-facing manipulation and must follow applicable data governance requirements.
+
+---
+
+# Enterprise Intelligence Pattern
+
+Reward Intelligence follows the broader Essentials Intelligence Pattern:
+
+```text
+Engagement Domain
+
+↓
+
+Recognition Intelligence
+
+↓
+
+Trust Engine
+
+↓
+
+Reward Intelligence
+
+↓
+
+Recognition Agent
+
+↓
+
+AI Society
+
+↓
+
+Customer
+```
+
+The Trust Engine is a governance layer rather than a replacement for domain intelligence.
+
+---
+
+# Success Criteria
+
+Reward Intelligence succeeds when:
+
+* recognition remains economically sustainable;
+* rewards feel meaningful rather than transactional;
+* customers do not feel pressured to earn benefits;
+* reward abuse is controlled;
+* recognition remains diverse;
+* customer relevance improves;
+* internal decisions remain explainable;
+* trust is strengthened rather than weakened.
+
+---
+
+# Future Vision
+
+Reward Intelligence should eventually become capable of coordinating appreciation across the entire Essentials Mart ecosystem.
+
+Future capabilities may include:
+
+* supplier-funded appreciation;
+* intelligent product gifting;
+* personalised service benefits;
+* experiential recognition;
+* household-level appreciation;
+* Club Plan recognition;
+* cross-domain appreciation;
+* dynamic reward availability;
+* predictive reward economics;
+* enterprise-wide appreciation optimisation.
+
+The long-term objective is not to create the largest reward programme.
+
+It is to create the most thoughtful and sustainable recognition system possible.
+
+---
+
+# Trust Engine — Enterprise Principle
+
+> **Essentials Mart should never optimise for customer behaviour at the expense of customer trust.**
+>
+> **The platform should optimise for long-term relationship value while preserving customer autonomy, fairness and economic sustainability.**
 
 
 # 11. Domain Philosophy
