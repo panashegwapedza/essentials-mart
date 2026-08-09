@@ -8163,6 +8163,1275 @@ It establishes the constitutional boundary between:
 * human decision-makers.
 
 This completes the foundational architecture required for the Intelligence Layer to scale with Essentials Mart rather than becoming a collection of disconnected AI features.
+# EDA-012 — Enterprise Information, Analytics & Audit Architecture
+
+**Document ID:** EDA-012
+**Title:** Enterprise Information, Analytics & Audit Architecture
+**Project:** Essentials Mart
+**Version:** 0.1.0
+**Status:** Draft / Commit Ready
+**Classification:** Foundational Architecture
+**Parent Architecture:** EDA-001 Part 2
+**Owner:** Essentials Mart Architecture Team
+**Date:** 09 August 2026
+
+---
+
+# 1. Purpose
+
+EDA-012 establishes the enterprise architecture governing how information is consumed, interpreted, analysed, exposed and audited across Essentials Mart.
+
+The architecture recognises that Essentials Mart does not have a single universal analytics experience.
+
+Different participants require different information according to:
+
+* identity;
+* principal type;
+* organisation;
+* role;
+* responsibilities;
+* clearance;
+* permissions;
+* attributes;
+* geographic scope;
+* organisational scope;
+* resource ownership;
+* legitimate purpose;
+* and applicable governance policies.
+
+The purpose of this architecture is therefore to establish a governed information layer capable of supporting:
+
+* customers;
+* households;
+* suppliers;
+* brand partners;
+* Essentials Mart staff;
+* platform administrators;
+* external professionals;
+* institutional users;
+* service and integration principals;
+* AI agents;
+* the AI Society;
+* and authorised enterprise systems.
+
+The architecture must remain viable from:
+
+**1 store → 10,000+ stores**
+
+**100 users → 100 million+ users**
+
+**1 country → global deployment**
+
+---
+
+# 2. Architectural Principle
+
+The following principle is constitutional:
+
+> **Information must be exposed according to legitimate purpose, authority, scope and governance—not simply according to whether Essentials Mart possesses the information.**
+
+Possession of information does not imply entitlement to access it.
+
+A participant may only receive the information required for an authorised purpose and within the scope granted to that participant.
+
+---
+
+# 3. Information Ownership
+
+EDA-012 inherits the domain ownership principle established by EDA-009.
+
+The domain that owns a business concept owns:
+
+* its authoritative data;
+* its business rules;
+* its lifecycle;
+* its validation rules;
+* and the authoritative interpretation of that concept.
+
+Other domains may consume information through approved mechanisms.
+
+These include:
+
+* capability contracts;
+* APIs;
+* integration events;
+* governed read models;
+* approved data products;
+* analytical models;
+* and intelligence interfaces.
+
+A derived representation does not transfer ownership.
+
+A domain must not become a competing source of truth merely because it stores a representation of another domain's information.
+
+---
+
+# 4. Enterprise Information Layers
+
+Essentials Mart information is conceptually divided into several layers.
+
+```text
+                    DOMAIN TRUTH
+                         │
+                         ▼
+                  DOMAIN EVENTS
+                         │
+             ┌───────────┴───────────┐
+             │                       │
+             ▼                       ▼
+       OPERATIONAL USE          INFORMATION USE
+                                     │
+                      ┌──────────────┼──────────────┐
+                      ▼              ▼              ▼
+                  Analytics     Data Products   Intelligence
+                      │              │              │
+                      └──────────────┼──────────────┘
+                                     ▼
+                                  INSIGHT
+                                     │
+                                     ▼
+                                AI SOCIETY
+```
+
+These layers must remain conceptually distinct.
+
+Operational data records what the enterprise knows.
+
+Analytics interprets what has happened.
+
+Intelligence derives governed insights.
+
+AI agents use authorised capabilities.
+
+Audit records what materially happened within the system.
+
+---
+
+# 5. Analytics Architecture
+
+Analytics is a first-class enterprise capability.
+
+It is not merely a dashboard system.
+
+Analytics enables Essentials Mart to understand:
+
+* what happened;
+* how frequently it happened;
+* where it happened;
+* how behaviour changes;
+* why patterns may have emerged;
+* what relationships exist between events;
+* and what trends require attention.
+
+Analytics may support:
+
+* descriptive analysis;
+* diagnostic analysis;
+* comparative analysis;
+* trend analysis;
+* behavioural analysis;
+* operational analysis;
+* financial analysis;
+* forecasting;
+* anomaly detection;
+* performance analysis;
+* and enterprise learning.
+
+Analytics must remain distinguishable from Intelligence.
+
+Conceptually:
+
+```text
+Analytics
+    │
+    ├── What happened?
+    ├── What is happening?
+    └── Why might it be happening?
+             │
+             ▼
+        Intelligence
+             │
+             ├── What does it mean?
+             ├── What may happen next?
+             └── What should be considered?
+```
+
+Intelligence may consume analytics.
+
+Analytics must not automatically become an authority for operational decisions.
+
+---
+
+# 6. Personal Analytics
+
+Customers receive analytics relevant to themselves and, where authorised, their household.
+
+Examples include:
+
+## Spending
+
+* total expenditure;
+* expenditure over time;
+* expenditure by category;
+* average basket value;
+* savings;
+* delivery expenditure;
+* purchase frequency.
+
+## Product Behaviour
+
+* favourite products;
+* frequently purchased products;
+* recently purchased products;
+* repeat purchases;
+* product combinations;
+* category preferences.
+
+## Household
+
+Where authorised:
+
+* household purchasing patterns;
+* household expenditure;
+* shared purchases;
+* household needs;
+* pantry-related trends.
+
+## Engagement
+
+Customers may receive appropriate personal insights concerning:
+
+* shopping activity;
+* Walk Mode activity;
+* saved products;
+* preferences;
+* rewards;
+* milestones;
+* service interactions;
+* and other relevant personal activity.
+
+Personal analytics must not expose internal enterprise information merely because the platform possesses it.
+
+---
+
+# 7. Supplier & Brand Analytics
+
+Suppliers and brand partners receive analytics appropriate to their authorised commercial relationship with Essentials Mart.
+
+Potential analytics include:
+
+* product sales;
+* units sold;
+* product performance;
+* store performance;
+* regional performance;
+* availability;
+* inventory movement;
+* returns;
+* breakages;
+* complaints;
+* customer feedback;
+* product ratings;
+* delivery performance;
+* supplier performance;
+* and authorised commercial metrics.
+
+Supplier analytics must be scoped.
+
+A supplier must not automatically access:
+
+* another supplier's information;
+* unrelated customer identities;
+* confidential internal Essentials Mart information;
+* unrelated employee information;
+* internal margins;
+* or restricted commercial agreements.
+
+---
+
+# 8. Staff Analytics
+
+Staff analytics are determined by role, responsibility, organisational scope and clearance.
+
+Staff members do not receive a universal staff analytics view.
+
+Examples include:
+
+### Store Associate
+
+May access information necessary for assigned duties.
+
+### Store Manager
+
+May additionally access:
+
+* store performance;
+* inventory exceptions;
+* returns;
+* complaints;
+* operational metrics;
+* authorised staff information.
+
+### Regional Manager
+
+May access authorised information across their assigned region.
+
+### Procurement
+
+May access authorised:
+
+* supplier;
+* product;
+* purchasing;
+* availability;
+* and commercial information.
+
+### Finance
+
+May access authorised financial information.
+
+### Security / Compliance
+
+May access authorised security, audit and compliance information.
+
+### Executive
+
+May access broader enterprise-level analytics according to explicit authority.
+
+Access must remain purpose-bound.
+
+---
+
+# 9. External & Institutional Analytics
+
+Authorised external parties may receive narrowly scoped analytics.
+
+Examples include:
+
+* auditors;
+* regulators;
+* certification bodies;
+* approved accountants;
+* insurance assessors;
+* legal representatives;
+* approved contractors;
+* authorised investigators.
+
+External access must be:
+
+* explicitly authorised;
+* purpose-bound;
+* scope-bound;
+* time-bound where appropriate;
+* auditable;
+* revocable.
+
+Example:
+
+```text
+External Auditor
+      │
+      ▼
+Store 47
+      │
+      ▼
+Returns Analytics
+      │
+      ▼
+Read Only
+      │
+      ▼
+30-Day Authorisation
+```
+
+An external professional must never receive unrestricted enterprise access merely because they have a legitimate reason to access one category of information.
+
+---
+
+# 10. Principal Model
+
+EDA-012 recognises the following principal categories.
+
+## Human Principals
+
+1. Customer
+2. Supplier / Brand Partner
+3. Essentials Mart Staff
+4. Platform Administrator
+5. External / Institutional User
+
+## Non-Human Principals
+
+6. Service / Integration Principal
+7. AI Agent / AI Society Principal
+
+## Unauthenticated State
+
+8. Guest / Anonymous Visitor
+
+These categories are intentionally broad.
+
+A new job title should normally be represented as a role rather than creating a new top-level principal type.
+
+---
+
+# 11. Principal ≠ Role ≠ Permission
+
+These concepts must not be conflated.
+
+```text
+Principal
+    ↓
+Principal Type
+    ↓
+Organisation / Household
+    ↓
+Role
+    ↓
+Attributes
+    ↓
+Scope
+    ↓
+Clearance
+    ↓
+Permissions
+    ↓
+Capabilities
+```
+
+Example:
+
+```text
+Human
+  ↓
+Essentials Mart Staff
+  ↓
+Store Manager
+  ↓
+Store 47
+  ↓
+Inventory Clearance
+  ↓
+View Inventory Analytics
+```
+
+A principal may possess multiple roles or responsibilities where authorised.
+
+---
+
+# 12. Role-Based and Attribute-Based Access
+
+Essentials Mart shall support a combination of:
+
+* Role-Based Access Control;
+* Attribute-Based Access Control;
+* resource scope;
+* data classification;
+* and contextual policy.
+
+RBAC answers:
+
+> What role does this principal have?
+
+ABAC answers:
+
+> What attributes and circumstances apply?
+
+Scope answers:
+
+> Which exact resources may be accessed?
+
+Conceptually:
+
+```text
+Identity
+   +
+Role
+   +
+Attributes
+   +
+Resource
+   +
+Action
+   +
+Context
+   ↓
+Authorization Decision
+```
+
+The final implementation of the security model belongs to EDA-001 Part 3, but the information architecture must be designed to support it.
+
+---
+
+# 13. Fine-Grained Information Access
+
+Access may need to be controlled below the level of an entire dashboard or service.
+
+Potential control boundaries include:
+
+* organisation;
+* country;
+* region;
+* store;
+* department;
+* household;
+* customer;
+* supplier;
+* resource;
+* record;
+* field;
+* metric;
+* analytical dataset.
+
+Where necessary, the architecture must support:
+
+* row-level restrictions;
+* field-level restrictions;
+* sensitive-data masking;
+* aggregation controls;
+* identity suppression;
+* anonymisation;
+* and purpose-based access.
+
+The UI must never be considered the primary security boundary.
+
+---
+
+# 14. Analytics Entitlement
+
+An analytical result must be evaluated against the requesting principal's entitlement before being returned.
+
+The preferred conceptual flow is:
+
+```text
+Analytics Request
+       ↓
+Identity
+       ↓
+Authorization
+       ↓
+Data Entitlement
+       ↓
+Scope Evaluation
+       ↓
+Data Classification
+       ↓
+Analytics Query
+       ↓
+Governed Result
+       ↓
+Audit Record
+```
+
+A user must not be able to bypass analytics restrictions by constructing a different query or accessing another interface.
+
+---
+
+# 15. Data Classification
+
+Information should be classified according to its sensitivity and governance requirements.
+
+Conceptual classifications may include:
+
+* Public;
+* Internal;
+* Confidential;
+* Restricted;
+* Highly Restricted.
+
+The exact classification taxonomy may be refined in EDA-001 Part 3.
+
+Classification must influence:
+
+* access;
+* analytics;
+* AI consumption;
+* retention;
+* export;
+* logging;
+* and disclosure.
+
+---
+
+# 16. AI and Analytics
+
+AI agents may consume analytics only through authorised capabilities.
+
+The preferred model is:
+
+```text
+AI Agent
+    ↓
+Authorised Capability
+    ↓
+Governed Analytics Layer
+    ↓
+Permitted Data
+    ↓
+Analytical Result
+    ↓
+AI Agent
+```
+
+AI agents must not receive unrestricted access to analytical stores merely because they are internal Essentials Mart systems.
+
+An AI agent's ability to reason does not grant it authority to access information.
+
+---
+
+# 17. AI Principal Architecture
+
+Every material AI agent should have a distinct machine identity.
+
+Examples include:
+
+* Customer AI Companion;
+* Inventory Intelligence;
+* Reward Intelligence;
+* Trust Engine;
+* Learning Engine;
+* Analytics Intelligence;
+* Procurement Intelligence;
+* Operations Intelligence.
+
+AI agents must have:
+
+* identity;
+* ownership;
+* capabilities;
+* permissions;
+* scope;
+* credentials;
+* lifecycle state;
+* revocation mechanism;
+* auditability.
+
+An AI agent must not inherit unrestricted authority from the human who initiated a request.
+
+---
+
+# 18. Service & Integration Principals
+
+External and internal machine systems must also operate under controlled identities.
+
+Examples include:
+
+* payment providers;
+* POS systems;
+* inventory systems;
+* warehouse systems;
+* logistics systems;
+* delivery providers;
+* supplier integrations;
+* analytics pipelines;
+* event infrastructure;
+* external APIs.
+
+Each integration should have:
+
+* explicit identity;
+* permitted capabilities;
+* scope;
+* authentication mechanism;
+* authorization policy;
+* rate limits;
+* lifecycle;
+* audit trail;
+* revocation.
+
+---
+
+# 19. Activity Logging
+
+Essentials Mart shall maintain a record of significant user and system activity.
+
+Examples include:
+
+* authentication;
+* search;
+* product interaction;
+* basket activity;
+* purchase;
+* payment;
+* return;
+* complaint;
+* service interaction;
+* data access;
+* data export;
+* analytics access;
+* AI interaction;
+* administrative actions.
+
+Activity logging supports:
+
+* personal history;
+* operational analysis;
+* customer experience;
+* security;
+* fraud detection;
+* troubleshooting;
+* learning;
+* and governance.
+
+---
+
+# 20. Operational Logging
+
+Operational logs record system behaviour.
+
+Examples include:
+
+* service startup;
+* service failure;
+* request failure;
+* event processing;
+* queue delays;
+* synchronisation failures;
+* integration failures;
+* model availability;
+* infrastructure events.
+
+Operational logs primarily support:
+
+* reliability;
+* troubleshooting;
+* observability;
+* performance;
+* and incident response.
+
+They must remain conceptually separate from business audit records.
+
+---
+
+# 21. Enterprise Audit Logging
+
+Audit records capture actions requiring accountability.
+
+Examples include:
+
+* role changes;
+* permission changes;
+* clearance changes;
+* sensitive-data access;
+* data exports;
+* administrative actions;
+* policy overrides;
+* security events;
+* privileged operations;
+* AI actions with material consequences.
+
+Audit records should answer:
+
+> Who did what, to what, when, under what authority, and with what result?
+
+---
+
+# 22. Auditability of AI Actions
+
+AI actions must be auditable without exposing private model chain-of-thought.
+
+The system should retain decision provenance such as:
+
+```text
+Agent
+ ↓
+Capability Requested
+ ↓
+Authorization
+ ↓
+Data / Evidence Accessed
+ ↓
+Intelligence Engine
+ ↓
+Decision / Recommendation
+ ↓
+Trust Evaluation
+ ↓
+Action
+ ↓
+Outcome
+```
+
+The architecture records the governed decision path, not unrestricted internal model reasoning.
+
+---
+
+# 23. Audit Record Protection
+
+Audit records must not be casually modifiable by the same actors whose actions they record.
+
+The architecture should support:
+
+* append-oriented records;
+* tamper evidence;
+* controlled access;
+* retention policies;
+* privileged audit access;
+* investigation workflows;
+* and security monitoring.
+
+Audit data itself is sensitive information and must therefore be governed.
+
+---
+
+# 24. Analytics Provenance
+
+Material analytical results should retain provenance where practical.
+
+Provenance may include:
+
+* source domain;
+* source dataset;
+* source event;
+* calculation or transformation;
+* metric definition;
+* timestamp;
+* data freshness;
+* model version where applicable;
+* analytical version;
+* confidence;
+* and responsible capability.
+
+This supports explainability and prevents analytical results from becoming opaque enterprise facts.
+
+---
+
+# 25. Analytics Freshness
+
+Analytics must communicate freshness where freshness materially affects interpretation.
+
+For example:
+
+```text
+Inventory Analytics
+Last Updated: 2 minutes ago
+```
+
+versus:
+
+```text
+Supplier Performance
+Reporting Period: July 2026
+```
+
+The system must distinguish:
+
+* real-time;
+* near-real-time;
+* daily;
+* periodic;
+* historical;
+* and estimated information.
+
+Consumers must not mistake stale analytical data for current operational truth.
+
+---
+
+# 26. Analytics and Domain Truth
+
+Analytics must never silently replace domain truth.
+
+For example:
+
+```text
+Commerce
+    owns
+Order
+```
+
+Analytics may calculate:
+
+```text
+Orders by Region
+```
+
+But the analytical aggregate does not become the authoritative definition of an order.
+
+Similarly:
+
+```text
+Inventory
+    owns
+Stock State
+```
+
+Analytics may calculate:
+
+```text
+Stock-Out Risk
+```
+
+but stock-out risk does not become the authoritative inventory state.
+
+---
+
+# 27. Analytics → Intelligence Boundary
+
+Analytics provides evidence and interpretation.
+
+Intelligence provides governed understanding and recommendations.
+
+```text
+Domain Truth
+     ↓
+Analytics
+     ↓
+Insight
+     ↓
+Intelligence Engine
+     ↓
+Trust Evaluation
+     ↓
+Recommendation / Action
+```
+
+An analytical observation must not automatically trigger an action.
+
+This preserves the distinction between:
+
+* observation;
+* interpretation;
+* recommendation;
+* decision;
+* execution.
+
+---
+
+# 28. Learning Integration
+
+The Learning Engine may consume governed analytical evidence.
+
+Existing architecture establishes that learning consumes evidence from customer feedback, product reviews, delivery reviews, shopping behaviour, Walk Mode behaviour, AI interactions, recognition outcomes and operational outcomes.
+
+The Learning Engine may therefore use analytics to identify patterns while retaining provenance and confidence.
+
+```text
+Evidence
+   ↓
+Analytics
+   ↓
+Pattern
+   ↓
+Learning Engine
+   ↓
+Learned Insight
+   ↓
+Domain Intelligence
+```
+
+Learning must not overwrite authoritative domain truth.
+
+---
+
+# 29. Enterprise Analytics
+
+Enterprise-level analytics may aggregate governed information across:
+
+* stores;
+* regions;
+* countries;
+* suppliers;
+* products;
+* customers;
+* operations;
+* finance;
+* logistics;
+* engagement;
+* inventory;
+* and other authorised domains.
+
+Enterprise analytics must preserve the ownership and governance boundaries of the underlying domains.
+
+Cross-domain aggregation is an analytical operation, not a transfer of ownership.
+
+---
+
+# 30. Walk Mode Analytics
+
+Walk Mode generates unique analytical signals.
+
+Potential signals include:
+
+* navigation patterns;
+* product discovery;
+* dwell behaviour;
+* search behaviour;
+* product comparison;
+* basket formation;
+* route patterns;
+* interaction with shelves;
+* interaction with AI;
+* shared household behaviour;
+* and privacy-controlled social interaction.
+
+Walk Mode analytics must respect the privacy architecture.
+
+The existence of a behavioural signal does not automatically create permission to expose that signal to another participant.
+
+---
+
+# 31. Privacy-Controlled Social Analytics
+
+Walk Mode may contain live shoppers, household avatars, initials, friends, family and Club Plan participants.
+
+Analytics must distinguish between:
+
+* observable presence;
+* identifiable activity;
+* aggregated activity;
+* personal behavioural history;
+* and explicitly shared information.
+
+A shopper's presence in a shared environment must not automatically expose their personal shopping history, identity or preferences.
+
+---
+
+# 32. Supplier Performance Analytics
+
+Supplier analytics should be capable of incorporating:
+
+* sales;
+* availability;
+* returns;
+* breakages;
+* complaints;
+* product feedback;
+* fulfilment;
+* delivery;
+* product quality;
+* and other authorised measures.
+
+These measures may feed Supplier Intelligence while remaining governed by supplier-specific access policies.
+
+---
+
+# 33. Staff Performance Analytics
+
+Staff performance analytics must be handled carefully.
+
+Analytics must distinguish between legitimate operational performance measurement and inappropriate surveillance.
+
+Access must be:
+
+* role appropriate;
+* purpose-bound;
+* proportionate;
+* auditable;
+* governed.
+
+Sensitive employee analytics should require appropriate authority.
+
+---
+
+# 34. Data Export
+
+Exporting information is itself an auditable action.
+
+A principal authorised to view data does not automatically have authority to:
+
+* download;
+* export;
+* share;
+* bulk extract;
+* or redistribute that data.
+
+Export permissions may be more restrictive than read permissions.
+
+---
+
+# 35. Cross-Tenant and Cross-Organisation Isolation
+
+Where Essentials Mart operates across:
+
+* countries;
+* legal entities;
+* suppliers;
+* business units;
+* franchises;
+* partners;
+* or other organisational boundaries,
+
+information access must respect those boundaries.
+
+A valid identity in one organisation must not automatically receive access to another organisation's information.
+
+---
+
+# 36. Analytics Failure and Degradation
+
+Analytics must not become a single point of failure for core commerce.
+
+If analytics becomes unavailable:
+
+```text
+Analytics unavailable
+        ↓
+Core commerce continues
+```
+
+Likewise, if a non-critical intelligence capability becomes unavailable:
+
+```text
+Intelligence unavailable
+        ↓
+Core shopping remains functional
+```
+
+This inherits the existing EDA principle that non-critical intelligence must degrade gracefully while critical transactional capabilities remain operational.
+
+---
+
+# 37. Governance Principle
+
+The following rule is established:
+
+> **Access to information is a governed capability, not an inherent property of a user, service or AI agent.**
+
+Every access pathway must therefore be capable of being:
+
+* authorised;
+* restricted;
+* monitored;
+* revoked;
+* audited;
+* and reviewed.
+
+---
+
+# 38. Enterprise Information Lifecycle
+
+Information should move through a governed lifecycle.
+
+```text
+Created
+   ↓
+Validated
+   ↓
+Owned
+   ↓
+Consumed
+   ↓
+Derived
+   ↓
+Analysed
+   ↓
+Retained
+   ↓
+Archived
+   ↓
+Deleted / Disposed
+```
+
+The exact retention and deletion requirements are subject to applicable legal, regulatory and business requirements and will be further defined in the security architecture.
+
+---
+
+# 39. Constitutional Rules Established by EDA-012
+
+EDA-012 establishes the following enterprise laws:
+
+1. Domain truth remains domain-owned.
+2. Analytics does not replace domain truth.
+3. Intelligence does not replace domain truth.
+4. Derived information does not transfer ownership.
+5. Analytics must be governed by entitlement.
+6. Analytics experiences may differ by principal type.
+7. Role alone may not be sufficient to determine access.
+8. Attributes and scope may further restrict access.
+9. AI agents require explicit identities and capabilities.
+10. Machine systems require controlled identities.
+11. Viewing data does not automatically grant export rights.
+12. Material activity must be auditable.
+13. Audit records must themselves be protected.
+14. AI actions must have decision provenance.
+15. Analytical results should retain provenance where material.
+16. Data freshness must be distinguishable where relevant.
+17. Walk Mode behavioural information remains subject to privacy controls.
+18. Analytics failure must not unnecessarily disable core commerce.
+19. Intelligence failure must not unnecessarily disable core commerce.
+20. Information access must remain revocable and reviewable.
+
+---
+
+# 40. Relationship to EDA-001 Part 3
+
+EDA-012 establishes the information and analytics requirements that the dedicated security architecture must enforce.
+
+EDA-001 Part 3 will subsequently define in greater detail:
+
+* authentication;
+* identity security;
+* authorization;
+* RBAC;
+* ABAC;
+* clearance;
+* encryption;
+* secrets;
+* device security;
+* API security;
+* service-to-service security;
+* AI security;
+* privacy;
+* threat detection;
+* fraud;
+* incident response;
+* security monitoring;
+* forensic capability;
+* and global security controls.
+
+EDA-012 therefore establishes **what must be governed**.
+
+EDA-001 Part 3 establishes **how the enterprise secures that governance**.
+
+---
+
+# 41. Architectural Outcome
+
+EDA-012 transforms analytics from a collection of dashboards into a governed enterprise information capability.
+
+The resulting model is:
+
+```text
+                    DOMAIN TRUTH
+                         │
+                         ▼
+                     EVENTS
+                         │
+          ┌──────────────┼──────────────┐
+          ▼              ▼              ▼
+     Operations       Analytics       Audit
+                         │
+              ┌──────────┴──────────┐
+              ▼                     ▼
+         Intelligence            Learning
+              │                     │
+              └──────────┬──────────┘
+                         ▼
+                    TRUST ENGINE
+                         │
+                         ▼
+                     AI SOCIETY
+                         │
+                         ▼
+                AUTHORISED ACTION
+                         │
+                         ▼
+                      OUTCOME
+                         │
+                         ▼
+                     ANALYTICS
+```
+
+The system therefore becomes capable of learning from its own operation without collapsing operational truth, analytics, intelligence, AI authority and governance into one undifferentiated system.
+
+---
+
+# 42. Architectural Principle
+
+> **Essentials Mart should know what is happening, understand what it means, govern who is allowed to know it, record what materially happens, and continuously learn from outcomes—without allowing any analytical, intelligent or AI capability to bypass enterprise ownership and trust boundaries.**
+
+---
+
 
 # 11. Domain Philosophy
 
