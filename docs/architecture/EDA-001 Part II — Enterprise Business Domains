@@ -11023,7 +11023,7 @@ The Event Catalogue defines the inventory.
 Therefore:
 
 ```text
-EDA-013
+Commit-013
   ↓
 How events work
   ↓
@@ -11042,7 +11042,7 @@ This prevents the Event Catalogue from becoming an architectural substitute.
 
 # 62. Relationship With EDA-012
 
-EDA-012 established:
+Commit-012 established:
 
 * information ownership;
 * analytics;
@@ -11051,16 +11051,16 @@ EDA-012 established:
 * AI access;
 * principal-specific information governance.
 
-EDA-013 establishes how meaningful occurrences propagate that information through the enterprise.
+Commit-013 establishes how meaningful occurrences propagate that information through the enterprise.
 
 Therefore:
 
 ```text
-EDA-012
+Commit-012
 Information Governance
        │
        ▼
-EDA-013
+commit-013
 Event Governance
        │
        ▼
@@ -11071,7 +11071,7 @@ Analytics / Audit / Intelligence / AI Society
 
 # 63. Relationship With Security Architecture
 
-EDA-013 defines the event requirements.
+commit-013 defines the event requirements.
 
 EDA-001 Part 3 will define the security controls.
 
@@ -11091,7 +11091,7 @@ The security architecture must protect:
 
 # 64. Constitutional Event Laws
 
-EDA-013 establishes the following enterprise laws:
+commit-013 establishes the following enterprise laws:
 
 1. Events represent meaningful occurrences.
 2. Events are distinct from commands.
@@ -11130,7 +11130,7 @@ EDA-013 establishes the following enterprise laws:
 
 # 65. Architectural Outcome
 
-EDA-013 establishes the enterprise event fabric as a **governed connective layer**, rather than simply a message queue.
+commit-013 establishes the enterprise event fabric as a **governed connective layer**, rather than simply a message queue.
 
 The resulting conceptual architecture is:
 
@@ -11179,6 +11179,1465 @@ The event architecture must preserve:
 **truth → ownership → decoupling → governance → observability → resilience → learning.**
 
 ---
+# COMMIT 014 — Enterprise Identity, Access & Authorization
+
+**Parent Document:** EDA-001 Part 2 — Enterprise Architecture
+**Commit:** 014
+**Status:** Commit Ready
+**Purpose:** Establish the enterprise-wide identity, principal, role, permission, scope, clearance and authorization model for Essentials Mart.
+
+---
+
+## 1. Purpose
+
+Commit 014 establishes the architectural model governing **who or what may access, view, modify, execute, publish, approve or otherwise interact with resources across Essentials Mart**.
+
+The architecture must support:
+
+* customers;
+* household members;
+* suppliers;
+* supplier representatives;
+* staff;
+* managers;
+* administrators;
+* support personnel;
+* delivery personnel;
+* external partners;
+* services;
+* devices;
+* integrations;
+* automated processes;
+* AI agents;
+* intelligence engines;
+* and future actor types.
+
+The model must remain viable as Essentials Mart grows from:
+
+**1 store → 10,000+ stores**
+
+**100 users → 100 million+ users**
+
+**1 country → global deployment**
+
+---
+
+# 2. Core Principle
+
+Essentials Mart shall not reduce authorization to a simple:
+
+> `user → role → permission`
+
+relationship.
+
+Instead, authorization shall consider the broader security and business context:
+
+```text
+Identity
+    ↓
+Principal
+    ↓
+Role
+    ↓
+Attributes
+    ↓
+Relationship
+    ↓
+Scope
+    ↓
+Clearance
+    ↓
+Context
+    ↓
+Policy
+    ↓
+Authorization Decision
+    ↓
+Enforcement
+```
+
+This allows the same individual to legitimately possess different capabilities depending on their responsibilities, location, relationship, clearance and current context.
+
+---
+
+# 3. Authentication vs Authorization
+
+Authentication answers:
+
+> **Who are you?**
+
+Authorization answers:
+
+> **What are you allowed to do?**
+
+These are separate architectural concerns.
+
+Successful authentication must never automatically imply unrestricted access.
+
+```text
+Authentication
+      ↓
+Identity established
+      ↓
+Authorization
+      ↓
+Access decision
+```
+
+This follows the zero-trust principle that authentication and authorization are discrete functions performed before access to enterprise resources.
+
+---
+
+# 4. Principal Model
+
+A **principal** is any actor capable of requesting access to an Essentials Mart resource.
+
+Essentials Mart shall support three major principal categories.
+
+### Human Principals
+
+Examples:
+
+* Customer
+* Household Member
+* Supplier User
+* Store Associate
+* Store Manager
+* Finance User
+* Support Agent
+* Administrator
+* Delivery Personnel
+
+### Machine Principals
+
+Examples:
+
+* Backend Service
+* Integration
+* Scheduled Process
+* Device
+* Automation
+* Infrastructure Component
+
+### AI Principals
+
+Examples:
+
+* Customer Intelligence Agent
+* Inventory Intelligence Agent
+* Reward Intelligence Agent
+* Trust Engine
+* Learning Agent
+* Operations Intelligence Agent
+
+Every principal must be attributable.
+
+---
+
+# 5. Identity
+
+An identity represents an actor within the Essentials Mart identity system.
+
+Identity information may include:
+
+* stable identity identifier;
+* identity type;
+* lifecycle state;
+* verification state;
+* authentication mechanisms;
+* organizational relationships;
+* attributes;
+* associated principals;
+* authorization references;
+* audit references.
+
+Identity data must remain conceptually separate from authorization policy.
+
+---
+
+# 6. Identity Lifecycle
+
+Identities shall have controlled lifecycles.
+
+```text
+Provisioned
+    ↓
+Pending Verification
+    ↓
+Active
+    ↓
+Restricted
+    ↓
+Suspended
+    ↓
+Deactivated
+    ↓
+Archived
+```
+
+Lifecycle changes must propagate to dependent authorization systems.
+
+For example:
+
+```text
+Staff Member Leaves
+       ↓
+Identity Deactivated
+       ↓
+Sessions Revoked
+       ↓
+Permissions Revoked
+       ↓
+Access Removed
+       ↓
+Audit History Retained
+```
+
+Deactivation must not destroy historical accountability.
+
+---
+
+# 7. Roles
+
+Roles represent functional responsibilities.
+
+Examples include:
+
+* Customer;
+* Supplier User;
+* Store Associate;
+* Store Manager;
+* Support Agent;
+* Finance User;
+* Security Administrator;
+* System Administrator.
+
+Roles provide a useful baseline for authorization but must not be the sole determinant of access.
+
+---
+
+# 8. Attributes
+
+Authorization may depend on attributes associated with:
+
+* the principal;
+* the resource;
+* the requested operation;
+* the organization;
+* the store;
+* the relationship;
+* the environment.
+
+Examples:
+
+```text
+Employment Status
+Department
+Store Assignment
+Country
+Supplier
+Customer Segment
+Account Ownership
+Device State
+Risk State
+```
+
+This allows authorization to become context-aware rather than dependent on static roles alone.
+
+---
+
+# 9. RBAC + Attribute-Based Authorization
+
+Essentials Mart shall support a combined authorization model.
+
+```text
+Role
++
+Attributes
++
+Relationship
++
+Scope
++
+Clearance
++
+Context
++
+Policy
+=
+Authorization Decision
+```
+
+Example:
+
+```text
+Store Manager
++
+Active Employee
++
+Store = Harare CBD
++
+Inventory Clearance
++
+Request = View Inventory
++
+Resource Store = Harare CBD
+=
+ALLOW
+```
+
+Whereas:
+
+```text
+Store Manager
++
+Store = Harare CBD
++
+Request = View Payroll
++
+No Payroll Clearance
+=
+DENY
+```
+
+The approach is compatible with zero-trust access models that move authorization toward granular, identity- and resource-based decisions.
+
+---
+
+# 10. Resource Ownership
+
+Authorization shall be applied to resources.
+
+Examples include:
+
+* customer records;
+* orders;
+* payments;
+* products;
+* inventory;
+* supplier records;
+* employee records;
+* analytics;
+* rewards;
+* intelligence outputs;
+* events;
+* AI decisions;
+* store information;
+* Walk Mode data.
+
+Each protected resource must have an identifiable ownership and authorization boundary.
+
+---
+
+# 11. Action-Level Permissions
+
+Permissions shall distinguish between operations.
+
+Examples:
+
+* Read
+* Create
+* Update
+* Delete
+* Approve
+* Reject
+* Execute
+* Configure
+* Publish
+* Export
+* Administer
+
+Permission to read a resource does not automatically imply permission to modify it.
+
+---
+
+# 12. Scope
+
+Permissions must operate within defined scopes.
+
+Possible scopes include:
+
+```text
+Global
+Country
+Region
+City
+Store
+Department
+Supplier
+Household
+Account
+Resource
+```
+
+Example:
+
+```text
+Store Manager
+Scope = Store 021
+```
+
+must not automatically become:
+
+```text
+Store Manager
+Scope = All Stores
+```
+
+---
+
+# 13. Clearance
+
+Clearance represents the sensitivity level an actor may access.
+
+Example levels:
+
+```text
+Public
+Internal
+Confidential
+Restricted
+Highly Restricted
+```
+
+Clearance is distinct from role.
+
+A manager may have extensive operational authority while still lacking access to highly sensitive financial, employee or security information.
+
+---
+
+# 14. Need-to-Know
+
+Clearance alone does not guarantee access.
+
+Access should require a legitimate need where appropriate.
+
+```text
+Clearance
++
+Need-to-Know
++
+Scope
++
+Policy
+=
+Access
+```
+
+This prevents seniority from becoming a universal data-access mechanism.
+
+---
+
+# 15. Relationship-Based Access
+
+Some authorization decisions depend on relationships.
+
+Examples:
+
+```text
+Customer → Owns → Account
+
+Supplier → Owns → Product Listing
+
+Staff → Assigned To → Store
+
+Manager → Manages → Store
+
+Household Member → Belongs To → Household
+
+AI Agent → Acts For → Domain
+```
+
+Relationships may therefore form part of authorization decisions.
+
+---
+
+# 16. Customer Access
+
+A standard customer should primarily access information belonging to or legitimately shared with them.
+
+Examples:
+
+* account information;
+* orders;
+* purchases;
+* rewards;
+* preferences;
+* recommendations;
+* personal analytics;
+* household information where permitted.
+
+Customer access must not expose another customer's private information.
+
+---
+
+# 17. Household Access
+
+Household functionality may support shared resources while preserving individual privacy.
+
+```text
+Household Owner
+    ↓
+Household Management
+
+Household Member
+    ↓
+Permitted Shared Resources
+
+Private Customer Data
+    ↓
+Remains Private Unless Shared
+```
+
+Household membership does not automatically eliminate personal privacy.
+
+---
+
+# 18. Supplier Access
+
+Supplier users may access information associated with their authorized commercial relationship.
+
+Examples:
+
+* their products;
+* product performance;
+* relevant inventory;
+* sales;
+* returns;
+* complaints;
+* breakage reports;
+* fulfilment performance;
+* authorised analytics.
+
+Supplier users must not gain access to another supplier's confidential commercial information.
+
+---
+
+# 19. Staff Access
+
+Staff access shall depend on more than simply being classified as "staff".
+
+Relevant factors include:
+
+* employment status;
+* role;
+* department;
+* assigned location;
+* responsibilities;
+* clearance;
+* manager relationship;
+* temporary assignment;
+* contextual policy.
+
+This prevents a universal `Staff` permission set from becoming an internal security weakness.
+
+---
+
+# 20. Staff Clearance
+
+Different staff members may have different access levels.
+
+Example:
+
+```text
+Store Associate
+    ↓
+Operational Store Data
+
+Store Manager
+    ↓
+Store Operations + Management Analytics
+
+Finance Staff
+    ↓
+Authorized Financial Resources
+
+HR Staff
+    ↓
+Authorized Employee Resources
+
+Security Staff
+    ↓
+Authorized Security Resources
+```
+
+Administrative responsibility and data visibility remain separate concepts.
+
+---
+
+# 21. Privileged Access
+
+Privileged actions require stronger authorization controls.
+
+Examples:
+
+* modifying authorization policies;
+* creating privileged accounts;
+* changing system configuration;
+* accessing highly restricted records;
+* exporting sensitive information;
+* overriding business controls.
+
+Privileged permissions should be:
+
+* explicitly granted;
+* scoped;
+* attributable;
+* auditable;
+* revocable;
+* and temporary where appropriate.
+
+---
+
+# 22. Temporary Access
+
+Temporary permissions may be granted for legitimate business purposes.
+
+Examples:
+
+* incident response;
+* support investigation;
+* maintenance;
+* temporary staff assignment;
+* migration;
+* emergency operations.
+
+Temporary authorization must define:
+
+* purpose;
+* scope;
+* issuer;
+* capability;
+* duration;
+* expiry.
+
+---
+
+# 23. Break-Glass Access
+
+Emergency access may be required when normal processes cannot safely or quickly resolve a critical incident.
+
+Break-glass access must:
+
+* be exceptional;
+* be narrowly scoped;
+* be strongly controlled;
+* be highly auditable;
+* expire where possible;
+* trigger review.
+
+Break-glass must never become ordinary administrative access.
+
+---
+
+# 24. Service Identity
+
+Backend services shall have independently attributable identities.
+
+Examples:
+
+```text
+Inventory Service
+Order Service
+Reward Service
+Trust Service
+Analytics Service
+Customer Intelligence Service
+```
+
+Services must not rely on a single universal service credential.
+
+NIST's cloud-native zero-trust guidance specifically identifies application and service identities as part of granular access control.
+
+---
+
+# 25. Service-to-Service Authorization
+
+A service must authenticate and authorize itself when accessing another protected service.
+
+```text
+Reward Service
+      ↓
+Request
+      ↓
+Inventory Service
+      ↓
+Authorization Policy
+      ↓
+ALLOW / DENY
+```
+
+Network reachability does not constitute authorization.
+
+---
+
+# 26. AI Identity
+
+Every autonomous AI agent and intelligence engine shall possess an attributable identity.
+
+Examples:
+
+```text
+Customer Intelligence Agent
+Inventory Intelligence Agent
+Reward Intelligence Agent
+Trust Engine
+Learning Agent
+Operations Intelligence Agent
+```
+
+The system must be capable of determining:
+
+* which agent acted;
+* which version acted;
+* which capability it possessed;
+* what resource it accessed;
+* what policy authorized it;
+* what action it performed;
+* and what outcome resulted.
+
+---
+
+# 27. AI Least Privilege
+
+AI intelligence must never automatically create additional authority.
+
+For example:
+
+```text
+Customer Intelligence Agent
+        ↓
+Read authorized customer context
+        ↓
+Generate recommendation
+        ↓
+Cannot independently modify payment records
+```
+
+An AI agent must receive only the authority required for its defined function.
+
+---
+
+# 28. AI Action Boundaries
+
+AI agents should conceptually operate through:
+
+```text
+Observe
+   ↓
+Analyse
+   ↓
+Recommend
+   ↓
+Request Authorization
+   ↓
+Act
+```
+
+Different agents may stop at different stages.
+
+High-impact operations may require explicit policy approval or human approval.
+
+---
+
+# 29. Policy Decision
+
+Authorization decisions should conceptually evaluate:
+
+```text
+WHO?
+WHAT RESOURCE?
+WHAT ACTION?
+WHAT RELATIONSHIP?
+WHAT SCOPE?
+WHAT CLEARANCE?
+WHAT CONTEXT?
+WHICH POLICY?
+```
+
+The result may be:
+
+```text
+ALLOW
+DENY
+REQUIRE STEP-UP
+REQUIRE APPROVAL
+```
+
+---
+
+# 30. Policy Decision Point
+
+Essentials Mart shall conceptually support a centralized policy decision capability.
+
+```text
+Requester
+    ↓
+Policy Enforcement Point
+    ↓
+Policy Decision Point
+    ↓
+Identity
+Role
+Attributes
+Relationship
+Scope
+Clearance
+Context
+Risk
+    ↓
+Decision
+```
+
+The exact implementation belongs to the later security architecture.
+
+---
+
+# 31. Policy Enforcement
+
+Authorization decisions must be enforced at trusted resource boundaries.
+
+Possible enforcement points include:
+
+* API gateway;
+* service;
+* database;
+* storage;
+* event broker;
+* application;
+* administrative interface.
+
+A policy that is not enforced is not an effective authorization control.
+
+---
+
+# 32. Context-Aware Authorization
+
+Authorization may depend on contextual information.
+
+Examples:
+
+* device state;
+* session assurance;
+* location;
+* time;
+* current risk;
+* behavioural anomalies;
+* resource sensitivity;
+* operational conditions.
+
+This allows:
+
+```text
+Normal Context
+    ↓
+ALLOW
+
+Elevated Risk
+    ↓
+STEP-UP
+
+Critical Risk
+    ↓
+DENY
+```
+
+NIST's implementation guidance similarly describes evaluating contextual information such as identity, role, device health, resource sensitivity, location and behaviour.
+
+---
+
+# 33. Trust Engine Relationship
+
+The Trust Engine may provide risk intelligence to the authorization system.
+
+However:
+
+```text
+Trust ≠ Identity
+Trust ≠ Permission
+Trust ≠ Clearance
+```
+
+The Trust Engine provides intelligence.
+
+The authorization architecture remains responsible for the final policy decision.
+
+---
+
+# 34. Analytics Authorization
+
+Analytics must be personalized according to the actor's authorization.
+
+### Customer
+
+May see:
+
+* spending;
+* purchase history;
+* favourite products;
+* reward progress;
+* personal trends.
+
+### Supplier
+
+May see:
+
+* product sales;
+* product performance;
+* returns;
+* complaints;
+* breakage;
+* fulfilment performance.
+
+### Staff
+
+May see information according to:
+
+* role;
+* clearance;
+* department;
+* store;
+* responsibilities.
+
+Analytics must never bypass underlying domain authorization.
+
+---
+
+# 35. Export Authorization
+
+Viewing and exporting are separate permissions.
+
+A user may be allowed to:
+
+```text
+VIEW
+```
+
+without being allowed to:
+
+```text
+EXPORT
+```
+
+Export operations must therefore have their own authorization requirements.
+
+---
+
+# 36. Bulk Access
+
+Bulk access must receive additional authorization consideration.
+
+The ability to view one record does not imply permission to export thousands or millions of records.
+
+Bulk access may consider:
+
+* quantity;
+* sensitivity;
+* purpose;
+* scope;
+* clearance;
+* role;
+* approval;
+* risk.
+
+---
+
+# 37. Field-Level Access
+
+Where appropriate, authorization must operate at field level.
+
+Example:
+
+```text
+Employee Record
+
+Manager:
+Name ✓
+Department ✓
+Performance ✓
+
+Payroll Information ✗
+Bank Information ✗
+```
+
+This prevents legitimate record-level access from unnecessarily exposing sensitive fields.
+
+---
+
+# 38. Event Authorization
+
+Events established by Commit 013 are themselves protected enterprise resources.
+
+Authorization may be required to:
+
+* publish;
+* subscribe;
+* consume;
+* replay;
+* inspect;
+* administer.
+
+Access to one event stream must not automatically imply access to the entire domain.
+
+---
+
+# 39. Audit Relationship
+
+Commit 012 established enterprise analytics and audit capabilities.
+
+Commit 014 establishes the authorization information that must be auditable.
+
+For material access decisions, the platform should be able to determine:
+
+```text
+Actor
+↓
+Resource
+↓
+Action
+↓
+Time
+↓
+Context
+↓
+Policy
+↓
+Decision
+↓
+Outcome
+```
+
+This allows security and operational teams to reconstruct significant access activity.
+
+---
+
+# 40. Identity Events
+
+Identity and authorization changes should integrate with the enterprise event architecture.
+
+Examples:
+
+```text
+CustomerRegistered
+StaffActivated
+StaffDeactivated
+RoleAssigned
+RoleRevoked
+PermissionGranted
+PermissionRevoked
+ClearanceChanged
+AccountSuspended
+AccountReactivated
+```
+
+These events allow dependent systems to respond to authorization changes.
+
+---
+
+# 41. Revocation
+
+Access must be revocable.
+
+Revocation may result from:
+
+* identity suspension;
+* employment termination;
+* supplier relationship termination;
+* role change;
+* clearance change;
+* policy change;
+* temporary-access expiry;
+* elevated risk.
+
+Revocation must propagate to relevant systems.
+
+---
+
+# 42. Separation of Duties
+
+Certain high-impact operations should require more than one authorized actor.
+
+Example:
+
+```text
+Employee A
+    ↓
+Creates High-Value Refund
+
+Employee B
+    ↓
+Approves Refund
+```
+
+This reduces the risk associated with a compromised or malicious individual account.
+
+---
+
+# 43. Delegation
+
+Authority may be delegated where business requirements justify it.
+
+Delegation must define:
+
+* delegator;
+* delegate;
+* capability;
+* scope;
+* purpose;
+* duration;
+* restrictions;
+* audit trail.
+
+Delegation must never create uncontrolled privilege escalation.
+
+---
+
+# 44. Impersonation
+
+Support and administrative impersonation may be necessary.
+
+Where allowed, the system must preserve both identities.
+
+```text
+Actual Actor:
+Support Agent
+
+Acting As:
+Customer
+
+Audit:
+Support Agent → Customer Session
+```
+
+Impersonation must never erase the real actor's accountability.
+
+---
+
+# 45. Multi-Tenant Authorization
+
+Essentials Mart must support multiple:
+
+* stores;
+* organisations;
+* suppliers;
+* countries;
+* business units.
+
+Tenant boundaries must therefore be reflected in authorization.
+
+Access to one tenant must never automatically grant access to another.
+
+---
+
+# 46. Geographic Scope
+
+Authorization must support geographic boundaries where required.
+
+Example:
+
+```text
+Country
+   ↓
+Region
+   ↓
+City
+   ↓
+Store
+```
+
+A manager authorized for one location must not automatically receive global access.
+
+---
+
+# 47. Anonymous and Pseudonymous Access
+
+Not every interaction requires a fully identified customer.
+
+Where appropriate, Essentials Mart may support:
+
+* anonymous browsing;
+* public product discovery;
+* limited Walk Mode interaction;
+* pseudonymous experiences.
+
+Identity collection must remain proportional to the purpose of the interaction.
+
+---
+
+# 48. Identity Federation
+
+Future integrations may require external identity providers.
+
+Examples:
+
+* enterprise suppliers;
+* logistics partners;
+* corporate customers;
+* external organizations.
+
+Federated authentication must not bypass Essentials Mart authorization.
+
+External identity establishes who the actor is.
+
+Essentials Mart still determines what that actor may access.
+
+---
+
+# 49. Client-Side Authorization
+
+Frontend visibility is not a security boundary.
+
+For example:
+
+```text
+Hide Administrator Button
+```
+
+does not constitute authorization.
+
+The backend and trusted enforcement layers must independently enforce the access decision.
+
+---
+
+# 50. Flutter Authorization
+
+The Flutter application may consume authorization information to determine:
+
+* visible screens;
+* available controls;
+* analytics;
+* actions;
+* menus;
+* workflows.
+
+However, backend authorization remains authoritative.
+
+---
+
+# 51. Authorization Telemetry
+
+The platform should monitor security-relevant authorization activity, including:
+
+* repeated access denials;
+* unusual privilege use;
+* privilege escalation;
+* abnormal administrative behaviour;
+* unusual service access;
+* AI authorization violations.
+
+These signals may feed the Trust Engine and security monitoring capabilities.
+
+---
+
+# 52. Permission Review
+
+High-risk permissions should be periodically reviewed.
+
+Reviews may consider:
+
+* continued business need;
+* role changes;
+* scope;
+* actual usage;
+* risk;
+* organizational changes.
+
+Unused privileges should become candidates for removal.
+
+---
+
+# 53. Least Privilege
+
+The governing principle is:
+
+> **Every principal receives the minimum authority required to perform its legitimate function.**
+
+This applies equally to:
+
+* customers;
+* staff;
+* suppliers;
+* administrators;
+* services;
+* integrations;
+* devices;
+* AI agents.
+
+NIST defines least privilege as granting only the minimum resources and authorizations necessary for an entity to perform its function.
+
+---
+
+# 54. Default Deny
+
+Where no policy explicitly authorizes an action:
+
+```text
+DENY
+```
+
+Access must not be inferred simply because no explicit denial exists.
+
+---
+
+# 55. Fail Securely
+
+If an authorization system cannot safely establish that access should be permitted:
+
+```text
+DENY
+```
+
+Any deliberate exception must be explicitly architected and controlled.
+
+---
+
+# 56. No Universal Superuser
+
+Essentials Mart should avoid a permanent unrestricted application-level "god mode".
+
+Administrative authority should remain:
+
+* scoped;
+* attributable;
+* auditable;
+* revocable;
+* and proportionate to responsibility.
+
+Exceptional emergency authority must use controlled mechanisms.
+
+---
+
+# 57. Global Scale
+
+The identity and authorization model must support:
+
+* millions of users;
+* distributed services;
+* multiple countries;
+* multiple stores;
+* multiple organizations;
+* geographically distributed infrastructure;
+* high authorization volume.
+
+Authorization must therefore be designed as an enterprise platform capability rather than a single application feature.
+
+---
+
+# 58. Architectural Laws Established by Commit 014
+
+Commit 014 establishes the following laws:
+
+1. Authentication and authorization are separate.
+2. Identity is not the same as role.
+3. Role is not the same as permission.
+4. Permission is not the same as clearance.
+5. Clearance is not the same as need-to-know.
+6. No principal receives implicit trust.
+7. Authorization must be resource-oriented.
+8. Authorization must be action-specific.
+9. Scope must be explicit.
+10. Least privilege is mandatory.
+11. Default authorization is deny.
+12. Human principals must be attributable.
+13. Machine principals must be attributable.
+14. AI principals must be attributable.
+15. AI agents must never operate under generic human identities.
+16. Service-to-service access requires authorization.
+17. Network location does not constitute authorization.
+18. Client-side controls do not constitute security enforcement.
+19. Cross-tenant access must never be implicit.
+20. Geographic scope must be enforceable where required.
+21. Sensitive resources require appropriate clearance.
+22. Need-to-know remains distinct from clearance.
+23. Bulk access requires explicit consideration.
+24. Export is distinct from viewing.
+25. Field-level authorization must be supported where necessary.
+26. Privileged access requires stronger controls.
+27. Temporary permissions require expiry.
+28. Break-glass access must remain exceptional.
+29. Delegation must be bounded.
+30. Impersonation must preserve real-actor accountability.
+31. Event access requires authorization.
+32. Analytics must respect authorization boundaries.
+33. Trust signals do not replace authorization policy.
+34. AI intelligence does not create authority.
+35. Authorization decisions must be enforceable.
+36. Significant access decisions must be auditable.
+37. Revocation must propagate.
+38. Authorization must fail securely.
+39. Shared credentials should be avoided where attributable identities are possible.
+40. Identity lifecycle changes must propagate through the enterprise.
+41. High-risk privileges require review.
+42. Separation of duties should protect high-impact operations.
+43. Authorization must scale globally.
+44. No permanent unrestricted superuser should exist without explicit architectural justification.
+
+---
+
+# 59. Relationship to Previous Commits
+
+Commit 014 connects directly with the architecture already established in EDA-001 Part 2.
+
+```text
+Commit 011
+Intelligence
+      ↓
+Commit 012
+Analytics + Audit
+      ↓
+Commit 013
+Enterprise Events
+      ↓
+Commit 014
+Identity + Authorization
+```
+
+The result is an increasingly complete enterprise control model:
+
+> **What Essentials Mart knows → how information moves → who is allowed to access and act upon it.**
+
+---
+
+# 60. Boundary With EDA-001 Part 3
+
+Commit 014 establishes the **enterprise authorization model**.
+
+It does not attempt to fully specify the security implementation.
+
+The following remain for **EDA-001 Part 3 — Security Architecture**:
+
+* threat modelling;
+* security zones;
+* cryptography;
+* encryption;
+* key management;
+* secrets management;
+* credential architecture;
+* network security;
+* application security;
+* API security;
+* device security;
+* infrastructure security;
+* security monitoring;
+* incident response;
+* vulnerability management;
+* penetration testing;
+* secure development;
+* data protection mechanisms;
+* privacy/security controls;
+* disaster and security recovery;
+* detailed zero-trust implementation;
+* security compliance requirements.
+
+This boundary prevents Commit 014 from prematurely consuming the scope of Part 3.
+
+---
+
+# 61. Final Architectural Principle
+
+> **Essentials Mart shall never ask only "Who are you?" before granting access. It shall determine who or what is requesting access, what resource is being accessed, what action is being requested, what relationship exists, what scope applies, what clearance exists, what contextual conditions apply, and which policy authorizes the action.**
+
+Commit 014 therefore establishes the enterprise-wide identity and authorization foundation upon which the later security architecture will build.
 
 # 11. Domain Philosophy
 
