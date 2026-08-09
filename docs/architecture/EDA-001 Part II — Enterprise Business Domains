@@ -9328,7 +9328,7 @@ The exact retention and deletion requirements are subject to applicable legal, r
 
 # 39. Constitutional Rules Established by EDA-012
 
-EDA-012 establishes the following enterprise laws:
+Commit-012 establishes the following enterprise laws:
 
 1. Domain truth remains domain-owned.
 2. Analytics does not replace domain truth.
@@ -9355,7 +9355,7 @@ EDA-012 establishes the following enterprise laws:
 
 # 40. Relationship to EDA-001 Part 3
 
-EDA-012 establishes the information and analytics requirements that the dedicated security architecture must enforce.
+Commit-012 establishes the information and analytics requirements that the dedicated security architecture must enforce.
 
 EDA-001 Part 3 will subsequently define in greater detail:
 
@@ -9379,7 +9379,7 @@ EDA-001 Part 3 will subsequently define in greater detail:
 * forensic capability;
 * and global security controls.
 
-EDA-012 therefore establishes **what must be governed**.
+Commit-012 therefore establishes **what must be governed**.
 
 EDA-001 Part 3 establishes **how the enterprise secures that governance**.
 
@@ -9432,6 +9432,1753 @@ The system therefore becomes capable of learning from its own operation without 
 
 ---
 
+# Commit-013 — Enterprise Event Architecture & Governance
+
+**Document ID:** Commit-013
+**Title:** Enterprise Event Architecture & Event Governance
+**Project:** Essentials Mart
+**Version:** 0.1.0
+**Status:** Draft / Commit Ready
+**Classification:** Foundational Architecture
+**Parent Architecture:** EDA-001 Part 2
+**Depends On:** EDA-001, EDA-009, EDA-010, EDA-011, EDA-012
+**Owner:** Essentials Mart Architecture Team
+**Date:** 09 August 2026
+
+---
+
+# 1. Purpose
+
+Commit-013 establishes the enterprise event architecture governing how meaningful occurrences within Essentials Mart are represented, published, transported, consumed, observed, governed and retained.
+
+The event architecture exists to connect the enterprise without creating unnecessary point-to-point dependencies between domains.
+
+It enables:
+
+* domain decoupling;
+* asynchronous processing;
+* enterprise analytics;
+* intelligence engines;
+* learning;
+* audit;
+* notifications;
+* AI Society collaboration;
+* inventory intelligence;
+* reward intelligence;
+* trust evaluation;
+* operational synchronisation;
+* Walk Mode;
+* external integrations;
+* and future capabilities not yet known.
+
+The architecture must remain viable from:
+
+**1 store → 10,000+ stores**
+
+**100 users → 100 million+ users**
+
+**1 country → global deployment**
+
+---
+
+# 2. Constitutional Event Principle
+
+The following principle is established:
+
+> **An event represents a meaningful occurrence that has happened within the enterprise. It is not an implicit command, permission or guarantee that another component must perform an action.**
+
+Events communicate facts.
+
+Commands request actions.
+
+Queries request information.
+
+These concepts must remain distinct.
+
+```text
+Command
+    ↓
+Request for action
+
+Event
+    ↓
+Fact that something happened
+
+Query
+    ↓
+Request for information
+```
+
+---
+
+# 3. Why Essentials Mart Requires an Event Architecture
+
+Essentials Mart contains many domains that need to react to the same business occurrence.
+
+For example:
+
+```text
+Customer places order
+        │
+        ▼
+Order Placed
+        │
+   ┌────┼────┬────┬────┬────┐
+   ▼    ▼    ▼    ▼    ▼    ▼
+Inventory
+Analytics
+Rewards
+Trust
+Learning
+Notifications
+```
+
+The Order domain should not need direct knowledge of every consumer.
+
+A new consumer should be able to subscribe to the appropriate event without requiring the producing domain to be redesigned.
+
+This decoupling is one of the principal benefits of event-driven architecture.
+
+---
+
+# 4. Event Architecture Is Not Universal
+
+Essentials Mart shall not force every interaction through events.
+
+The architecture recognises three broad communication patterns:
+
+## Synchronous
+
+Used where immediate response and stronger consistency are required.
+
+Examples:
+
+* authentication;
+* payment authorization;
+* retrieving current product information;
+* submitting a command requiring immediate validation.
+
+## Asynchronous Event
+
+Used where a fact can be propagated independently.
+
+Examples:
+
+* OrderPlaced;
+* ProductReviewed;
+* InventoryAdjusted;
+* RewardGranted.
+
+## Event Stream
+
+Used where large volumes of ordered events must be retained and consumed independently.
+
+Examples:
+
+* Walk Mode telemetry;
+* operational telemetry;
+* high-volume behavioural signals;
+* analytical streams.
+
+The architectural decision must be based on business requirements rather than ideology.
+
+---
+
+# 5. Event Ownership
+
+Every enterprise event must have an owning domain.
+
+The event owner is responsible for:
+
+* defining the event's business meaning;
+* maintaining its contract;
+* determining when it is emitted;
+* validating its semantic correctness;
+* managing its lifecycle;
+* approving material schema changes;
+* and ensuring the event remains aligned with domain truth.
+
+Consumers do not become owners simply because they consume an event.
+
+---
+
+# 6. Event Source of Truth
+
+An event is authoritative only for the fact it represents and only within the boundaries established by its owning domain.
+
+For example:
+
+```text
+Commerce
+   │
+   └── OrderPlaced
+```
+
+The event states that an order was placed.
+
+It does not transfer ownership of the order to:
+
+* Analytics;
+* Rewards;
+* Inventory;
+* Customer Intelligence;
+* Learning;
+* or AI Society.
+
+The Order domain remains authoritative for the order.
+
+---
+
+# 7. Event Taxonomy
+
+Essentials Mart shall maintain a controlled event taxonomy.
+
+Initial categories include:
+
+### Domain Events
+
+Represent meaningful business occurrences within a domain.
+
+Examples:
+
+* OrderPlaced
+* OrderCancelled
+* ProductAddedToBasket
+* ReturnApproved
+* InventoryAdjusted
+* SupplierShipmentReceived
+
+### Integration Events
+
+Represent information intentionally exposed across a system boundary.
+
+These may contain a more stable contract than an internal domain event.
+
+### Lifecycle Events
+
+Represent changes to the lifecycle of an entity or capability.
+
+Examples:
+
+* CustomerRegistered
+* AccountSuspended
+* SupplierActivated
+* StoreOpened
+* ProductDiscontinued
+
+### Analytical Events
+
+Represent meaningful analytical observations where event-based propagation is justified.
+
+### Security Events
+
+Represent security-relevant occurrences.
+
+Examples:
+
+* AuthenticationFailed
+* PrivilegedAccessGranted
+* SensitiveDataAccessed
+
+### AI Events
+
+Represent material AI activity.
+
+Examples:
+
+* IntelligenceRequested
+* RecommendationGenerated
+* AIActionApproved
+* AIActionExecuted
+
+### Operational Events
+
+Represent infrastructure or service conditions.
+
+Examples:
+
+* ServiceUnavailable
+* SynchronizationFailed
+* EventProcessingDelayed
+
+The exact catalogue is established later in the Event Catalogue phase.
+
+---
+
+# 8. Event Naming
+
+Event names must describe what happened.
+
+Preferred:
+
+```text
+OrderPlaced
+ReturnApproved
+ProductReviewed
+InventoryAdjusted
+RewardGranted
+```
+
+Avoid:
+
+```text
+ProcessOrder
+UpdateInventory
+GiveReward
+HandleReturn
+```
+
+The latter describe commands or instructions rather than facts.
+
+Events should use clear, stable business language.
+
+---
+
+# 9. Event Semantics
+
+An event must answer:
+
+* What happened?
+* To what subject?
+* Where did it happen?
+* When did it happen?
+* Which domain produced it?
+* Under which business context?
+* Which correlation or causation chain does it belong to?
+
+An event should not contain arbitrary implementation details simply because they are convenient to the producer.
+
+---
+
+# 10. Event Envelope
+
+Every enterprise event should use a standard envelope.
+
+Conceptually:
+
+```text
+Event
+│
+├── eventId
+├── eventType
+├── eventVersion
+├── occurredAt
+├── publishedAt
+├── producer
+├── subject
+├── tenant / organisation context
+├── correlationId
+├── causationId
+├── traceId
+├── schema reference
+├── classification
+└── payload
+```
+
+The exact technical representation will be defined during backend architecture.
+
+---
+
+# 11. Event Identity
+
+Every event must have a globally unique event identifier.
+
+The event identifier enables:
+
+* duplicate detection;
+* idempotency;
+* tracing;
+* auditing;
+* replay management;
+* investigation;
+* and correlation.
+
+An event identifier must not be reused for a different event.
+
+---
+
+# 12. Correlation and Causation
+
+Events must support distributed tracing.
+
+### Correlation ID
+
+Connects related events within a broader business operation.
+
+### Causation ID
+
+Identifies the event or action that directly caused the current event.
+
+Example:
+
+```text
+Customer places order
+        │
+        ▼
+OrderPlaced
+correlationId = ABC
+        │
+        ▼
+InventoryReserved
+correlationId = ABC
+causationId = OrderPlaced
+        │
+        ▼
+RewardEvaluated
+correlationId = ABC
+causationId = InventoryReserved
+```
+
+This allows the enterprise to reconstruct how a distributed operation unfolded.
+
+Event-driven systems have greater observability challenges than synchronous call chains, making correlation identifiers particularly important.
+
+---
+
+# 13. Event Immutability
+
+Once an event has been accepted as a historical enterprise event, its meaning and historical record must not be silently rewritten.
+
+If something needs to be corrected:
+
+```text
+Original Event
+      ↓
+Correction / Compensating Event
+```
+
+rather than:
+
+```text
+Original Event
+      ↓
+Overwrite History
+```
+
+This preserves historical integrity.
+
+Append-only event histories can support auditability and replay, although Essentials Mart will not automatically assume that every event stream constitutes full event sourcing.
+
+---
+
+# 14. Event Sourcing Is Not Automatically Required
+
+Essentials Mart shall distinguish:
+
+**Event-driven architecture**
+
+from
+
+**Event sourcing**
+
+The enterprise may use events extensively without storing every domain state exclusively as an event stream.
+
+Event sourcing may be appropriate for selected domains or aggregates where:
+
+* historical reconstruction is valuable;
+* event history is part of the domain;
+* replay is useful;
+* concurrency characteristics justify it;
+* and the operational complexity is acceptable.
+
+It must not become a universal requirement.
+
+---
+
+# 15. Event Payload Principle
+
+Events should contain enough information for their intended consumers without unnecessarily duplicating large amounts of authoritative data.
+
+Where appropriate, events may contain:
+
+* identifiers;
+* business facts;
+* relevant state;
+* context;
+* references.
+
+Large or sensitive payloads should be avoided where consumers can safely retrieve governed information through an authorised capability.
+
+This reduces:
+
+* payload size;
+* coupling;
+* duplication;
+* consistency problems;
+* and schema complexity.
+
+Large event payloads can increase bandwidth, consistency and contract-management costs.
+
+---
+
+# 16. Sensitive Information
+
+Events must not become an uncontrolled mechanism for distributing sensitive information.
+
+Sensitive information may include:
+
+* personal information;
+* payment information;
+* authentication information;
+* employee information;
+* supplier commercial information;
+* security information;
+* private behavioural information;
+* AI-sensitive information.
+
+Where possible:
+
+```text
+Event
+  ↓
+Reference / identifier
+  ↓
+Authorised retrieval
+```
+
+rather than distributing sensitive information to every consumer.
+
+---
+
+# 17. Event Classification
+
+Events should carry appropriate classification metadata.
+
+Possible classifications include:
+
+* Public;
+* Internal;
+* Confidential;
+* Restricted;
+* Highly Restricted.
+
+Classification influences:
+
+* who may consume the event;
+* where it may be transported;
+* how long it may be retained;
+* whether it may cross organisational boundaries;
+* whether AI agents may consume it;
+* and how it is logged.
+
+Security implementation is further defined in EDA-001 Part 3.
+
+---
+
+# 18. Publication Rule
+
+A domain publishes an event only after the underlying business occurrence has reached the appropriate state of validity.
+
+Events must not be published merely because an intermediate operation started unless the event is explicitly defined as an initiation event.
+
+For example:
+
+```text
+OrderPlaced
+```
+
+must not be emitted merely because an order request was received if the business transaction ultimately failed.
+
+Event semantics must remain truthful.
+
+---
+
+# 19. Transactional Event Publication
+
+Where a business state change and its corresponding event must remain consistent, the architecture shall support a reliable publication mechanism.
+
+The implementation may use patterns such as:
+
+* transactional outbox;
+* durable event storage;
+* reliable broker publication;
+* or equivalent mechanisms.
+
+The goal is to avoid:
+
+```text
+Database updated
+      ↓
+Application crashes
+      ↓
+Event never published
+```
+
+or:
+
+```text
+Event published
+      ↓
+Database transaction fails
+      ↓
+Consumers believe something happened
+```
+
+The exact implementation belongs to backend architecture.
+
+---
+
+# 20. Consumer Independence
+
+Event consumers should remain independently deployable where practical.
+
+A producer should not need to know:
+
+* how many consumers exist;
+* where they run;
+* how they process the event;
+* or which version they are running.
+
+This allows:
+
+```text
+New Consumer
+     ↓
+Subscribe
+     ↓
+Existing Producer
+unchanged
+```
+
+This is a major scalability advantage of publish-subscribe and event-stream architectures.
+
+---
+
+# 21. Idempotent Consumers
+
+Consumers must assume that an event may be delivered more than once.
+
+Therefore:
+
+> **Processing the same event multiple times must not unintentionally produce multiple business effects.**
+
+For example:
+
+```text
+RewardGranted
+     ↓
+Consumer receives event
+     ↓
+Reward recorded
+```
+
+If the same event arrives again:
+
+```text
+RewardGranted
+     ↓
+Duplicate detected
+     ↓
+No second reward
+```
+
+At-least-once delivery makes idempotent consumers an essential architectural requirement.
+
+---
+
+# 22. Event Ordering
+
+The architecture shall not assume global event ordering.
+
+Ordering must instead be defined where business semantics require it.
+
+For example:
+
+```text
+Customer 123
+OrderCreated
+      ↓
+OrderPaid
+      ↓
+OrderDispatched
+```
+
+The system may require ordering for this entity stream.
+
+But unrelated events:
+
+```text
+Store 1 InventoryAdjusted
+Store 928 InventoryAdjusted
+Supplier 42 ShipmentReceived
+Customer 891 ProductReviewed
+```
+
+do not necessarily require global ordering.
+
+Partitioning and entity-scoped ordering should be preferred where appropriate.
+
+---
+
+# 23. Eventual Consistency
+
+Consumers must tolerate eventual consistency where events are used asynchronously.
+
+For example:
+
+```text
+OrderPlaced
+      ↓
+Commerce = immediately updated
+      ↓
+Analytics = shortly afterwards
+      ↓
+Rewards = shortly afterwards
+      ↓
+Learning = eventually
+```
+
+The customer-facing experience must not incorrectly represent asynchronous derived information as authoritative current state.
+
+Event-driven systems naturally introduce propagation delays and therefore require consumers to tolerate eventual consistency where applicable.
+
+---
+
+# 24. Replay
+
+Where the underlying event infrastructure supports durable retention, authorised consumers may replay historical events.
+
+Replay supports:
+
+* recovery;
+* rebuilding projections;
+* correcting consumer bugs;
+* onboarding new consumers;
+* historical analytics;
+* learning;
+* investigation.
+
+Replay must not automatically re-execute irreversible side effects.
+
+For example:
+
+```text
+Replay OrderPlaced
+       ↓
+Rebuild Analytics Projection
+       ✓
+
+Replay OrderPlaced
+       ↓
+Charge Customer Again
+       ✗
+```
+
+Consumers must distinguish between:
+
+* projection/reconstruction;
+* and side-effect execution.
+
+Durable event streams can support late consumers, recovery and reprocessing through replay.
+
+---
+
+# 25. Dead-Letter and Quarantine Handling
+
+Events that repeatedly fail processing must not disappear.
+
+The architecture shall support:
+
+```text
+Event
+ ↓
+Consumer
+ ↓
+Failure
+ ↓
+Retry
+ ↓
+Failure
+ ↓
+Retry Policy
+ ↓
+Dead-Letter / Quarantine
+ ↓
+Investigation
+ ↓
+Correction
+ ↓
+Controlled Replay
+```
+
+Dead-letter events must remain observable and traceable.
+
+---
+
+# 26. Retry Governance
+
+Retries must be bounded and controlled.
+
+The system should consider:
+
+* retry count;
+* backoff;
+* transient versus permanent errors;
+* dependency health;
+* duplicate side effects;
+* ordering implications;
+* and dead-letter thresholds.
+
+Retries must not create infinite event storms.
+
+---
+
+# 27. Event Storm Prevention
+
+A consumer that publishes another event may accidentally create circular behaviour.
+
+Example:
+
+```text
+Event A
+ ↓
+Consumer
+ ↓
+Event B
+ ↓
+Consumer
+ ↓
+Event A
+ ↓
+...
+```
+
+Event contracts and governance must therefore prevent uncontrolled cycles.
+
+Circular event chains must be:
+
+* intentionally designed;
+* observable;
+* bounded;
+* and demonstrably safe.
+
+---
+
+# 28. Event Storms and Excessive Granularity
+
+Essentials Mart must avoid creating an event for every insignificant internal state mutation.
+
+Too many events create:
+
+* unnecessary traffic;
+* processing overhead;
+* storage growth;
+* analytical noise;
+* operational complexity.
+
+Events should represent meaningful business or operational occurrences.
+
+At the same time, events must not be so broad that consumers cannot determine what actually happened.
+
+The architecture therefore favours **meaningful event granularity**.
+
+---
+
+# 29. Event Schema Governance
+
+Every governed enterprise event must have a schema.
+
+The schema defines:
+
+* required fields;
+* optional fields;
+* data types;
+* metadata;
+* payload structure;
+* semantic meaning;
+* version;
+* compatibility requirements.
+
+A schema registry or equivalent governed mechanism should eventually provide central visibility and validation.
+
+Schema registries are commonly used to centralise event contracts and support controlled schema evolution.
+
+---
+
+# 30. Schema Evolution
+
+Events must evolve without unnecessarily breaking independent consumers.
+
+The architecture should prefer:
+
+* additive changes;
+* backwards-compatible changes;
+* explicit versioning;
+* deprecation periods;
+* consumer compatibility testing.
+
+Breaking changes require deliberate version management.
+
+Consumers must not assume that the producer can synchronously upgrade every consumer.
+
+Independent deployment is a fundamental reason schema governance is required.
+
+---
+
+# 31. Event Versioning
+
+Every event contract must have a version.
+
+Example:
+
+```text
+OrderPlaced.v1
+OrderPlaced.v2
+```
+
+Versioning must represent meaningful contract evolution.
+
+A version number must not be changed merely because the producer's internal implementation changed.
+
+---
+
+# 32. Event Contract Ownership
+
+The event owner is responsible for:
+
+* schema definition;
+* documentation;
+* compatibility;
+* semantic correctness;
+* deprecation;
+* consumer communication;
+* lifecycle management.
+
+Consumers may request changes but do not unilaterally redefine the event.
+
+---
+
+# 33. Event Catalogue
+
+The enterprise will maintain a formal Event Catalogue.
+
+The catalogue will eventually record:
+
+* event ID;
+* event name;
+* domain;
+* owner;
+* description;
+* producer;
+* consumers;
+* schema;
+* version;
+* classification;
+* retention;
+* ordering requirements;
+* replay policy;
+* sensitivity;
+* lifecycle;
+* and status.
+
+**Important:**
+
+Commit-013 defines the architecture governing the catalogue.
+
+The later **Event Catalogue phase** enumerates the actual enterprise events.
+
+---
+
+# 34. Analytics Consumption
+
+Analytics may consume events to build:
+
+* operational metrics;
+* behavioural analytics;
+* trends;
+* historical analysis;
+* real-time indicators;
+* performance models;
+* anomaly detection.
+
+Analytics consumers must preserve event provenance.
+
+The resulting analytical record should be traceable to its source event or event set where material.
+
+---
+
+# 35. Audit Consumption
+
+Audit systems may consume security and business events.
+
+However:
+
+> **Not every event automatically constitutes an audit record.**
+
+Audit records require additional governance around accountability, retention, integrity and access.
+
+An event can provide evidence for an audit record without being identical to the audit record.
+
+---
+
+# 36. Intelligence Consumption
+
+Intelligence engines may consume relevant events to detect patterns.
+
+Examples:
+
+```text
+InventoryAdjusted
+      ↓
+Inventory Intelligence
+```
+
+```text
+ProductReviewed
+      ↓
+Customer Intelligence
+```
+
+```text
+RewardEarned
+      ↓
+Reward Intelligence
+```
+
+```text
+ComplaintSubmitted
+      ↓
+Trust Engine
+```
+
+Intelligence consumers must remain subject to the authority and data-governance principles established in EDA-012.
+
+---
+
+# 37. Learning Consumption
+
+The Learning Engine may consume historical and outcome events to identify patterns.
+
+For example:
+
+```text
+RecommendationGenerated
+        ↓
+CustomerAccepted
+        ↓
+PurchaseCompleted
+        ↓
+OutcomeRecorded
+        ↓
+Learning Engine
+```
+
+Learning should be able to distinguish:
+
+* recommendation;
+* action;
+* outcome;
+* success;
+* failure;
+* feedback.
+
+This allows Essentials Mart to learn from consequences rather than merely from activity.
+
+---
+
+# 38. Reward Intelligence Events
+
+Reward Intelligence may consume events such as:
+
+* PurchaseCompleted;
+* MilestoneReached;
+* RewardGranted;
+* RewardRedeemed;
+* RewardExpired;
+* CustomerReturned;
+* DeliveryCompleted.
+
+However, event consumption does not grant Reward Intelligence unrestricted authority to grant rewards.
+
+Reward decisions remain governed by:
+
+* reward rules;
+* financial guardrails;
+* Trust Engine;
+* eligibility;
+* budget constraints;
+* and authorised capabilities.
+
+---
+
+# 39. Trust Engine Events
+
+The Trust Engine may consume relevant behavioural and transactional events.
+
+Examples:
+
+* unusual login;
+* unusual purchase;
+* repeated returns;
+* reward abuse indicators;
+* suspicious account activity;
+* unusual payment behaviour.
+
+Trust signals must be handled according to the security and privacy architecture.
+
+A trust score is not automatically a final truth about a person.
+
+---
+
+# 40. Inventory Intelligence Events
+
+Inventory Intelligence may consume:
+
+* stock movements;
+* purchases;
+* returns;
+* breakages;
+* deliveries;
+* adjustments;
+* reservations;
+* replenishment;
+* store-level availability.
+
+This supports the Living Digital Supermarket's requirement that digital inventory reflects real-world conditions.
+
+For example:
+
+```text
+Physical Inventory Change
+        ↓
+InventoryAdjusted
+        ↓
+Inventory Intelligence
+        ↓
+Digital Store State
+```
+
+The digital representation remains a projection of authoritative inventory state.
+
+---
+
+# 41. Walk Mode Events
+
+Walk Mode may produce events such as:
+
+* ShopperEnteredStore;
+* ShopperEnteredZone;
+* ProductViewed;
+* ProductCompared;
+* ProductAddedToBasket;
+* ProductRemovedFromBasket;
+* RouteChanged;
+* NavigationCompleted;
+* AIInteractionOccurred.
+
+Because Walk Mode may involve live people, these events require strong privacy and identity controls.
+
+Not every Walk Mode signal should be permanently retained.
+
+Retention must be purpose-driven.
+
+---
+
+# 42. AI Society Event Architecture
+
+AI Society agents may consume and publish governed events.
+
+Example:
+
+```text
+Inventory Intelligence
+        │
+        ▼
+InventoryRiskDetected
+        │
+        ▼
+Operations Intelligence
+        │
+        ▼
+ReplenishmentRecommendation
+        │
+        ▼
+Human / Authorised System
+        │
+        ▼
+ReplenishmentApproved
+```
+
+The AI Society must not become an uncontrolled event mesh.
+
+Agents must only subscribe to events required for their authorised capabilities.
+
+---
+
+# 43. AI Event Authority
+
+Publishing or consuming an event does not grant an AI agent authority to act.
+
+For example:
+
+```text
+InventoryRiskDetected
+```
+
+does not mean:
+
+```text
+AI may automatically place an order.
+```
+
+Instead:
+
+```text
+Event
+ ↓
+Intelligence
+ ↓
+Recommendation
+ ↓
+Authorization
+ ↓
+Action
+```
+
+Where an AI action is permitted, the resulting action must itself be attributable and auditable.
+
+---
+
+# 44. Human-in-the-Loop Events
+
+Certain events may require human approval before consequential action.
+
+Example:
+
+```text
+SupplierRiskDetected
+       ↓
+Recommendation
+       ↓
+Human Review
+       ↓
+Decision
+       ↓
+Action
+```
+
+The architecture must support events representing:
+
+* approval;
+* rejection;
+* escalation;
+* override;
+* cancellation.
+
+---
+
+# 45. External Integration Events
+
+External partners may publish or consume approved integration events.
+
+Examples:
+
+* supplier shipment events;
+* delivery status;
+* payment status;
+* logistics events;
+* external fulfilment events.
+
+External event contracts must be explicitly governed.
+
+An external partner must not gain access to internal domain events merely because an integration exists.
+
+---
+
+# 46. Event Boundary
+
+Events must respect organisational and geographic boundaries.
+
+A store-level event should not automatically become globally visible.
+
+A supplier event should not automatically become visible to another supplier.
+
+A country-specific event may require regional restrictions.
+
+The event routing layer must therefore support appropriate:
+
+* tenant;
+* organisation;
+* store;
+* region;
+* country;
+* and environment boundaries.
+
+---
+
+# 47. Event Security
+
+Event infrastructure must eventually enforce:
+
+* authenticated producers;
+* authenticated consumers;
+* authorization;
+* topic/stream permissions;
+* encryption;
+* secret management;
+* sensitive-event controls;
+* network controls;
+* monitoring;
+* anomaly detection.
+
+These controls will be fully specified in **EDA-001 Part 3 — Security Architecture**.
+
+---
+
+# 48. Event Observability
+
+The event platform must expose sufficient operational information to determine:
+
+* event publication rate;
+* processing latency;
+* consumer lag;
+* failures;
+* retries;
+* dead-letter volume;
+* duplicate rate;
+* schema failures;
+* dropped events;
+* replay activity;
+* and processing health.
+
+A distributed event architecture must be observable as a system rather than merely as isolated services.
+
+---
+
+# 49. Event Lineage
+
+The enterprise should be able to trace a material business outcome backwards through its event lineage.
+
+Example:
+
+```text
+Customer Purchase
+      ↑
+OrderCompleted
+      ↑
+OrderPaid
+      ↑
+PaymentAuthorized
+      ↑
+OrderCreated
+      ↑
+Customer Checkout Action
+```
+
+And forwards:
+
+```text
+OrderCompleted
+      ↓
+Inventory Update
+      ↓
+Reward Evaluation
+      ↓
+Analytics
+      ↓
+Learning
+      ↓
+Future Recommendation
+```
+
+This creates an enterprise causal graph.
+
+---
+
+# 50. Event Retention
+
+Event retention must be purpose-driven.
+
+Different event categories may require different retention periods.
+
+Factors include:
+
+* business value;
+* audit requirements;
+* regulatory requirements;
+* privacy;
+* analytical value;
+* replay requirements;
+* storage cost;
+* security classification.
+
+Not every event requires indefinite retention.
+
+---
+
+# 51. Personal Data in Events
+
+Personal information should be minimised within durable events.
+
+Where possible:
+
+```text
+Event
+  ↓
+Stable subject identifier
+```
+
+rather than embedding unnecessary personal information.
+
+This supports privacy and deletion requirements.
+
+Event-sourcing and append-only designs create specific tensions with personal-data deletion requirements, so the architecture must account for this before implementation.
+
+---
+
+# 52. Event Replay and Privacy
+
+Replay must respect current authorization and privacy policies.
+
+Historical event access must not become a loophole allowing an otherwise unauthorized actor to recover historical personal information.
+
+Replay capabilities therefore require:
+
+* authorization;
+* purpose;
+* scope;
+* auditing;
+* data minimisation;
+* and appropriate redaction or protection strategies.
+
+---
+
+# 53. Global Event Architecture
+
+At global scale, the architecture must support:
+
+* regional event processing;
+* geographic partitioning;
+* disaster recovery;
+* cross-region replication where required;
+* data residency;
+* regional failure;
+* local autonomy;
+* controlled global events.
+
+A single global event broker must not automatically become a single point of failure.
+
+---
+
+# 54. Store-Level Resilience
+
+A store should remain capable of operating through temporary event infrastructure degradation where business continuity requires it.
+
+For example:
+
+```text
+Event Infrastructure Failure
+          ↓
+Store Operations
+          ↓
+Local / Deferred Processing
+          ↓
+Events Synchronised Later
+```
+
+The exact implementation will be defined during backend architecture.
+
+---
+
+# 55. Event Backpressure
+
+Consumers must be able to slow down without causing uncontrolled producer failure.
+
+The architecture should support:
+
+* buffering;
+* queueing;
+* consumer scaling;
+* backpressure;
+* prioritisation;
+* load shedding for non-critical streams.
+
+Critical commerce events must receive appropriate priority over low-value telemetry.
+
+---
+
+# 56. Event Priority
+
+Events may have operational priority.
+
+Conceptually:
+
+```text
+Critical
+High
+Normal
+Low
+Telemetry
+```
+
+Priority must not be used as a substitute for proper architecture.
+
+Criticality must be defined according to business impact.
+
+---
+
+# 57. Event Failure Classification
+
+Failures should be classified.
+
+### Transient
+
+May succeed later.
+
+Examples:
+
+* temporary service outage;
+* network timeout.
+
+### Permanent
+
+Retrying will not solve the problem.
+
+Examples:
+
+* invalid schema;
+* unauthorized producer;
+* malformed payload.
+
+### Unknown
+
+Requires investigation.
+
+This classification informs retry, quarantine and escalation.
+
+---
+
+# 58. Event Contract Testing
+
+Event producers and consumers must be testable independently.
+
+Testing should include:
+
+* schema validation;
+* compatibility;
+* required fields;
+* semantic correctness;
+* duplicate handling;
+* ordering;
+* replay;
+* failure;
+* retry;
+* dead-letter handling.
+
+Event-driven systems require additional testing around projections, idempotency and schema evolution because producers and consumers evolve independently.
+
+---
+
+# 59. Event Governance
+
+The enterprise shall maintain governance over:
+
+* event creation;
+* event ownership;
+* event naming;
+* schemas;
+* versions;
+* consumers;
+* retention;
+* classification;
+* deprecation;
+* replay;
+* access;
+* and retirement.
+
+No domain may create uncontrolled enterprise-wide events without following the governance framework.
+
+---
+
+# 60. Event Lifecycle
+
+An event contract follows a lifecycle:
+
+```text
+Proposed
+   ↓
+Reviewed
+   ↓
+Approved
+   ↓
+Published
+   ↓
+Maintained
+   ↓
+Deprecated
+   ↓
+Retired
+```
+
+Retirement must consider existing consumers.
+
+---
+
+# 61. Event Catalogue Relationship
+
+EDA-013 defines the laws.
+
+The Event Catalogue defines the inventory.
+
+Therefore:
+
+```text
+EDA-013
+  ↓
+How events work
+  ↓
+Event Catalogue
+  ↓
+Which events exist
+  ↓
+Domain Models
+  ↓
+What entities produce them
+```
+
+This prevents the Event Catalogue from becoming an architectural substitute.
+
+---
+
+# 62. Relationship With EDA-012
+
+EDA-012 established:
+
+* information ownership;
+* analytics;
+* audit;
+* provenance;
+* AI access;
+* principal-specific information governance.
+
+EDA-013 establishes how meaningful occurrences propagate that information through the enterprise.
+
+Therefore:
+
+```text
+EDA-012
+Information Governance
+       │
+       ▼
+EDA-013
+Event Governance
+       │
+       ▼
+Analytics / Audit / Intelligence / AI Society
+```
+
+---
+
+# 63. Relationship With Security Architecture
+
+EDA-013 defines the event requirements.
+
+EDA-001 Part 3 will define the security controls.
+
+The security architecture must protect:
+
+* event producers;
+* event consumers;
+* event channels;
+* schemas;
+* event stores;
+* credentials;
+* replay;
+* administrative functions;
+* sensitive event payloads.
+
+---
+
+# 64. Constitutional Event Laws
+
+EDA-013 establishes the following enterprise laws:
+
+1. Events represent meaningful occurrences.
+2. Events are distinct from commands.
+3. Events are distinct from queries.
+4. Every governed event has an owner.
+5. Event ownership follows domain ownership.
+6. Events do not transfer domain ownership.
+7. Events must have stable semantic meaning.
+8. Every event has a unique identity.
+9. Events support correlation and causation.
+10. Historical events must not be silently rewritten.
+11. Consumers must be idempotent.
+12. Global event ordering must not be assumed.
+13. Required ordering must be explicitly scoped.
+14. Consumers must tolerate eventual consistency where applicable.
+15. Replay must not unintentionally repeat irreversible side effects.
+16. Failed events must not disappear silently.
+17. Event retries must be bounded.
+18. Circular event chains must be prevented or explicitly governed.
+19. Event volume must remain purposeful.
+20. Event schemas must be governed.
+21. Event schema evolution must be controlled.
+22. Sensitive information must not be unnecessarily broadcast.
+23. AI agents must not gain authority merely by consuming events.
+24. Event publication does not imply permission to act.
+25. Event infrastructure must be observable.
+26. Material event lineage must be traceable.
+27. Event retention must be governed.
+28. Personal information must be minimised in durable events.
+29. Event access must respect organisational and geographic boundaries.
+30. Event infrastructure must not become an unnecessary single point of failure.
+31. Event-driven architecture must not replace synchronous communication where strong consistency is required.
+32. The Event Catalogue must implement, not redefine, this architecture.
+
+---
+
+# 65. Architectural Outcome
+
+EDA-013 establishes the enterprise event fabric as a **governed connective layer**, rather than simply a message queue.
+
+The resulting conceptual architecture is:
+
+```text
+                     ENTERPRISE DOMAINS
+                            │
+                            ▼
+                    DOMAIN OCCURRENCES
+                            │
+                            ▼
+                    GOVERNED EVENTS
+                            │
+             ┌──────────────┼───────────────┐
+             │              │               │
+             ▼              ▼               ▼
+        EVENT STREAM     EVENT BUS       INTEGRATIONS
+             │              │               │
+             └──────┬───────┴───────┬───────┘
+                    │               │
+          ┌─────────┼───────────────┼─────────────┐
+          ▼         ▼               ▼             ▼
+      Analytics   Audit       Intelligence    AI Society
+          │         │               │             │
+          └─────────┴───────────────┴─────────────┘
+                              │
+                              ▼
+                           Learning
+                              │
+                              ▼
+                           Outcomes
+                              │
+                              ▼
+                         New Events
+```
+
+This creates the foundation for an enterprise that can observe itself, react asynchronously, learn from outcomes and allow new capabilities to join the ecosystem without repeatedly redesigning existing domains.
+
+---
+
+# 66. Final Architectural Principle
+
+> **Essentials Mart shall treat events as governed facts flowing through an enterprise ecosystem—not as hidden commands, uncontrolled broadcasts or implementation details.**
+
+The event architecture must preserve:
+
+**truth → ownership → decoupling → governance → observability → resilience → learning.**
+
+---
 
 # 11. Domain Philosophy
 
