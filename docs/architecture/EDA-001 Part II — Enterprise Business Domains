@@ -11529,6 +11529,1897 @@ Each protected resource must have an identifiable ownership and authorization bo
 
 ---
 
+# COMMIT 015 — Enterprise Audit, Observability & Accountability
+
+**Parent Document:** EDA-001 Part 2 — Enterprise Architecture
+**Commit:** 015
+**Status:** Commit Ready
+**Purpose:** Establish the enterprise-wide architecture for auditability, activity records, operational observability, accountability, traceability and evidence across Essentials Mart.
+
+---
+
+# 1. Purpose
+
+Commit 015 establishes how Essentials Mart records, observes, correlates and preserves evidence of activity across the platform.
+
+The purpose is not simply to create application logs.
+
+Essentials Mart must be capable of answering:
+
+> **Who did what, to what, when, where, through which system, under what authority, what decision was made, and what happened afterwards?**
+
+This applies to:
+
+* customers;
+* household members;
+* suppliers;
+* supplier representatives;
+* staff;
+* administrators;
+* services;
+* devices;
+* integrations;
+* AI agents;
+* intelligence engines;
+* automated processes;
+* Walk Mode;
+* enterprise operations.
+
+---
+
+# 2. Core Principle
+
+> **If an important action cannot be traced, Essentials Mart cannot reliably establish accountability.**
+
+The platform shall therefore distinguish between:
+
+```text
+Application Logs
+Operational Telemetry
+Security Events
+Business Events
+Audit Records
+AI Activity Records
+```
+
+These are related but are not interchangeable.
+
+---
+
+# 3. Audit vs Logging vs Observability
+
+Essentials Mart shall maintain clear conceptual boundaries.
+
+### Logging
+
+Records technical information useful for debugging and operations.
+
+Examples:
+
+* exceptions;
+* warnings;
+* service messages;
+* stack traces;
+* request failures.
+
+### Observability
+
+Provides information about the internal state and health of systems.
+
+Examples:
+
+* metrics;
+* traces;
+* latency;
+* availability;
+* resource consumption;
+* service dependencies.
+
+### Audit
+
+Provides authoritative evidence of significant actions and decisions.
+
+Examples:
+
+* account changes;
+* permission changes;
+* refunds;
+* administrative actions;
+* sensitive data access;
+* supplier changes;
+* AI actions;
+* policy decisions.
+
+### Business Events
+
+Represent meaningful changes in enterprise state.
+
+Examples:
+
+```text
+OrderPlaced
+PaymentCompleted
+ReturnApproved
+RewardGranted
+InventoryAdjusted
+```
+
+These distinctions prevent the audit system from becoming an unstructured dump of every message produced by the platform.
+
+---
+
+# 4. Enterprise Evidence Model
+
+Every material activity should be representable as:
+
+```text
+Actor
+    ↓
+Action
+    ↓
+Resource
+    ↓
+Context
+    ↓
+Authority
+    ↓
+Decision
+    ↓
+Outcome
+    ↓
+Evidence
+```
+
+For example:
+
+```text
+Staff Member
+    ↓
+Adjusted Inventory
+    ↓
+Product SKU-123
+    ↓
+Store 014
+    ↓
+Inventory Permission
+    ↓
+Authorization = ALLOW
+    ↓
+Quantity Changed
+    ↓
+Audit Record
+```
+
+---
+
+# 5. Actor Attribution
+
+Every significant action must have an attributable actor.
+
+Actors may be:
+
+### Human
+
+```text
+Customer
+Staff Member
+Supplier
+Administrator
+Manager
+```
+
+### Machine
+
+```text
+Service
+Device
+Integration
+Scheduled Job
+Automation
+```
+
+### AI
+
+```text
+Customer Intelligence Agent
+Inventory Intelligence Engine
+Reward Intelligence Engine
+Trust Engine
+AI Society Agent
+```
+
+The system must not represent materially significant actions as having been performed by an anonymous generic actor when attribution is technically possible.
+
+---
+
+# 6. Correlation Identity
+
+Enterprise activity shall support correlation across multiple services.
+
+A single customer action may generate:
+
+```text
+Flutter App
+   ↓
+API
+   ↓
+Order Service
+   ↓
+Payment Service
+   ↓
+Inventory Service
+   ↓
+Reward Intelligence
+   ↓
+Analytics
+```
+
+The platform must be capable of relating these activities to the originating interaction.
+
+This requires a correlation mechanism capable of connecting distributed activity.
+
+---
+
+# 7. Request Identity
+
+Requests should carry a traceable request identifier through relevant system boundaries.
+
+Conceptually:
+
+```text
+Request ID
+Correlation ID
+Actor ID
+Session/Interaction ID
+```
+
+This allows investigators and operators to reconstruct distributed workflows.
+
+---
+
+# 8. Audit Record
+
+A canonical audit record should conceptually contain:
+
+```text
+Audit ID
+Timestamp
+Actor
+Actor Type
+Action
+Resource Type
+Resource ID
+Scope
+Source
+Request ID
+Correlation ID
+Authorization Context
+Decision
+Outcome
+Reason
+Before State
+After State
+Risk Context
+Related Event
+```
+
+Not every field is mandatory for every event.
+
+The architecture should define which attributes are required according to event sensitivity and action type.
+
+---
+
+# 9. Immutable Evidence
+
+Material audit records must be protected against inappropriate modification.
+
+The audit architecture should provide evidence preservation mechanisms appropriate to the sensitivity and regulatory requirements of the record.
+
+Audit data must not simply be treated as ordinary application data that any administrator can freely edit.
+
+---
+
+# 10. Append-Oriented Audit Model
+
+The preferred conceptual model is:
+
+```text
+Event Occurred
+      ↓
+Audit Evidence Created
+      ↓
+Evidence Preserved
+```
+
+rather than:
+
+```text
+Record Created
+      ↓
+Record Modified
+      ↓
+Record Modified Again
+      ↓
+Original Evidence Lost
+```
+
+Historical accountability must remain reconstructable.
+
+---
+
+# 11. Before-and-After State
+
+Material mutations should capture sufficient information to determine what changed.
+
+Example:
+
+```text
+Before:
+Inventory = 42
+
+Action:
+Inventory Adjustment = -5
+
+After:
+Inventory = 37
+```
+
+For sensitive operations, the system should retain the appropriate before/after representation without unnecessarily duplicating sensitive data.
+
+---
+
+# 12. Read Auditing
+
+Not all important activity is a write.
+
+Certain sensitive reads must also be auditable.
+
+Examples:
+
+* viewing employee records;
+* accessing financial information;
+* accessing customer-sensitive information;
+* viewing security information;
+* exporting data;
+* accessing restricted analytics.
+
+The architecture therefore distinguishes:
+
+```text
+READ
+WRITE
+DELETE
+EXPORT
+APPROVE
+EXECUTE
+CONFIGURE
+```
+
+---
+
+# 13. Administrative Audit
+
+Administrative operations must receive elevated audit treatment.
+
+Examples:
+
+* role assignment;
+* permission changes;
+* clearance changes;
+* policy changes;
+* account suspension;
+* account reactivation;
+* configuration changes;
+* service administration;
+* privileged access.
+
+Administrative activity must remain attributable even when performed through automated tooling.
+
+---
+
+# 14. Privileged Activity
+
+Privileged actions require stronger auditability.
+
+The audit record should identify:
+
+```text
+Who
+↓
+Which Privilege
+↓
+Which Resource
+↓
+Which Action
+↓
+Why
+↓
+Result
+```
+
+This is particularly important for administrators and emergency access.
+
+Enterprise IAM guidance likewise recommends monitoring administrative operations and changes to administrator groups through audit records.
+
+---
+
+# 15. Break-Glass Audit
+
+Break-glass access must generate explicit evidence.
+
+A break-glass record should identify:
+
+* actor;
+* reason;
+* authorization path;
+* time activated;
+* scope;
+* resources accessed;
+* actions performed;
+* time terminated.
+
+Break-glass activity should therefore be distinguishable from ordinary administrative activity.
+
+---
+
+# 16. Impersonation Audit
+
+Where impersonation is permitted:
+
+```text
+Actual Actor ≠ Represented Identity
+```
+
+must remain visible.
+
+Example:
+
+```text
+Actual Actor:
+Support Agent 827
+
+Acting For:
+Customer 10482
+
+Action:
+Viewed Order
+```
+
+The audit trail must preserve both identities.
+
+---
+
+# 17. Delegation Audit
+
+Delegated authority must also remain traceable.
+
+```text
+Original Authority
+       ↓
+Delegated To
+       ↓
+Action
+       ↓
+Resource
+       ↓
+Outcome
+```
+
+This prevents delegation from becoming an accountability gap.
+
+---
+
+# 18. AI Auditability
+
+AI activity must receive first-class audit treatment.
+
+For material AI actions, Essentials Mart should be able to establish:
+
+```text
+AI Agent
+Agent Version
+Trigger
+Input Context Reference
+Tools Used
+Requested Action
+Authorization
+Policy Decision
+Action Performed
+Outcome
+Human Approval
+```
+
+This becomes increasingly important because AI agents can read information, call tools and modify enterprise systems on behalf of users or domains.
+
+---
+
+# 19. AI Delegation Chain
+
+When AI acts on behalf of another actor, the relationship must remain visible.
+
+Example:
+
+```text
+Customer
+   ↓
+Customer Intelligence Agent
+   ↓
+Recommendation
+```
+
+or:
+
+```text
+Staff Member
+   ↓
+Operations Agent
+   ↓
+Inventory Adjustment
+```
+
+The system must not make the AI appear to be the original human actor.
+
+---
+
+# 20. AI Decision Evidence
+
+For significant AI-assisted decisions, the platform should preserve enough information to understand:
+
+* which agent acted;
+* which version was deployed;
+* what policy governed it;
+* what information sources were used;
+* what tools were invoked;
+* whether a human approved the action;
+* what action ultimately occurred.
+
+The architecture does not require storing unrestricted model chain-of-thought.
+
+It requires **accountable evidence of the decision and action pathway**.
+
+---
+
+# 21. Trust Engine Integration
+
+The Trust Engine may consume audit and behavioural signals.
+
+For example:
+
+```text
+Audit Events
+     ↓
+Behavioural Analysis
+     ↓
+Trust Signal
+     ↓
+Risk Assessment
+     ↓
+Authorization / Intervention
+```
+
+The Trust Engine must not rewrite historical audit evidence.
+
+It consumes evidence; it does not become the owner of the evidence.
+
+---
+
+# 22. Reward Intelligence Integration
+
+Reward Intelligence may consume behavioural and transactional information to determine eligibility.
+
+For example:
+
+```text
+Purchase History
+     ↓
+Reward Intelligence
+     ↓
+Milestone Eligibility
+     ↓
+Reward Granted
+     ↓
+Audit Evidence
+```
+
+The granting of a reward should itself be auditable.
+
+This is especially important because Essentials Mart has deliberately chosen to support **secret reward milestones**.
+
+A user may not know the milestone existed before receiving the reward, but the enterprise must still know:
+
+```text
+Why was the reward granted?
+Which metric triggered it?
+Which policy was active?
+When was it triggered?
+What reward was issued?
+```
+
+---
+
+# 23. Inventory Audit
+
+Inventory intelligence must produce traceable evidence for material inventory changes.
+
+Examples:
+
+* stock adjustment;
+* stock correction;
+* stock receipt;
+* stock transfer;
+* stock loss;
+* breakage;
+* expiry;
+* shrinkage;
+* reservation;
+* fulfilment.
+
+Example:
+
+```text
+Inventory Intelligence
+      ↓
+Detected Discrepancy
+      ↓
+Adjustment Proposed
+      ↓
+Authorization
+      ↓
+Inventory Changed
+      ↓
+Audit Record
+```
+
+---
+
+# 24. Commerce Audit
+
+Commerce operations requiring audit evidence include:
+
+* order creation;
+* order modification;
+* cancellation;
+* refund;
+* return;
+* payment;
+* discount;
+* promotion;
+* reward application;
+* delivery state changes.
+
+High-value or exceptional operations should receive stronger audit treatment.
+
+---
+
+# 25. Supplier Audit
+
+Supplier activity may include:
+
+* product submissions;
+* product modifications;
+* price changes;
+* stock updates;
+* fulfilment activity;
+* dispute activity;
+* return decisions;
+* complaint responses.
+
+Supplier audit boundaries must preserve separation between suppliers.
+
+---
+
+# 26. Customer Audit
+
+Customer activity may include:
+
+* account creation;
+* account changes;
+* authentication events;
+* order activity;
+* reward activity;
+* consent changes;
+* privacy settings;
+* support interactions.
+
+Customer audit records must not become an unrestricted behavioural surveillance mechanism.
+
+Data collection must remain purpose-driven.
+
+---
+
+# 27. Staff Activity Audit
+
+Staff activity must support accountability without turning every ordinary operational action into disproportionate surveillance.
+
+The architecture therefore distinguishes:
+
+```text
+Operational Activity
+Security-Relevant Activity
+Privileged Activity
+Sensitive Data Access
+```
+
+This allows auditing to remain useful without indiscriminately treating every action as a security incident.
+
+---
+
+# 28. Walk Mode Audit
+
+Walk Mode introduces a unique activity surface.
+
+Potentially auditable activities include:
+
+* entering Walk Mode;
+* location/session interactions;
+* navigation requests;
+* product interactions;
+* virtual shelf interactions;
+* AI companion interactions;
+* purchases initiated from Walk Mode;
+* inventory-dependent experiences.
+
+Privacy-sensitive Walk Mode data must remain subject to the authorization and privacy boundaries established elsewhere in the architecture.
+
+---
+
+# 29. Analytics Auditability
+
+Analytics outputs must be traceable to their underlying authorized data sources where appropriate.
+
+The platform should be able to establish:
+
+```text
+Actor
+↓
+Analytics View
+↓
+Data Scope
+↓
+Authorization
+↓
+Result
+```
+
+This is particularly important because analytics differ by user type.
+
+---
+
+# 30. Role-Specific Analytics
+
+### Customer
+
+Examples:
+
+* total spending;
+* purchase history;
+* favourite products;
+* purchase frequency;
+* reward progress.
+
+### Supplier
+
+Examples:
+
+* product sales;
+* product performance;
+* returns;
+* complaints;
+* breakage;
+* fulfilment performance.
+
+### Staff
+
+Examples:
+
+* operational performance;
+* store metrics;
+* departmental metrics;
+* authorized activity.
+
+### Management
+
+Examples:
+
+* enterprise performance;
+* regional performance;
+* store comparisons;
+* operational trends.
+
+The analytics layer must inherit the authorization boundaries defined in Commit 014.
+
+---
+
+# 31. Operational Observability
+
+Audit is not sufficient for operating a global platform.
+
+Essentials Mart must also observe system health.
+
+Key observability dimensions include:
+
+```text
+Availability
+Latency
+Throughput
+Errors
+Capacity
+Dependencies
+Resource Utilization
+```
+
+---
+
+# 32. Metrics
+
+Services should expose meaningful operational metrics.
+
+Examples:
+
+```text
+Requests per second
+Error rate
+Latency
+Queue depth
+Database performance
+Cache performance
+Event processing delay
+AI inference latency
+Authorization latency
+```
+
+Metrics should support both local service operation and enterprise-level analysis.
+
+---
+
+# 33. Distributed Tracing
+
+As Essentials Mart grows into a distributed architecture, a single user interaction may cross many services.
+
+Distributed tracing should allow operators to follow:
+
+```text
+Client
+ ↓
+Gateway
+ ↓
+Service A
+ ↓
+Service B
+ ↓
+Event Bus
+ ↓
+Service C
+```
+
+This is distinct from the business audit trail.
+
+Tracing explains:
+
+> **How did the system execute this request?**
+
+Audit explains:
+
+> **What materially happened and who was accountable?**
+
+---
+
+# 34. Error Observability
+
+Errors must be distinguishable by severity and significance.
+
+Examples:
+
+```text
+Informational
+Warning
+Recoverable Error
+Critical Error
+Security-Relevant Error
+Data Integrity Error
+```
+
+Not every error is a security incident.
+
+Not every security signal is an application error.
+
+---
+
+# 35. Business Observability
+
+Essentials Mart should observe business health in addition to technical health.
+
+Examples:
+
+* order completion rate;
+* payment failures;
+* fulfilment delays;
+* inventory discrepancies;
+* return rates;
+* reward issuance;
+* supplier performance;
+* customer support volume.
+
+This creates a bridge between:
+
+```text
+Technology Health
+        +
+Business Health
+```
+
+---
+
+# 36. Intelligence Observability
+
+Intelligence Engines must also be observable.
+
+Examples:
+
+```text
+Recommendation Quality
+Prediction Latency
+Decision Volume
+False Positive Signals
+Intervention Frequency
+Reward Decisions
+Trust Decisions
+Inventory Predictions
+```
+
+The objective is not merely to know whether an AI service is running.
+
+The enterprise must understand whether it is behaving usefully.
+
+---
+
+# 37. AI Society Observability
+
+As AI agents collaborate, Essentials Mart must be able to observe:
+
+```text
+Agent A
+   ↓
+Requests Agent B
+   ↓
+Agent B
+   ↓
+Requests Agent C
+   ↓
+Decision
+```
+
+The system should retain sufficient relationship information to understand important multi-agent workflows.
+
+---
+
+# 38. Event-to-Audit Relationship
+
+Not every enterprise event is an audit event.
+
+However, significant events may produce audit evidence.
+
+Conceptually:
+
+```text
+Business Event
+       ↓
+Does it require accountability?
+       ↓
+YES ─────────→ Audit Record
+NO
+ ↓
+Normal Event Processing
+```
+
+This prevents the audit system from becoming unnecessarily enormous.
+
+---
+
+# 39. Audit Classification
+
+Audit records should be classified according to sensitivity and purpose.
+
+Possible classifications:
+
+```text
+Operational
+Business
+Security
+Privacy
+Financial
+Administrative
+AI
+Compliance
+```
+
+One record may belong to more than one classification.
+
+---
+
+# 40. Audit Retention
+
+Retention requirements must be determined according to:
+
+* legal requirements;
+* regulatory requirements;
+* business requirements;
+* security requirements;
+* privacy requirements;
+* evidentiary value;
+* operational usefulness.
+
+The architecture must avoid assuming that every record should be retained forever.
+
+---
+
+# 41. Data Minimisation
+
+Auditability must not become an excuse for indiscriminate data collection.
+
+The platform should record:
+
+> **the evidence necessary to establish accountability**
+
+rather than:
+
+> **everything that could possibly be observed.**
+
+Sensitive information should not be duplicated unnecessarily into audit records.
+
+---
+
+# 42. Sensitive Data Handling
+
+Audit records may themselves contain sensitive information.
+
+Therefore:
+
+```text
+Audit Data
+     ↓
+Protected Resource
+```
+
+Audit data must have its own authorization boundaries.
+
+An administrator who can operate the audit infrastructure should not automatically have unrestricted access to every underlying sensitive record.
+
+---
+
+# 43. Audit Access
+
+Audit access should be restricted according to legitimate responsibilities.
+
+Potential consumers include:
+
+* security;
+* compliance;
+* operations;
+* authorized administrators;
+* investigators;
+* relevant management;
+* Trust Engine;
+* analytics systems.
+
+Customer-facing applications must not expose unrestricted internal audit information.
+
+---
+
+# 44. Audit Search
+
+The enterprise should support investigation across multiple dimensions.
+
+Examples:
+
+```text
+Actor
+Resource
+Action
+Time
+Store
+Supplier
+Customer
+Service
+AI Agent
+Request ID
+Correlation ID
+Outcome
+```
+
+This allows investigators to reconstruct activity without manually searching unrelated logs.
+
+---
+
+# 45. Audit Integrity
+
+The architecture should support mechanisms capable of detecting inappropriate modification or deletion of audit evidence.
+
+The precise implementation belongs to the security architecture.
+
+Commit 015 establishes the requirement:
+
+> **Material audit evidence must have integrity protection appropriate to its purpose.**
+
+---
+
+# 46. Audit Availability
+
+Audit information must remain available when needed for:
+
+* incident investigation;
+* customer disputes;
+* operational investigations;
+* financial reconciliation;
+* compliance;
+* security analysis;
+* AI investigation.
+
+Audit availability is therefore an enterprise reliability concern.
+
+---
+
+# 47. Audit Failure
+
+A critical design question is:
+
+> What happens when audit infrastructure is temporarily unavailable?
+
+The answer must depend on the action's sensitivity.
+
+For low-risk activity:
+
+```text
+Action
+ ↓
+Temporary Audit Delay
+ ↓
+Retry / Queue
+```
+
+For high-risk actions:
+
+```text
+Action
+ ↓
+Audit Requirement
+ ↓
+Audit Unavailable
+ ↓
+Action Blocked or Safely Degraded
+```
+
+The exact rules belong to the relevant security and domain policies.
+
+---
+
+# 48. Tamper Evidence
+
+The architecture should support evidence that allows unauthorized modification to be detected.
+
+Possible implementation mechanisms may later include:
+
+* append-only storage;
+* cryptographic integrity mechanisms;
+* signed records;
+* immutable storage;
+* chained evidence;
+* controlled archival.
+
+The specific mechanism is intentionally deferred to EDA-001 Part 3.
+
+---
+
+# 49. Time
+
+Accurate time is essential for reconstruction.
+
+Enterprise records should use a consistent time model capable of supporting:
+
+* distributed services;
+* multiple countries;
+* multiple time zones;
+* daylight-saving changes;
+* event ordering.
+
+UTC should serve as the canonical machine-level reference, while local time may be retained where relevant to the user experience or business context.
+
+---
+
+# 50. Clock and Event Ordering
+
+Distributed systems may not always observe events in the same order.
+
+Therefore, the architecture should distinguish:
+
+```text
+Event Occurrence Time
+Ingestion Time
+Processing Time
+```
+
+This allows investigations to understand the difference between when something happened and when the system received or processed its evidence.
+
+---
+
+# 51. Audit Across Regions
+
+As Essentials Mart becomes global:
+
+```text
+Zimbabwe
+South Africa
+Kenya
+United Kingdom
+United States
+...
+```
+
+audit architecture must remain capable of correlating activity across regional deployments.
+
+Regional data-residency requirements may affect where audit information is stored or processed.
+
+Those requirements belong to the later security and compliance architecture.
+
+---
+
+# 52. Multi-Store Audit
+
+A single enterprise may operate thousands of stores.
+
+Audit queries must support:
+
+```text
+Enterprise
+ ↓
+Country
+ ↓
+Region
+ ↓
+Store
+ ↓
+Department
+ ↓
+Actor
+```
+
+Store-level investigations must not require scanning the entire enterprise audit population unnecessarily.
+
+---
+
+# 53. Supplier Audit Boundaries
+
+Supplier audit information must respect commercial isolation.
+
+Supplier A must not be able to inspect:
+
+```text
+Supplier B
+```
+
+activity merely because both suppliers interact with Essentials Mart.
+
+---
+
+# 54. Customer Privacy Boundary
+
+Customer behavioural analytics and audit evidence must remain subject to privacy and authorization rules.
+
+The platform must distinguish between:
+
+```text
+Personal Analytics
+```
+
+and:
+
+```text
+Internal Audit Evidence
+```
+
+A customer seeing their own spending analytics does not imply access to internal audit records.
+
+---
+
+# 55. Evidence for Disputes
+
+Audit architecture must support dispute resolution.
+
+Examples:
+
+```text
+Customer claims refund was never processed
+        ↓
+Order Audit
+        ↓
+Payment Audit
+        ↓
+Refund Audit
+        ↓
+Support Activity
+        ↓
+Resolution
+```
+
+This allows Essentials Mart to resolve disputes using evidence rather than assumptions.
+
+---
+
+# 56. Returns and Complaints
+
+Returns and complaints should maintain traceable histories.
+
+Example:
+
+```text
+Return Requested
+      ↓
+Return Reviewed
+      ↓
+Return Approved
+      ↓
+Item Received
+      ↓
+Refund Issued
+```
+
+Each material transition should remain reconstructable.
+
+---
+
+# 57. Service Desk Accountability
+
+Service desk interactions should preserve appropriate records.
+
+Potential evidence includes:
+
+* support actor;
+* customer;
+* request;
+* timestamps;
+* actions;
+* escalation;
+* resolution;
+* communication channel.
+
+This connects the Service Desk with the wider accountability architecture.
+
+---
+
+# 58. Information Point and Parcel Collection
+
+Operational areas such as:
+
+* Information Point;
+* Parcel Collection;
+* Returns Counter;
+* Service Desk;
+
+must produce appropriate operational evidence when actions affect customer orders, parcels, refunds, returns or other protected resources.
+
+This ensures physical-store operations remain connected to the digital accountability model.
+
+---
+
+# 59. Audit and Enterprise Events
+
+Commit 013 established the enterprise event architecture.
+
+Commit 015 establishes the evidence relationship:
+
+```text
+Enterprise Event
+      ↓
+Observable Activity
+      ↓
+Audit Classification
+      ↓
+Audit Evidence
+```
+
+This provides continuity between event-driven architecture and accountability.
+
+---
+
+# 60. Audit and Analytics
+
+Audit data may feed analytics systems.
+
+Examples:
+
+```text
+Audit Events
+     ↓
+Analytics
+     ↓
+Operational Insight
+```
+
+or:
+
+```text
+Audit Behaviour
+     ↓
+Trust Engine
+     ↓
+Risk Signal
+```
+
+However, analytics consumers must not be able to modify the authoritative audit record.
+
+---
+
+# 61. Audit and Intelligence Engines
+
+Intelligence Engines may consume audit signals to improve decisions.
+
+Examples:
+
+### Trust Intelligence
+
+Detect unusual activity.
+
+### Reward Intelligence
+
+Verify reward eligibility.
+
+### Inventory Intelligence
+
+Identify suspicious stock adjustments.
+
+### Customer Intelligence
+
+Understand legitimate behavioural context.
+
+### Operations Intelligence
+
+Detect operational anomalies.
+
+The source evidence remains authoritative.
+
+---
+
+# 62. Audit and AI Governance
+
+AI actions that materially affect users, suppliers, staff, inventory, rewards or financial outcomes should be traceable.
+
+This creates:
+
+```text
+AI Action
+ ↓
+Authorization
+ ↓
+Outcome
+ ↓
+Audit Evidence
+ ↓
+Evaluation
+```
+
+This will become important when the AI Society is fully implemented.
+
+---
+
+# 63. Observability Governance
+
+Every major service should define:
+
+* what it measures;
+* what it logs;
+* what it audits;
+* what it traces;
+* what it alerts on;
+* what it exposes to operators.
+
+This prevents observability from being designed independently by every development team.
+
+---
+
+# 64. Standardized Event Vocabulary
+
+Audit and observability systems require consistent terminology.
+
+For example:
+
+```text
+ACTOR_AUTHENTICATED
+ACCESS_GRANTED
+ACCESS_DENIED
+ROLE_ASSIGNED
+PERMISSION_REVOKED
+RESOURCE_CREATED
+RESOURCE_UPDATED
+RESOURCE_DELETED
+DATA_EXPORTED
+AI_ACTION_EXECUTED
+REWARD_GRANTED
+INVENTORY_ADJUSTED
+REFUND_APPROVED
+```
+
+The definitive enterprise event catalogue will be formalized later in the architecture roadmap.
+
+---
+
+# 65. Alerting
+
+Not every audit event should trigger an alert.
+
+The platform should distinguish:
+
+```text
+Record
+↓
+Analyse
+↓
+Threshold
+↓
+Alert
+```
+
+Examples of potentially alert-worthy behaviour:
+
+* unusual privileged access;
+* repeated authorization failures;
+* abnormal bulk export;
+* suspicious inventory manipulation;
+* unusual reward issuance;
+* anomalous AI activity.
+
+---
+
+# 66. Human Review
+
+Some signals should result in human investigation rather than automatic action.
+
+Example:
+
+```text
+Suspicious Activity
+      ↓
+Trust Engine
+      ↓
+High-Risk Signal
+      ↓
+Human Review
+```
+
+This prevents intelligence systems from automatically converting every anomaly into punitive action.
+
+---
+
+# 67. Automated Response
+
+Where appropriate, some observability signals may trigger automated responses.
+
+Examples:
+
+* throttling;
+* temporary access restriction;
+* service failover;
+* queue isolation;
+* additional verification.
+
+Automated responses must themselves be attributable and auditable.
+
+---
+
+# 68. Audit of Automated Actions
+
+An automated response is still an action.
+
+Therefore:
+
+```text
+System Detects Event
+       ↓
+Automation Triggered
+       ↓
+Automated Action
+       ↓
+Audit Evidence
+```
+
+The platform must not treat automation as outside accountability.
+
+---
+
+# 69. No Silent Mutation
+
+Material state changes must not occur without an appropriate trace.
+
+This applies to:
+
+* humans;
+* services;
+* automation;
+* AI;
+* scheduled processes.
+
+If a system changes important enterprise state, the architecture must provide an accountability pathway.
+
+---
+
+# 70. Observability at 100 Million Users
+
+The architecture must scale beyond a single application instance.
+
+The audit and observability architecture must support:
+
+* distributed collection;
+* asynchronous processing where appropriate;
+* partitioning;
+* retention tiers;
+* regional deployment;
+* high-volume ingestion;
+* query isolation;
+* archival;
+* fault tolerance.
+
+Audit systems should therefore be treated as enterprise infrastructure rather than a database table attached to the main application.
+
+---
+
+# 71. Performance Principle
+
+Auditability must not unnecessarily become the bottleneck for ordinary transactions.
+
+The architecture should support appropriate separation between:
+
+```text
+Transaction Path
+```
+
+and:
+
+```text
+Evidence Processing Path
+```
+
+while preserving stronger guarantees for actions where audit completion is itself a prerequisite.
+
+---
+
+# 72. Audit Backpressure
+
+At large scale, audit volume may temporarily exceed processing capacity.
+
+The architecture must therefore support:
+
+```text
+Producer
+ ↓
+Buffer
+ ↓
+Durable Queue
+ ↓
+Audit Processor
+ ↓
+Audit Store
+```
+
+This prevents temporary downstream congestion from automatically destroying evidence.
+
+---
+
+# 73. Failure Isolation
+
+Failure of analytics must not necessarily stop ordinary commerce.
+
+Likewise:
+
+```text
+Analytics Failure
+≠
+Commerce Failure
+```
+
+But:
+
+```text
+Critical Audit Failure
+```
+
+may require stronger protection depending on the action.
+
+The architecture must explicitly classify these dependencies.
+
+---
+
+# 74. Evidence Lifecycle
+
+Audit records may follow a lifecycle such as:
+
+```text
+Created
+ ↓
+Validated
+ ↓
+Stored
+ ↓
+Queried
+ ↓
+Archived
+ ↓
+Retained
+ ↓
+Disposed
+```
+
+Each transition must follow applicable policy.
+
+---
+
+# 75. Accountability Across the Enterprise
+
+Commit 015 establishes a fundamental platform principle:
+
+> **Accountability follows the action across domain boundaries.**
+
+For example:
+
+```text
+Customer
+ ↓
+Order
+ ↓
+Payment
+ ↓
+Inventory
+ ↓
+Delivery
+ ↓
+Reward
+ ↓
+Analytics
+```
+
+The enterprise should be capable of connecting the important evidence generated throughout the journey.
+
+---
+
+# 76. Architectural Laws Established by Commit 015
+
+Commit 015 establishes the following laws:
+
+1. Material actions must be attributable.
+2. Human, machine and AI actors must remain distinguishable.
+3. Logging and auditing are not synonymous.
+4. Observability and auditing are not synonymous.
+5. Business events and audit records are not synonymous.
+6. Significant reads may require auditing.
+7. Significant writes require appropriate auditability.
+8. Administrative actions must be attributable.
+9. Privileged activity requires enhanced auditability.
+10. Break-glass activity must be explicitly recorded.
+11. Impersonation must preserve the actual actor.
+12. Delegation must preserve the authority chain.
+13. AI actions must be attributable.
+14. AI versions must be identifiable for material decisions.
+15. Automated actions must remain accountable.
+16. Audit records must be protected from inappropriate modification.
+17. Audit data has its own authorization boundary.
+18. Sensitive data must not be duplicated unnecessarily into audit records.
+19. Audit retention must be policy-driven.
+20. Audit evidence must support dispute resolution.
+21. Distributed activity must support correlation.
+22. Requests should have traceable correlation identifiers.
+23. Enterprise services must expose meaningful observability.
+24. Business observability must complement technical observability.
+25. Intelligence Engines must be observable.
+26. AI Society interactions must be observable.
+27. Audit systems must support regional and global scale.
+28. Audit infrastructure must be resilient.
+29. Audit processing should not unnecessarily block ordinary transactions.
+30. Critical actions may require successful audit evidence before completion.
+31. Automated responses must themselves be auditable.
+32. No material state mutation should occur through an unaccountable pathway.
+33. Trust Intelligence may consume audit evidence but must not rewrite it.
+34. Analytics may consume audit information but must not alter authoritative evidence.
+35. Audit evidence must remain distinct from customer-facing analytics.
+36. Observability data must support investigation and operational decision-making.
+37. Audit evidence must remain reconstructable across domain boundaries.
+38. Audit architecture must support privacy-aware data minimisation.
+39. Audit access must follow least privilege.
+40. Audit architecture must remain viable at global platform scale.
+
+---
+
+# 77. Relationship to Previous Commits
+
+Commit 015 builds directly on the preceding architecture:
+
+```text
+Commit 013
+Enterprise Events
+       ↓
+Commit 014
+Identity, Access & Authorization
+       ↓
+Commit 015
+Audit, Observability & Accountability
+```
+
+The relationship is:
+
+```text
+Events
+  ↓
+Activity occurs
+
+Identity + Authorization
+  ↓
+Who is allowed to act?
+
+Audit + Observability
+  ↓
+What actually happened?
+```
+
+Together they create the foundation for enterprise accountability.
+
+---
+
+# 78. Relationship to Future Security Architecture
+
+Commit 015 establishes **what must be observable and auditable**.
+
+It does not yet prescribe every security implementation mechanism.
+
+EDA-001 Part 3 will later define the security architecture governing mechanisms such as:
+
+* cryptographic protection;
+* key management;
+* secure audit storage;
+* tamper resistance;
+* security monitoring;
+* SIEM integration;
+* threat detection;
+* incident response;
+* network security;
+* application security;
+* infrastructure security;
+* privacy controls;
+* compliance controls.
+
+Commit 015 therefore establishes the architectural requirement while Part 3 defines the deeper security implementation.
+
+---
+
+# 79. Final Architectural Principle
+
+> **Essentials Mart must be able to explain itself.**
+
+When something important happens, the platform must be able to reconstruct:
+
+```text
+WHO
+↓
+DID WHAT
+↓
+TO WHAT
+↓
+WHEN
+↓
+WHERE
+↓
+UNDER WHAT AUTHORITY
+↓
+UNDER WHICH POLICY
+↓
+WITH WHAT RESULT
+↓
+AND WHAT HAPPENED NEXT
+```
+
+That principle applies equally to:
+
+**customers, staff, suppliers, services, automation, AI agents and the enterprise itself.**
+
+Commit 015 therefore establishes **Audit, Observability and Accountability as an enterprise capability rather than a collection of application logs.**
+
+
 # 11. Action-Level Permissions
 
 Permissions shall distinguish between operations.
