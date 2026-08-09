@@ -6144,8 +6144,6 @@ Commit 010 establishes the following laws:
 
 ---
 
-# End of Commit 010
-
 Commit 010 formally establishes the Enterprise Intelligence and Enterprise Society architecture within EDA-001 Part II.
 
 It does not define:
@@ -6160,6 +6158,2011 @@ It does not define:
 * infrastructure.
 
 Those remain subsequent architectural stages.
+
+# Commit 011 — Intelligence Engine Architecture
+
+## Purpose
+
+Commit 011 establishes the constitutional architecture governing the Intelligence Engine layer of Essentials Mart.
+
+The Intelligence Engine layer exists to transform governed enterprise and platform evidence into:
+
+* understanding;
+* predictions;
+* recommendations;
+* decisions;
+* interventions;
+* learning;
+* measurable improvement.
+
+The Intelligence Engine layer does not become a replacement for the business domains that produce the underlying truth.
+
+It does not become a second database.
+
+It does not become a collection of uncontrolled AI models.
+
+It does not become an autonomous authority over the platform.
+
+Instead, Intelligence Engines operate as specialised computational and reasoning capabilities positioned between domain evidence and governed action.
+
+The fundamental pattern is:
+
+```text
+Domain Truth
+     ↓
+Evidence
+     ↓
+Intelligence Engine
+     ↓
+Interpretation
+     ↓
+Confidence
+     ↓
+Recommendation / Decision Support
+     ↓
+Trust Evaluation
+     ↓
+Action
+     ↓
+Observed Outcome
+     ↓
+Learning
+     ↓
+Improved Intelligence
+```
+
+This creates an enterprise-wide intelligence loop while preserving domain ownership.
+
+---
+
+# 1. Intelligence Engine Constitutional Principle
+
+The following principle is established:
+
+> **An Intelligence Engine may interpret, predict, recommend, optimise or learn from domain-owned information, but it does not automatically become the owner of that information.**
+
+This distinction is fundamental.
+
+For example:
+
+* Inventory Intelligence does not own the physical inventory merely because it predicts stock-outs.
+* Reward Intelligence does not own the customer's financial account merely because it determines whether a reward may be issued.
+* Relationship Intelligence does not own the customer relationship merely because it analyses relationship signals.
+* Learning Engine does not own the historical evidence merely because it learns from it.
+* Trust Engine does not own identity merely because it evaluates trust.
+* Forecasting does not own demand merely because it predicts demand.
+
+The domain remains authoritative.
+
+The Intelligence Engine remains responsible for the intelligence it produces.
+
+---
+
+# 2. Why Intelligence Engines Exist
+
+Business domains answer questions such as:
+
+* What happened?
+* What exists?
+* What was purchased?
+* What is in stock?
+* What reward was issued?
+* What delivery occurred?
+* What relationship exists?
+
+Intelligence Engines answer higher-order questions:
+
+* What does this mean?
+* What is likely to happen?
+* What should we pay attention to?
+* What opportunity exists?
+* What risk is emerging?
+* What action might help?
+* How confident are we?
+* What happened after the previous decision?
+
+The architecture therefore separates:
+
+```text
+FACT
+ ↓
+INTERPRETATION
+ ↓
+INTELLIGENCE
+ ↓
+DECISION SUPPORT
+```
+
+This prevents raw operational systems from becoming responsible for intelligence reasoning.
+
+---
+
+# 3. Intelligence Engine Categories
+
+The Intelligence Engine layer consists of several categories.
+
+### 3.1 Customer Intelligence
+
+Understands customer-level behaviour, preferences, context and patterns.
+
+### 3.2 Household Intelligence
+
+Understands household-level patterns, coordination and shared context.
+
+### 3.3 Commerce Intelligence
+
+Understands shopping, purchasing and commercial behaviour.
+
+### 3.4 Product Intelligence
+
+Understands products, product relationships, attributes and product-level knowledge.
+
+### 3.5 Inventory Intelligence
+
+Understands stock, availability, demand signals and inventory behaviour.
+
+### 3.6 Relationship Intelligence
+
+Understands the evolving relationship between Essentials Mart and the household.
+
+### 3.7 Recognition Intelligence
+
+Identifies meaningful customer behaviour and determines when recognition may be appropriate.
+
+### 3.8 Reward Intelligence
+
+Determines whether a customer or household may qualify for an appropriate reward under governed rules.
+
+### 3.9 Re-engagement Intelligence
+
+Identifies meaningful opportunities to reconnect with customers without becoming intrusive.
+
+### 3.10 Trust Engine
+
+Evaluates whether proposed platform behaviour satisfies trust, safety, fairness and economic guardrails.
+
+### 3.11 Learning Engine
+
+Transforms verified outcomes and evidence into reusable institutional learning.
+
+### 3.12 Analytics
+
+Provides analytical capabilities supporting multiple intelligence domains.
+
+### 3.13 Forecasting
+
+Provides predictive capabilities supporting planning and decision-making.
+
+### 3.14 Enterprise Intelligence Engines
+
+Provide enterprise-facing intelligence across:
+
+* Procurement;
+* Warehouse;
+* Inventory;
+* Logistics;
+* Supplier;
+* HR;
+* Compliance;
+* Workforce;
+* Retail;
+* Marketing;
+* Customer Experience;
+* Finance;
+* Operations;
+* Executive.
+
+The exact engine inventory may evolve as EDA-001 is completed, but every new engine must obey this architecture.
+
+---
+
+# 4. Intelligence Engine Boundary
+
+An Intelligence Engine must have an explicit boundary.
+
+The boundary defines:
+
+* purpose;
+* inputs;
+* outputs;
+* evidence;
+* authority;
+* confidence;
+* dependencies;
+* consumers;
+* actions;
+* learning loop.
+
+An engine without a clear boundary is not considered architecturally complete.
+
+The preferred model is:
+
+```text
+┌─────────────────────────────┐
+│      Intelligence Engine   │
+├─────────────────────────────┤
+│ Purpose                     │
+│ Evidence                    │
+│ Interpretation              │
+│ Models / Rules               │
+│ Confidence                  │
+│ Recommendation              │
+│ Guardrails                  │
+│ Outcome Measurement         │
+│ Learning                    │
+└─────────────────────────────┘
+```
+
+---
+
+# 5. Intelligence Does Not Own Domain Truth
+
+Domain ownership remains primary.
+
+```text
+BUSINESS DOMAIN
+      │
+      │ authoritative truth
+      ▼
+DOMAIN DATA
+      │
+      │ governed evidence
+      ▼
+INTELLIGENCE ENGINE
+      │
+      │ interpretation
+      ▼
+INTELLIGENCE OUTPUT
+```
+
+The Intelligence Engine may maintain:
+
+* derived features;
+* embeddings;
+* projections;
+* analytical representations;
+* model state;
+* historical intelligence;
+* learned patterns.
+
+These are derived representations.
+
+They do not automatically replace the authoritative source.
+
+This follows the broader architectural principle that domain ownership should remain explicit rather than allowing a central data/intelligence platform to become a monolithic owner.
+
+---
+
+# 6. Intelligence Evidence
+
+Every meaningful intelligence output should be grounded in evidence.
+
+Evidence may originate from:
+
+* transactions;
+* customer interactions;
+* household activity;
+* inventory observations;
+* product information;
+* delivery outcomes;
+* rewards;
+* feedback;
+* operational events;
+* enterprise records;
+* previous decisions;
+* previous intelligence outputs.
+
+Evidence must retain sufficient provenance to answer:
+
+> **Why did the system believe this?**
+
+---
+
+# 7. Evidence Provenance
+
+Where technically and legally appropriate, intelligence evidence should retain:
+
+* originating domain;
+* originating record or event;
+* timestamp;
+* source type;
+* evidence version;
+* transformation history;
+* confidence;
+* relevant context;
+* applicable market;
+* applicable policy.
+
+This allows the platform to distinguish:
+
+```text
+FACT
+```
+
+from:
+
+```text
+INFERENCE
+```
+
+from:
+
+```text
+PREDICTION
+```
+
+from:
+
+```text
+RECOMMENDATION
+```
+
+from:
+
+```text
+ACTION
+```
+
+This distinction is critical for explainability.
+
+---
+
+# 8. Intelligence Confidence
+
+Intelligence must not be represented as absolute truth when it is probabilistic.
+
+An Intelligence Engine should be able to express:
+
+* confidence;
+* uncertainty;
+* evidence strength;
+* conflicting evidence;
+* freshness;
+* model limitations.
+
+Conceptually:
+
+```text
+Evidence
+   ↓
+Inference
+   ↓
+Confidence
+   ↓
+Recommendation
+```
+
+A low-confidence recommendation must not be treated identically to a high-confidence observation.
+
+---
+
+# 9. Intelligence Freshness
+
+Intelligence has a temporal dimension.
+
+An intelligence output may become less reliable as:
+
+* customer behaviour changes;
+* inventory changes;
+* products change;
+* market conditions change;
+* regulations change;
+* household circumstances change;
+* models become stale.
+
+Therefore, intelligence should be evaluated not only by:
+
+> "How confident is this?"
+
+but also:
+
+> "How fresh is this?"
+
+---
+
+# 10. Intelligence Lifecycle
+
+Every Intelligence Engine should conceptually follow this lifecycle:
+
+```text
+1. Observe
+      ↓
+2. Acquire Evidence
+      ↓
+3. Validate Evidence
+      ↓
+4. Interpret
+      ↓
+5. Generate Intelligence
+      ↓
+6. Estimate Confidence
+      ↓
+7. Apply Guardrails
+      ↓
+8. Recommend / Decide
+      ↓
+9. Act
+      ↓
+10. Observe Outcome
+      ↓
+11. Evaluate Result
+      ↓
+12. Learn
+      ↓
+13. Improve
+```
+
+The cycle must be designed so that learning is based on outcomes rather than assumptions.
+
+---
+
+# 11. Intelligence vs Decision
+
+The architecture distinguishes intelligence from decision authority.
+
+An Intelligence Engine may say:
+
+> "The household appears likely to need this product soon."
+
+That is intelligence.
+
+The platform may then determine:
+
+> "Would presenting this information now be useful and appropriate?"
+
+That is decision logic.
+
+The Trust Engine may then determine:
+
+> "Is the proposed interaction permitted and consistent with platform trust rules?"
+
+That is governance.
+
+The customer may finally decide:
+
+> "Yes, I want it."
+
+That is customer authority.
+
+This separation prevents intelligence from becoming coercive automation.
+
+---
+
+# 12. Recommendation Architecture
+
+A recommendation should be treated as a structured intelligence output rather than an immediate action.
+
+Conceptually:
+
+```text
+INTELLIGENCE
+     ↓
+RECOMMENDATION
+     ↓
+CONTEXT CHECK
+     ↓
+TRUST CHECK
+     ↓
+AUTHORITY CHECK
+     ↓
+ACTION
+```
+
+This is particularly important for:
+
+* rewards;
+* re-engagement;
+* marketing;
+* financial decisions;
+* household recommendations;
+* AI-assisted purchasing;
+* enterprise decisions.
+
+---
+
+# 13. Trust Engine as Intelligence Governance
+
+The Trust Engine operates across Intelligence Engines.
+
+Its role is not to create intelligence.
+
+Its role is to evaluate proposed behaviour.
+
+```text
+Intelligence Engine
+        ↓
+Proposed Action
+        ↓
+Trust Engine
+        ↓
+┌────────┬────────┬────────┐
+│ Approve│ Modify │ Reject │
+└────────┴────────┴────────┘
+```
+
+The Trust Engine evaluates factors such as:
+
+* privacy;
+* fairness;
+* safety;
+* economic sustainability;
+* frequency;
+* manipulation risk;
+* customer expectations;
+* policy;
+* regulatory constraints.
+
+---
+
+# 14. Reward Intelligence Guardrail
+
+Reward Intelligence must operate under explicit economic guardrails.
+
+The engine may identify that a customer qualifies for recognition.
+
+It must not be allowed to create unlimited economic liability.
+
+Therefore:
+
+```text
+Reward Opportunity
+       ↓
+Reward Intelligence
+       ↓
+Economic Guardrails
+       ↓
+Trust Engine
+       ↓
+Approved Reward
+```
+
+The customer does not need to know the internal reward thresholds.
+
+This preserves the surprise-based recognition model while preventing reward exploitation.
+
+---
+
+# 15. Relationship Intelligence Guardrail
+
+Relationship Intelligence must not become a mechanism for manipulating customer behaviour.
+
+It should understand:
+
+* relationship history;
+* engagement;
+* preferences;
+* meaningful milestones;
+* service experiences.
+
+It must not optimise purely for:
+
+* session duration;
+* purchase frequency;
+* compulsive engagement.
+
+The goal is:
+
+> **A stronger relationship, not maximum behavioural extraction.**
+
+---
+
+# 16. Re-engagement Intelligence Guardrail
+
+Re-engagement must be:
+
+* contextual;
+* relevant;
+* restrained;
+* respectful.
+
+It should prefer:
+
+```text
+Meaningful opportunity
+       ↓
+Helpful intervention
+```
+
+rather than:
+
+```text
+User inactive
+       ↓
+Send notification
+       ↓
+Send another notification
+       ↓
+Send another notification
+```
+
+The engine must understand when **not** to engage.
+
+Silence is therefore a valid intelligence outcome.
+
+---
+
+# 17. Customer Intelligence Guardrail
+
+Customer Intelligence must not turn the customer into a permanent behavioural profile without appropriate governance.
+
+It must distinguish between:
+
+* observed behaviour;
+* inferred preference;
+* temporary context;
+* persistent preference;
+* sensitive information;
+* uncertain inference.
+
+The engine must avoid treating an inference as a fact merely because the inference has been stored.
+
+---
+
+# 18. Household Intelligence Boundary
+
+Household Intelligence must preserve the distinction between:
+
+* individual;
+* household;
+* shared;
+* private.
+
+A household recommendation may be useful without exposing one household member's private information to another.
+
+Therefore:
+
+```text
+Individual Context
+        ↓
+Privacy Evaluation
+        ↓
+Household Context
+        ↓
+Permitted Intelligence
+```
+
+The Trust Engine participates where privacy boundaries require evaluation.
+
+---
+
+# 19. Learning Engine
+
+The Learning Engine is responsible for converting verified outcomes into reusable knowledge.
+
+It may learn from:
+
+* successful recommendations;
+* failed recommendations;
+* reward outcomes;
+* customer feedback;
+* inventory predictions;
+* delivery outcomes;
+* enterprise forecasts;
+* operational decisions.
+
+However:
+
+> **Learning must not rewrite historical truth.**
+
+A corrected model may change future interpretation.
+
+It does not change what actually happened.
+
+---
+
+# 20. Learning Provenance
+
+Learned knowledge should retain:
+
+* source evidence;
+* learning event;
+* model/version;
+* time;
+* confidence;
+* applicable context;
+* validation status.
+
+This allows the platform to distinguish:
+
+```text
+What happened
+```
+
+from:
+
+```text
+What we learned from what happened
+```
+
+---
+
+# 21. Analytics Engine Boundary
+
+Analytics provides descriptive and diagnostic understanding.
+
+Typical questions include:
+
+* What happened?
+* Where did it happen?
+* How often?
+* What changed?
+* What relationships exist?
+
+Analytics should not automatically become the decision-maker.
+
+```text
+Operational Data
+      ↓
+Analytics
+      ↓
+Understanding
+      ↓
+Human / Intelligence Engine
+```
+
+---
+
+# 22. Forecasting Engine Boundary
+
+Forecasting provides predictive intelligence.
+
+Typical questions include:
+
+* What is likely to happen?
+* When might demand change?
+* What might stock levels look like?
+* What operational pressure may emerge?
+
+Forecasting outputs must retain:
+
+* forecast horizon;
+* model version;
+* confidence;
+* assumptions;
+* applicable scope.
+
+Forecasting must never be confused with certainty.
+
+---
+
+# 23. Cross-Engine Collaboration
+
+Intelligence Engines may collaborate.
+
+For example:
+
+```text
+Customer Intelligence
+        ↓
+Relationship Intelligence
+        ↓
+Recognition Intelligence
+        ↓
+Reward Intelligence
+        ↓
+Trust Engine
+        ↓
+Customer Experience
+```
+
+Or:
+
+```text
+Inventory Intelligence
+        ↓
+Forecasting
+        ↓
+Procurement Intelligence
+        ↓
+Warehouse Intelligence
+        ↓
+Logistics Intelligence
+```
+
+Or:
+
+```text
+Commerce Intelligence
+        ↓
+Customer Intelligence
+        ↓
+Learning Engine
+        ↓
+Relationship Intelligence
+```
+
+Collaboration must occur through explicit architectural contracts.
+
+---
+
+# 24. No Universal Intelligence Engine
+
+Essentials Mart must not create a single:
+
+> "Universal Intelligence Engine"
+
+that owns every intelligence capability.
+
+Such a system would gradually become:
+
+* difficult to understand;
+* difficult to govern;
+* difficult to audit;
+* difficult to scale;
+* difficult to replace;
+* difficult to explain.
+
+Instead:
+
+```text
+Specialised Intelligence
+        +
+Explicit Coordination
+        =
+Enterprise Intelligence
+```
+
+This is consistent with the strategic purpose of bounded contexts: complexity is managed by keeping coherent models and explicit relationships rather than forcing everything into one model.
+
+---
+
+# 25. Intelligence Engine Contracts
+
+Each Intelligence Engine must eventually expose a conceptual contract defining:
+
+### Inputs
+
+What evidence can it consume?
+
+### Outputs
+
+What intelligence can it produce?
+
+### Authority
+
+What can it recommend?
+
+### Restrictions
+
+What may it never do?
+
+### Consumers
+
+Who can use its outputs?
+
+### Provenance
+
+How can its conclusions be explained?
+
+### Confidence
+
+How certain is its output?
+
+### Lifecycle
+
+How is its intelligence updated or retired?
+
+The detailed technical API contract belongs to the later API architecture phase.
+
+This commit establishes the conceptual contract only.
+
+---
+
+# 26. Intelligence Engine Versioning
+
+Intelligence must be versionable.
+
+A change to:
+
+* model;
+* rule;
+* threshold;
+* feature;
+* policy;
+* inference method;
+
+may change the behaviour of an Intelligence Engine.
+
+Therefore, material intelligence outputs should be traceable to the intelligence version that generated them.
+
+Conceptually:
+
+```text
+Evidence
+   +
+Engine Version
+   +
+Policy Version
+   ↓
+Intelligence Output
+```
+
+---
+
+# 27. Model Drift
+
+Intelligence Engines must assume that the world changes.
+
+Model drift may occur because:
+
+* customers change;
+* markets change;
+* products change;
+* stores change;
+* supply chains change;
+* regulations change;
+* economic conditions change.
+
+Therefore, intelligence engines must eventually support:
+
+* performance monitoring;
+* drift detection;
+* recalibration;
+* model replacement;
+* rollback;
+* retirement.
+
+No model should be considered permanently correct.
+
+---
+
+# 28. Intelligence Failure
+
+Intelligence failure must not automatically become platform failure.
+
+If Customer Intelligence becomes unavailable:
+
+```text
+Customer Intelligence DOWN
+        ↓
+Core Commerce CONTINUES
+```
+
+If Forecasting becomes unavailable:
+
+```text
+Forecasting DOWN
+        ↓
+Operational fallback
+```
+
+If Learning becomes unavailable:
+
+```text
+Learning DOWN
+        ↓
+Existing intelligence continues
+```
+
+The platform should degrade gracefully.
+
+---
+
+# 29. Critical vs Non-Critical Intelligence
+
+Intelligence capabilities must eventually be classified as:
+
+### Critical Intelligence
+
+Failure materially affects:
+
+* safety;
+* financial integrity;
+* regulatory obligations;
+* core operational correctness.
+
+### Important Intelligence
+
+Failure reduces capability but does not stop core operations.
+
+### Enhancement Intelligence
+
+Failure removes convenience or personalisation but does not materially affect the platform.
+
+This classification will later inform:
+
+* availability requirements;
+* fallback behaviour;
+* infrastructure;
+* monitoring;
+* testing;
+* disaster recovery.
+
+---
+
+# 30. AI Agent Relationship
+
+AI Agents consume Intelligence Engine capabilities.
+
+They should not independently recreate every intelligence capability.
+
+Preferred architecture:
+
+```text
+AI Agent
+    ↓
+Intelligence Capability
+    ↓
+Evidence
+    ↓
+Intelligence Engine
+    ↓
+Result
+    ↓
+AI Agent
+    ↓
+User / Enterprise Action
+```
+
+This allows the same intelligence to be used by:
+
+* Walk Mode;
+* home shopping;
+* mobile experiences;
+* enterprise interfaces;
+* customer service;
+* future experiences.
+
+It also prevents every agent from developing a different interpretation of the same business truth.
+
+---
+
+# 31. AI Society Relationship
+
+The AI Society coordinates AI Agents.
+
+The Intelligence Layer provides specialised reasoning capabilities.
+
+Therefore:
+
+```text
+AI Society
+     ↓
+AI Agents
+     ↓
+Intelligence Engines
+     ↓
+Domain Evidence
+```
+
+The AI Society should not bypass the Intelligence Layer simply because an individual AI model can technically access the underlying information.
+
+---
+
+# 32. Enterprise Society Relationship
+
+The Enterprise Society coordinates enterprise intelligence.
+
+Its relationship with Intelligence Engines is:
+
+```text
+Enterprise Society
+        ↓
+Enterprise Intelligence Engines
+        ↓
+Enterprise Domains
+        ↓
+Enterprise Evidence
+```
+
+The Enterprise Society may synthesise outputs across engines.
+
+It must not silently rewrite domain truth.
+
+---
+
+# 33. Intelligence Society Model
+
+The combined architecture can therefore be represented as:
+
+```text
+                         ESSENTIALS MART
+                                │
+                ┌───────────────┴───────────────┐
+                │                               │
+           BUSINESS DOMAINS                 USERS /
+                │                           ENTERPRISE
+                │                               │
+                └───────────────┬───────────────┘
+                                │
+                         EVIDENCE LAYER
+                                │
+                     INTELLIGENCE ENGINES
+                                │
+        ┌───────────────┬───────┴───────┬───────────────┐
+        │               │               │               │
+    Customer       Commerce        Inventory       Enterprise
+    Household      Product        Relationship     Intelligence
+        │               │               │               │
+        └───────────────┴───────┬───────┴───────────────┘
+                                │
+                         TRUST ENGINE
+                                │
+                         LEARNING ENGINE
+                                │
+                ┌───────────────┴───────────────┐
+                │                               │
+            AI SOCIETY                    ENTERPRISE
+                │                           SOCIETY
+                │                               │
+                └───────────────┬───────────────┘
+                                │
+                             ACTION
+                                │
+                             OUTCOME
+                                │
+                             LEARNING
+```
+
+---
+
+# 34. Intelligence and Human Agency
+
+Essentials Mart must preserve the principle:
+
+> **The platform should help people make better decisions, not make people feel controlled by the platform.**
+
+For customers this means:
+
+* recommendations remain suggestions;
+* assistance remains optional;
+* personalisation remains respectful;
+* rewards remain meaningful;
+* re-engagement remains restrained.
+
+For employees this means:
+
+* intelligence supports work;
+* intelligence does not automatically determine worth;
+* consequential decisions receive appropriate human review.
+
+For executives this means:
+
+* intelligence improves visibility;
+* intelligence does not silently become corporate authority.
+
+---
+
+# 35. Intelligence and Explainability
+
+The more consequential the intelligence, the greater the explanation requirement.
+
+A useful principle is:
+
+```text
+Low Consequence
+      ↓
+Lightweight Explanation
+
+High Consequence
+      ↓
+Strong Evidence + Traceability + Human Review
+```
+
+For example:
+
+A product suggestion may require only a lightweight explanation.
+
+A financial recommendation may require considerably stronger evidence.
+
+A compliance recommendation may require traceable regulatory evidence.
+
+An employment recommendation may require heightened safeguards and human review.
+
+---
+
+# 36. Intelligence and Privacy
+
+Intelligence must operate under least-necessary-information principles.
+
+An engine should consume the minimum information necessary for its purpose.
+
+It should not receive unrestricted access merely because broader access might improve predictive accuracy.
+
+Therefore:
+
+> **Prediction quality does not automatically justify unrestricted data access.**
+
+Privacy boundaries remain part of the architecture rather than being added later as an implementation detail.
+
+---
+
+# 37. Intelligence and Security
+
+Intelligence outputs can themselves become sensitive information.
+
+For example:
+
+* inferred household patterns;
+* predicted behaviour;
+* enterprise forecasts;
+* supplier risk;
+* workforce intelligence;
+* customer relationship signals.
+
+Therefore, intelligence outputs require:
+
+* access control;
+* classification;
+* appropriate retention;
+* auditability;
+* secure transport;
+* controlled sharing.
+
+Derived intelligence must be treated as governed information.
+
+---
+
+# 38. Intelligence and Economic Sustainability
+
+Intelligence consumes resources.
+
+At 100 million users, unlimited intelligence computation would be economically irresponsible.
+
+The platform must therefore eventually support:
+
+* intelligence prioritisation;
+* caching;
+* batching;
+* event-driven computation;
+* model selection;
+* inference budgets;
+* computation tiers.
+
+The architectural principle is:
+
+> **Use intelligence where its expected value justifies its cost.**
+
+This applies particularly to:
+
+* large AI models;
+* continuous inference;
+* personalisation;
+* forecasting;
+* recommendation generation.
+
+---
+
+# 39. Intelligence Priority
+
+Not every event deserves the same intelligence investment.
+
+The platform should eventually distinguish:
+
+```text
+Critical Signal
+     ↓
+Immediate Intelligence
+
+Important Signal
+     ↓
+Near-Term Intelligence
+
+Routine Signal
+     ↓
+Batch / Deferred Intelligence
+
+Low-Value Signal
+     ↓
+No Intelligence Required
+```
+
+This allows Essentials Mart to scale intelligently rather than attempting to reason equally deeply about every event.
+
+---
+
+# 40. Intelligence Caching and Reuse
+
+When intelligence remains valid for a defined period, the platform should be able to reuse it.
+
+For example:
+
+```text
+Customer Preference
+      ↓
+Validated Intelligence
+      ↓
+Reusable Within Validity Window
+```
+
+However, cached intelligence must have:
+
+* freshness;
+* scope;
+* expiration;
+* invalidation rules.
+
+Stale intelligence must not silently become permanent truth.
+
+---
+
+# 41. Intelligence Invalidation
+
+Intelligence should be invalidated when material underlying conditions change.
+
+Examples:
+
+```text
+Product discontinued
+       ↓
+Product Intelligence invalidated
+```
+
+```text
+Household preference changed
+       ↓
+Relevant recommendation intelligence invalidated
+```
+
+```text
+Inventory changed materially
+       ↓
+Availability intelligence invalidated
+```
+
+```text
+Policy changed
+       ↓
+Affected recommendations re-evaluated
+```
+
+This is essential for maintaining trust.
+
+---
+
+# 42. Intelligence Audit Trail
+
+Material intelligence actions should eventually support an audit chain:
+
+```text
+Evidence
+   ↓
+Engine
+   ↓
+Version
+   ↓
+Output
+   ↓
+Trust Evaluation
+   ↓
+Decision
+   ↓
+Action
+   ↓
+Outcome
+```
+
+This becomes the foundation for later:
+
+* observability;
+* governance;
+* incident investigation;
+* model evaluation;
+* compliance;
+* customer support.
+
+---
+
+# 43. Intelligence Learning Loop
+
+The Intelligence Layer becomes progressively better through verified feedback.
+
+```text
+Prediction
+   ↓
+Actual Outcome
+   ↓
+Comparison
+   ↓
+Error / Success
+   ↓
+Learning
+   ↓
+Model Improvement
+   ↓
+New Prediction
+```
+
+The platform must not learn indiscriminately from every outcome.
+
+Learning should eventually account for:
+
+* data quality;
+* causality;
+* confidence;
+* context;
+* selection bias;
+* abnormal events;
+* policy changes.
+
+---
+
+# 44. Intelligence Does Not Become Autonomous Authority
+
+The following architectural prohibition is established:
+
+> **No Intelligence Engine may independently grant itself authority that has not been explicitly assigned to it by the enterprise architecture.**
+
+An engine cannot decide:
+
+> "Because I can predict this, I may now control this."
+
+Capability does not imply authority.
+
+---
+
+# 45. Intelligence Engine Creation Rule
+
+A new Intelligence Engine may only be introduced when there is a demonstrable need for a distinct intelligence responsibility.
+
+The proposed engine must answer:
+
+1. Why does it exist?
+2. What evidence does it consume?
+3. What intelligence does it produce?
+4. What domain owns the underlying truth?
+5. What decisions can it influence?
+6. What can it never control?
+7. How is trust enforced?
+8. How does AI improve it?
+9. How is learning performed?
+10. Can it operate at 100 million users?
+
+If these questions cannot be answered, the proposed engine should not yet exist.
+
+---
+
+# 46. Intelligence Engine Duplication Rule
+
+Two engines must not independently solve the same intelligence problem without a deliberate architectural reason.
+
+For example, there should not be:
+
+```text
+Customer Agent A
+   ↓
+Customer Preference Engine A
+
+Customer Agent B
+   ↓
+Customer Preference Engine B
+```
+
+when both are attempting to infer the same underlying concept.
+
+Instead:
+
+```text
+Shared Customer Intelligence
+        ↓
+Multiple Consumers
+```
+
+This creates consistency across the platform.
+
+---
+
+# 47. Intelligence Engine Independence
+
+An Intelligence Engine should be replaceable without requiring the entire enterprise architecture to change.
+
+Therefore:
+
+```text
+Engine Version 1
+       ↓
+Engine Contract
+       ↓
+Engine Version 2
+```
+
+Consumers should depend primarily on the governed capability contract rather than the internal model.
+
+This supports:
+
+* model replacement;
+* vendor replacement;
+* technology evolution;
+* model upgrades;
+* cost optimisation.
+
+---
+
+# 48. Intelligence Engine Observability
+
+Each engine will eventually require observability across:
+
+* latency;
+* availability;
+* accuracy;
+* confidence;
+* drift;
+* cost;
+* usage;
+* failure rate;
+* decision outcomes.
+
+The Intelligence Layer therefore becomes observable as a first-class architectural subsystem.
+
+---
+
+# 49. Intelligence Engine Security Boundary
+
+An Intelligence Engine should have explicitly defined:
+
+* permitted callers;
+* permitted evidence;
+* permitted outputs;
+* permitted actions;
+* data classification;
+* retention;
+* audit requirements.
+
+The architecture must prevent:
+
+```text
+Any Agent
+   ↓
+Any Engine
+   ↓
+All Data
+   ↓
+Unlimited Action
+```
+
+The preferred model is:
+
+```text
+Authorised Agent
+       ↓
+Authorised Capability
+       ↓
+Authorised Evidence
+       ↓
+Governed Intelligence
+       ↓
+Authorised Action
+```
+
+---
+
+# 50. Global Intelligence Architecture
+
+At global scale, the Intelligence Layer must support:
+
+* regional intelligence;
+* market-specific models;
+* local regulations;
+* local languages;
+* local currencies;
+* cultural differences;
+* different product catalogues;
+* different store formats;
+* different operational conditions.
+
+The architecture should therefore distinguish:
+
+```text
+Global Intelligence Principles
+            +
+Regional Intelligence
+            +
+Market Intelligence
+            +
+Local Context
+```
+
+rather than assuming one model behaves identically everywhere.
+
+---
+
+# 51. 100 Million User Requirement
+
+At 100 million users, the Intelligence Layer must not require 100 million independent full-scale reasoning processes for every ordinary interaction.
+
+The architecture must eventually support multiple levels of intelligence:
+
+```text
+Level 1 — Deterministic Rules
+        ↓
+Level 2 — Lightweight Intelligence
+        ↓
+Level 3 — Personalised Intelligence
+        ↓
+Level 4 — Deep Reasoning
+        ↓
+Level 5 — Human Escalation
+```
+
+The platform should invoke the appropriate level according to:
+
+* complexity;
+* consequence;
+* uncertainty;
+* user context;
+* expected value;
+* computational cost.
+
+This becomes a major scalability mechanism.
+
+---
+
+# 52. Intelligence and Walk Mode
+
+Walk Mode will eventually become one of the richest consumers of the Intelligence Layer.
+
+For example:
+
+```text
+Walk Mode
+   │
+   ├── Product Intelligence
+   ├── Inventory Intelligence
+   ├── Customer Intelligence
+   ├── Household Intelligence
+   ├── Relationship Intelligence
+   ├── Recommendation Intelligence
+   ├── Trust Engine
+   └── AI Society
+```
+
+The Living Digital Supermarket therefore does not contain its own independent intelligence universe.
+
+It becomes an experience layer over the platform's intelligence architecture.
+
+---
+
+# 53. Intelligence and Shopping From Home
+
+The same Intelligence Engines should support both:
+
+```text
+Shopping From Home
+```
+
+and:
+
+```text
+Walk Mode
+```
+
+The experience changes.
+
+The intelligence foundation does not need to be duplicated.
+
+For example:
+
+```text
+Customer wants milk
+        ↓
+Customer Intelligence
+        ↓
+Household Context
+        ↓
+Inventory Intelligence
+        ↓
+Product Intelligence
+        ↓
+Recommendation
+        ↓
+Trust Evaluation
+```
+
+The resulting recommendation may appear:
+
+* in home shopping;
+* in Walk Mode;
+* through the AI companion;
+* through another future interface.
+
+---
+
+# 54. Intelligence as Platform Infrastructure
+
+Intelligence should therefore be treated as a platform capability rather than a feature.
+
+A feature may consume intelligence.
+
+It should not reinvent it.
+
+This creates:
+
+```text
+ONE INTELLIGENCE FOUNDATION
+        ↓
+MANY EXPERIENCES
+```
+
+rather than:
+
+```text
+EVERY FEATURE
+        ↓
+ITS OWN AI
+        ↓
+ITS OWN DATA
+        ↓
+ITS OWN RULES
+```
+
+The latter pattern would create fragmentation and inconsistent behaviour.
+
+---
+
+# 55. Intelligence Governance
+
+The Intelligence Layer will eventually require an enterprise governance mechanism covering:
+
+* model approval;
+* engine creation;
+* engine retirement;
+* model changes;
+* policy changes;
+* data access;
+* high-risk decisions;
+* audit requirements.
+
+This governance must remain federated enough to respect domain ownership while maintaining enterprise-wide standards.
+
+---
+
+# 56. Intelligence Change Management
+
+Changes to Intelligence Engines must be treated according to their impact.
+
+### Low-impact change
+
+May be deployed through ordinary engine governance.
+
+### Medium-impact change
+
+Requires validation and monitoring.
+
+### High-impact change
+
+Requires:
+
+* explicit review;
+* stronger testing;
+* rollback capability;
+* documented decision authority.
+
+### Critical change
+
+Requires formal architectural and governance approval.
+
+---
+
+# 57. Intelligence Incident Response
+
+When an Intelligence Engine produces materially harmful or incorrect results, the platform must eventually support:
+
+```text
+Detect
+ ↓
+Contain
+ ↓
+Disable / Degrade
+ ↓
+Investigate
+ ↓
+Identify Cause
+ ↓
+Correct
+ ↓
+Re-evaluate Historical Impact
+ ↓
+Restore
+ ↓
+Learn
+```
+
+This ensures that intelligence failures become learning opportunities rather than recurring systemic problems.
+
+---
+
+# 58. Intelligence Retirement
+
+An Intelligence Engine may be retired when:
+
+* its purpose no longer exists;
+* its outputs are no longer useful;
+* a superior engine replaces it;
+* its operating cost exceeds its value;
+* its risk becomes unacceptable.
+
+Retirement must include:
+
+* consumer migration;
+* historical record handling;
+* model archival;
+* contract deprecation;
+* governance review.
+
+---
+
+# 59. Intelligence Engine Constitutional Laws
+
+Commit 011 establishes the following architectural laws:
+
+> **Business domains own truth.**
+
+> **Intelligence Engines own intelligence, not the underlying business truth.**
+
+> **Evidence must have provenance.**
+
+> **Inference must not be represented as fact.**
+
+> **Prediction must not be represented as certainty.**
+
+> **Confidence and freshness are properties of intelligence.**
+
+> **Recommendation does not automatically imply authority.**
+
+> **Capability does not imply permission.**
+
+> **AI does not automatically imply autonomy.**
+
+> **Trust must evaluate consequential platform behaviour.**
+
+> **Learning must improve future interpretation without rewriting historical truth.**
+
+> **Intelligence must degrade gracefully when non-critical engines fail.**
+
+> **No engine may become an unrestricted universal intelligence layer.**
+
+> **Duplicate intelligence capabilities should be avoided unless deliberately justified.**
+
+> **Intelligence must remain replaceable through explicit contracts.**
+
+> **Privacy limits intelligence access even when additional data could improve prediction.**
+
+> **Economic cost is an architectural consideration.**
+
+> **The more consequential the decision, the stronger the evidence and human oversight required.**
+
+> **Intelligence must remain viable at 100 million users.**
+
+> **The platform should use intelligence to empower people, not control them.**
+
+---
+
+# 60. Final Intelligence Architecture
+
+The complete conceptual model is:
+
+```text
+                         ESSENTIALS MART
+                                │
+                 ┌──────────────┴──────────────┐
+                 │                             │
+          BUSINESS DOMAINS               ENTERPRISE DOMAINS
+                 │                             │
+                 └──────────────┬──────────────┘
+                                │
+                         AUTHORITATIVE TRUTH
+                                │
+                           EVIDENCE
+                                │
+                    ┌───────────┴───────────┐
+                    │                       │
+             CUSTOMER / HOUSEHOLD     ENTERPRISE
+               INTELLIGENCE          INTELLIGENCE
+                    │                       │
+                    └───────────┬───────────┘
+                                │
+                     INTELLIGENCE ENGINES
+                                │
+       ┌────────────┬───────────┼───────────┬────────────┐
+       │            │           │           │            │
+    Customer     Product    Inventory   Relationship  Reward
+    Household    Commerce   Forecasting Intelligence  Recognition
+       │            │           │           │            │
+       └────────────┴───────────┼───────────┴────────────┘
+                                │
+                     ┌──────────┴──────────┐
+                     │                     │
+                TRUST ENGINE          LEARNING ENGINE
+                     │                     │
+                     └──────────┬──────────┘
+                                │
+                    ┌───────────┴───────────┐
+                    │                       │
+                AI SOCIETY             ENTERPRISE
+                    │                    SOCIETY
+                    │                       │
+                    └───────────┬───────────┘
+                                │
+                           DECISION SUPPORT
+                                │
+                              ACTION
+                                │
+                             OUTCOME
+                                │
+                             LEARNING
+                                │
+                         IMPROVED INTELLIGENCE
+```
+
+---
+
+# 61. Relationship to Later Architecture
+
+Commit 011 intentionally stops before implementation.
+
+It establishes the conceptual foundation required for later stages.
+
+It does **not** define:
+
+* database tables;
+* columns;
+* indexes;
+* entity schemas;
+* aggregates;
+* API endpoints;
+* event payload schemas;
+* service deployment;
+* model implementation;
+* infrastructure;
+* Flutter implementation.
+
+Those decisions must be derived later from the architecture rather than invented prematurely.
+
+The intended progression remains:
+
+```text
+EDA-001
+   ↓
+ADRs
+   ↓
+EIP
+   ↓
+Enterprise Model Freeze
+   ↓
+Information Architecture
+   ↓
+Entities
+   ↓
+Relationships
+   ↓
+Aggregates
+   ↓
+IDs
+   ↓
+Events
+   ↓
+Lifecycle
+   ↓
+Backend Architecture
+   ↓
+APIs / Services / Event Bus
+   ↓
+Flutter
+   ↓
+Walk Mode
+   ↓
+Full AI Society
+```
+
+---
+
+# End of Commit 011
+
+Commit 011 establishes the Intelligence Engine Architecture as a first-class architectural layer of Essentials Mart.
+
+It defines how domain-owned truth becomes governed intelligence, how intelligence becomes decision support, how actions generate outcomes, and how outcomes feed the learning cycle.
+
+It establishes the constitutional boundary between:
+
+* Business Domains;
+* Intelligence Engines;
+* Trust Engine;
+* Learning Engine;
+* AI Society;
+* Enterprise Society;
+* human decision-makers.
+
+This completes the foundational architecture required for the Intelligence Layer to scale with Essentials Mart rather than becoming a collection of disconnected AI features.
 
 # 11. Domain Philosophy
 
