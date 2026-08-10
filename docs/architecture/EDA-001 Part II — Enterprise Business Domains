@@ -17431,6 +17431,1695 @@ Learning From It
 
 That is the standard required for a platform intended to grow from a single store into a globally deployable enterprise system.
 
+# EDA-001 — ESSENTIALS MART ENTERPRISE ARCHITECTURE
+
+## PART 2 — ENTERPRISE OPERATING MODEL, COORDINATION & DECISION ARCHITECTURE
+
+**Commit:** 018
+**Status:** COMMIT READY
+**Position:** Final substantive commit of EDA-001 Part 2
+**Predecessor:** Commit 017 — Enterprise Scalability & Global Growth Architecture
+
+---
+
+# 1. Purpose
+
+Commit 018 establishes how the Essentials Mart enterprise operates as a coordinated system.
+
+Previous commits established the enterprise domains, intelligence capabilities, actors, relationships, events, analytics, trust mechanisms, resilience and scalability.
+
+Those capabilities must now be connected by an explicit operating model.
+
+The purpose of this commit is therefore to establish:
+
+* how domains cooperate;
+* how responsibilities are distributed;
+* how decisions are made;
+* how decisions move between humans, systems and AI;
+* how cross-domain processes operate;
+* how conflicts are resolved;
+* how exceptions are handled;
+* how enterprise policies interact with domain autonomy;
+* how accountability is preserved;
+* how the model scales without creating a central bottleneck.
+
+This commit does **not** define the final database schema, APIs, service topology or implementation details.
+
+Those belong to subsequent architectural phases.
+
+---
+
+# 2. Core Principle
+
+> **Every significant enterprise capability must have an owner, every significant decision must have an authority, every significant process must have an accountable outcome, and every cross-domain interaction must have an explicit coordination mechanism.**
+
+No architectural capability should exist in an ownership vacuum.
+
+---
+
+# 3. The Enterprise Operating Model
+
+Essentials Mart shall operate as a **federated, intelligence-enabled enterprise**.
+
+This means:
+
+* enterprise-wide concerns are governed centrally where consistency is essential;
+* domain-specific decisions remain with the domain where local context matters;
+* cross-domain decisions use explicit coordination mechanisms;
+* AI may automate appropriate decisions within defined authority;
+* humans retain accountability for decisions that require human ownership;
+* enterprise policy overrides conflicting local preference where enterprise-wide consistency is required.
+
+The objective is neither complete centralisation nor unrestricted decentralisation.
+
+It is:
+
+> **Centralise what must be consistent. Federate what benefits from domain ownership. Coordinate what crosses boundaries.**
+
+This principle prevents the enterprise from becoming either a central bottleneck or a collection of disconnected systems.
+
+---
+
+# 4. Enterprise Operating Layers
+
+The operating model consists conceptually of five layers:
+
+```text
+Enterprise Strategy
+        ↓
+Enterprise Policies & Guardrails
+        ↓
+Domain Capabilities
+        ↓
+Cross-Domain Coordination
+        ↓
+Operational Execution
+```
+
+Intelligence operates across these layers rather than existing as an isolated layer.
+
+---
+
+# 5. Enterprise Strategy
+
+Enterprise strategy establishes:
+
+* long-term direction;
+* enterprise objectives;
+* acceptable risk;
+* business priorities;
+* customer promise;
+* economic objectives;
+* geographic expansion;
+* major investment priorities.
+
+Domains must align with enterprise strategy.
+
+A domain must not optimise itself in a way that materially damages the enterprise.
+
+---
+
+# 6. Enterprise Guardrails
+
+Enterprise guardrails establish boundaries within which domains operate.
+
+Examples include:
+
+* security requirements;
+* privacy requirements;
+* financial constraints;
+* ethical requirements;
+* AI governance;
+* regulatory requirements;
+* trust requirements;
+* customer protection;
+* data governance.
+
+Guardrails establish boundaries without necessarily prescribing every implementation detail.
+
+---
+
+# 7. Domain Autonomy
+
+Within enterprise guardrails, domains should retain appropriate autonomy.
+
+For example:
+
+```text
+Enterprise
+   ↓
+Defines Customer Protection Principles
+
+Customer Intelligence
+   ↓
+Determines appropriate customer insights
+```
+
+The enterprise should not micromanage every domain decision.
+
+---
+
+# 8. Domain Ownership
+
+Every domain shall have a clearly defined conceptual owner.
+
+The owner is accountable for:
+
+* domain purpose;
+* domain outcomes;
+* domain policies;
+* domain data;
+* domain intelligence;
+* domain health;
+* domain dependencies;
+* domain evolution.
+
+Exact organizational role assignments will be defined later.
+
+---
+
+# 9. Domain Boundaries
+
+A domain owns its responsibilities.
+
+It must not silently assume ownership of another domain's responsibilities.
+
+For example:
+
+```text
+Reward Intelligence
+        ≠
+Trust Engine
+```
+
+Reward Intelligence may consume trust information.
+
+It does not own the Trust Engine.
+
+Likewise:
+
+```text
+Customer Intelligence
+        ≠
+Customer Identity
+```
+
+Customer Intelligence may analyse customer information.
+
+It does not automatically own identity.
+
+---
+
+# 10. Cross-Domain Coordination
+
+When a process crosses multiple domains, coordination must be explicit.
+
+Conceptually:
+
+```text
+Domain A
+   ↓
+Event / Request
+   ↓
+Domain B
+   ↓
+Decision
+   ↓
+Domain C
+   ↓
+Outcome
+```
+
+No domain should need undocumented assumptions about another domain's internal behaviour.
+
+---
+
+# 11. Enterprise Value Streams
+
+The enterprise shall recognise end-to-end value streams.
+
+Examples include:
+
+### Customer value stream
+
+```text
+Discover
+ ↓
+Consider
+ ↓
+Purchase
+ ↓
+Fulfil
+ ↓
+Receive
+ ↓
+Use
+ ↓
+Feedback
+ ↓
+Relationship
+ ↓
+Re-engagement
+```
+
+### Supplier value stream
+
+```text
+Supplier Onboarding
+ ↓
+Catalogue
+ ↓
+Supply
+ ↓
+Inventory
+ ↓
+Sales
+ ↓
+Performance
+ ↓
+Returns / Complaints
+ ↓
+Settlement
+```
+
+### Service-resolution value stream
+
+```text
+Issue
+ ↓
+Detection
+ ↓
+Service Desk
+ ↓
+Investigation
+ ↓
+Resolution
+ ↓
+Customer Outcome
+ ↓
+Learning
+```
+
+The detailed process models will be produced later.
+
+Part 2 establishes that the enterprise must think in terms of **end-to-end outcomes**, not isolated departmental actions.
+
+---
+
+# 12. Process Ownership
+
+Every major enterprise process must eventually have an accountable owner.
+
+A process owner is responsible for the outcome across domain boundaries.
+
+This prevents the situation where:
+
+```text
+Domain A says:
+"Not our responsibility."
+
+Domain B says:
+"Not our responsibility."
+
+Customer receives:
+"No resolution."
+```
+
+Cross-domain processes must therefore have outcome accountability.
+
+---
+
+# 13. Decision Rights
+
+The enterprise shall explicitly distinguish:
+
+* who decides;
+* who executes;
+* who must be consulted;
+* who must be informed;
+* who is accountable.
+
+Decision rights must be defined at the appropriate level.
+
+The goal is to avoid both:
+
+* uncontrolled decentralisation;
+* unnecessary centralisation.
+
+Clear decision rights are particularly important for AI-enabled operations, where ownership must remain explicit even when execution becomes automated.
+
+---
+
+# 14. Decision Hierarchy
+
+Decisions should generally occur at the lowest appropriate level.
+
+Conceptually:
+
+```text
+Enterprise Decision
+        ↓
+Domain Decision
+        ↓
+Process Decision
+        ↓
+Operational Decision
+        ↓
+Automated Decision
+```
+
+A lower-level actor should not escalate every ordinary decision to enterprise leadership.
+
+---
+
+# 15. Enterprise-Level Decisions
+
+Enterprise-level authority applies to matters such as:
+
+* enterprise strategy;
+* enterprise-wide policy;
+* major risk;
+* global standards;
+* major financial exposure;
+* security architecture;
+* major AI authority;
+* major regulatory obligations.
+
+---
+
+# 16. Domain-Level Decisions
+
+Domains should decide matters that primarily concern their own capability.
+
+Examples:
+
+* domain workflows;
+* domain-specific intelligence;
+* domain-specific optimisation;
+* domain-specific operational rules.
+
+Subject to enterprise guardrails.
+
+---
+
+# 17. Operational Decisions
+
+Operational decisions should occur as close as practical to the operation.
+
+Examples:
+
+* stock handling;
+* service actions;
+* routine fulfilment;
+* routine customer assistance;
+* store operations.
+
+This supports responsiveness and scalability.
+
+---
+
+# 18. AI Decision Rights
+
+AI agents may receive decision authority only when explicitly granted.
+
+AI authority must be:
+
+* scoped;
+* identifiable;
+* policy-bound;
+* auditable;
+* revocable;
+* appropriate to the risk of the action.
+
+AI must not inherit unlimited authority simply because it can technically access a system.
+
+---
+
+# 19. Human Decision Rights
+
+Humans retain authority over decisions designated as requiring human judgement.
+
+These may include:
+
+* high-risk decisions;
+* irreversible decisions;
+* exceptional cases;
+* policy changes;
+* major financial decisions;
+* sensitive customer cases;
+* security decisions;
+* enterprise strategic decisions.
+
+---
+
+# 20. Automated Decision Rights
+
+Low-risk, well-defined decisions may be automated.
+
+Automation is encouraged where it improves:
+
+* speed;
+* consistency;
+* scalability;
+* cost;
+* customer experience.
+
+But automation must remain within explicit authority.
+
+---
+
+# 21. Decision Risk Classification
+
+Future architecture shall classify decisions according to risk.
+
+Conceptually:
+
+```text
+Level 1 — Routine
+Level 2 — Material
+Level 3 — High Risk
+Level 4 — Critical
+```
+
+The higher the risk, the stronger the requirements for:
+
+* authorization;
+* evidence;
+* oversight;
+* audit;
+* reversibility;
+* escalation.
+
+---
+
+# 22. Decision Reversibility
+
+Decision authority should consider whether an action can be reversed.
+
+A reversible action may require less authority than an irreversible action of similar operational scope.
+
+Examples:
+
+```text
+Recommendation
+→ Easily reversible
+
+Temporary account preference
+→ Reversible
+
+Financial transaction
+→ Material
+
+Permanent data deletion
+→ Potentially irreversible
+```
+
+---
+
+# 23. Escalation
+
+When an actor cannot safely or legitimately make a decision, the decision must escalate.
+
+Conceptually:
+
+```text
+Local Decision
+      ↓
+Unable to Decide
+      ↓
+Domain Authority
+      ↓
+Unable to Decide
+      ↓
+Enterprise Authority
+```
+
+Escalation must not become the default path for ordinary operations.
+
+---
+
+# 24. Exception Management
+
+Exceptions are expected in a complex enterprise.
+
+The operating model shall support:
+
+* identification;
+* classification;
+* ownership;
+* temporary mitigation;
+* decision;
+* approval;
+* documentation;
+* learning;
+* closure.
+
+An exception must not silently become permanent architecture.
+
+---
+
+# 25. Policy Hierarchy
+
+Policies shall have an explicit hierarchy.
+
+Conceptually:
+
+```text
+Law / Regulation
+      ↓
+Enterprise Policy
+      ↓
+Domain Policy
+      ↓
+Process Rule
+      ↓
+Operational Rule
+      ↓
+Automation
+```
+
+Lower-level rules must not contradict higher-level constraints.
+
+---
+
+# 26. Policy Precedence
+
+Where policies conflict:
+
+> **The higher-authority policy takes precedence unless an explicitly approved exception exists.**
+
+This principle prevents domain-level optimisation from accidentally violating enterprise obligations.
+
+---
+
+# 27. Domain Coordination Rules
+
+Domains must coordinate when:
+
+* one domain depends on another;
+* a process crosses ownership boundaries;
+* data is exchanged;
+* a decision affects another domain;
+* an event changes another domain's state;
+* an enterprise objective requires multiple domains.
+
+---
+
+# 28. Event-Based Coordination
+
+Events shall remain a primary coordination mechanism where appropriate.
+
+A domain should communicate meaningful state changes without exposing unnecessary internal implementation details.
+
+Conceptually:
+
+```text
+Domain State Change
+       ↓
+Enterprise Event
+       ↓
+Interested Domains
+```
+
+This supports loose coupling.
+
+---
+
+# 29. Request-Based Coordination
+
+Not every interaction is an event.
+
+Some operations require direct requests.
+
+The architecture therefore recognises both:
+
+```text
+Request/Response
+```
+
+and:
+
+```text
+Event-Driven Coordination
+```
+
+The final API and integration strategy will be defined later.
+
+---
+
+# 30. Intelligence Coordination
+
+Intelligence engines must cooperate without collapsing their boundaries.
+
+For example:
+
+```text
+Customer Intelligence
+       ↓
+Customer Context
+
+Trust Engine
+       ↓
+Trust Context
+
+Reward Intelligence
+       ↓
+Reward Decision
+
+Relationship Intelligence
+       ↓
+Relationship Context
+```
+
+The enterprise can combine these signals without turning every engine into one monolithic intelligence system.
+
+---
+
+# 31. Intelligence Composition
+
+Higher-level decisions may combine outputs from multiple intelligence engines.
+
+Conceptually:
+
+```text
+Customer Intelligence
+        +
+Trust Intelligence
+        +
+Relationship Intelligence
+        +
+Transaction Context
+        ↓
+Enterprise Decision Context
+```
+
+The detailed orchestration mechanism belongs to the EIP and AI architecture.
+
+---
+
+# 32. Trust in Cross-Domain Decisions
+
+A domain must not blindly trust information simply because it came from another internal domain.
+
+Cross-domain information must have:
+
+* identifiable provenance;
+* appropriate ownership;
+* defined semantics;
+* appropriate authorization.
+
+---
+
+# 33. Data Ownership
+
+Every important enterprise information asset must eventually have an owner.
+
+The owner is accountable for:
+
+* meaning;
+* quality;
+* lifecycle;
+* authorized use;
+* changes;
+* stewardship.
+
+The precise data ownership model will be established during Phase 2.
+
+---
+
+# 34. Analytics Ownership
+
+Analytics consumers must not automatically become owners of the source information.
+
+For example:
+
+```text
+Supplier Analytics
+```
+
+may use:
+
+```text
+Sales Information
+```
+
+without owning the underlying transaction information.
+
+This distinction prevents analytical duplication from creating conflicting sources of truth.
+
+---
+
+# 35. Systems of Record
+
+Phase 2 must establish authoritative sources for important enterprise information.
+
+The enterprise should avoid multiple competing sources of truth.
+
+Where multiple representations are necessary, lineage and ownership must remain clear.
+
+---
+
+# 36. Information Flow
+
+Information should move according to purpose and authority.
+
+The operating model shall distinguish:
+
+```text
+Source
+ ↓
+Owner
+ ↓
+Authorized Consumer
+ ↓
+Transformation
+ ↓
+Decision
+```
+
+This becomes a foundation for the Information Architecture phase.
+
+---
+
+# 37. Lifecycle Governance
+
+Important enterprise objects must eventually have defined lifecycle states.
+
+Examples include:
+
+```text
+Created
+ ↓
+Active
+ ↓
+Suspended
+ ↓
+Modified
+ ↓
+Archived
+ ↓
+Retired
+```
+
+The exact lifecycle for each entity will be defined in Phase 2.
+
+Part 2 establishes that lifecycle ownership is mandatory.
+
+---
+
+# 38. Accountability
+
+Every major enterprise outcome must have an accountable party.
+
+Accountability cannot be assigned solely to:
+
+* "the system";
+* "the AI";
+* "the platform";
+* "the algorithm".
+
+A system may execute.
+
+An AI may recommend.
+
+A service may automate.
+
+But accountable ownership must remain identifiable.
+
+---
+
+# 39. AI Accountability
+
+AI agents must have:
+
+* an owner;
+* an authority boundary;
+* a defined purpose;
+* defined capabilities;
+* monitoring;
+* auditability;
+* escalation paths.
+
+The more consequential the agent's actions, the stronger these requirements become.
+
+---
+
+# 40. AI Escalation
+
+AI agents should be capable of recognising when they cannot safely continue.
+
+Conceptually:
+
+```text
+AI Decision
+   ↓
+Within Authority?
+   ↓ YES
+Execute
+
+   ↓ NO
+Escalate
+```
+
+AI should not be rewarded architecturally for bypassing its authority boundary.
+
+---
+
+# 41. Human-AI Collaboration
+
+The operating model shall support:
+
+```text
+Human → AI
+AI → Human
+AI → AI
+System → AI
+AI → System
+```
+
+but every interaction must remain governed by identity, authority and accountability.
+
+---
+
+# 42. AI Society Coordination
+
+The AI Society shall not be a collection of autonomous agents acting without coordination.
+
+Agents must operate as participants in an enterprise operating model.
+
+This means:
+
+* defined responsibilities;
+* defined capabilities;
+* defined authority;
+* defined escalation;
+* defined communication mechanisms;
+* defined accountability.
+
+---
+
+# 43. No Agent Sovereignty
+
+No AI agent is sovereign over the enterprise.
+
+An agent cannot independently redefine:
+
+* enterprise policy;
+* security policy;
+* its own authority;
+* another agent's authority;
+* enterprise ownership;
+* its own accountability.
+
+---
+
+# 44. Human Override
+
+Where appropriate, authorized humans must be able to:
+
+* pause;
+* override;
+* revoke;
+* disable;
+* review
+
+AI actions.
+
+The exact mechanism belongs to later architecture.
+
+---
+
+# 45. Conflict Resolution
+
+Cross-domain conflicts must have a defined resolution path.
+
+Conceptually:
+
+```text
+Domain A
+    ↕
+Domain B
+    ↓
+Unable to Resolve
+    ↓
+Enterprise Arbitration
+```
+
+The enterprise should resolve conflicts according to:
+
+1. legal requirements;
+2. enterprise policy;
+3. customer protection;
+4. security;
+5. strategic objectives;
+6. measurable business impact.
+
+---
+
+# 46. Customer Outcome Priority
+
+Where appropriate, cross-domain decisions should consider the effect on the customer.
+
+No domain should optimise a local KPI at the expense of the overall customer relationship.
+
+For example:
+
+```text
+Short-Term Margin
+        ≠
+Always Best Customer Outcome
+```
+
+Enterprise-level optimisation should consider long-term value.
+
+---
+
+# 47. Supplier Coordination
+
+Supplier-facing processes must coordinate:
+
+* supplier management;
+* catalogue;
+* inventory;
+* sales;
+* complaints;
+* returns;
+* logistics;
+* settlement;
+* performance intelligence.
+
+No individual supplier domain should be treated as isolated from the wider value chain.
+
+---
+
+# 48. Store Coordination
+
+Stores represent physical operational nodes within the enterprise.
+
+Store operations must coordinate with:
+
+* inventory;
+* customer experience;
+* fulfilment;
+* staff;
+* suppliers;
+* Walk Mode;
+* analytics;
+* service operations.
+
+---
+
+# 49. Walk Mode Coordination
+
+Walk Mode must not operate as an isolated digital experience.
+
+It must coordinate with:
+
+```text
+Store
+Inventory
+Products
+Customer
+Navigation
+AI Companion
+Analytics
+Enterprise Events
+```
+
+This preserves the principle that Walk Mode represents the **Living Digital Supermarket** rather than a separate virtual product.
+
+---
+
+# 50. Reward Coordination
+
+Reward Intelligence must coordinate with:
+
+* customer behaviour;
+* transaction information;
+* Trust Engine;
+* relationship intelligence;
+* financial constraints;
+* enterprise strategy.
+
+This prevents rewards from being optimised independently of business economics or trust.
+
+---
+
+# 51. Service Coordination
+
+Customer service functions such as:
+
+* service desk;
+* returns;
+* information point;
+* parcel collection
+
+must ultimately connect into real operational ownership.
+
+The system must not create the illusion of support without an accountable human or operational process behind it.
+
+---
+
+# 52. Enterprise Analytics Coordination
+
+Analytics must aggregate information across domains without destroying domain ownership.
+
+The enterprise should be able to produce:
+
+```text
+Customer View
+Supplier View
+Store View
+Staff View
+Management View
+Enterprise View
+```
+
+while preserving access boundaries.
+
+---
+
+# 53. Role-Specific Operating Views
+
+Different actors require different operational views.
+
+Examples:
+
+### Customer
+
+* personal spending;
+* favourite products;
+* purchase history;
+* rewards;
+* relevant recommendations.
+
+### Supplier
+
+* product performance;
+* sales;
+* returns;
+* complaints;
+* breakages;
+* supply performance.
+
+### Staff
+
+* operational workload;
+* authorized customer/service information;
+* role-specific analytics;
+* activity records.
+
+### Management
+
+* enterprise performance;
+* operational health;
+* financial indicators;
+* strategic analytics.
+
+The architecture therefore treats **role-specific information views as an enterprise operating-model requirement**, not merely a UI feature.
+
+---
+
+# 54. Auditability
+
+Every significant operational action must eventually be attributable to:
+
+* a human;
+* service;
+* device;
+* AI agent;
+* automated process.
+
+The operating model therefore depends on the audit architecture established earlier.
+
+---
+
+# 55. Operational Learning
+
+Enterprise operations should feed learning systems.
+
+Conceptually:
+
+```text
+Operation
+ ↓
+Outcome
+ ↓
+Measurement
+ ↓
+Learning
+ ↓
+Improvement
+ ↓
+New Operation
+```
+
+This creates an enterprise learning loop.
+
+---
+
+# 56. Closed-Loop Enterprise Intelligence
+
+Essentials Mart should eventually operate as a feedback system:
+
+```text
+Observe
+ ↓
+Understand
+ ↓
+Decide
+ ↓
+Act
+ ↓
+Measure
+ ↓
+Learn
+ ↓
+Improve
+```
+
+This is one of the defining architectural characteristics of the platform.
+
+---
+
+# 57. Preventing Local Optimisation
+
+A domain must not optimise a local metric if doing so materially harms an enterprise outcome.
+
+For example:
+
+```text
+Domain KPI
+      ↓
+Enterprise Impact
+      ↓
+Decision
+```
+
+Enterprise-level intelligence should be capable of detecting such conflicts.
+
+---
+
+# 58. Enterprise KPI Hierarchy
+
+The architecture should eventually distinguish:
+
+* enterprise KPIs;
+* domain KPIs;
+* process KPIs;
+* operational KPIs;
+* customer KPIs;
+* AI performance KPIs;
+* security KPIs.
+
+The detailed metrics catalogue belongs later.
+
+---
+
+# 59. Governance by Exception
+
+Governance should focus attention where risk or impact warrants it.
+
+Routine operations should remain automated or domain-managed.
+
+Exceptional situations should receive greater oversight.
+
+This prevents governance from becoming a bottleneck.
+
+---
+
+# 60. Change Management
+
+Enterprise changes must consider cross-domain impact.
+
+A change to one domain may affect:
+
+* events;
+* APIs;
+* data;
+* analytics;
+* intelligence engines;
+* AI agents;
+* security;
+* Walk Mode;
+* suppliers;
+* stores.
+
+Therefore architectural change must eventually include impact analysis.
+
+---
+
+# 61. Dependency Awareness
+
+Domains must declare meaningful dependencies.
+
+Dependencies should eventually be represented explicitly in the enterprise model.
+
+This enables:
+
+* impact analysis;
+* failure analysis;
+* change planning;
+* capacity planning;
+* security analysis.
+
+---
+
+# 62. Enterprise Coordination at Scale
+
+At 100 million users, manual coordination becomes impossible.
+
+Therefore coordination must increasingly rely on:
+
+* events;
+* policies;
+* automation;
+* intelligence;
+* explicit ownership;
+* standardized interfaces;
+* observability.
+
+Human coordination should focus on exceptional and strategic situations.
+
+---
+
+# 63. Local Autonomy at Scale
+
+Global scale requires local adaptation.
+
+Stores and regional operations may require local decisions based on:
+
+* geography;
+* demand;
+* supply;
+* infrastructure;
+* regulations;
+* customer behaviour.
+
+Local autonomy must operate within enterprise guardrails.
+
+---
+
+# 64. Global Consistency
+
+Certain capabilities must remain consistent globally where required.
+
+Examples include:
+
+* identity principles;
+* security principles;
+* core customer protection;
+* auditability;
+* enterprise event semantics;
+* AI governance;
+* fundamental trust principles.
+
+---
+
+# 65. Localisation Without Architectural Fragmentation
+
+Regional differences must not create completely separate architectures.
+
+The enterprise should support:
+
+```text
+Global Core
++
+Regional Adaptation
+```
+
+rather than:
+
+```text
+Country A Architecture
+Country B Architecture
+Country C Architecture
+...
+```
+
+---
+
+# 66. Emerging-Market Operation
+
+The operating model must remain viable under:
+
+* intermittent connectivity;
+* constrained infrastructure;
+* local payment differences;
+* regional supplier structures;
+* varying logistics capabilities.
+
+This is an operating-model requirement, not merely an infrastructure problem.
+
+---
+
+# 67. Enterprise Memory
+
+The enterprise must retain institutional knowledge.
+
+Important decisions, incidents, changes and lessons should eventually become part of enterprise knowledge.
+
+This supports:
+
+* AI Society;
+* human operators;
+* architecture;
+* training;
+* operational learning.
+
+---
+
+# 68. Architectural Memory
+
+Architecture itself must be traceable.
+
+Future ADRs will record why major architectural decisions were made.
+
+This commit establishes that the operating model must preserve the relationship between:
+
+```text
+Decision
+ ↓
+Reason
+ ↓
+Authority
+ ↓
+Implementation
+ ↓
+Outcome
+```
+
+---
+
+# 69. Decision Evidence
+
+Important decisions should eventually have sufficient evidence to explain:
+
+* why the decision occurred;
+* who/what made it;
+* what information was considered;
+* which policy applied;
+* what outcome resulted.
+
+This is particularly important for AI-driven decisions.
+
+---
+
+# 70. Reversibility and Recovery
+
+Where possible, enterprise decisions should be designed for recovery.
+
+A system that can make a wrong decision but cannot recover from it is less resilient than one that can detect and reverse mistakes.
+
+---
+
+# 71. Enterprise Operating Constitution
+
+This commit establishes the conceptual foundation for an **Essentials Mart Operating Constitution**.
+
+The Operating Constitution is the collection of principles governing:
+
+* authority;
+* accountability;
+* ownership;
+* coordination;
+* decision rights;
+* policy hierarchy;
+* escalation;
+* exceptions;
+* AI authority;
+* human authority;
+* domain autonomy.
+
+It is not a legal constitution.
+
+It is an architectural operating contract.
+
+---
+
+# 72. Enterprise Operating Laws
+
+Commit 018 establishes the following laws:
+
+1. Every major capability must have an owner.
+2. Every major decision must have an identifiable authority.
+3. Every major process must have an accountable outcome.
+4. Domain ownership must be explicit.
+5. Domain boundaries must be respected.
+6. Cross-domain dependencies must be explicit.
+7. Cross-domain processes require coordination.
+8. Enterprise policies override conflicting lower-level rules.
+9. Domain autonomy exists within enterprise guardrails.
+10. Decisions should occur at the lowest appropriate level.
+11. High-impact decisions require stronger governance.
+12. AI authority must be explicitly granted.
+13. AI cannot grant itself authority.
+14. AI actions must remain attributable.
+15. Humans remain accountable for designated human decisions.
+16. Automated decisions must operate within defined authority.
+17. Exceptions must be explicitly managed.
+18. Escalation must be available without becoming the default.
+19. Enterprise processes must be evaluated by end-to-end outcomes.
+20. Local optimisation must not materially damage enterprise outcomes.
+21. Information ownership must be explicit.
+22. Analytics does not automatically confer ownership of source data.
+23. Important information must have authoritative sources.
+24. Information flows must have identifiable purpose and authority.
+25. Enterprise objects must eventually have lifecycle ownership.
+26. Policies must have explicit precedence.
+27. Events are a primary cross-domain coordination mechanism where appropriate.
+28. Requests remain appropriate where immediate interaction is required.
+29. Intelligence engines should remain independently bounded.
+30. Intelligence may be composed without collapsing domain ownership.
+31. Trust signals may inform decisions but do not automatically confer authority.
+32. Security policy remains authoritative over intelligence recommendations.
+33. Reward decisions must account for trust and enterprise economics.
+34. Walk Mode must remain integrated with the enterprise.
+35. Service experiences must connect to accountable operational ownership.
+36. Role-specific analytics must preserve information boundaries.
+37. Operational actions must be attributable.
+38. Operational outcomes should feed enterprise learning.
+39. Enterprise operations should form a closed learning loop.
+40. Governance should focus disproportionately on exceptions and high-impact decisions.
+41. Enterprise changes must consider cross-domain impact.
+42. Dependencies must be explicitly representable.
+43. Global scale requires policy-driven coordination.
+44. Local autonomy must operate within enterprise guardrails.
+45. Regional variation must not create uncontrolled architectural fragmentation.
+46. Enterprise-wide standards must remain consistent where consistency is necessary.
+47. Enterprise knowledge must be retained.
+48. Architectural decisions must remain traceable.
+49. Important decisions should retain evidence.
+50. Reversible decisions should be preferred where appropriate.
+51. High-consequence decisions require stronger authority.
+52. No AI agent is sovereign over the enterprise.
+53. No domain is sovereign over enterprise-wide obligations.
+54. No operational team may silently redefine enterprise architecture.
+55. The operating model must remain valid at global scale.
+
+---
+
+# 73. Relationship to Previous Part 2 Commits
+
+Commit 018 integrates the preceding architecture.
+
+### Domains
+
+Provide enterprise capabilities.
+
+### Intelligence Engines
+
+Provide specialised intelligence.
+
+### Trust Engine
+
+Provides trust signals and risk context.
+
+### Reward Intelligence
+
+Provides controlled customer-value mechanisms.
+
+### Relationship Intelligence
+
+Maintains relationship context.
+
+### Analytics
+
+Provides role-specific and enterprise-level understanding.
+
+### Events
+
+Enable cross-domain coordination.
+
+### Auditability
+
+Provides accountability and evidence.
+
+### Resilience
+
+Provides continuity.
+
+### Scalability
+
+Allows the operating model to survive growth.
+
+Commit 018 connects these capabilities into a coherent enterprise operating system.
+
+---
+
+# 74. Relationship to Part 3
+
+Security architecture must protect the operating model established here.
+
+Part 3 will therefore define:
+
+* identity;
+* authentication;
+* authorization;
+* privileged access;
+* security boundaries;
+* data protection;
+* AI security;
+* threat management;
+* security monitoring;
+* incident response.
+
+Part 3 must not redefine the enterprise operating model.
+
+It must secure it.
+
+---
+
+# 75. Relationship to Phase 2 — Information Architecture
+
+Commit 018 provides the conceptual contract for Phase 2.
+
+Phase 2 will now translate this operating model into:
+
+* enterprise entities;
+* relationships;
+* aggregate boundaries;
+* IDs;
+* ownership;
+* lifecycle;
+* events;
+* information flows;
+* authoritative sources;
+* data governance.
+
+The detailed models belong there.
+
+---
+
+# 76. Relationship to ADRs
+
+After EDA-001 is complete, major decisions made during this architecture process should be captured as ADRs.
+
+Examples may include:
+
+* federated domain ownership;
+* event-driven coordination;
+* decision-rights model;
+* AI authority;
+* Trust Engine boundaries;
+* data ownership;
+* security architecture;
+* Walk Mode architecture.
+
+---
+
+# 77. Relationship to EIP
+
+The Enterprise Intelligence Pattern will later provide reusable architectural patterns for implementing the intelligence and coordination model established by EDA-001.
+
+EDA establishes:
+
+> **What the enterprise requires.**
+
+EIP establishes:
+
+> **How recurring intelligence patterns should be implemented consistently.**
+
+---
+
+# 78. Part 2 Completion Condition
+
+With Commit 018 complete, EDA-001 Part 2 contains sufficient enterprise-level architecture to proceed into:
+
+* Security Architecture;
+* ADRs;
+* EIP;
+* Event Catalogue;
+* Information Architecture.
+
+No additional substantive enterprise operating-model capability should be added to Part 2 unless a future architectural discovery reveals a genuine contradiction or missing foundational law.
+
+---
+
+# 79. Part 2 Freeze Principle
+
+After Commit 018:
+
+> **Part 2 should be treated as architecturally frozen.**
+
+Future phases may refine, implement and instantiate the model.
+
+They should not casually rewrite it.
+
+If a later phase discovers a genuine architectural contradiction, the change must be treated as an explicit architectural change rather than silently modifying the model.
+
+---
+
+# 80. Final Architectural Principle
+
+> **Essentials Mart is not a collection of independent domains. It is a coordinated enterprise in which specialised domains retain ownership while intelligence, events, policies, people and AI agents work together toward shared enterprise outcomes.**
+
+The objective is not central control.
+
+The objective is **coherent autonomy**.
+
+Each domain should be capable of acting independently where appropriate, while the enterprise remains capable of acting as one system when the outcome crosses domain boundaries.
+
+That principle is what allows Essentials Mart to evolve from a supermarket application into a long-lived intelligent platform.
+
+---
+
+# 81. Commit Completion Criteria
+
+Commit 018 is complete when:
+
+* the enterprise operating model is defined;
+* domain autonomy is established;
+* enterprise guardrails are established;
+* domain ownership is established;
+* cross-domain coordination is established;
+* value-stream thinking is established;
+* process ownership is established;
+* decision rights are established;
+* AI decision authority is established;
+* human decision authority is established;
+* automated decision authority is established;
+* risk-based decision classification is established;
+* escalation is established;
+* exception management is established;
+* policy hierarchy is established;
+* information ownership principles are established;
+* lifecycle ownership is established;
+* accountability is established;
+* AI accountability is established;
+* AI Society coordination principles are established;
+* conflict resolution is established;
+* enterprise analytics coordination is established;
+* role-specific operating views are established;
+* operational learning is established;
+* closed-loop enterprise intelligence is established;
+* global/local operating principles are established;
+* enterprise memory is established;
+* architectural traceability is established;
+* the Operating Constitution concept is established;
+* the bridge to Part 3 is established;
+* the bridge to Phase 2 is established;
+* the conditions for freezing Part 2 are established.
 
 # 11. Action-Level Permissions
 
