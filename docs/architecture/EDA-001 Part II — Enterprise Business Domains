@@ -13755,6 +13755,1970 @@ Store Commerce Failure
 
 ---
 
+# COMMIT 017 — Enterprise Performance, Capacity & Scalability
+
+**Parent Document:** EDA-001 Part 2 — Enterprise Architecture
+**Commit:** 017
+**Status:** Commit Ready
+**Purpose:** Establish the enterprise-wide architectural principles governing performance, capacity, scalability, elasticity, workload growth, resource allocation and global expansion across Essentials Mart.
+
+---
+
+# 1. Purpose
+
+Commit 017 establishes how Essentials Mart will remain performant and economically viable as the platform grows.
+
+Essentials Mart is explicitly designed around the long-term expansion model:
+
+* 1 store → 10,000+ stores
+* 100 users → 100 million+ users
+* 1 country → global deployment
+* small transaction volume → enterprise-scale commerce
+* limited AI workloads → continuous intelligence workloads
+* local analytics → enterprise analytics
+
+The architecture must therefore not merely support today's workload.
+
+It must provide a path for controlled growth.
+
+---
+
+# 2. Core Principle
+
+> **Essentials Mart must scale capacity without requiring fundamental architectural redesign.**
+
+Scaling must be an expected property of the architecture rather than an emergency response to growth.
+
+---
+
+# 3. Scalability, Elasticity and Performance
+
+These concepts are related but distinct.
+
+### Performance
+
+How efficiently the system performs a workload.
+
+### Scalability
+
+The ability to handle increasing workload by adding appropriate capacity.
+
+### Elasticity
+
+The ability to dynamically increase or decrease capacity according to demand.
+
+### Capacity
+
+The amount of workload the system can reliably support within defined performance and reliability requirements.
+
+These concepts must be evaluated together.
+
+---
+
+# 4. Enterprise Scale Model
+
+Essentials Mart shall consider multiple dimensions of scale.
+
+```text
+Users
+Stores
+Countries
+Transactions
+Products
+Suppliers
+Orders
+Events
+Data
+AI Requests
+Analytics
+Devices
+Staff
+Integrations
+```
+
+A system may scale along one dimension without scaling equally along another.
+
+---
+
+# 5. Scale Is Not Just Users
+
+100 million users do not necessarily mean 100 million simultaneous users.
+
+Capacity planning must consider:
+
+* total users;
+* active users;
+* concurrent users;
+* requests per second;
+* transactions per second;
+* event throughput;
+* data growth;
+* AI inference volume;
+* peak traffic.
+
+---
+
+# 6. Growth Dimensions
+
+The architecture must account for at least:
+
+### Horizontal growth
+
+More users, stores or services.
+
+### Vertical growth
+
+Larger workloads handled by individual components.
+
+### Geographic growth
+
+Additional regions and countries.
+
+### Temporal growth
+
+Seasonal and event-driven demand.
+
+### Functional growth
+
+Additional features and domains.
+
+### Data growth
+
+Increasing historical and operational data.
+
+### Intelligence growth
+
+Increasing AI and analytics processing.
+
+---
+
+# 7. Capacity Planning
+
+Capacity planning becomes an ongoing enterprise capability.
+
+It must consider:
+
+```text
+Current Load
++
+Historical Trends
++
+Growth Forecast
++
+Known Events
++
+Expected Peaks
++
+New Features
++
+Geographic Expansion
+=
+Future Capacity Requirement
+```
+
+Capacity planning should occur before predictable demand changes rather than after capacity has already become a bottleneck.
+
+---
+
+# 8. Capacity Must Be Measurable
+
+Each major service should eventually have measurable capacity indicators.
+
+Examples:
+
+* requests/second;
+* transactions/second;
+* events/second;
+* concurrent sessions;
+* database connections;
+* queue depth;
+* storage growth;
+* AI inference requests;
+* search queries;
+* analytics jobs.
+
+---
+
+# 9. Capacity Headroom
+
+Systems must not routinely operate at their absolute maximum capacity.
+
+Capacity planning should maintain appropriate headroom for:
+
+* unexpected demand;
+* traffic spikes;
+* infrastructure degradation;
+* maintenance;
+* scaling delays;
+* regional redistribution.
+
+---
+
+# 10. No Permanent Overprovisioning
+
+Headroom does not mean permanently buying maximum capacity.
+
+The architecture should support elasticity where appropriate.
+
+```text
+Low Demand
+    ↓
+Lower Capacity
+
+High Demand
+    ↓
+Higher Capacity
+```
+
+This balances resilience with economic sustainability.
+
+---
+
+# 11. Horizontal Scaling
+
+Where practical, services should prefer scale-out architectures.
+
+```text
+Instance A
+Instance B
+Instance C
+Instance D
+```
+
+rather than relying indefinitely on:
+
+```text
+One enormous Instance
+```
+
+Horizontal architectures reduce hard scaling ceilings and can reduce single points of failure.
+
+---
+
+# 12. Vertical Scaling
+
+Vertical scaling remains valid where appropriate.
+
+Examples may include:
+
+* specialised databases;
+* compute-heavy workloads;
+* AI inference nodes;
+* temporary capacity increases.
+
+However:
+
+> **Vertical scaling must not become the only scalability strategy for critical services.**
+
+---
+
+# 13. Modular Scaling
+
+Architectural modules should be independently scalable where possible.
+
+For example:
+
+```text
+Checkout
+   ↓
+Scale independently
+
+Search
+   ↓
+Scale independently
+
+Analytics
+   ↓
+Scale independently
+
+AI
+   ↓
+Scale independently
+```
+
+The entire platform should not need to scale simply because one workload increases.
+
+---
+
+# 14. Stateless Application Design
+
+Where appropriate, application services should minimise local state.
+
+This allows instances to be added or removed without requiring users to remain attached to one particular server.
+
+Statelessness supports horizontal scaling and reduces dependence on individual instances.
+
+---
+
+# 15. Session Scalability
+
+User sessions must not unnecessarily depend on a single application instance.
+
+Session state should be managed through appropriate shared or distributed mechanisms.
+
+The architecture must avoid unnecessary instance stickiness because it limits effective scale-out.
+
+---
+
+# 16. Autoscaling
+
+Where appropriate, workloads should be able to automatically scale according to measurable conditions.
+
+Possible signals include:
+
+* CPU;
+* memory;
+* request rate;
+* queue depth;
+* latency;
+* concurrency;
+* AI workload;
+* scheduled demand.
+
+Autoscaling should be governed by safe boundaries rather than unlimited growth.
+
+---
+
+# 17. Scaling Policies
+
+Each scalable service should eventually define:
+
+```text
+Minimum Capacity
+Maximum Capacity
+Scaling Trigger
+Scale-Up Rate
+Scale-Down Rate
+Cooldown
+Emergency Behaviour
+```
+
+These values belong to service-level implementation design.
+
+---
+
+# 18. Scaling Must Be Predictable
+
+Autoscaling should not oscillate continuously.
+
+For example:
+
+```text
+Scale Up
+↓
+Immediately Scale Down
+↓
+Scale Up
+↓
+Scale Down
+```
+
+indicates poor scaling policy.
+
+Scaling decisions should consider sustained demand and system stability.
+
+---
+
+# 19. Predictive Scaling
+
+Where demand is predictable, Essentials Mart may eventually use forecasting.
+
+Examples:
+
+* holidays;
+* promotional campaigns;
+* paydays;
+* seasonal shopping;
+* major product releases;
+* regional events.
+
+Capacity planning can therefore combine historical trends with predicted demand.
+
+---
+
+# 20. AI-Assisted Capacity Planning
+
+The Intelligence layer may eventually assist in predicting:
+
+* demand;
+* traffic;
+* store workload;
+* AI inference requirements;
+* delivery demand;
+* inventory activity.
+
+However:
+
+> **AI should advise capacity decisions without becoming a single point of failure for capacity management.**
+
+---
+
+# 21. Peak Demand
+
+The platform must explicitly model peak workloads.
+
+Examples:
+
+```text
+Normal Day
+        ↓
+Promotion
+        ↓
+Payday
+        ↓
+Holiday
+        ↓
+Exceptional Demand
+```
+
+The architecture must not be sized exclusively around average usage.
+
+---
+
+# 22. Traffic Spikes
+
+Sudden demand increases must be controlled.
+
+Potential mechanisms include:
+
+* autoscaling;
+* queues;
+* caching;
+* rate limiting;
+* load shedding;
+* priority management;
+* traffic distribution.
+
+These mechanisms complement the resilience architecture established in Commit 016.
+
+---
+
+# 23. Rate Limiting
+
+Services should protect themselves from excessive request rates.
+
+Rate limiting may be applied by:
+
+* user;
+* device;
+* IP;
+* API client;
+* supplier;
+* staff account;
+* service;
+* region.
+
+The exact policy depends on the workload.
+
+---
+
+# 24. Quotas
+
+Quotas provide explicit resource boundaries.
+
+They may apply to:
+
+* API requests;
+* AI requests;
+* storage;
+* uploads;
+* supplier integrations;
+* background processing.
+
+Quotas protect the enterprise from uncontrolled consumption.
+
+---
+
+# 25. Noisy-Neighbour Protection
+
+One customer, store, supplier or workload must not consume disproportionate resources and degrade unrelated users.
+
+The architecture should support workload isolation where necessary.
+
+```text
+Tenant A
+   ↓
+Resource Boundary
+
+Tenant B
+   ↓
+Resource Boundary
+```
+
+---
+
+# 26. Store Isolation
+
+A single store experiencing unusually high activity should not automatically degrade the entire enterprise.
+
+For example:
+
+```text
+Store A
+Extreme Traffic
+       ↓
+Store A Capacity Increase
+       ↓
+Enterprise Remains Stable
+```
+
+---
+
+# 27. Geographic Isolation
+
+Likewise, regional demand should be isolated where practical.
+
+```text
+Region A
+High Demand
+
+Region B
+Normal Demand
+
+Region C
+Normal Demand
+```
+
+The entire global platform should not need to operate at the capacity required by the busiest region.
+
+---
+
+# 28. Data Scalability
+
+Data volume may eventually become one of the largest scaling challenges.
+
+The architecture must consider:
+
+* transaction data;
+* customer data;
+* product data;
+* inventory;
+* supplier data;
+* event history;
+* audit records;
+* analytics;
+* AI context;
+* Walk Mode data.
+
+---
+
+# 29. Database Scaling
+
+Database scaling should be designed around workload characteristics.
+
+Potential strategies include:
+
+* indexing;
+* read replicas;
+* partitioning;
+* sharding;
+* caching;
+* archival;
+* workload separation.
+
+The exact database strategy belongs to the Information and Backend Architecture phases.
+
+---
+
+# 30. Avoid Premature Sharding
+
+Sharding must not be introduced merely because the platform intends to become large.
+
+The architectural requirement is:
+
+> **Design for future partitionability without introducing unnecessary complexity before it is justified.**
+
+---
+
+# 31. Partitioning Strategy
+
+Where partitioning becomes necessary, boundaries should align with meaningful domain or workload characteristics.
+
+Potential partition dimensions include:
+
+* geography;
+* tenant/store;
+* customer;
+* time;
+* domain;
+* workload.
+
+The final partitioning model will be established during Phase 2.
+
+---
+
+# 32. Read vs Write Scaling
+
+Read-heavy workloads and write-heavy workloads should not necessarily scale identically.
+
+Examples:
+
+```text
+Product Catalogue
+→ Read Heavy
+
+Checkout
+→ Write Critical
+
+Analytics
+→ Read / Compute Heavy
+
+Event Processing
+→ Write / Stream Heavy
+```
+
+Scaling architecture should reflect these differences.
+
+---
+
+# 33. Caching
+
+Caching may reduce unnecessary computation and database load.
+
+Potential candidates include:
+
+* product information;
+* catalogue data;
+* configuration;
+* public content;
+* selected analytics;
+* recommendations.
+
+Caching must never compromise business correctness.
+
+---
+
+# 34. Cache Invalidation
+
+The architecture recognises:
+
+> **Stale data can become incorrect data.**
+
+Therefore every cacheable dataset must eventually have an explicit freshness strategy.
+
+Examples:
+
+* time-based expiration;
+* event-driven invalidation;
+* versioning;
+* explicit refresh.
+
+---
+
+# 35. Transactional Correctness
+
+Performance must never be achieved by weakening critical business correctness.
+
+For example:
+
+```text
+Faster Inventory
+```
+
+is not an improvement if it permits:
+
+```text
+Overselling
+```
+
+Therefore:
+
+> **Correctness takes priority over raw throughput for critical transactions.**
+
+---
+
+# 36. Event Scalability
+
+Commit 013 established enterprise events.
+
+Commit 017 establishes that event infrastructure must scale independently from synchronous application traffic.
+
+```text
+1,000 Events/sec
+       ↓
+10,000 Events/sec
+       ↓
+100,000 Events/sec
+       ↓
+Potentially Millions/sec
+```
+
+The architecture must support future growth without redesigning the event model.
+
+---
+
+# 37. Event Backpressure
+
+If consumers cannot keep up:
+
+```text
+Producer
+ ↓
+Queue
+ ↓
+Consumer Lag
+```
+
+the platform should protect the producer and preserve events rather than simply dropping critical events.
+
+This connects directly to Commit 016.
+
+---
+
+# 38. Analytics Scalability
+
+Analytics must be isolated from transactional workloads where possible.
+
+```text
+Commerce
+   ↓
+Events
+   ↓
+Analytics Infrastructure
+```
+
+rather than:
+
+```text
+Commerce
+   ↓
+Heavy Analytics Query
+   ↓
+Customer Waits
+```
+
+---
+
+# 39. Analytics by User Type
+
+The analytics architecture must support role-specific scale.
+
+Examples:
+
+### Customer
+
+* spending;
+* purchase history;
+* favourite products;
+* shopping patterns.
+
+### Supplier
+
+* product sales;
+* performance;
+* returns;
+* complaints;
+* breakage;
+* demand.
+
+### Staff
+
+* operational performance;
+* assigned activity;
+* relevant KPIs.
+
+### Management
+
+* enterprise-level analytics.
+
+The same underlying analytical infrastructure should support differentiated views without indiscriminately exposing all data.
+
+---
+
+# 40. Audit Scalability
+
+Audit records can grow enormously at enterprise scale.
+
+The architecture must therefore support:
+
+* high-volume event capture;
+* durable storage;
+* efficient querying;
+* retention policies;
+* archival;
+* controlled access.
+
+Audit capacity must scale independently from normal application traffic where appropriate.
+
+---
+
+# 41. AI Workload Scalability
+
+AI introduces unique scaling requirements.
+
+AI workloads may consume:
+
+* CPU;
+* GPU;
+* memory;
+* network;
+* storage;
+* model inference capacity.
+
+AI workloads must therefore have independent capacity planning.
+
+---
+
+# 42. AI Workload Prioritisation
+
+Not every AI request has equal business importance.
+
+Potential categories:
+
+```text
+Critical
+High
+Normal
+Background
+```
+
+For example:
+
+A safety/security decision may have higher priority than generating an optional recommendation.
+
+---
+
+# 43. AI Queueing
+
+Non-immediate AI workloads may be queued.
+
+```text
+AI Request
+ ↓
+Priority Queue
+ ↓
+Available Inference Capacity
+ ↓
+Processing
+```
+
+This prevents AI demand from overwhelming the platform.
+
+---
+
+# 44. AI Degradation
+
+When AI capacity is exhausted:
+
+```text
+AI Capacity Exhausted
+        ↓
+Fallback Model
+        ↓
+Cached Result
+        ↓
+Rule-Based Behaviour
+        ↓
+Feature Temporarily Deferred
+```
+
+depending on the capability.
+
+Core commerce must remain operational.
+
+---
+
+# 45. AI Cost Governance
+
+AI scalability must consider cost as well as performance.
+
+The platform must eventually track:
+
+* inference volume;
+* model cost;
+* compute utilisation;
+* latency;
+* token consumption where applicable;
+* cache effectiveness.
+
+---
+
+# 46. Walk Mode Scalability
+
+Walk Mode introduces potentially large volumes of:
+
+* location data;
+* store geometry;
+* product positioning;
+* inventory state;
+* navigation requests;
+* user interaction;
+* AI interaction.
+
+Walk Mode must therefore be designed as a scalable workload rather than a feature that assumes a small number of simultaneous shoppers.
+
+---
+
+# 47. Real-World Store Scaling
+
+The platform must eventually support:
+
+```text
+1 Store
+ ↓
+10 Stores
+ ↓
+100 Stores
+ ↓
+1,000 Stores
+ ↓
+10,000 Stores+
+```
+
+without requiring every store to have a bespoke backend architecture.
+
+---
+
+# 48. Global Scaling
+
+Global deployment introduces:
+
+* geographic latency;
+* regional capacity;
+* data residency;
+* network variability;
+* local demand patterns;
+* currency;
+* language;
+* regulatory differences.
+
+The enterprise architecture must therefore support regionalisation without fragmenting the core domain model.
+
+---
+
+# 49. Global Traffic Distribution
+
+Global traffic should eventually be capable of being directed toward appropriate regional infrastructure.
+
+The exact mechanism belongs to backend/infrastructure architecture.
+
+---
+
+# 50. Locality
+
+Where appropriate, data and computation should be placed closer to users and stores.
+
+Benefits may include:
+
+* lower latency;
+* reduced network traffic;
+* regional resilience;
+* improved user experience.
+
+---
+
+# 51. Latency Budgets
+
+Performance must eventually be expressed through measurable latency expectations.
+
+Examples may include:
+
+* API response latency;
+* search latency;
+* checkout latency;
+* inventory lookup latency;
+* Walk Mode navigation latency;
+* AI response latency.
+
+Different workloads will have different acceptable limits.
+
+---
+
+# 52. Performance Budgets
+
+Each major service should eventually define a performance budget.
+
+This should include:
+
+```text
+Latency
+Throughput
+Concurrency
+Resource Consumption
+Error Rate
+```
+
+Performance should be treated as an architectural requirement rather than an afterthought.
+
+---
+
+# 53. Performance vs Reliability
+
+Commit 016 established resilience.
+
+Commit 017 establishes performance.
+
+They must not conflict.
+
+For example:
+
+```text
+Maximum Performance
+```
+
+is not acceptable if it produces:
+
+```text
+System Instability
+```
+
+The objective is:
+
+> **Predictable performance under realistic and degraded conditions.**
+
+---
+
+# 54. Performance vs Cost
+
+A system can always be made faster by spending more money.
+
+That is not sufficient.
+
+The architecture must optimise:
+
+```text
+Performance
++
+Reliability
++
+Scalability
++
+Cost
+```
+
+simultaneously.
+
+---
+
+# 55. Cost-Aware Scaling
+
+Scaling policies should account for:
+
+* resource price;
+* workload importance;
+* expected demand;
+* idle capacity;
+* AI cost;
+* storage cost;
+* network cost.
+
+This is particularly important as Essentials Mart expands into emerging and global markets.
+
+---
+
+# 56. Emerging-Market Considerations
+
+The platform must not assume every deployment has:
+
+* unlimited bandwidth;
+* low network latency;
+* cheap compute;
+* stable electricity;
+* perfect connectivity.
+
+The architecture should therefore support efficient operation under constrained environments.
+
+---
+
+# 57. Network Efficiency
+
+Network traffic can become a major scaling cost.
+
+The architecture should minimise unnecessary:
+
+* data transfer;
+* repeated requests;
+* oversized payloads;
+* synchronous dependencies.
+
+Caching, compression and appropriate data locality should be considered during implementation.
+
+---
+
+# 58. Mobile Scalability
+
+Flutter clients may operate across a wide range of devices.
+
+The backend must not assume:
+
+* high-end devices;
+* unlimited memory;
+* constant connectivity;
+* high-speed networks.
+
+The client architecture should therefore consume scalable backend APIs efficiently.
+
+---
+
+# 59. API Scalability
+
+APIs must be designed to support:
+
+* pagination;
+* filtering;
+* bounded responses;
+* caching where appropriate;
+* rate limiting;
+* versioning;
+* asynchronous operations.
+
+The API architecture will be defined in a later phase.
+
+---
+
+# 60. Search Scalability
+
+Search is likely to become increasingly important as the catalogue grows.
+
+Search workloads should eventually support:
+
+* large product catalogues;
+* regional catalogues;
+* supplier catalogues;
+* personalised results;
+* Walk Mode discovery.
+
+Search infrastructure should scale independently from transactional databases where appropriate.
+
+---
+
+# 61. Background Work
+
+Background workloads should not unnecessarily compete with customer-facing workloads.
+
+Examples:
+
+* analytics;
+* AI training;
+* recommendation generation;
+* report generation;
+* data exports;
+* archival.
+
+These workloads should have appropriate scheduling and resource boundaries.
+
+---
+
+# 62. Priority Classes
+
+The platform may eventually establish workload priority classes.
+
+Example:
+
+```text
+P0 — Safety / Critical Transaction
+P1 — Core Commerce
+P2 — Operational
+P3 — Intelligence
+P4 — Background
+```
+
+The exact taxonomy will be established during backend architecture.
+
+---
+
+# 63. Capacity Exhaustion
+
+The architecture must define what happens when capacity cannot immediately be increased.
+
+Potential responses include:
+
+```text
+Queue
+Throttle
+Degrade
+Prioritise
+Reject
+Fail Over
+```
+
+The worst possible response is uncontrolled cascading failure.
+
+---
+
+# 64. Graceful Overload
+
+Commit 016 established graceful degradation during failures.
+
+Commit 017 extends this to overload.
+
+```text
+Demand > Capacity
+        ↓
+Controlled Degradation
+        ↓
+Critical Services Protected
+```
+
+---
+
+# 65. No Infinite Scaling Assumption
+
+"Cloud scalable" does not mean "unlimited."
+
+Every platform has:
+
+* quotas;
+* service limits;
+* database limits;
+* network limits;
+* cost limits;
+* physical limits.
+
+Capacity planning must identify these before they become production incidents.
+
+Cloud guidance specifically recommends identifying service limits and quotas before they emerge as scaling problems.
+
+---
+
+# 66. Bottleneck Identification
+
+The platform should continuously identify the current limiting resource.
+
+Potential bottlenecks include:
+
+* CPU;
+* memory;
+* storage;
+* network;
+* database;
+* queue;
+* external API;
+* AI inference;
+* locks;
+* synchronisation.
+
+Scaling the wrong component does not solve the bottleneck.
+
+---
+
+# 67. Scaling Laws
+
+Every major service should eventually document its approximate scaling behaviour.
+
+For example:
+
+```text
+2× Traffic
+→
+Expected Resource Increase
+```
+
+The architecture should aim for predictable scaling rather than unexpected nonlinear collapse.
+
+---
+
+# 68. Avoid Global Synchronisation
+
+Global synchronous coordination can become a scalability bottleneck.
+
+Where possible, the architecture should favour:
+
+* asynchronous events;
+* local processing;
+* eventual propagation;
+* partitionable workloads.
+
+Critical transactions requiring strong consistency remain exceptions.
+
+---
+
+# 69. Domain Boundaries and Scalability
+
+The domain boundaries established during EDA must support independent scaling.
+
+A poorly defined domain boundary can create:
+
+```text
+One Domain
+ ↓
+Everything Depends On It
+ ↓
+Everything Must Scale Together
+```
+
+The eventual domain model should therefore consider workload characteristics as well as business ownership.
+
+---
+
+# 70. Tenant / Store Isolation
+
+As Essentials Mart expands to many stores and potentially many enterprise participants, workload boundaries should support isolation.
+
+A single high-volume tenant should not automatically destabilise unrelated tenants.
+
+---
+
+# 71. Supplier Scaling
+
+Supplier activity may grow significantly.
+
+The platform must eventually support:
+
+* many suppliers;
+* large catalogues;
+* frequent product updates;
+* high-volume orders;
+* complaints;
+* returns;
+* performance reporting.
+
+Supplier integrations must scale independently where appropriate.
+
+---
+
+# 72. Staff Scaling
+
+As the enterprise grows, staff accounts and permissions will increase.
+
+The platform must support:
+
+* many staff members;
+* different clearances;
+* regional teams;
+* store teams;
+* corporate teams.
+
+Identity and authorization remain the governing controls established earlier.
+
+---
+
+# 73. Logging Scalability
+
+Commit 015 established action logging.
+
+At 100 million users, logging every action can create enormous data volume.
+
+Therefore the architecture must distinguish:
+
+```text
+Security / Audit Evidence
+```
+
+from:
+
+```text
+Operational Telemetry
+```
+
+and:
+
+```text
+Product Analytics
+```
+
+They may have different retention, storage and querying requirements.
+
+---
+
+# 74. Data Retention and Scale
+
+Not every dataset should remain in the hottest storage tier forever.
+
+The architecture should eventually support:
+
+```text
+Hot
+ ↓
+Warm
+ ↓
+Cold
+ ↓
+Archive
+```
+
+according to:
+
+* access frequency;
+* legal requirements;
+* business value;
+* recovery needs.
+
+---
+
+# 75. Historical Data Growth
+
+Historical data must not eventually make current operations unusably expensive.
+
+The architecture should support appropriate separation of:
+
+* operational data;
+* historical data;
+* analytical data;
+* archival data.
+
+---
+
+# 76. Observability at Scale
+
+Commit 015 established observability.
+
+Commit 017 requires observability to scale with the platform.
+
+Monitoring 10 services is different from monitoring:
+
+```text
+10,000 services
+100,000 instances
+100 million users
+```
+
+Telemetry architecture must therefore be scalable itself.
+
+---
+
+# 77. Performance Telemetry
+
+The platform should eventually measure:
+
+* latency;
+* throughput;
+* saturation;
+* error rates;
+* queue lag;
+* database performance;
+* AI inference latency;
+* resource consumption.
+
+These measurements feed capacity planning.
+
+---
+
+# 78. Capacity Feedback Loop
+
+The enterprise should eventually operate a continuous cycle:
+
+```text
+Measure
+ ↓
+Analyse
+ ↓
+Forecast
+ ↓
+Plan
+ ↓
+Scale
+ ↓
+Measure Again
+```
+
+Capacity planning therefore becomes an ongoing system rather than a one-time architecture exercise.
+
+---
+
+# 79. Scalability Testing
+
+Before major releases, the platform should eventually test:
+
+* normal load;
+* peak load;
+* sustained load;
+* burst load;
+* concurrent users;
+* event throughput;
+* database growth;
+* AI demand.
+
+---
+
+# 80. Load Testing
+
+Load testing should answer:
+
+> **Can the system handle the expected workload?**
+
+---
+
+# 81. Stress Testing
+
+Stress testing should answer:
+
+> **What happens beyond the expected workload?**
+
+This is particularly important for verifying the graceful-overload principles established in this commit.
+
+---
+
+# 82. Soak Testing
+
+Long-running workloads should eventually be tested to identify:
+
+* memory leaks;
+* resource exhaustion;
+* queue accumulation;
+* storage growth;
+* degradation over time.
+
+---
+
+# 83. Scaling Failure Testing
+
+The architecture should eventually test situations where scaling itself fails.
+
+Examples:
+
+```text
+Autoscaler unavailable
+Capacity limit reached
+Database cannot scale
+AI capacity exhausted
+Regional capacity exhausted
+External provider throttles requests
+```
+
+The system must still degrade predictably.
+
+---
+
+# 84. Global Expansion Testing
+
+Before entering a new region, the architecture should assess:
+
+* capacity;
+* latency;
+* network;
+* data requirements;
+* regulatory constraints;
+* operational support;
+* disaster recovery.
+
+---
+
+# 85. Cost Simulation
+
+Scaling tests should eventually measure cost.
+
+A system capable of supporting 100 million users but economically incapable of serving them is not a successful architecture.
+
+---
+
+# 86. Unit Economics at Scale
+
+The enterprise should eventually understand:
+
+```text
+Cost per User
+Cost per Transaction
+Cost per Store
+Cost per Order
+Cost per AI Interaction
+Cost per Delivery
+```
+
+These metrics can inform architectural decisions.
+
+---
+
+# 87. Scalability and Reward Intelligence
+
+Reward systems must remain economically sustainable as users grow.
+
+A reward that is affordable at:
+
+```text
+100 users
+```
+
+may become financially dangerous at:
+
+```text
+100 million users
+```
+
+Therefore reward economics must scale with enterprise capacity and cost constraints.
+
+---
+
+# 88. Scalability and Trust
+
+Trust decisions may involve increasingly large datasets.
+
+The Trust Engine must therefore support:
+
+* high-volume decisions;
+* efficient feature retrieval;
+* bounded latency;
+* appropriate caching;
+* safe degradation.
+
+---
+
+# 89. Scalability and Analytics
+
+Analytics architecture must support different levels of aggregation:
+
+```text
+Customer
+ ↓
+Store
+ ↓
+Region
+ ↓
+Country
+ ↓
+Enterprise
+```
+
+This enables role-specific analytics without forcing every request to process raw enterprise-scale data.
+
+---
+
+# 90. Scalability and AI Society
+
+The AI Society may eventually contain many agents and intelligence engines.
+
+The architecture must support:
+
+* independent scaling;
+* workload prioritisation;
+* agent isolation;
+* queueing;
+* model routing;
+* fallback behaviour;
+* cost controls.
+
+---
+
+# 91. Scalability and Walk Mode
+
+Walk Mode should eventually support:
+
+```text
+1 Shopper
+ ↓
+100 Shoppers
+ ↓
+1,000 Shoppers
+ ↓
+10,000 Shoppers
+ ↓
+Millions of concurrent shoppers globally
+```
+
+The architecture must avoid requiring every shopper to maintain a globally synchronised state.
+
+---
+
+# 92. Real-Time Data Boundaries
+
+Not all Walk Mode data needs to be globally real-time.
+
+The architecture should distinguish between:
+
+### Strongly real-time
+
+Data where correctness requires immediate synchronisation.
+
+### Near-real-time
+
+Data where seconds of delay may be acceptable.
+
+### Eventually consistent
+
+Data where delayed propagation is acceptable.
+
+This distinction will be critical during Phase 2.
+
+---
+
+# 93. Scalability and Security
+
+Scaling must never bypass security controls.
+
+For example:
+
+```text
+More Users
+≠
+Weaker Authentication
+```
+
+and:
+
+```text
+More Traffic
+≠
+Disable Authorization
+```
+
+Security architecture in Part 3 must therefore be designed to scale with the enterprise.
+
+---
+
+# 94. Scalability and Resilience
+
+Commit 016 and Commit 017 are deliberately interconnected.
+
+```text
+016
+Resilience
+"What if something fails?"
+
+017
+Scalability
+"What if demand grows?"
+```
+
+Together:
+
+```text
+Demand Growth
+      ↓
+Scale
+      ↓
+Capacity
+      ↓
+Failure
+      ↓
+Recover
+```
+
+---
+
+# 95. Architectural Laws Established by Commit 017
+
+Commit 017 establishes the following laws:
+
+1. Essentials Mart must be designed for future scale from the beginning.
+2. Scalability must not require fundamental architectural redesign.
+3. Performance, capacity, scalability and elasticity are distinct concerns.
+4. Scale must be measured across multiple dimensions.
+5. Capacity planning must be continuous.
+6. Capacity planning must consider both normal and peak workloads.
+7. Critical services must maintain appropriate capacity headroom.
+8. Permanent overprovisioning should be avoided where elasticity is practical.
+9. Horizontal scaling should be preferred where appropriate.
+10. Vertical scaling remains valid where justified.
+11. Critical services must not rely indefinitely on a single scaling mechanism.
+12. Services should be independently scalable where practical.
+13. Stateless application design should be preferred where appropriate.
+14. Session management must not unnecessarily prevent horizontal scaling.
+15. Autoscaling must operate within controlled limits.
+16. Predictable demand should be incorporated into capacity planning.
+17. AI may assist capacity forecasting but must not become a single point of failure.
+18. Peak demand must be explicitly modelled.
+19. Rate limiting must protect services from uncontrolled demand.
+20. Quotas must protect shared enterprise resources.
+21. Noisy-neighbour behaviour must be controlled.
+22. Store-level demand must not automatically destabilise the enterprise.
+23. Geographic demand should be independently manageable where practical.
+24. Data scalability must be treated as a first-class concern.
+25. Database scaling must follow workload characteristics.
+26. Premature sharding must be avoided.
+27. Future partitionability must be considered during domain design.
+28. Read-heavy and write-heavy workloads should be treated differently.
+29. Caching must not compromise business correctness.
+30. Cache freshness must be explicitly defined.
+31. Transactional correctness takes priority over raw throughput.
+32. Event infrastructure must scale independently from synchronous workloads.
+33. Event backpressure must protect the system.
+34. Analytics must not unnecessarily block commerce.
+35. Audit infrastructure must scale with enterprise activity.
+36. AI workloads require independent capacity planning.
+37. AI workloads should support prioritisation.
+38. AI capacity exhaustion must have controlled fallback behaviour.
+39. AI scaling must consider economic cost.
+40. Walk Mode must be designed for large concurrent populations.
+41. APIs must support bounded and scalable access patterns.
+42. Background workloads must not unnecessarily compete with customer-facing workloads.
+43. Workload priorities should eventually be formalised.
+44. Capacity exhaustion must trigger controlled behaviour.
+45. The architecture must not assume infinite cloud capacity.
+46. Service limits and quotas must be identified before becoming critical bottlenecks.
+47. Bottlenecks must be measured before scaling decisions are made.
+48. Global synchronisation should be minimised where business correctness permits.
+49. Domain boundaries must support independent workload scaling.
+50. Tenant and store workloads must be appropriately isolated.
+51. Logging must distinguish audit, telemetry and product analytics.
+52. Historical data must not unnecessarily burden operational workloads.
+53. Observability infrastructure must scale with the platform.
+54. Performance telemetry must feed capacity planning.
+55. Capacity planning must operate as a continuous feedback loop.
+56. Scalability must be tested before major production expansion.
+57. Load, stress and sustained workloads must be tested.
+58. Scaling failures themselves must be tested.
+59. Global expansion must include capacity assessment.
+60. Scalability must remain economically sustainable.
+61. Reward economics must remain sustainable at enterprise scale.
+62. Trust decisions must scale without sacrificing safety.
+63. Analytics must support multiple organisational aggregation levels.
+64. AI Society workloads must scale independently.
+65. Security controls must scale with the platform.
+66. Resilience and scalability must be designed together.
+67. Performance optimisation must never silently weaken trust or correctness.
+68. 100-million-user scale must remain an architectural target rather than an afterthought.
+
+---
+
+# 96. Relationship to Previous Commits
+
+The architecture now forms a progressively stronger chain:
+
+```text
+013
+Enterprise Events
+      ↓
+014
+Identity / Access / Authorization
+      ↓
+015
+Audit / Observability / Accountability
+      ↓
+016
+Resilience / Reliability / Continuity
+      ↓
+017
+Performance / Capacity / Scalability
+```
+
+The relationship is deliberate.
+
+### Commit 013
+
+Defines how enterprise activity is communicated.
+
+### Commit 014
+
+Defines who may perform enterprise activity.
+
+### Commit 015
+
+Defines how enterprise activity can be observed and proven.
+
+### Commit 016
+
+Defines how the enterprise survives failure.
+
+### Commit 017
+
+Defines how the enterprise survives growth.
+
+---
+
+# 97. Relationship to Phase 2
+
+Commit 017 deliberately leaves certain implementation decisions open.
+
+The Information Architecture phase will determine:
+
+* aggregate boundaries;
+* partition keys;
+* entity relationships;
+* identifiers;
+* ownership;
+* event structure;
+* lifecycle;
+* data locality.
+
+Those decisions will directly influence scalability.
+
+---
+
+# 98. Relationship to Backend Architecture
+
+The Backend Architecture phase will eventually determine:
+
+* service topology;
+* deployment model;
+* autoscaling;
+* queues;
+* caching;
+* databases;
+* API gateways;
+* load balancing;
+* regional infrastructure;
+* AI orchestration.
+
+Commit 017 establishes the architectural requirements those decisions must satisfy.
+
+---
+
+# 99. Relationship to Part 3 Security Architecture
+
+Security scalability will be addressed in EDA-001 Part 3.
+
+Part 3 must ensure that:
+
+```text
+More Users
++
+More Stores
++
+More Regions
++
+More Services
++
+More AI
+```
+
+does not result in weaker security.
+
+---
+
+# 100. Final Architectural Principle
+
+> **Essentials Mart must be able to grow without becoming a different system.**
+
+The architecture should allow the platform to evolve from:
+
+```text
+1 Store
+100 Users
+1 Country
+```
+
+to:
+
+```text
+10,000+ Stores
+100,000,000+ Users
+Global Deployment
+```
+
+while preserving:
+
+```text
+Trust
+Correctness
+Security
+Performance
+Resilience
+Intelligence
+Auditability
+Economic Sustainability
+```
+
+The objective is not simply to make Essentials Mart **big**.
+
+The objective is to make it **structurally capable of becoming big**.
+
+---
+
+# 101. Commit Completion Criteria
+
+Commit 017 is considered complete when:
+
+* scalability principles are established;
+* capacity planning principles are established;
+* workload dimensions are defined;
+* horizontal and vertical scaling principles are defined;
+* elasticity principles are defined;
+* workload isolation is established;
+* data scalability requirements are established;
+* event scalability requirements are established;
+* AI scalability requirements are established;
+* analytics scalability requirements are established;
+* Walk Mode scalability requirements are established;
+* global scaling requirements are established;
+* performance and latency principles are established;
+* overload behaviour is defined;
+* scaling testing requirements are established;
+* cost-aware scaling is established;
+* architectural laws are recorded;
+* relationships with previous and future architecture are established.
+
+**Commit 017 is therefore Commit Ready.**
+
 # 11. Dependency Isolation
 
 Services should not blindly depend synchronously on every other service.
