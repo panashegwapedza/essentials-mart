@@ -955,3 +955,1098 @@ The Enterprise Security Architecture succeeds when:
 * security remains enforceable as the AI Society becomes increasingly autonomous.
 
 The Enterprise Security Architecture establishes the security foundation upon which all subsequent Essentials Mart architecture and implementation must operate.
+
+## 1.2 Enterprise Identity Architecture
+
+### Purpose
+
+The Enterprise Identity Architecture defines how Essentials Mart represents, manages, relates and governs every actor capable of interacting with the platform.
+
+Identity is the foundational security representation of an actor.
+
+The Enterprise Identity Architecture ensures that Essentials Mart can determine:
+
+* who is acting;
+* what is acting;
+* on whose behalf the action is occurring;
+* what organisational or household context applies;
+* what authority the actor may possess;
+* what resources the actor may interact with;
+* what relationships the actor has with other identities;
+* what security state applies to the identity;
+* how the identity can be suspended, restricted or revoked.
+
+Identity therefore provides the foundation upon which authentication, authorization, auditing, AI governance, analytics and security decisions operate.
+
+The identity architecture must support both human and non-human actors.
+
+---
+
+### Responsibilities
+
+The Enterprise Identity Architecture is responsible for:
+
+* Identity classification
+* Identity lifecycle
+* Identity ownership
+* Identity relationships
+* Identity uniqueness
+* Identity identifiers
+* Identity states
+* Identity hierarchy
+* Identity context
+* Identity federation principles
+* Human identity representation
+* Non-human identity representation
+* Service identity representation
+* Device identity representation
+* AI agent identity representation
+* Enterprise identity relationships
+* Delegated identity
+* Acting-on-behalf-of relationships
+* Identity suspension
+* Identity revocation
+* Identity recovery principles
+* Identity provenance
+* Identity correlation
+* Identity separation
+* Identity auditability
+
+Authentication and credential mechanisms are intentionally outside the detailed ownership of this commit and will be defined in subsequent security architecture.
+
+---
+
+### Owns
+
+The Enterprise Identity Architecture owns:
+
+* Identity
+* Identity Identifier
+* Identity Type
+* Identity State
+* Identity Relationship
+* Identity Context
+* Identity Ownership
+* Identity Provenance
+* Identity Lifecycle
+* Identity Status
+* Identity Suspension State
+* Identity Revocation State
+* Delegation Relationship
+* Representation of Acting-on-Behalf-Of Relationships
+* Identity Correlation Rules
+* Identity Classification Rules
+
+---
+
+### Does Not Own
+
+The Enterprise Identity Architecture does not own:
+
+* Passwords
+* Passkeys
+* MFA implementation
+* Biometrics
+* Authentication protocols
+* Session tokens
+* Access tokens
+* Authorization policies
+* Role definitions
+* Staff clearances
+* Application permissions
+* Customer profiles
+* Supplier business data
+* Household business data
+* AI agent capabilities
+* Trust scores
+* Security risk scores
+
+These capabilities remain owned by their appropriate architecture or domain.
+
+Identity establishes **who or what an actor is**.
+
+It does not independently determine everything that actor is permitted to do.
+
+---
+
+### Identity Classes
+
+Essentials Mart recognises the following primary identity classes:
+
+* Customer Identity
+* Household Identity
+* Household Member Identity
+* Staff Identity
+* Supplier Identity
+* Supplier User Identity
+* Administrator Identity
+* Service Identity
+* Device Identity
+* AI Agent Identity
+* External Integration Identity
+
+Additional specialised identities may be introduced where required by future architecture.
+
+---
+
+### Human Identities
+
+Human identities represent people interacting directly with Essentials Mart.
+
+Human identity classes include:
+
+* Customers
+* Household Members
+* Staff Members
+* Supplier Users
+* Administrators
+* Other explicitly governed human operators
+
+A human identity must remain distinguishable from the person's business profile, preferences, analytics and transactional history.
+
+Identity establishes the actor.
+
+Other domains own the information describing the actor's relationship with the enterprise.
+
+---
+
+### Customer Identity
+
+Customer Identity represents an individual who interacts with Essentials Mart as a customer.
+
+A Customer Identity may participate in:
+
+* individual shopping;
+* households;
+* loyalty programmes;
+* shopping lists;
+* Walk Mode;
+* AI Society interactions;
+* payments;
+* orders;
+* customer intelligence.
+
+Customer Identity does not automatically grant access to another customer's resources.
+
+---
+
+### Household Identity
+
+A Household Identity represents a collaborative identity context rather than necessarily a human individual.
+
+A household may contain:
+
+* one member;
+* multiple members;
+* different household roles;
+* shared resources;
+* delegated responsibilities.
+
+The Household Identity provides the security context for resources explicitly shared by household members.
+
+Household membership must not erase individual identity.
+
+---
+
+### Household Member Identity
+
+A Household Member Identity represents the relationship between an individual identity and a household.
+
+This relationship determines that:
+
+* the person belongs to the household;
+* the person has a defined household role;
+* the person may have defined household permissions;
+* the person may participate in shared resources.
+
+Household membership must remain distinct from global platform identity.
+
+---
+
+### Staff Identity
+
+Staff Identity represents an individual operating Essentials Mart in an authorised organisational capacity.
+
+Staff identities may be associated with:
+
+* store;
+* department;
+* operational role;
+* clearance;
+* management hierarchy;
+* employment state;
+* assigned responsibilities.
+
+Staff Identity does not itself grant operational authority.
+
+Authority is established through the Authorization and Staff Clearance architecture.
+
+---
+
+### Supplier Identity
+
+Supplier Identity represents an external organisation participating in the Essentials Mart ecosystem.
+
+Supplier Identity may have:
+
+* supplier users;
+* organisational relationships;
+* product relationships;
+* commercial relationships;
+* operational relationships.
+
+Supplier Identity must remain distinct from individual Supplier User identities.
+
+---
+
+### Supplier User Identity
+
+Supplier User Identity represents an individual acting on behalf of a Supplier Identity.
+
+The architecture must preserve the relationship:
+
+```text
+Supplier Organisation
+        ↓
+Supplier User
+        ↓
+Individual Human Identity
+```
+
+The supplier user may act within supplier-authorised boundaries but must not inherit unrelated enterprise authority.
+
+---
+
+### Administrator Identity
+
+Administrator Identity represents a highly privileged human or operational identity capable of performing sensitive enterprise functions.
+
+Administrator identities require stronger security controls.
+
+Administrative identity must remain distinguishable from ordinary staff identity.
+
+Administrative authority is not inherent in the identity itself and must be separately governed.
+
+---
+
+### Non-Human Identities
+
+Essentials Mart treats non-human identities as first-class security subjects.
+
+Non-human identities include:
+
+* services;
+* workloads;
+* automated processes;
+* devices;
+* integrations;
+* AI agents.
+
+A non-human identity must be uniquely identifiable and attributable.
+
+It must not rely solely on the identity of the infrastructure on which it happens to execute.
+
+---
+
+### Service Identity
+
+Service Identity represents an application or backend service acting within Essentials Mart.
+
+For example:
+
+```text
+Customer Intelligence Service
+Commerce Service
+Inventory Intelligence Service
+Analytics Service
+Security Service
+```
+
+Each service must have its own identity.
+
+A service must not impersonate another service simply because both operate within the same infrastructure.
+
+Service identity enables:
+
+* service attribution;
+* service authorization;
+* service-to-service auditing;
+* service isolation;
+* credential lifecycle management;
+* security incident investigation.
+
+---
+
+### Device Identity
+
+Device Identity represents a physical or virtual device participating in the Essentials Mart ecosystem.
+
+Examples include:
+
+* customer mobile devices;
+* staff devices;
+* store devices;
+* operational terminals;
+* scanners;
+* Walk Mode devices;
+* enterprise infrastructure devices.
+
+Device identity must remain separate from the human identity using the device.
+
+A trusted user does not automatically make every device trusted.
+
+---
+
+### AI Agent Identity
+
+AI Agent Identity represents an individual AI agent within the AI Society.
+
+Every persistent or security-relevant AI agent must have:
+
+* unique identity;
+* identifiable owner;
+* defined purpose;
+* defined operational scope;
+* defined authority boundary;
+* lifecycle state;
+* audit identity;
+* revocation capability.
+
+Examples include:
+
+* Customer Intelligence Agent
+* Household Intelligence Agent
+* Reward Intelligence Agent
+* Relationship Intelligence Agent
+* Walk Mode Intelligence Agent
+* Security Intelligence Agent
+
+An AI agent's identity establishes **which agent is acting**.
+
+It does not automatically establish what that agent may do.
+
+---
+
+### External Integration Identity
+
+External Integration Identity represents an external system interacting with Essentials Mart.
+
+Examples may include:
+
+* payment providers;
+* logistics systems;
+* supplier systems;
+* communication platforms;
+* external AI services;
+* government or regulatory systems where required.
+
+External integrations must have identities that allow Essentials Mart to distinguish:
+
+* which external system is communicating;
+* which integration instance is involved;
+* which enterprise relationship authorizes the interaction.
+
+---
+
+### Identity Relationships
+
+Identity is not isolated.
+
+The architecture must represent relationships between identities.
+
+Examples include:
+
+```text
+Person
+  ↓
+Customer Identity
+  ↓
+Household Membership
+  ↓
+Household Identity
+```
+
+or:
+
+```text
+Person
+  ↓
+Staff Identity
+  ↓
+Department
+  ↓
+Store
+```
+
+or:
+
+```text
+Organisation
+  ↓
+Supplier Identity
+  ↓
+Supplier User
+  ↓
+Human Identity
+```
+
+or:
+
+```text
+AI Society
+  ↓
+AI Agent Identity
+  ↓
+Service Identity
+  ↓
+Enterprise Resource
+```
+
+These relationships provide context for later authorization decisions.
+
+---
+
+### Identity Context
+
+Identity must support contextual information required by security decisions.
+
+Identity context may include:
+
+* actor type;
+* organisational relationship;
+* household relationship;
+* employment relationship;
+* supplier relationship;
+* device association;
+* service association;
+* AI Society membership;
+* delegated authority;
+* identity state.
+
+Identity context does not itself equal authorization.
+
+---
+
+### Identity Ownership
+
+Every identity must have an identifiable owner or governing authority.
+
+Ownership may belong to:
+
+* the individual;
+* a household;
+* Essentials Mart;
+* a supplier organisation;
+* an enterprise administrative authority;
+* an explicitly governed service owner.
+
+Ownership establishes responsibility for the identity's lifecycle.
+
+---
+
+### Identity Provenance
+
+The architecture must preserve information describing where an identity originated.
+
+Provenance may include:
+
+* identity creation source;
+* registration source;
+* enterprise provisioning source;
+* federation source;
+* administrative creation;
+* service provisioning;
+* AI agent provisioning.
+
+Identity provenance assists with:
+
+* security investigations;
+* identity correlation;
+* lifecycle management;
+* fraud detection;
+* compliance;
+* recovery.
+
+---
+
+### Identity Uniqueness
+
+Each identity must possess a unique enterprise identifier.
+
+The identifier must remain stable enough to support:
+
+* auditing;
+* relationships;
+* transactions;
+* analytics;
+* security;
+* lifecycle management.
+
+Identifiers must not depend on mutable attributes such as:
+
+* email address;
+* telephone number;
+* display name;
+* username.
+
+A mutable attribute may change.
+
+The underlying identity must remain identifiable.
+
+---
+
+### Identity State
+
+Every identity must have a defined lifecycle state.
+
+Possible states include:
+
+* Pending
+* Active
+* Restricted
+* Suspended
+* Disabled
+* Revoked
+* Archived
+
+The exact state machine will be refined in later architecture.
+
+Identity state changes must be auditable.
+
+---
+
+### Identity Lifecycle
+
+Identity lifecycle must support:
+
+```text
+Creation
+   ↓
+Verification
+   ↓
+Activation
+   ↓
+Use
+   ↓
+Restriction / Suspension
+   ↓
+Reactivation
+   ↓
+Revocation
+   ↓
+Archival
+```
+
+Not every identity will use every state.
+
+Lifecycle rules must differ appropriately between:
+
+* customers;
+* staff;
+* suppliers;
+* services;
+* devices;
+* AI agents.
+
+---
+
+### Identity Suspension
+
+Suspension temporarily prevents an identity from operating normally without necessarily destroying its historical existence.
+
+Suspension may occur because of:
+
+* suspected compromise;
+* security investigation;
+* administrative action;
+* employment changes;
+* supplier relationship changes;
+* device compromise;
+* AI agent anomaly.
+
+Suspension must preserve sufficient identity history for investigation and audit.
+
+---
+
+### Identity Revocation
+
+Revocation permanently invalidates an identity's authority to operate under its existing identity state.
+
+Revocation must be:
+
+* explicit;
+* attributable;
+* auditable;
+* enforceable;
+* capable of propagating to dependent systems.
+
+Historical records associated with the identity must remain attributable where legally and operationally appropriate.
+
+---
+
+### Delegated Identity
+
+Essentials Mart must support controlled delegation.
+
+Delegation represents a relationship where one identity authorizes another actor to act within defined boundaries.
+
+Examples include:
+
+* household member acting on behalf of household;
+* staff member acting on behalf of an enterprise function;
+* AI agent acting on behalf of a customer;
+* AI agent acting on behalf of a household;
+* service acting on behalf of another service.
+
+Delegation must preserve the distinction between:
+
+```text
+Original Actor
+        ↓
+Delegated Actor
+        ↓
+Action
+```
+
+The delegated actor must not become indistinguishable from the original actor.
+
+---
+
+### Acting-On-Behalf-Of
+
+Where an actor performs an action on behalf of another actor, the system must preserve both identities.
+
+For example:
+
+```text
+Customer
+   ↓
+Household Intelligence Agent
+   ↓
+Shopping Recommendation
+```
+
+or:
+
+```text
+Customer
+   ↓
+Walk Mode AI Agent
+   ↓
+Basket Action
+```
+
+The audit trail must be capable of answering:
+
+* which human initiated the authority;
+* which AI agent performed the action;
+* which service executed the action;
+* which resource was affected.
+
+---
+
+### Identity Chain
+
+The architecture must support identity chains.
+
+Example:
+
+```text
+Customer
+   ↓
+AI Agent
+   ↓
+Service
+   ↓
+Database Resource
+```
+
+or:
+
+```text
+Staff Member
+   ↓
+Staff Application
+   ↓
+Operational Service
+   ↓
+Inventory Resource
+```
+
+The identity chain must remain attributable across the transaction.
+
+---
+
+### Identity Separation
+
+Identity types must not be collapsed into one generic identity model where doing so destroys security boundaries.
+
+For example:
+
+* Customer ≠ Household
+* Staff ≠ Administrator
+* Supplier ≠ Supplier User
+* Human ≠ Device
+* Human ≠ Service
+* Service ≠ AI Agent
+* AI Agent ≠ Human
+* Identity ≠ Role
+* Identity ≠ Permission
+* Identity ≠ Trust Score
+
+These distinctions are architectural security boundaries.
+
+---
+
+### Identity and Trust Engine
+
+The Trust Engine may maintain trust-related intelligence associated with identities.
+
+However:
+
+> **Identity is not a trust score.**
+
+An identity remains an identity regardless of whether its trust score changes.
+
+For example:
+
+```text
+Identity
+   +
+Trust State
+   +
+Security Context
+   +
+Authorization
+```
+
+must remain separate concepts.
+
+A high trust score must not rewrite identity.
+
+A low trust score must not destroy identity.
+
+The Trust Engine may influence security decisions but does not own identity.
+
+---
+
+### Identity and Analytics
+
+Analytics may consume identity-linked events to generate insights.
+
+However, analytics must respect identity privacy and security boundaries.
+
+Identity data should not automatically become globally visible merely because it is useful for analytics.
+
+Access to identity-linked analytics must remain governed by authorization and data protection policies.
+
+---
+
+### Identity and Auditability
+
+All security-sensitive actions must be attributable to an identity.
+
+Where multiple identities participate in an action, the identity chain must be preserved.
+
+The audit model must be capable of distinguishing:
+
+* initiating identity;
+* delegated identity;
+* executing identity;
+* service identity;
+* AI agent identity;
+* affected resource.
+
+This prevents automated actions from becoming unattributable.
+
+---
+
+### Identity and Walk Mode
+
+Walk Mode introduces identity relationships between:
+
+* customer;
+* device;
+* Walk Mode session;
+* AI companion;
+* AI pilot;
+* store environment;
+* relevant services.
+
+Autopilot must therefore operate under an explicit identity chain.
+
+For example:
+
+```text
+Customer Identity
+        ↓
+Walk Mode Session
+        ↓
+Walk Mode AI Agent
+        ↓
+Navigation Service
+        ↓
+Store Environment
+```
+
+If the user explicitly delegates navigation to Autopilot, the system must preserve the user's identity as the originating authority while maintaining the AI agent's separate identity.
+
+Taking manual control must immediately restore the appropriate user-controlled interaction state.
+
+Autopilot does not become the user.
+
+---
+
+### Identity and AI Society
+
+The AI Society must maintain distinct identities for its agents.
+
+Agents may collaborate without merging identities.
+
+For example:
+
+```text
+Customer Intelligence Agent
+             ↓
+Household Intelligence Agent
+             ↓
+Walk Mode Intelligence Agent
+             ↓
+Commerce Service
+```
+
+Each participant remains separately attributable.
+
+Agent collaboration therefore does not create anonymous collective authority.
+
+---
+
+### Identity and Security
+
+Identity provides the subject representation required by the Zero Trust security model established in Commit 001.
+
+Identity therefore participates in:
+
+* authentication;
+* authorization;
+* contextual access decisions;
+* risk evaluation;
+* monitoring;
+* auditing;
+* incident response.
+
+Identity itself does not replace these systems.
+
+---
+
+### Identity and Authentication
+
+Authentication answers:
+
+> **Can Essentials Mart establish that this actor controls or possesses the required authentication factor or credential?**
+
+Identity answers:
+
+> **Which actor is being represented?**
+
+These must remain separate concepts.
+
+Multiple authentication mechanisms may authenticate the same underlying identity.
+
+Changing authentication credentials must not necessarily create a new identity.
+
+---
+
+### Identity and Authorization
+
+Authorization answers:
+
+> **Is this identity permitted to perform this action against this resource under the current context?**
+
+Identity answers:
+
+> **Which actor is requesting the action?**
+
+Therefore:
+
+```text
+Identity
+      ↓
+Authentication
+      ↓
+Context
+      ↓
+Authorization
+      ↓
+Resource Access
+```
+
+The detailed authorization architecture will be established in a later commit.
+
+---
+
+### Identity Security Principles
+
+The Enterprise Identity Architecture must:
+
+* uniquely identify actors;
+* distinguish human and non-human identities;
+* preserve identity ownership;
+* preserve identity provenance;
+* preserve identity relationships;
+* support identity lifecycle;
+* support suspension;
+* support revocation;
+* support delegation;
+* preserve acting-on-behalf-of relationships;
+* preserve identity chains;
+* maintain identity separation;
+* prevent identity impersonation;
+* support auditability;
+* support security investigations;
+* remain independent of authentication implementation;
+* remain independent of authorization implementation;
+* remain independent of trust scoring;
+* remain independent of analytics;
+* support AI agent identity;
+* support service identity;
+* support device identity;
+* support Walk Mode identity;
+* support enterprise-scale identity management.
+
+---
+
+### Identity Laws
+
+The following laws are established by Commit 002:
+
+1. Every security-sensitive actor must possess an identifiable identity.
+2. Every identity must have a unique enterprise identifier.
+3. Identity must remain distinct from authentication.
+4. Identity must remain distinct from authorization.
+5. Identity must remain distinct from permissions.
+6. Identity must remain distinct from trust scores.
+7. Identity must remain distinct from analytics profiles.
+8. Human and non-human identities must be distinguishable.
+9. Customer identity must remain distinct from household identity.
+10. Staff identity must remain distinct from administrator identity.
+11. Supplier identity must remain distinct from supplier-user identity.
+12. Human identity must remain distinct from device identity.
+13. Service identity must remain distinct from AI agent identity.
+14. AI agent identity must remain distinct from human identity.
+15. Every identity must have an identifiable owner or governing authority.
+16. Identity provenance must be preserved where required.
+17. Identity lifecycle must be explicitly governed.
+18. Identity suspension must be distinguishable from identity revocation.
+19. Revoked identities must remain historically attributable where appropriate.
+20. Delegated actions must preserve the original and delegated identities.
+21. Acting-on-behalf-of relationships must remain auditable.
+22. Identity chains must remain attributable.
+23. AI agents must possess distinct identities.
+24. Services must possess distinct identities.
+25. Security-sensitive devices must possess identifiable device identities.
+26. Identity relationships must not automatically grant authorization.
+27. Household membership must not erase individual identity.
+28. Supplier relationships must not automatically grant enterprise authority.
+29. Staff identity must not automatically grant administrative authority.
+30. AI identity must not automatically grant human authority.
+31. Trust Engine intelligence must not replace identity.
+32. Trust scores must not redefine identity.
+33. Analytics must not redefine identity ownership.
+34. Identity must remain attributable throughout automated actions.
+35. Walk Mode Autopilot must operate under explicit identity.
+36. User delegation to Autopilot must preserve the user's originating identity.
+37. AI agents must not impersonate their originating users.
+38. Identity revocation must be capable of propagating to dependent systems.
+39. Identity architecture must support enterprise-scale operation.
+40. Later authentication and authorization architecture must build upon this identity model.
+41. Later security architecture may refine these laws but must not contradict them without an explicit architectural decision.
+
+---
+
+### Relationship to Commit 001
+
+Commit 002 implements the identity foundation established by:
+
+**EDA-001 Part 3 — Commit 001: Enterprise Security Architecture Foundation & Zero Trust Architecture**
+
+Commit 001 established:
+
+* no implicit trust;
+* explicit security boundaries;
+* least privilege;
+* human and non-human security subjects;
+* continuous verification;
+* AI authority boundaries;
+* resource protection;
+* security accountability.
+
+Commit 002 now establishes the identity architecture required to enforce those principles.
+
+---
+
+### Relationship to Later Security Architecture
+
+Commit 002 establishes the identity foundation for subsequent commits including:
+
+* Authentication Architecture
+* Credential Architecture
+* Authorization Architecture
+* RBAC / ABAC
+* Staff Clearance Architecture
+* Privileged Access
+* Service Identity Security
+* Device Security
+* AI Agent Security
+* Data Security
+* Security Logging
+* Fraud Detection
+* Incident Response
+
+The sequence is intentional:
+
+```text
+Commit 001
+Security Foundation
+        ↓
+Commit 002
+Identity
+        ↓
+Commit 003
+Authentication
+        ↓
+Commit 004
+Authorization
+        ↓
+Commit 005+
+Specialised Security Controls
+```
+
+---
+
+### Success Criteria
+
+The Enterprise Identity Architecture succeeds when:
+
+* every security-sensitive actor is uniquely identifiable;
+* human and non-human identities are clearly distinguished;
+* customer identities remain distinct from household identities;
+* staff identities remain distinct from administrative identities;
+* supplier identities remain distinct from supplier users;
+* services possess independent identities;
+* devices possess independent identities;
+* AI agents possess independent identities;
+* identity ownership is explicit;
+* identity provenance can be established;
+* identity lifecycle can be governed;
+* identities can be suspended and revoked;
+* delegated actions remain attributable;
+* acting-on-behalf-of relationships remain auditable;
+* identity chains remain intact;
+* Walk Mode Autopilot actions remain attributable;
+* Trust Engine signals remain separate from identity;
+* analytics cannot silently redefine identity ownership;
+* identity architecture can support millions of identities without abandoning its security model;
+* subsequent authentication and authorization architecture can build directly upon this foundation.
+
+The Enterprise Identity Architecture establishes the identity layer upon which the remaining Essentials Mart security architecture will operate.
