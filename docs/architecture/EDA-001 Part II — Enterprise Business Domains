@@ -13419,6 +13419,2054 @@ That principle applies equally to:
 
 Commit 015 therefore establishes **Audit, Observability and Accountability as an enterprise capability rather than a collection of application logs.**
 
+# COMMIT 016 — Enterprise Resilience, Reliability & Continuity
+
+**Parent Document:** EDA-001 Part 2 — Enterprise Architecture
+**Commit:** 016
+**Status:** Commit Ready
+**Purpose:** Establish the enterprise-wide architecture for reliability, resilience, fault tolerance, graceful degradation, disaster recovery, business continuity and recovery across Essentials Mart.
+
+---
+
+# 1. Purpose
+
+Commit 016 establishes the architectural principles that allow Essentials Mart to continue operating when things go wrong.
+
+The platform must be designed on the assumption that:
+
+> **Failures will happen.**
+
+Hardware will fail.
+
+Networks will fail.
+
+Services will fail.
+
+Databases will become unavailable.
+
+Third-party providers will experience outages.
+
+AI engines will become unavailable.
+
+Deployments will contain bugs.
+
+Stores will lose connectivity.
+
+Entire infrastructure regions may become unavailable.
+
+Human operators will make mistakes.
+
+The objective is therefore not to create a system that never fails.
+
+The objective is to create a system that:
+
+* limits the impact of failure;
+* detects failure quickly;
+* isolates failure;
+* degrades safely;
+* preserves critical state;
+* recovers predictably;
+* restores normal operation;
+* and learns from the failure.
+
+This follows the broader reliability principle of designing for failure rather than assuming infrastructure will always remain available.
+
+---
+
+# 2. Core Principle
+
+> **No single component failure should automatically become an enterprise failure.**
+
+This becomes a foundational architectural law.
+
+```text
+Component Failure
+       ↓
+Contain
+       ↓
+Degrade / Fail Over
+       ↓
+Continue Critical Operations
+       ↓
+Recover
+       ↓
+Reconcile
+       ↓
+Restore Normal Operation
+```
+
+---
+
+# 3. Reliability vs Resilience
+
+Essentials Mart shall distinguish between related concepts.
+
+### Reliability
+
+The ability of a system to consistently perform its intended function.
+
+### Availability
+
+The ability of users to access and use a service when required.
+
+### Resilience
+
+The ability to withstand disruption and recover while maintaining acceptable service.
+
+### Fault Tolerance
+
+The ability to continue operating despite specific component failures.
+
+### Disaster Recovery
+
+The capability to restore systems and data following major disruption.
+
+### Business Continuity
+
+The ability of the enterprise to continue critical business functions despite disruption.
+
+These concepts must work together rather than being treated as interchangeable.
+
+---
+
+# 4. Resilience Is an Enterprise Property
+
+Reliability cannot be delegated entirely to infrastructure.
+
+A resilient Essentials Mart platform requires coordination across:
+
+```text
+Application
+Services
+Data
+Events
+AI
+Identity
+Infrastructure
+Networking
+Stores
+Devices
+People
+Operations
+Third Parties
+```
+
+A highly available database does not make an application resilient if the application cannot recover from database failure.
+
+---
+
+# 5. Failure Is a Normal Architectural Condition
+
+The architecture shall assume failures can occur at multiple levels.
+
+### Level 1 — Component
+
+* server;
+* container;
+* process;
+* device.
+
+### Level 2 — Service
+
+* API;
+* database;
+* event processor;
+* intelligence engine.
+
+### Level 3 — Dependency
+
+* payment provider;
+* messaging provider;
+* maps;
+* identity provider.
+
+### Level 4 — Network
+
+* ISP;
+* regional network;
+* connectivity between services.
+
+### Level 5 — Infrastructure
+
+* availability zone;
+* cluster;
+* storage system.
+
+### Level 6 — Regional
+
+* geographic deployment region.
+
+### Level 7 — Enterprise
+
+* catastrophic operational event;
+* major cyber incident;
+* widespread infrastructure failure.
+
+Each level requires an appropriate resilience strategy.
+
+---
+
+# 6. Failure Domains
+
+The architecture shall explicitly identify failure domains.
+
+Conceptually:
+
+```text
+Device
+ ↓
+Process
+ ↓
+Host
+ ↓
+Zone
+ ↓
+Region
+ ↓
+Provider
+ ↓
+Global
+```
+
+A resilience strategy must understand which failure domains a component can survive.
+
+---
+
+# 7. No Unnecessary Single Points of Failure
+
+Critical enterprise capabilities must not depend on an avoidable single point of failure.
+
+Examples include:
+
+* authentication;
+* checkout;
+* payments;
+* inventory;
+* order processing;
+* event processing;
+* customer data;
+* audit evidence.
+
+The exact redundancy strategy depends on business criticality.
+
+---
+
+# 8. Criticality Classification
+
+Not every capability requires identical resilience.
+
+Capabilities should therefore be classified.
+
+### Tier 0 — Enterprise Critical
+
+Failure creates major enterprise-wide consequences.
+
+Examples:
+
+* identity;
+* core transaction processing;
+* critical data;
+* financial integrity.
+
+### Tier 1 — Business Critical
+
+Failure materially disrupts operations.
+
+Examples:
+
+* ordering;
+* payment;
+* fulfilment;
+* inventory.
+
+### Tier 2 — Important
+
+Failure reduces functionality but core commerce continues.
+
+Examples:
+
+* recommendations;
+* some analytics;
+* some customer intelligence.
+
+### Tier 3 — Optional / Experience
+
+Failure primarily affects convenience or enhanced experience.
+
+Examples:
+
+* advanced recommendations;
+* certain Walk Mode features;
+* non-critical AI experiences.
+
+This classification prevents over-engineering everything.
+
+---
+
+# 9. Graceful Degradation
+
+When a non-critical service fails, Essentials Mart should degrade rather than collapse.
+
+Example:
+
+```text
+Recommendation Engine
+        ↓
+Unavailable
+        ↓
+Customer can still browse
+        ↓
+Customer can still purchase
+```
+
+The system should preserve the core transaction even when enhancement services are unavailable.
+
+---
+
+# 10. Core Commerce Must Be Protected
+
+The following principle is established:
+
+> **Experience degradation must not unnecessarily become transaction degradation.**
+
+For example:
+
+```text
+AI Recommendation Failure
+        ≠
+Checkout Failure
+```
+
+and:
+
+```text
+Analytics Failure
+        ≠
+Order Failure
+```
+
+and:
+
+```text
+Walk Mode Failure
+        ≠
+Store Commerce Failure
+```
+
+---
+
+# 11. Dependency Isolation
+
+Services should not blindly depend synchronously on every other service.
+
+A chain such as:
+
+```text
+Checkout
+ ↓
+Recommendations
+ ↓
+Analytics
+ ↓
+AI
+ ↓
+External API
+```
+
+creates unnecessary failure propagation.
+
+Critical services should depend only on what is required for their critical function.
+
+---
+
+# 12. Circuit Breaking
+
+Where appropriate, unstable dependencies should be isolated.
+
+Conceptually:
+
+```text
+Healthy Dependency
+       ↓
+Normal Calls
+
+Failure Detected
+       ↓
+Circuit Opens
+       ↓
+Dependency Isolated
+       ↓
+Fallback / Degraded Behaviour
+```
+
+This prevents cascading failure.
+
+---
+
+# 13. Timeouts
+
+Distributed calls must have bounded waiting periods.
+
+A service should not wait indefinitely for:
+
+* another service;
+* database;
+* external provider;
+* AI engine;
+* event processor.
+
+Timeouts are therefore part of resilience rather than merely performance tuning.
+
+---
+
+# 14. Retry Strategy
+
+Retries must be controlled.
+
+Blind retries can amplify failures.
+
+Therefore retries should consider:
+
+* operation safety;
+* idempotency;
+* backoff;
+* retry limits;
+* dependency health.
+
+---
+
+# 15. Idempotency
+
+Critical operations should be designed so that safe retries do not accidentally duplicate business effects.
+
+For example:
+
+```text
+Payment Request
+     ↓
+Network Failure
+     ↓
+Retry
+     ↓
+Same Business Operation
+```
+
+must not automatically become:
+
+```text
+Two Payments
+```
+
+Idempotency therefore becomes a fundamental enterprise reliability property.
+
+---
+
+# 16. Queue-Based Resilience
+
+Where immediate synchronous processing is not mandatory, durable queues may separate producers from consumers.
+
+```text
+Producer
+   ↓
+Durable Queue
+   ↓
+Consumer
+```
+
+If the consumer temporarily fails:
+
+```text
+Message
+ ↓
+Queue
+ ↓
+Consumer Recovers
+ ↓
+Processing Continues
+```
+
+This pattern is particularly important for:
+
+* events;
+* analytics;
+* notifications;
+* AI processing;
+* non-critical background work.
+
+---
+
+# 17. Backpressure
+
+The architecture must protect services from being overwhelmed.
+
+When demand exceeds processing capacity:
+
+```text
+Demand
+ ↓
+Capacity Limit
+ ↓
+Queue / Throttle / Degrade
+```
+
+rather than:
+
+```text
+Demand
+ ↓
+System Saturation
+ ↓
+Cascading Failure
+```
+
+---
+
+# 18. Load Shedding
+
+When necessary, non-critical workloads may be temporarily reduced or rejected to protect critical services.
+
+For example:
+
+```text
+High Load
+ ↓
+Suspend Advanced Recommendations
+ ↓
+Protect Checkout
+```
+
+This creates a deliberate hierarchy of survival.
+
+---
+
+# 19. Bulkheads
+
+Independent workloads should be isolated where appropriate.
+
+For example:
+
+```text
+Customer Commerce
+───────────────
+AI Processing
+───────────────
+Analytics
+───────────────
+Supplier Processing
+```
+
+A failure in one workload should not automatically consume all resources required by another.
+
+---
+
+# 20. Data Resilience
+
+Data is more important than application availability alone.
+
+The architecture must protect:
+
+* integrity;
+* durability;
+* recoverability;
+* consistency;
+* availability.
+
+Backups and redundancy must therefore be treated as architectural capabilities.
+
+---
+
+# 21. Data Loss Classification
+
+Different data has different recovery requirements.
+
+Examples:
+
+```text
+Financial Transactions
+Customer Orders
+Inventory
+Audit Evidence
+Analytics
+Recommendations
+Temporary AI Context
+```
+
+Losing a recommendation cache is fundamentally different from losing a completed payment record.
+
+---
+
+# 22. Recovery Point Objective
+
+The architecture shall use **Recovery Point Objective (RPO)** to describe acceptable data loss.
+
+RPO answers:
+
+> **How much recent data can Essentials Mart afford to lose after a failure?**
+
+For example:
+
+```text
+RPO = 5 minutes
+```
+
+means the recovery architecture targets no more than approximately five minutes of data loss for that workload.
+
+RPO must be defined per workload rather than globally. Google Cloud's disaster-recovery guidance likewise treats RPO and RTO as key metrics for recovery design.
+
+---
+
+# 23. Recovery Time Objective
+
+The architecture shall use **Recovery Time Objective (RTO)**.
+
+RTO answers:
+
+> **How long can the capability remain unavailable before recovery must occur?**
+
+For example:
+
+```text
+RTO = 15 minutes
+```
+
+does not mean every system must recover within fifteen minutes.
+
+It means that particular workload has a fifteen-minute recovery requirement.
+
+---
+
+# 24. RTO/RPO Are Business Decisions
+
+RTO and RPO must not be selected solely by engineers.
+
+They depend on:
+
+* business criticality;
+* financial consequences;
+* customer impact;
+* regulatory requirements;
+* operational requirements;
+* recovery cost.
+
+The architecture establishes the framework; final targets must be defined for each capability during subsequent design.
+
+---
+
+# 25. Recovery Hierarchy
+
+Recovery should prioritise capabilities.
+
+Conceptually:
+
+```text
+Enterprise Safety
+      ↓
+Identity
+      ↓
+Core Commerce
+      ↓
+Financial Integrity
+      ↓
+Inventory / Fulfilment
+      ↓
+Customer Support
+      ↓
+Analytics
+      ↓
+Enhanced Intelligence
+      ↓
+Experience Features
+```
+
+The exact ordering will be validated during domain and backend architecture.
+
+---
+
+# 26. Failover
+
+Where redundancy exists, the architecture should support controlled failover.
+
+```text
+Primary
+   ↓
+Failure
+   ↓
+Detection
+   ↓
+Failover Decision
+   ↓
+Secondary
+   ↓
+Recovery
+```
+
+Failover must not create duplicate transactions or inconsistent state.
+
+---
+
+# 27. Automatic vs Manual Recovery
+
+Not every failure should trigger automatic recovery.
+
+### Automatic
+
+Appropriate for predictable, low-risk failures.
+
+Examples:
+
+* process restart;
+* instance replacement;
+* service failover.
+
+### Human-controlled
+
+Appropriate for complex or potentially destructive events.
+
+Examples:
+
+* data corruption;
+* suspected cyber compromise;
+* major regional failure;
+* financial reconciliation.
+
+---
+
+# 28. Recovery Must Be Tested
+
+A backup that has never been restored should not be treated as proven recovery capability.
+
+Therefore:
+
+> **Recovery must be exercised, not merely documented.**
+
+Tests should validate:
+
+* backup restoration;
+* failover;
+* service recovery;
+* data integrity;
+* event replay;
+* reconciliation;
+* dependency recovery.
+
+Operational resilience guidance increasingly emphasises testing actual recovery paths rather than relying solely on architectural diagrams.
+
+---
+
+# 29. Disaster Recovery
+
+Disaster recovery must cover more than infrastructure failure.
+
+Potential disasters include:
+
+* infrastructure destruction;
+* database corruption;
+* accidental deletion;
+* software defects;
+* major configuration errors;
+* cyber incidents;
+* regional outages;
+* third-party failure;
+* operational mistakes.
+
+---
+
+# 30. Regional Resilience
+
+As Essentials Mart becomes global, regional architecture must support appropriate isolation.
+
+Conceptually:
+
+```text
+Region A
+   ↕
+Region B
+   ↕
+Region C
+```
+
+Not every service must operate active-active globally.
+
+The architecture should choose the appropriate model based on:
+
+* criticality;
+* latency;
+* data residency;
+* cost;
+* consistency requirements.
+
+---
+
+# 31. Multi-Region Is Not Automatically Required
+
+The architecture explicitly rejects:
+
+> "Everything must be multi-region."
+
+Instead:
+
+> **Criticality determines resilience investment.**
+
+This prevents unnecessary complexity and cost.
+
+---
+
+# 32. Global Failover
+
+For globally distributed capabilities, the architecture should support controlled traffic movement.
+
+```text
+Global Traffic
+      ↓
+Healthy Region
+```
+
+If the region fails:
+
+```text
+Global Traffic
+      ↓
+Failover Region
+```
+
+The mechanism will be selected during backend and infrastructure architecture.
+
+---
+
+# 33. Store-Level Resilience
+
+Essentials Mart is not purely a cloud platform.
+
+Physical stores are part of the enterprise.
+
+A store may experience:
+
+* internet failure;
+* power failure;
+* device failure;
+* local network failure;
+* POS failure;
+* inventory system disconnection.
+
+The architecture must therefore account for physical-store degradation.
+
+---
+
+# 34. Offline Store Capability
+
+Certain store functions may require limited offline operation.
+
+Potential examples:
+
+* viewing locally cached information;
+* queueing selected transactions;
+* recording operational events;
+* continuing approved workflows.
+
+Offline capability must have explicit boundaries.
+
+It must not become an uncontrolled second version of the enterprise database.
+
+---
+
+# 35. Offline Reconciliation
+
+When connectivity returns:
+
+```text
+Offline Activity
+       ↓
+Local Queue
+       ↓
+Connection Restored
+       ↓
+Validation
+       ↓
+Conflict Resolution
+       ↓
+Enterprise Synchronisation
+```
+
+Reconciliation must preserve business correctness.
+
+---
+
+# 36. Conflict Resolution
+
+Distributed activity can produce conflicts.
+
+For example:
+
+```text
+Store A
+Inventory = 10
+
+Store B
+Inventory = 10
+
+Both operate offline
+```
+
+The system must not simply overwrite one result with another.
+
+Conflict rules must be defined according to domain ownership.
+
+---
+
+# 37. Event Replay
+
+The event architecture established earlier should support recovery where appropriate.
+
+```text
+Stored Event
+    ↓
+Replay
+    ↓
+Consumer Rebuild
+```
+
+This can assist recovery of:
+
+* projections;
+* analytics;
+* derived state;
+* intelligence context.
+
+Events must not be replayed blindly where doing so could duplicate irreversible side effects.
+
+---
+
+# 38. Reconciliation
+
+After recovery, systems may require reconciliation.
+
+Examples:
+
+* payments vs orders;
+* orders vs inventory;
+* inventory vs physical stock;
+* rewards vs transactions;
+* supplier records vs fulfilment;
+* audit records vs business events.
+
+Recovery is not complete merely because servers are running again.
+
+---
+
+# 39. Recovery Verification
+
+After recovery the system must verify:
+
+```text
+Service Available
++
+Data Intact
++
+State Consistent
++
+Events Reconciled
++
+Security Controls Active
++
+Audit Working
+```
+
+Only then should the system be considered fully recovered.
+
+---
+
+# 40. Graceful Customer Experience
+
+Customers should receive honest system behaviour during disruption.
+
+The application should not:
+
+* silently lose requests;
+* claim an order succeeded when it did not;
+* fabricate inventory;
+* show stale payment status as confirmed;
+* issue duplicate rewards.
+
+Instead it should communicate appropriate states.
+
+Examples:
+
+```text
+Processing
+Pending
+Temporarily Unavailable
+Awaiting Confirmation
+```
+
+---
+
+# 41. Payment Resilience
+
+Payments require special treatment.
+
+A payment outage must not result in ambiguous financial state.
+
+The architecture must distinguish:
+
+```text
+Payment Initiated
+Payment Authorized
+Payment Captured
+Payment Failed
+Payment Unknown
+Payment Reconciled
+```
+
+The **unknown** state is particularly important during network failure.
+
+---
+
+# 42. Order Resilience
+
+Orders must similarly have explicit lifecycle states.
+
+A temporary failure must not cause the platform to accidentally create two orders or lose the original order.
+
+Order processing should therefore use:
+
+* idempotency;
+* durable state;
+* event correlation;
+* reconciliation.
+
+---
+
+# 43. Inventory Resilience
+
+Inventory must remain protected against conflicting updates.
+
+Examples include:
+
+* simultaneous purchases;
+* offline store operations;
+* supplier updates;
+* stock adjustments;
+* returns;
+* breakage.
+
+The architecture must prioritise inventory correctness over merely displaying the fastest possible number.
+
+---
+
+# 44. Reward Resilience
+
+Reward issuance must be protected against duplication.
+
+A failure occurring after eligibility evaluation but before reward confirmation must not cause:
+
+```text
+One Milestone
+     ↓
+Multiple Rewards
+```
+
+Reward Intelligence must therefore operate with idempotent reward issuance.
+
+---
+
+# 45. Trust Engine Resilience
+
+Trust decisions should degrade safely.
+
+If the Trust Engine becomes unavailable:
+
+```text
+Trust Engine Offline
+```
+
+must not automatically mean:
+
+```text
+Every Customer Denied
+```
+
+Nor should it mean:
+
+```text
+Every Security Control Disabled
+```
+
+Fallback policies must be defined according to action sensitivity.
+
+---
+
+# 46. Intelligence Engine Resilience
+
+AI and intelligence systems should generally be treated as replaceable decision-support capabilities rather than mandatory dependencies for basic commerce.
+
+For example:
+
+```text
+Customer Intelligence Offline
+        ↓
+Basic Shopping Continues
+```
+
+This protects core commerce from AI availability problems.
+
+---
+
+# 47. AI Society Resilience
+
+The AI Society must not become a single point of failure.
+
+If one agent becomes unavailable:
+
+```text
+Agent A Offline
+      ↓
+Agent B / fallback capability
+```
+
+where appropriate.
+
+The system must also prevent cascading agent failures.
+
+---
+
+# 48. Analytics Resilience
+
+Analytics may be temporarily delayed without stopping commerce.
+
+```text
+Analytics Processing Delayed
+        ↓
+Transactions Continue
+        ↓
+Events Accumulate
+        ↓
+Analytics Catches Up
+```
+
+This is preferable to making checkout depend on real-time analytics processing.
+
+---
+
+# 49. Audit Resilience
+
+From Commit 015:
+
+Audit is an enterprise capability.
+
+Therefore audit infrastructure must itself be resilient.
+
+A temporary analytics outage should not destroy audit evidence.
+
+Critical audit records may require durable buffering and stronger persistence guarantees.
+
+---
+
+# 50. Observability Resilience
+
+Observability systems must remain useful during incidents.
+
+If monitoring disappears whenever the platform is under stress, operators become blind precisely when visibility is most needed.
+
+Therefore monitoring and alerting should have appropriate isolation from the workloads they observe.
+
+---
+
+# 51. Deployment Resilience
+
+Software deployments are themselves potential failure sources.
+
+The architecture should support mechanisms such as:
+
+* staged deployment;
+* rollback;
+* health validation;
+* progressive rollout;
+* feature flags;
+* version compatibility.
+
+Implementation details belong to the backend/platform architecture.
+
+---
+
+# 52. Database Migration Resilience
+
+Schema changes must not assume instantaneous migration across every service.
+
+The architecture should support compatible evolution.
+
+Conceptually:
+
+```text
+Old Version
+    +
+New Version
+    ↓
+Compatible Transition
+    ↓
+Old Version Removed
+```
+
+This becomes especially important at global scale.
+
+---
+
+# 53. Configuration Resilience
+
+Configuration is part of the production system.
+
+Incorrect configuration can cause enterprise-wide failure.
+
+Therefore critical configuration should support:
+
+* versioning;
+* validation;
+* controlled deployment;
+* rollback;
+* auditability.
+
+---
+
+# 54. Dependency Failure
+
+Third-party services must be treated as failure-prone dependencies.
+
+Examples:
+
+* payment providers;
+* messaging;
+* maps;
+* identity providers;
+* cloud services;
+* supplier integrations.
+
+Essentials Mart must define what happens when each critical dependency is unavailable.
+
+---
+
+# 55. Third-Party Degradation
+
+The architecture should avoid assuming that third-party failure equals total platform failure.
+
+Example:
+
+```text
+Maps API unavailable
+        ↓
+Navigation degraded
+        ↓
+Shopping continues
+```
+
+The exact fallback depends on the domain.
+
+---
+
+# 56. Resilience Budgets
+
+Reliability has a cost.
+
+Excessive redundancy increases:
+
+* infrastructure cost;
+* operational complexity;
+* testing requirements;
+* data synchronization complexity.
+
+Therefore resilience investment must correspond to business criticality.
+
+---
+
+# 57. Reliability Objectives
+
+Each critical service should eventually have explicit reliability objectives.
+
+These may include:
+
+```text
+Availability Target
+Latency Target
+RTO
+RPO
+Maximum Data Loss
+Maximum Degradation
+Recovery Procedure
+```
+
+These values should be defined during the backend architecture phase.
+
+---
+
+# 58. Error Budgets
+
+Where appropriate, reliability objectives may be paired with error budgets.
+
+Conceptually:
+
+```text
+Reliability Target
+       ↓
+Allowed Failure Budget
+       ↓
+Observed Failure
+       ↓
+Budget Consumption
+```
+
+This creates an engineering mechanism for balancing feature velocity with reliability.
+
+---
+
+# 59. Reliability Telemetry
+
+Commit 015 established observability.
+
+Commit 016 establishes how observability feeds resilience.
+
+```text
+Telemetry
+   ↓
+Detection
+   ↓
+Diagnosis
+   ↓
+Decision
+   ↓
+Recovery
+```
+
+The two commits therefore form a continuous operational loop.
+
+---
+
+# 60. Incident Lifecycle
+
+Major incidents should follow a defined lifecycle:
+
+```text
+Detection
+ ↓
+Classification
+ ↓
+Containment
+ ↓
+Mitigation
+ ↓
+Recovery
+ ↓
+Validation
+ ↓
+Reconciliation
+ ↓
+Post-Incident Review
+```
+
+---
+
+# 61. Incident Severity
+
+Incidents should be classified according to business impact.
+
+Possible levels:
+
+```text
+SEV-0 — Catastrophic
+SEV-1 — Enterprise Critical
+SEV-2 — Major
+SEV-3 — Moderate
+SEV-4 — Minor
+```
+
+The final incident-management taxonomy will be defined later.
+
+---
+
+# 62. Incident Command
+
+Major incidents require clear ownership.
+
+The architecture should support:
+
+```text
+Incident
+ ↓
+Incident Commander
+ ↓
+Technical / Business Leads
+ ↓
+Recovery Coordination
+```
+
+No major outage should depend on everyone independently deciding what to do.
+
+---
+
+# 63. Communication During Failure
+
+Customers, staff, suppliers and management may require different information during incidents.
+
+The communication architecture must therefore support role-specific information.
+
+For example:
+
+### Customer
+
+"Your order is still being processed."
+
+### Staff
+
+"Order processing is delayed."
+
+### Operations
+
+"Order Service latency has exceeded threshold."
+
+### Management
+
+"Regional order processing degradation affecting X stores."
+
+---
+
+# 64. Post-Incident Learning
+
+A failure should produce architectural learning.
+
+After major incidents:
+
+```text
+Incident
+ ↓
+Root Cause
+ ↓
+Impact
+ ↓
+Response
+ ↓
+What Worked
+ ↓
+What Failed
+ ↓
+Architectural Change
+```
+
+The goal is not simply to restore service.
+
+The goal is to make the enterprise more resilient afterwards.
+
+---
+
+# 65. Chaos and Failure Testing
+
+Resilience should eventually be tested deliberately.
+
+Potential scenarios:
+
+* service crash;
+* database unavailable;
+* network partition;
+* queue backlog;
+* region failure;
+* dependency outage;
+* expired credentials;
+* corrupted data;
+* failed deployment.
+
+Testing should be controlled and progressively introduced.
+
+---
+
+# 66. Recovery Drills
+
+Critical recovery procedures should be exercised regularly.
+
+A recovery plan that exists only in documentation is not sufficient evidence of resilience.
+
+The enterprise should eventually perform:
+
+```text
+Restore Test
+Failover Test
+Regional Recovery Test
+Data Recovery Test
+Event Replay Test
+Reconciliation Test
+```
+
+---
+
+# 67. Configuration Drift
+
+Resilience environments must not silently diverge.
+
+For example:
+
+```text
+Primary Environment
+        ≠
+Recovery Environment
+```
+
+can create a recovery system that appears healthy but fails when actually needed.
+
+Therefore resilience configurations should be continuously validated.
+
+---
+
+# 68. Recovery Environment Readiness
+
+Recovery environments should be treated as living systems rather than abandoned backups.
+
+They must remain:
+
+* documented;
+* tested;
+* monitored;
+* compatible;
+* accessible;
+* recoverable.
+
+---
+
+# 69. Backup Independence
+
+Critical backups should not depend entirely on the same failure domain as the primary system.
+
+For example:
+
+```text
+Primary System
+     +
+Independent Recovery Copy
+```
+
+The exact storage architecture belongs to Part 3 and backend architecture.
+
+---
+
+# 70. Cyber Recovery Boundary
+
+A cyberattack may compromise both production and recovery systems.
+
+Therefore the security architecture must eventually distinguish:
+
+```text
+Operational Recovery
+```
+
+from:
+
+```text
+Cyber Recovery
+```
+
+Commit 016 establishes the requirement.
+
+EDA-001 Part 3 will define the security mechanisms.
+
+---
+
+# 71. Business Continuity
+
+Technical recovery is only one component of continuity.
+
+Essentials Mart must consider:
+
+* store operations;
+* suppliers;
+* logistics;
+* customer support;
+* payments;
+* staffing;
+* communication;
+* physical infrastructure.
+
+A technically recovered platform is not necessarily a fully recovered business.
+
+---
+
+# 72. Physical Store Continuity
+
+Stores should have continuity procedures for:
+
+* connectivity loss;
+* power loss;
+* device failure;
+* inventory system outage;
+* payment outage;
+* emergency operations.
+
+The physical and digital architectures must eventually converge into a single continuity model.
+
+---
+
+# 73. Supplier Continuity
+
+Supplier dependencies must be evaluated for resilience.
+
+A critical supplier outage should not necessarily stop unrelated enterprise operations.
+
+Supplier integrations should therefore support:
+
+* retries;
+* queuing;
+* reconciliation;
+* graceful degradation;
+* failure isolation.
+
+---
+
+# 74. Logistics Continuity
+
+Delivery systems should support degraded operation when external logistics providers fail.
+
+The platform may need to:
+
+```text
+Provider A unavailable
+        ↓
+Provider B
+```
+
+or:
+
+```text
+Delivery temporarily delayed
+        ↓
+Order retained
+        ↓
+Customer informed
+```
+
+rather than losing the order.
+
+---
+
+# 75. Customer Support Continuity
+
+If automated support is unavailable:
+
+```text
+AI Support Offline
+        ↓
+Human Support
+```
+
+should remain possible where appropriate.
+
+Likewise, if a communication provider fails, alternative channels may eventually be supported.
+
+---
+
+# 76. Resilience of Service Desk Operations
+
+The Service Desk, Returns Counter, Information Point and Parcel Collection workflows should have defined degraded states.
+
+For example:
+
+```text
+Primary System Offline
+        ↓
+Staff Capture Operational Request
+        ↓
+Secure Temporary Record
+        ↓
+Synchronize When Restored
+```
+
+The exact offline workflow will be defined during domain and Flutter architecture.
+
+---
+
+# 77. Data Consistency After Recovery
+
+Recovery must not merely restore servers.
+
+The platform must establish that:
+
+```text
+Orders
+=
+Payments
+=
+Inventory
+=
+Rewards
+=
+Fulfilment
+```
+
+where the domain relationships require those states to agree.
+
+Any discrepancy should enter a controlled reconciliation process.
+
+---
+
+# 78. No Silent Data Repair
+
+Automated recovery must not silently rewrite important business history.
+
+If reconciliation changes material state:
+
+```text
+Detection
+ ↓
+Proposed Correction
+ ↓
+Authorization / Policy
+ ↓
+Correction
+ ↓
+Audit Evidence
+```
+
+This connects Commit 016 directly back to Commit 015.
+
+---
+
+# 79. Resilience and Audit
+
+Every major recovery action should be auditable.
+
+Examples:
+
+* failover;
+* emergency configuration change;
+* data restoration;
+* reconciliation;
+* manual correction;
+* emergency access;
+* service recovery.
+
+Therefore:
+
+```text
+Resilience
+   +
+Audit
+```
+
+must operate together.
+
+---
+
+# 80. Resilience and Identity
+
+Recovery systems must not bypass identity controls.
+
+A disaster is not permission to abandon authorization.
+
+Emergency recovery mechanisms must preserve:
+
+* identity;
+* least privilege;
+* accountability;
+* auditability.
+
+The detailed controls belong to Part 3.
+
+---
+
+# 81. Resilience and Trust
+
+The Trust Engine should be protected from becoming either:
+
+```text
+Single Point of Failure
+```
+
+or:
+
+```text
+Single Source of Truth for Every Recovery Decision
+```
+
+Trust signals can inform resilience and security decisions, but critical recovery procedures must have explicit deterministic safeguards.
+
+---
+
+# 82. Resilience and Reward Intelligence
+
+Rewards must remain financially controlled during outages.
+
+For example:
+
+```text
+Reward Service Offline
+        ↓
+Reward Eligibility Recorded
+        ↓
+Reward Issuance Deferred
+        ↓
+Service Restored
+        ↓
+Idempotent Issuance
+```
+
+This protects both customers and the enterprise.
+
+---
+
+# 83. Resilience and Analytics
+
+Analytics processing can generally be delayed.
+
+Therefore:
+
+```text
+Transaction
+ ↓
+Durable Event
+ ↓
+Analytics Later
+```
+
+is preferable to:
+
+```text
+Transaction
+ ↓
+Wait for Analytics
+ ↓
+Transaction
+```
+
+This keeps commerce independent from analytical processing.
+
+---
+
+# 84. Resilience and AI Society
+
+The AI Society should be designed as a resilient network rather than a monolithic intelligence layer.
+
+Agent failures should be:
+
+* detectable;
+* isolated;
+* recoverable;
+* auditable.
+
+Critical business operations must not become dependent on every agent being simultaneously available.
+
+---
+
+# 85. Global Scale
+
+At:
+
+```text
+1 Store
+100 Users
+1 Country
+```
+
+resilience may be relatively simple.
+
+At:
+
+```text
+10,000 Stores
+100 Million Users
+Global Deployment
+```
+
+failure becomes statistically inevitable.
+
+Therefore the architecture must scale resilience itself.
+
+This includes:
+
+* regional isolation;
+* partitioning;
+* asynchronous processing;
+* redundancy;
+* capacity management;
+* automated recovery;
+* observability;
+* reconciliation.
+
+---
+
+# 86. Cost-Aware Resilience
+
+Resilience must remain economically rational.
+
+The platform should not spend ten times more to protect a non-critical feature than the feature is worth.
+
+The architectural rule is:
+
+> **Spend resilience budget according to business impact.**
+
+---
+
+# 87. Resilience as a Design Requirement
+
+Every major domain and service should eventually answer:
+
+1. What happens when its dependencies fail?
+2. What happens when it fails?
+3. What data must survive?
+4. What can be delayed?
+5. What can be degraded?
+6. What must never be duplicated?
+7. What requires human intervention?
+8. What are its RTO and RPO?
+9. How is recovery verified?
+10. How is recovery audited?
+
+If these questions cannot be answered, the component is not architecturally complete.
+
+---
+
+# 88. Architectural Laws Established by Commit 016
+
+Commit 016 establishes the following laws:
+
+1. Failure is an expected architectural condition.
+2. No avoidable single component failure should become an enterprise failure.
+3. Reliability must be designed at multiple layers.
+4. Resilience must be proportional to business criticality.
+5. Criticality determines recovery investment.
+6. Experience degradation must not unnecessarily become transaction degradation.
+7. Non-critical dependencies must not unnecessarily block critical workflows.
+8. Distributed calls must have bounded timeouts.
+9. Retries must be controlled.
+10. Critical operations must support idempotency where appropriate.
+11. Durable queues should be used where asynchronous processing improves resilience.
+12. Backpressure must protect services from overload.
+13. Load shedding may protect critical workloads.
+14. Bulkheads should isolate failure domains where appropriate.
+15. Data resilience is as important as service availability.
+16. RTO must be defined for critical capabilities.
+17. RPO must be defined for critical data.
+18. RTO and RPO are business-driven requirements.
+19. Recovery must be tested.
+20. Backups must be recoverable, not merely created.
+21. Failover must preserve business correctness.
+22. Automatic recovery should be used where safe.
+23. Human intervention must remain available for complex recovery.
+24. Regional resilience must be proportional to business requirements.
+25. Multi-region deployment is not automatically required for every service.
+26. Store operations are part of enterprise resilience.
+27. Offline operation must have explicit boundaries.
+28. Offline activity must support controlled reconciliation.
+29. Conflicts must be resolved according to domain ownership.
+30. Event replay must not duplicate irreversible side effects.
+31. Recovery is incomplete until state is verified and reconciled.
+32. Payment recovery must explicitly handle ambiguous states.
+33. Order processing must be resilient to retries and failures.
+34. Inventory correctness must be protected during distributed failures.
+35. Rewards must be protected against duplicate issuance.
+36. AI systems must not unnecessarily become critical commerce dependencies.
+37. Analytics must not unnecessarily block commerce.
+38. Audit infrastructure must itself be resilient.
+39. Recovery actions must be auditable.
+40. Recovery must not bypass identity and authorization controls.
+41. Cyber recovery requires additional security considerations.
+42. Recovery environments must remain operationally ready.
+43. Recovery configurations must not silently drift.
+44. Critical backups must have appropriate independence from primary failure domains.
+45. Third-party dependencies must be treated as failure-prone.
+46. Business continuity extends beyond software infrastructure.
+47. Major incidents require structured response.
+48. Resilience requires post-incident learning.
+49. Resilience must be continuously tested.
+50. The platform must remain economically sustainable while resilient.
+51. Every major service must define its failure and recovery behaviour.
+52. Essentials Mart must be capable of recovering without losing enterprise accountability.
+
+---
+
+# 89. Relationship to Previous Commits
+
+Commit 016 follows directly from the architecture already established.
+
+```text
+Commit 013
+Enterprise Events
+        ↓
+Commit 014
+Identity / Access / Authorization
+        ↓
+Commit 015
+Audit / Observability / Accountability
+        ↓
+Commit 016
+Resilience / Reliability / Continuity
+```
+
+The relationship is fundamental:
+
+### Commit 013 asks:
+
+> What happened?
+
+### Commit 014 asks:
+
+> Who is allowed to make it happen?
+
+### Commit 015 asks:
+
+> Can we prove what happened?
+
+### Commit 016 asks:
+
+> What happens when the system itself fails?
+
+Together they establish a much stronger enterprise foundation.
+
+---
+
+# 90. Relationship to EDA-001 Part 3
+
+Commit 016 establishes the **resilience requirements**.
+
+EDA-001 Part 3 will later define the deeper **security architecture**, including:
+
+* cyber resilience;
+* secure recovery;
+* backup protection;
+* immutable evidence;
+* key management;
+* infrastructure security;
+* network resilience;
+* incident response;
+* disaster recovery security;
+* identity recovery;
+* compromise containment.
+
+The security architecture should therefore build on the resilience model rather than duplicate it.
+
+---
+
+# 91. Final Architectural Principle
+
+> **Essentials Mart must not merely work when everything works. It must remain trustworthy when things fail.**
+
+A resilient Essentials Mart should be capable of:
+
+```text
+Detecting Failure
+       ↓
+Containing Failure
+       ↓
+Protecting Critical Operations
+       ↓
+Degrading Gracefully
+       ↓
+Preserving Data
+       ↓
+Recovering Services
+       ↓
+Reconciling State
+       ↓
+Verifying Integrity
+       ↓
+Recording What Happened
+       ↓
+Learning From It
+```
+
+That is the standard required for a platform intended to grow from a single store into a globally deployable enterprise system.
+
 
 # 11. Action-Level Permissions
 
