@@ -4,7 +4,7 @@
 **Date:** 2026-08-11
 **Decision Type:** Integration
 
----
+----
 
 ## 1. Context
 
