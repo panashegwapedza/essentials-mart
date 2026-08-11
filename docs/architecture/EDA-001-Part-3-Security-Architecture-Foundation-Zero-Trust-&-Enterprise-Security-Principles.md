@@ -7576,3 +7576,1517 @@ The final objective is:
 > **Essentials Mart should be able to use information extensively without treating information casually.**
 
 Data should remain useful, intelligent and accessible to the people and systems that legitimately need it — while remaining protected from everyone and everything that does not.
+
+# EDA-001 Part 3 — Commit 007
+
+# Application Security Architecture
+
+## 1. Purpose
+
+The Application Security Architecture defines how Essentials Mart applications are designed, structured and operated so that security is embedded into the application architecture rather than added after implementation.
+
+This applies across:
+
+* Flutter applications;
+* web applications;
+* backend applications;
+* administrative applications;
+* staff applications;
+* supplier applications;
+* internal enterprise tools;
+* AI-facing applications;
+* Walk Mode;
+* channel interfaces;
+* application components;
+* shared application libraries.
+
+The objective is to ensure that application behaviour remains secure even when:
+
+* users behave maliciously;
+* devices are compromised;
+* requests are manipulated;
+* external services fail;
+* individual components are compromised;
+* AI agents behave unexpectedly;
+* integrations become unavailable;
+* attackers discover implementation details.
+
+---
+
+# 2. Core Principle
+
+Essentials Mart shall follow:
+
+> **Applications must be secure by construction, not secured after construction.**
+
+Security controls must therefore exist within:
+
+* application boundaries;
+* trust boundaries;
+* service boundaries;
+* authorization flows;
+* data flows;
+* input handling;
+* output handling;
+* error handling;
+* state transitions;
+* dependency management;
+* runtime controls.
+
+Security must not depend solely upon the assumption that the client application behaves correctly.
+
+---
+
+# 3. Client Is Never Trusted
+
+The client application shall never be considered authoritative.
+
+This applies to:
+
+* Flutter;
+* web;
+* mobile;
+* Walk Mode;
+* administrative interfaces;
+* supplier interfaces;
+* WhatsApp;
+* future channels.
+
+Client-provided values must be treated as untrusted input.
+
+The backend must independently validate:
+
+* identity;
+* authorization;
+* ownership;
+* prices;
+* quantities;
+* permissions;
+* state transitions;
+* eligibility;
+* transaction values;
+* security-sensitive actions.
+
+The rule is:
+
+> **The client requests. The enterprise decides.**
+
+---
+
+# 4. Application Trust Boundaries
+
+Every major application must have explicit trust boundaries.
+
+Examples include:
+
+```text
+User Device
+    ↓
+Client Application
+    ↓
+API Gateway / Channel Gateway
+    ↓
+Enterprise Services
+    ↓
+Domain Services
+    ↓
+Data Stores
+```
+
+Additional boundaries may exist around:
+
+* AI agents;
+* third-party integrations;
+* payment providers;
+* delivery systems;
+* supplier systems;
+* messaging platforms;
+* analytics systems;
+* administrative systems.
+
+A boundary must never exist merely on a diagram.
+
+The architecture must define the controls that enforce it.
+
+---
+
+# 5. Application Security Zones
+
+Applications shall operate within defined security zones appropriate to their function.
+
+Potential zones include:
+
+### Public Zone
+
+Contains deliberately public functionality.
+
+### Customer Zone
+
+Contains customer-facing functionality.
+
+### Staff Zone
+
+Contains authenticated staff functionality.
+
+### Supplier Zone
+
+Contains supplier functionality.
+
+### Administrative Zone
+
+Contains privileged administrative functionality.
+
+### Enterprise Security Zone
+
+Contains highly privileged security systems.
+
+### AI Zone
+
+Contains AI orchestration and agent infrastructure.
+
+### Integration Zone
+
+Contains controlled communication with external systems.
+
+### Data Zone
+
+Contains protected data services and stores.
+
+Cross-zone communication must use approved integration mechanisms.
+
+---
+
+# 6. Application Isolation
+
+Applications must not gain unnecessary access to unrelated services or data.
+
+For example:
+
+* a customer application must not directly access staff services;
+* a supplier application must not directly access another supplier's information;
+* a staff application must not automatically access security systems;
+* an AI agent must not automatically access databases;
+* a Walk Mode client must not directly access another shopper's information.
+
+Isolation reduces blast radius if an application is compromised.
+
+---
+
+# 7. Secure Application Defaults
+
+Applications shall begin in the safest reasonable state.
+
+Security-sensitive functionality must not depend on administrators remembering to activate protection manually.
+
+Secure defaults include:
+
+* authentication required;
+* authorization required;
+* encrypted communication;
+* minimal permissions;
+* disabled debug functionality;
+* restricted administrative functions;
+* safe error responses;
+* protected sensitive storage;
+* conservative rate limits;
+* secure session configuration.
+
+OWASP specifically identifies secure defaults and removal of unnecessary functionality as core secure-design practices.
+
+---
+
+# 8. Least Privilege
+
+Applications, services and components shall receive only the permissions required for their function.
+
+Least privilege applies to:
+
+* users;
+* staff;
+* suppliers;
+* administrators;
+* services;
+* application components;
+* CI/CD systems;
+* AI agents;
+* external integrations.
+
+A component should not receive broad privileges merely because doing so is convenient.
+
+---
+
+# 9. Separation of Duties
+
+Sensitive application functions shall be separated where appropriate.
+
+For example:
+
+```text
+Request
+   ↓
+Authorization
+   ↓
+Execution
+   ↓
+Verification
+   ↓
+Audit
+```
+
+No single component should unnecessarily control every stage of a highly sensitive operation.
+
+This is particularly important for:
+
+* financial actions;
+* privileged administration;
+* reward manipulation;
+* Trust Engine changes;
+* security configuration;
+* production deployment;
+* account recovery;
+* sensitive data exports.
+
+---
+
+# 10. Application State Security
+
+Application state must be treated as potentially manipulated.
+
+The backend must validate important state transitions.
+
+Examples include:
+
+```text
+Cart
+ ↓
+Checkout
+ ↓
+Payment
+ ↓
+Order
+ ↓
+Fulfilment
+ ↓
+Delivery
+```
+
+A malicious client must not be able to skip legitimate states by modifying a request.
+
+Similarly:
+
+```text
+Reward Eligible
+ ↓
+Reward Claimed
+ ↓
+Reward Issued
+```
+
+must be validated by authoritative enterprise logic.
+
+---
+
+# 11. Business Logic Security
+
+Security is not limited to authentication.
+
+Business logic must prevent:
+
+* unauthorized state transitions;
+* privilege abuse;
+* reward manipulation;
+* price manipulation;
+* quantity manipulation;
+* return abuse;
+* delivery manipulation;
+* household permission abuse;
+* supplier-data access;
+* staff privilege abuse.
+
+This is particularly important because OWASP's current Top 10 explicitly identifies insecure design and business-logic flaws as architectural security concerns.
+
+---
+
+# 12. Input Validation
+
+All application inputs shall be considered untrusted.
+
+Validation shall occur at appropriate boundaries.
+
+Inputs include:
+
+* user-entered values;
+* API requests;
+* uploaded files;
+* query parameters;
+* headers;
+* messages;
+* webhook payloads;
+* event payloads;
+* third-party responses;
+* AI-generated tool arguments.
+
+Validation must verify:
+
+* type;
+* format;
+* length;
+* range;
+* ownership;
+* authorization;
+* semantic validity.
+
+Client-side validation may improve usability but must never replace server-side validation.
+
+---
+
+# 13. Output Security
+
+Applications must also protect information leaving the system.
+
+Outputs must respect:
+
+* authorization;
+* classification;
+* privacy;
+* tenant boundaries;
+* role;
+* clearance;
+* purpose.
+
+A secure backend that returns excessive information is still insecure.
+
+Applications must therefore follow:
+
+> **Return only what the caller legitimately needs.**
+
+---
+
+# 14. Error Handling
+
+Applications shall fail securely.
+
+Errors must not expose:
+
+* credentials;
+* secrets;
+* internal architecture;
+* database details;
+* stack traces;
+* private identifiers;
+* security policies;
+* sensitive business information.
+
+User-facing errors should provide useful information without revealing unnecessary internal details.
+
+Detailed diagnostic information belongs in controlled internal telemetry.
+
+---
+
+# 15. Exception Handling
+
+Application exceptions must be controlled and observable.
+
+Unexpected failures must not:
+
+* bypass authorization;
+* silently continue privileged operations;
+* corrupt business state;
+* expose protected information;
+* disable security controls.
+
+Critical operations should use transactional or compensating mechanisms where appropriate.
+
+---
+
+# 16. Secure Session Architecture
+
+Applications shall protect authenticated sessions.
+
+Controls may include:
+
+* short-lived access tokens;
+* secure refresh mechanisms;
+* session expiration;
+* revocation;
+* device/session tracking;
+* re-authentication for sensitive actions;
+* protection against session fixation;
+* secure logout;
+* abnormal-session detection.
+
+Sessions must be associated with the appropriate identity and security context.
+
+---
+
+# 17. Device Security Relationship
+
+Application security shall recognize that the user device may be compromised.
+
+The application must therefore avoid trusting the device simply because:
+
+> "the app is official."
+
+Sensitive operations may require additional verification based on:
+
+* device trust;
+* authentication strength;
+* session risk;
+* transaction sensitivity;
+* behavioural signals.
+
+This connects directly to the Trust Engine and Identity Security architecture.
+
+---
+
+# 18. Local Storage Security
+
+Applications must minimize sensitive information stored locally.
+
+Sensitive local data should be protected using platform-appropriate secure storage.
+
+Applications must avoid unnecessarily storing:
+
+* authentication secrets;
+* payment credentials;
+* sensitive household information;
+* security data;
+* privileged tokens;
+* unnecessary personal information.
+
+Local caches must have defined lifecycle and invalidation behaviour.
+
+---
+
+# 19. Mobile Application Security
+
+The Flutter application shall be treated as an untrusted execution environment.
+
+The architecture shall support:
+
+* secure credential storage;
+* secure communication;
+* certificate and transport protections where appropriate;
+* application integrity considerations;
+* secure local state;
+* controlled deep links;
+* secure WebView usage where required;
+* safe update mechanisms;
+* production build hardening.
+
+No secret that must remain secret from the user should be embedded in the application.
+
+This becomes particularly important for the proprietary-IP and anti-replication architecture reserved for Part 4.
+
+---
+
+# 20. Web Application Security
+
+Web applications shall be designed to mitigate:
+
+* cross-site scripting;
+* cross-site request forgery where applicable;
+* clickjacking;
+* injection;
+* insecure browser storage;
+* unsafe redirects;
+* session abuse;
+* malicious file handling.
+
+Security headers, cookie controls and browser protections shall be established through centrally governed application baselines.
+
+---
+
+# 21. Walk Mode Application Security
+
+Walk Mode shall receive additional application-security controls because it combines:
+
+* location;
+* maps;
+* inventory;
+* real-time information;
+* navigation;
+* proximity;
+* device sensors;
+* potentially autonomous behaviour.
+
+The application must never expose sensitive real-time information simply because the client requests it.
+
+Walk Mode clients must receive only the information necessary for:
+
+* navigation;
+* product discovery;
+* authorized interaction;
+* AI assistance.
+
+---
+
+# 22. Walk Mode Autonomous Control
+
+The previously established **Walk Mode Autopilot** capability introduces additional security requirements.
+
+If the user permits AI/autopilot takeover:
+
+```text
+User
+ ↓
+Explicit Permission
+ ↓
+Autopilot Controller
+ ↓
+Navigation / Movement System
+```
+
+The user must retain the ability to:
+
+* pause;
+* stop;
+* reclaim control;
+* override the AI;
+* revoke autopilot permission.
+
+Autopilot must operate within predefined boundaries.
+
+The AI must not gain unrestricted control merely because the user enabled Walk Mode.
+
+---
+
+# 23. AI Application Boundary
+
+AI Society agents are application actors, not trusted administrators.
+
+AI access shall be mediated through:
+
+* identity;
+* authorization;
+* tools;
+* policies;
+* data scopes;
+* action limits.
+
+The application layer must prevent an AI agent from directly bypassing domain controls.
+
+The preferred architecture is:
+
+```text
+AI Agent
+   ↓
+Authorized Tool
+   ↓
+Application / Service Boundary
+   ↓
+Domain API
+   ↓
+Domain
+```
+
+not:
+
+```text
+AI Agent
+   ↓
+Database
+```
+
+---
+
+# 24. Prompt Injection Boundary
+
+External content must not automatically become trusted application instructions.
+
+Potential untrusted sources include:
+
+* user messages;
+* product descriptions;
+* reviews;
+* supplier content;
+* web content;
+* uploaded documents;
+* WhatsApp messages;
+* third-party APIs.
+
+Applications must maintain a distinction between:
+
+* trusted system instructions;
+* trusted enterprise policy;
+* user instructions;
+* retrieved content;
+* external content;
+* tool responses.
+
+This becomes a major component of Commit 009 — AI Security Architecture.
+
+---
+
+# 25. External Channel Security
+
+The omnichannel architecture established earlier shall apply.
+
+The following:
+
+* Essentials Mart App;
+* WhatsApp;
+* future SMS;
+* future USSD;
+* future voice;
+* future web interfaces;
+
+must not become separate sources of truth.
+
+They are application channels.
+
+The authoritative state remains within the enterprise backend.
+
+The architecture shall therefore follow:
+
+```text
+Channel
+   ↓
+Channel Gateway
+   ↓
+Identity
+   ↓
+Authorization
+   ↓
+AI / Application Layer
+   ↓
+Authorized Tool / API
+   ↓
+Enterprise Domain
+```
+
+This ensures WhatsApp cannot become a security bypass.
+
+---
+
+# 26. API Interaction Boundary
+
+Applications shall communicate with enterprise services through approved interfaces.
+
+Applications must not:
+
+* directly modify another service's database;
+* bypass domain authorization;
+* create undocumented dependencies;
+* use privileged internal endpoints from untrusted clients.
+
+The architecture shall prefer:
+
+> **Domain API + Events**
+
+over:
+
+> **Shared database access.**
+
+This aligns with secure-by-design service-boundary guidance.
+
+---
+
+# 27. Dependency Security
+
+Applications depend upon:
+
+* frameworks;
+* packages;
+* SDKs;
+* libraries;
+* APIs;
+* cloud services;
+* AI models;
+* third-party components.
+
+Dependencies shall therefore be treated as part of the application's attack surface.
+
+The architecture shall require:
+
+* dependency inventory;
+* version management;
+* vulnerability monitoring;
+* controlled upgrades;
+* removal of unnecessary dependencies;
+* provenance awareness;
+* supply-chain controls.
+
+Detailed supply-chain security will be addressed later in Part 3.
+
+---
+
+# 28. Secrets Management
+
+Applications must never store production secrets directly in:
+
+* source code;
+* repositories;
+* client applications;
+* configuration committed to version control;
+* logs;
+* error messages.
+
+Secrets shall be supplied through approved secret-management mechanisms.
+
+Applications should receive only the secrets they require.
+
+---
+
+# 29. Configuration Security
+
+Configuration shall be treated as security-sensitive where it affects:
+
+* authentication;
+* authorization;
+* network access;
+* feature availability;
+* data access;
+* AI permissions;
+* privileged functions.
+
+Configuration must be:
+
+* version-controlled where appropriate;
+* reviewed;
+* validated;
+* environment-specific;
+* protected from unauthorized modification.
+
+---
+
+# 30. Feature Flags
+
+Feature flags must not become hidden security bypasses.
+
+Security-sensitive feature flags must have:
+
+* ownership;
+* authorization;
+* auditability;
+* safe defaults;
+* controlled rollout.
+
+Disabling a security control through a feature flag should require appropriate privileged authorization.
+
+---
+
+# 31. File Upload Security
+
+Applications accepting files must treat uploads as untrusted.
+
+Controls shall address:
+
+* file type validation;
+* size limits;
+* malware scanning where appropriate;
+* storage isolation;
+* filename handling;
+* execution prevention;
+* content inspection;
+* access control.
+
+Uploaded files must not automatically become executable application content.
+
+---
+
+# 32. Deep Links and External Invocation
+
+Applications must securely handle externally initiated actions.
+
+Examples include:
+
+* deep links;
+* QR codes;
+* email links;
+* WhatsApp links;
+* payment callbacks;
+* notification actions.
+
+External invocation must not automatically authorize sensitive actions.
+
+The application must reconstruct and verify the appropriate security context.
+
+---
+
+# 33. Notification Security
+
+Notifications may contain sensitive information.
+
+The platform must consider whether information is appropriate for display in:
+
+* lock-screen notifications;
+* WhatsApp;
+* email;
+* SMS;
+* push notifications.
+
+Users must be able to control notification preferences where appropriate.
+
+Sensitive information should not be exposed through notification previews unnecessarily.
+
+---
+
+# 34. Application Logging
+
+Applications shall produce structured security-relevant telemetry.
+
+Events may include:
+
+* authentication;
+* authorization;
+* sensitive actions;
+* privilege changes;
+* configuration changes;
+* security failures;
+* unusual application behaviour.
+
+Logs must avoid exposing:
+
+* passwords;
+* tokens;
+* secrets;
+* unnecessary sensitive information.
+
+Application logging feeds the enterprise Security Logging & Evidence architecture.
+
+---
+
+# 35. Application Observability
+
+Application security must be observable.
+
+The architecture shall support:
+
+* structured logs;
+* metrics;
+* traces;
+* correlation IDs;
+* security events;
+* health signals;
+* error rates;
+* authorization failures.
+
+Security events should be correlated across:
+
+```text
+User
+ ↓
+Application
+ ↓
+Gateway
+ ↓
+Service
+ ↓
+Domain
+ ↓
+Database
+```
+
+This enables investigation of complex attacks.
+
+---
+
+# 36. Rate Limiting
+
+Applications must support appropriate protection against excessive activity.
+
+Potential targets include:
+
+* authentication;
+* account recovery;
+* search;
+* checkout;
+* reward claims;
+* referrals;
+* API calls;
+* AI requests;
+* WhatsApp interactions;
+* Walk Mode operations.
+
+Rate limits should consider identity and context rather than relying solely on IP addresses.
+
+---
+
+# 37. Abuse Prevention
+
+Application security shall distinguish between:
+
+**valid functionality**
+
+and
+
+**abusive use of valid functionality.**
+
+Examples:
+
+* repeatedly creating accounts;
+* manipulating rewards;
+* abusing returns;
+* automated purchasing;
+* scraping;
+* excessive AI requests;
+* supplier manipulation;
+* staff misuse.
+
+Application controls shall work alongside Fraud Intelligence, Trust Engine and Reward Intelligence.
+
+---
+
+# 38. Secure Administrative Interfaces
+
+Administrative applications shall receive stronger controls than ordinary customer applications.
+
+Controls may include:
+
+* MFA;
+* privileged sessions;
+* restricted network access;
+* device trust;
+* just-in-time privileges;
+* enhanced audit;
+* re-authentication;
+* approval workflows.
+
+Administrative functionality must not be hidden merely through UI design.
+
+Authorization must exist at the backend.
+
+---
+
+# 39. Staff Application Security
+
+Staff applications shall enforce the clearance model established earlier.
+
+The application must retrieve only information required by the staff member's:
+
+* role;
+* clearance;
+* assigned responsibilities;
+* current context.
+
+Changing the frontend UI must never be the mechanism that enforces staff security.
+
+---
+
+# 40. Supplier Application Security
+
+Supplier applications must enforce supplier isolation.
+
+A supplier must be restricted to:
+
+* its own authorized resources;
+* permitted operational functions;
+* permitted analytics;
+* permitted communications.
+
+Supplier identifiers must not be trusted merely because they were supplied by the client.
+
+---
+
+# 41. Payment Application Boundaries
+
+Payment-related functionality shall be isolated from ordinary application logic where appropriate.
+
+Applications should minimize exposure to payment-sensitive information.
+
+Payment operations must rely on authoritative payment-state verification rather than client claims.
+
+For example:
+
+```text
+Client:
+"Payment successful."
+
+must never be sufficient.
+
+Instead:
+
+Payment Provider
+       ↓
+Verified Payment Result
+       ↓
+Payment Service
+       ↓
+Commerce
+```
+
+---
+
+# 42. Transaction Integrity
+
+Important operations must be designed to prevent:
+
+* replay;
+* duplicate execution;
+* race conditions;
+* partial completion;
+* inconsistent state.
+
+Sensitive operations should support idempotency where appropriate.
+
+Examples:
+
+* payment;
+* order creation;
+* reward issuance;
+* delivery assignment;
+* referral credit;
+* wallet operations.
+
+---
+
+# 43. Application-to-Application Trust
+
+Applications must not assume that another internal application is automatically trustworthy.
+
+Service identities must be verified.
+
+Authorization must be enforced between applications.
+
+This creates:
+
+```text
+Application Identity
+        ↓
+Authentication
+        ↓
+Authorization
+        ↓
+Allowed Operation
+```
+
+rather than:
+
+```text
+Internal Network
+        ↓
+Everything Trusted
+```
+
+---
+
+# 44. Third-Party Integration Security
+
+Third-party integrations must be isolated behind controlled interfaces.
+
+Examples include:
+
+* WhatsApp;
+* payment providers;
+* delivery providers;
+* maps;
+* analytics;
+* AI model providers;
+* external commerce systems.
+
+Third parties must receive minimum necessary privileges.
+
+Their failures must not automatically compromise the core enterprise.
+
+---
+
+# 45. Anti-Corruption Boundaries
+
+External systems shall not dictate Essentials Mart's internal domain model.
+
+Adapters or anti-corruption layers should translate:
+
+```text
+External Model
+      ↓
+Integration Boundary
+      ↓
+Essentials Mart Model
+```
+
+This protects the enterprise architecture from external coupling and reduces security exposure.
+
+---
+
+# 46. Secure Dependency Failure
+
+Applications must remain secure when dependencies fail.
+
+Examples:
+
+* Identity service unavailable;
+* Trust Engine unavailable;
+* payment provider unavailable;
+* AI model unavailable;
+* WhatsApp unavailable;
+* inventory service unavailable.
+
+Failure behaviour must be explicitly defined.
+
+Security-sensitive operations should fail closed or require a safe degraded mode.
+
+---
+
+# 47. Application Resilience
+
+Security and availability must coexist.
+
+Applications should use appropriate:
+
+* timeouts;
+* retries;
+* circuit breakers;
+* bulkheads;
+* queues;
+* graceful degradation.
+
+Retries must not create security or financial duplication.
+
+For example:
+
+> Retrying a payment operation must not create two charges.
+
+---
+
+# 48. Application Security Testing Architecture
+
+Security testing shall verify architectural controls.
+
+Testing must eventually cover:
+
+* authorization;
+* tenant isolation;
+* state transitions;
+* authentication;
+* session security;
+* input validation;
+* output filtering;
+* rate limiting;
+* secure failures;
+* API boundaries;
+* AI tool restrictions;
+* Walk Mode boundaries;
+* administrative controls.
+
+OWASP's Secure-by-Design framework explicitly distinguishes design-time security architecture from later implementation verification such as ASVS.
+
+---
+
+# 49. Negative Security Testing
+
+Applications must be tested not only for what they allow but also for what they must reject.
+
+Examples:
+
+```text
+Unauthorized user → DENY
+Wrong household → DENY
+Wrong supplier → DENY
+Insufficient clearance → DENY
+Expired session → DENY
+Invalid state transition → DENY
+Malformed request → DENY
+Excessive requests → THROTTLE/DENY
+Unauthorized AI tool → DENY
+```
+
+Negative behaviour is part of the application's security contract.
+
+---
+
+# 50. Application Security and AI Society
+
+The Application Security Architecture establishes the execution boundary through which AI Society operates.
+
+AI agents must interact with applications through controlled tools and APIs.
+
+Therefore:
+
+> **AI capability does not bypass application security.**
+
+The same authorization rules must apply whether an action originates from:
+
+* a human;
+* an AI agent;
+* WhatsApp;
+* the Flutter app;
+* an administrator;
+* an automated workflow.
+
+---
+
+# 51. Application Security and Analytics
+
+Analytics applications must respect the underlying data security model.
+
+Analytics dashboards shall expose different views according to:
+
+* user type;
+* role;
+* clearance;
+* ownership;
+* data classification.
+
+For example:
+
+### Customer
+
+May see:
+
+* personal spending;
+* favourite products;
+* purchase patterns;
+* household information they are authorized to view.
+
+### Supplier
+
+May see:
+
+* own product sales;
+* own performance;
+* own complaints;
+* own returns;
+* own breakage.
+
+### Staff
+
+May see operational information according to clearance.
+
+### Administrator
+
+May receive broader information but remains subject to privileged-access controls.
+
+---
+
+# 52. Application Security and Auditability
+
+Every security-sensitive application action must be capable of producing an audit trail.
+
+The audit record should allow reconstruction of:
+
+```text
+Who
+ ↓
+Did what
+ ↓
+Through which application
+ ↓
+From which device/session
+ ↓
+When
+ ↓
+Under which authority
+ ↓
+Against which resource
+ ↓
+With what result
+```
+
+This connects directly to the enterprise audit and security-evidence architecture.
+
+---
+
+# 53. Application Security and Trust Engine
+
+The Trust Engine may contribute contextual signals to application security decisions.
+
+However:
+
+> **Trust does not replace authorization.**
+
+A trusted customer cannot access another customer's data.
+
+A trusted employee cannot exceed their clearance.
+
+A trusted AI agent cannot access tools outside its authorization scope.
+
+---
+
+# 54. Application Security and Reward Intelligence
+
+Applications must not allow users to manipulate Reward Intelligence through client-side claims.
+
+The backend must independently verify:
+
+* transactions;
+* referrals;
+* milestones;
+* eligibility;
+* reward issuance.
+
+Reward logic must remain authoritative on the server side.
+
+---
+
+# 55. Global Scale
+
+The application security architecture must remain viable at:
+
+* 100M+ users;
+* 10,000+ stores;
+* multiple countries;
+* multiple regions;
+* millions of daily transactions;
+* millions of API requests;
+* large AI workloads.
+
+Controls must therefore be:
+
+* centrally governed;
+* policy-driven;
+* automatable;
+* horizontally scalable;
+* observable.
+
+Security cannot depend on manual inspection of every application request.
+
+---
+
+# 56. Architectural Laws
+
+### Law 1 — Client Distrust
+
+No client is authoritative.
+
+### Law 2 — Backend Authority
+
+Critical business and security decisions occur within trusted enterprise services.
+
+### Law 3 — Secure Defaults
+
+Applications begin in a secure state.
+
+### Law 4 — Least Privilege
+
+Applications and components receive only necessary privileges.
+
+### Law 5 — Explicit Boundaries
+
+Trust boundaries must be architecturally defined and technically enforced.
+
+### Law 6 — Input Distrust
+
+All external input is untrusted until validated.
+
+### Law 7 — Output Minimisation
+
+Applications return only information the caller legitimately requires.
+
+### Law 8 — Secure Failure
+
+Application failures must not create security bypasses.
+
+### Law 9 — State Integrity
+
+Critical state transitions must be validated by authoritative services.
+
+### Law 10 — AI Boundary
+
+AI agents cannot bypass application security.
+
+### Law 11 — Channel Independence
+
+WhatsApp and future channels are interfaces, not sources of truth.
+
+### Law 12 — Auditability
+
+Sensitive application actions must be traceable.
+
+### Law 13 — Dependency Isolation
+
+Third-party failures must not automatically compromise the enterprise.
+
+### Law 14 — No Hidden Security
+
+UI restrictions alone never constitute authorization.
+
+---
+
+# 57. Relationship to Previous Commitments
+
+Commit 007 builds directly upon:
+
+```text
+001 Security Philosophy
+        ↓
+002 Enterprise Trust Architecture
+        ↓
+003 Identity & Access Security
+        ↓
+004 Authentication Architecture
+        ↓
+005 Staff Clearance Architecture
+        ↓
+006 Data Security Architecture
+        ↓
+007 Application Security Architecture
+```
+
+Commit 006 protects the information.
+
+Commit 007 protects the applications that handle that information.
+
+---
+
+# 58. Relationship to Future Commitments
+
+Commit 007 establishes the application layer upon which later security architecture will build.
+
+Next major layers include:
+
+* API & Service Security;
+* AI Security;
+* Trust Engine Security;
+* Reward Intelligence Security;
+* Fraud & Abuse;
+* Walk Mode Security;
+* Privacy;
+* Security Logging & Evidence;
+* Security Monitoring;
+* Incident Response;
+* Supply Chain;
+* Infrastructure;
+* CI/CD;
+* Governance;
+* Global Security.
+
+The detailed AI security requirements therefore remain in the dedicated AI Security commitment rather than being duplicated here.
+
+---
+
+# 59. Relationship to EDA-001 Part 4
+
+Part 4 remains responsible for the broader **platform/IP protection and anti-replication architecture**.
+
+That includes concerns such as:
+
+* client-side exposure;
+* reverse engineering;
+* application tampering;
+* intellectual-property protection;
+* proprietary algorithm protection;
+* clone resistance;
+* runtime integrity;
+* application hardening.
+
+Commit 007 establishes the baseline application-security architecture that Part 4 will later harden against deliberate duplication and reverse engineering.
+
+---
+
+# 60. Success Criteria
+
+The Application Security Architecture succeeds when:
+
+* clients cannot override enterprise authority;
+* security boundaries are explicit;
+* applications use least privilege;
+* sensitive state transitions are protected;
+* input is validated;
+* output is minimized;
+* sessions are protected;
+* secrets are isolated;
+* administrative functions are strongly protected;
+* supplier and staff applications respect their boundaries;
+* Walk Mode remains secure;
+* Autopilot remains user-controlled;
+* AI agents cannot bypass authorization;
+* WhatsApp cannot bypass backend security;
+* third-party integrations remain isolated;
+* failures do not create security bypasses;
+* security-sensitive actions are auditable;
+* application security scales with the enterprise.
+
+The final objective is:
+
+> **Every Essentials Mart application should behave as a controlled security boundary rather than an untrusted window into the enterprise.**
