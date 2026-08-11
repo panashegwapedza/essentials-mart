@@ -6254,3 +6254,1325 @@ The Staff Clearance Architecture succeeds when:
 * authorization remains the final enforcement mechanism.
 
 Staff clearance therefore becomes the formal bridge between **who an employee is within Essentials Mart** and **what level of enterprise authority that employee may exercise**.
+
+# EDA-001 Part 3 — Commit 006
+
+# Data Security Architecture
+
+## 1. Purpose
+
+The Data Security Architecture defines how Essentials Mart protects information throughout its entire lifecycle.
+
+The architecture establishes that data security is not limited to database encryption or access control.
+
+Data must remain protected while it is:
+
+* created;
+* collected;
+* transmitted;
+* processed;
+* stored;
+* replicated;
+* cached;
+* analysed;
+* shared;
+* used by AI;
+* exported;
+* archived;
+* retained;
+* deleted.
+
+The architecture therefore treats data as a protected enterprise asset with explicit ownership, classification, access requirements, lifecycle rules and security controls.
+
+The objective is to preserve:
+
+* confidentiality;
+* integrity;
+* availability;
+* privacy;
+* accountability;
+* data sovereignty;
+* controlled usability.
+
+---
+
+# 2. Core Data Security Principle
+
+Essentials Mart shall operate under the principle:
+
+> **Data must be protected according to what it is, who owns it, why it exists, who needs it, how sensitive it is, where it resides, and how long it should exist.**
+
+Authentication alone does not make data access legitimate.
+
+Authorization alone does not determine whether data should be exposed.
+
+A valid identity with valid permissions must still satisfy the applicable:
+
+* data classification;
+* purpose;
+* ownership;
+* contextual access;
+* privacy;
+* lifecycle;
+* geographic;
+* organisational;
+* security requirements.
+
+Least privilege therefore applies directly to data access, not merely to application permissions.
+
+---
+
+# 3. Data Ownership
+
+Every significant enterprise data category must have an accountable owner.
+
+Data ownership defines:
+
+* who is responsible for the data;
+* who defines its permitted uses;
+* who approves access requirements;
+* who defines retention requirements;
+* who approves sharing;
+* who is accountable for data quality;
+* who is responsible for security classification.
+
+Ownership does not mean that the owner can access every instance of the data.
+
+Ownership establishes **governance responsibility**, not unlimited technical privilege.
+
+---
+
+# 4. Data Classification
+
+Essentials Mart shall classify information according to sensitivity and business impact.
+
+The initial enterprise classification model shall be:
+
+### Public
+
+Information intentionally available to the public.
+
+Examples:
+
+* public product information;
+* public store information;
+* public promotions;
+* public terms;
+* public help content.
+
+### Internal
+
+Information intended for legitimate Essentials Mart operations but not public disclosure.
+
+Examples:
+
+* internal operational procedures;
+* non-sensitive operational analytics;
+* internal documentation;
+* general staff information.
+
+### Confidential
+
+Information whose unauthorized disclosure could materially affect customers, staff, suppliers or business operations.
+
+Examples:
+
+* customer behavioural information;
+* supplier performance information;
+* internal commercial analytics;
+* detailed operational reports;
+* household information;
+* non-public business intelligence.
+
+### Restricted
+
+Information requiring the strongest controls because unauthorized disclosure, modification or loss could cause significant harm.
+
+Examples:
+
+* authentication credentials;
+* cryptographic secrets;
+* privileged access information;
+* payment-related sensitive information;
+* highly sensitive customer information;
+* security intelligence;
+* fraud intelligence;
+* Trust Engine signals;
+* sensitive AI context;
+* security audit evidence;
+* high-value proprietary intelligence.
+
+Classification shall be attached to data according to its sensitivity rather than merely according to the system in which it happens to reside.
+
+---
+
+# 5. Classification Rules
+
+Data classification shall determine the minimum security controls applied to the information.
+
+Higher sensitivity shall result in stronger controls including, where appropriate:
+
+* stronger authorization;
+* stronger authentication requirements;
+* encryption;
+* stricter network isolation;
+* restricted export;
+* enhanced logging;
+* shorter retention;
+* additional approval;
+* enhanced monitoring;
+* stronger administrative controls.
+
+Classification shall be reviewed when:
+
+* data changes purpose;
+* new processing is introduced;
+* data is combined with another dataset;
+* regulations change;
+* risk changes;
+* AI processing is introduced;
+* the organisation expands into a new region.
+
+---
+
+# 6. Data Minimisation
+
+Essentials Mart shall not collect or retain information merely because it may become useful in the future.
+
+The system shall collect the minimum information necessary for a legitimate business or platform purpose.
+
+Data minimisation applies to:
+
+* customer information;
+* household information;
+* location;
+* behavioural information;
+* analytics;
+* Walk Mode data;
+* AI context;
+* staff information;
+* supplier information;
+* telemetry;
+* audit information.
+
+The principle is:
+
+> **If Essentials Mart does not need the data, it should not collect or retain it.**
+
+Sensitive data shall receive particular scrutiny before collection.
+
+OWASP similarly recommends avoiding storage of sensitive data where possible and applying access controls and least privilege to sensitive information.
+
+---
+
+# 7. Purpose Limitation
+
+Data collected for one purpose shall not automatically become available for unrelated purposes.
+
+For example:
+
+Customer location collected for Walk Mode navigation must not automatically become available for:
+
+* unrestricted behavioural analysis;
+* staff browsing;
+* marketing;
+* household intelligence;
+* supplier intelligence.
+
+Any secondary use must satisfy applicable:
+
+* authorization;
+* privacy;
+* purpose;
+* policy;
+* legal;
+* governance requirements.
+
+---
+
+# 8. Encryption Architecture
+
+Sensitive data shall be protected both:
+
+### At Rest
+
+Data stored within:
+
+* databases;
+* object storage;
+* backups;
+* archives;
+* caches where applicable;
+* replicated storage;
+* analytical stores;
+
+must use appropriate encryption controls according to classification.
+
+### In Transit
+
+Sensitive communications must use secure authenticated channels.
+
+This includes:
+
+* client-to-backend communication;
+* service-to-service communication;
+* administrative access;
+* AI service communication;
+* third-party integrations;
+* event infrastructure;
+* storage access.
+
+Approved cryptographic mechanisms shall be centrally governed rather than independently invented by individual services.
+
+OWASP recommends encryption in transit and at rest with managed keys and rotation as an architectural control.
+
+---
+
+# 9. Key Management
+
+Cryptographic keys shall be treated as protected enterprise security assets.
+
+Keys must not be:
+
+* hard-coded into applications;
+* embedded in client applications;
+* committed to source control;
+* exposed through logs;
+* exposed through APIs;
+* unnecessarily shared between services.
+
+The architecture shall support:
+
+* central key management;
+* key rotation;
+* key versioning;
+* controlled access;
+* key lifecycle management;
+* separation of duties;
+* emergency key revocation;
+* secure backup/recovery procedures.
+
+Application developers must not implement proprietary cryptographic algorithms or protocols.
+
+---
+
+# 10. Data Isolation
+
+Essentials Mart shall enforce logical and, where required, physical isolation between data categories.
+
+Isolation shall apply across:
+
+* customers;
+* households;
+* staff;
+* suppliers;
+* stores;
+* regions;
+* services;
+* environments;
+* security classifications.
+
+A user belonging to one household must never gain access to another household's private information merely because the records exist within the same database or service.
+
+Similarly:
+
+> **Database proximity must never imply authorization.**
+
+---
+
+# 11. Multi-Tenant Data Isolation
+
+The platform shall be designed as a multi-tenant system where appropriate.
+
+Tenant boundaries may include:
+
+* customer;
+* household;
+* supplier;
+* store;
+* organisation;
+* region;
+* enterprise administrative boundary.
+
+Every data access path must enforce the applicable tenant boundary.
+
+The architecture shall prevent:
+
+* horizontal data access;
+* cross-household leakage;
+* cross-supplier leakage;
+* cross-store leakage;
+* cross-region leakage;
+* accidental aggregation across protected boundaries.
+
+---
+
+# 12. Data Access Architecture
+
+Data access shall follow the previously established identity and clearance architecture.
+
+The decision chain becomes:
+
+```text
+Identity
+   ↓
+Authentication
+   ↓
+Role
+   ↓
+Clearance
+   ↓
+Permission
+   ↓
+Data Classification
+   ↓
+Ownership
+   ↓
+Purpose
+   ↓
+Context
+   ↓
+Policy Decision
+   ↓
+Data Access
+   ↓
+Audit
+```
+
+Therefore:
+
+> **Having permission to access a system does not automatically mean having permission to access every piece of data within it.**
+
+---
+
+# 13. Contextual Data Access
+
+Where appropriate, data access decisions shall consider:
+
+* identity;
+* role;
+* clearance;
+* device;
+* location;
+* time;
+* session;
+* purpose;
+* data sensitivity;
+* risk;
+* relationship to the data;
+* current security posture.
+
+This is consistent with the Zero Trust approach of evaluating access according to context rather than assuming that an authenticated user is inherently trusted.
+
+---
+
+# 14. Customer Data Protection
+
+Customer data shall be protected against:
+
+* unauthorized access;
+* unauthorized modification;
+* unnecessary disclosure;
+* accidental exposure;
+* cross-user leakage;
+* inappropriate staff access;
+* unauthorized analytics;
+* unauthorized AI processing.
+
+Customer-facing systems must expose only the information necessary for the customer's legitimate interaction.
+
+A customer must never be able to infer another customer's private:
+
+* identity;
+* spending;
+* location;
+* household;
+* order history;
+* preferences;
+* behavioural information;
+* Walk Mode presence.
+
+---
+
+# 15. Household Data Protection
+
+Household data introduces collaborative privacy requirements.
+
+The architecture shall distinguish between:
+
+* individual information;
+* household-shared information;
+* household-private information;
+* information belonging to another household member.
+
+Household membership shall not automatically grant unrestricted access to every personal attribute belonging to another member.
+
+The Household Intelligence Agent must respect the same data boundaries as human users.
+
+---
+
+# 16. Supplier Data Protection
+
+Supplier information shall be isolated according to supplier ownership and authorized business relationships.
+
+Supplier-accessible information may include:
+
+* own product performance;
+* own sales;
+* own complaints;
+* own returns;
+* own breakage;
+* own operational analytics.
+
+A supplier must not automatically access another supplier's commercially sensitive information.
+
+Aggregated analytics must be designed so that aggregation cannot become an indirect mechanism for exposing protected competitor information.
+
+---
+
+# 17. Staff Data Protection
+
+Staff access shall be governed by the clearance architecture established in Commit 005.
+
+Staff shall receive only the data necessary for their assigned responsibilities.
+
+Examples:
+
+A customer-service employee may need:
+
+* customer identity;
+* relevant order information;
+* relevant complaint information.
+
+They should not automatically receive:
+
+* unrelated household intelligence;
+* internal fraud models;
+* unrestricted financial analytics;
+* other staff records;
+* security credentials.
+
+Higher clearance does not remove the requirement for purpose limitation and auditability.
+
+---
+
+# 18. Analytics Data Security
+
+Analytics is a first-class enterprise capability and must have its own data-security boundaries.
+
+Analytics may exist at multiple levels:
+
+### Customer
+
+* spending;
+* favourite products;
+* purchase frequency;
+* shopping patterns;
+* household participation.
+
+### Supplier
+
+* product sales;
+* performance;
+* complaints;
+* returns;
+* breakage;
+* fulfilment indicators.
+
+### Staff
+
+* operational performance;
+* permitted activity metrics;
+* action history;
+* workflow metrics.
+
+### Enterprise
+
+* aggregate performance;
+* store analytics;
+* operational intelligence;
+* strategic intelligence.
+
+Analytics must respect the underlying ownership and sensitivity of the source data.
+
+---
+
+# 19. Audit Data Protection
+
+Audit records are themselves sensitive.
+
+Audit logs may contain:
+
+* identities;
+* actions;
+* timestamps;
+* devices;
+* locations;
+* authorization decisions;
+* sensitive resources;
+* security events.
+
+Therefore audit data must not be treated as ordinary operational logs.
+
+Access to audit evidence shall be restricted and independently governed.
+
+Audit records must also be protected against unauthorized modification or deletion.
+
+---
+
+# 20. AI Data Security
+
+AI systems shall not receive unrestricted access to enterprise data.
+
+AI access shall be:
+
+* identity-bound;
+* purpose-bound;
+* permission-bound;
+* context-bound;
+* auditable;
+* minimised.
+
+AI agents must receive only the information required to complete their authorized task.
+
+The architecture shall prevent:
+
+* unrestricted database access by agents;
+* unnecessary customer-data exposure;
+* cross-household context leakage;
+* unauthorized supplier information exposure;
+* sensitive audit-data exposure;
+* credential exposure;
+* security-policy bypass through AI tools.
+
+---
+
+# 21. AI Context Boundaries
+
+AI context shall be treated as a security boundary.
+
+The system must distinguish between:
+
+* user-provided information;
+* trusted enterprise information;
+* retrieved data;
+* system instructions;
+* agent state;
+* tool responses;
+* external content.
+
+Sensitive enterprise information must not automatically become persistent AI memory.
+
+AI memory must follow the same ownership and retention principles as ordinary enterprise data.
+
+---
+
+# 22. Walk Mode Data Protection
+
+Walk Mode introduces additional sensitive information.
+
+Potentially sensitive data includes:
+
+* shopper location;
+* store location;
+* movement;
+* product interaction;
+* proximity;
+* device signals;
+* real-time store state;
+* inventory availability.
+
+The core rule is:
+
+> **A shopper must never be able to use Walk Mode to infer information they are not authorized to know about another shopper.**
+
+The platform shall therefore separate:
+
+* navigation data;
+* store information;
+* inventory information;
+* personal location;
+* other shopper presence;
+* operational telemetry.
+
+Real-time data shall be exposed only where necessary.
+
+---
+
+# 23. WhatsApp and External Channel Data
+
+WhatsApp and future external channels shall not become independent sources of truth.
+
+Messages entering Essentials Mart through external channels must pass through:
+
+* channel authentication;
+* identity binding;
+* authorization;
+* AI policy;
+* data-access controls;
+* action authorization;
+* audit.
+
+Sensitive enterprise information shall not be disclosed merely because a message originates from a recognized messaging account.
+
+The channel is an interface.
+
+The backend remains authoritative.
+
+---
+
+# 24. Data Retention
+
+Every significant data class shall have a defined retention policy.
+
+Retention shall consider:
+
+* business necessity;
+* legal requirements;
+* contractual requirements;
+* security requirements;
+* customer expectations;
+* operational requirements;
+* analytical value.
+
+Data shall not remain indefinitely simply because storage is inexpensive.
+
+Retention periods must be documented and reviewable.
+
+---
+
+# 25. Secure Deletion
+
+When data reaches the end of its permitted lifecycle, the system must support secure deletion or controlled archival.
+
+Deletion must consider:
+
+* primary databases;
+* replicas;
+* caches;
+* search indexes;
+* analytics stores;
+* backups;
+* exported copies;
+* derived datasets;
+* AI memory/context where applicable.
+
+Deletion must not be considered complete merely because the primary record disappeared.
+
+The architecture must define how deletion propagates through dependent systems.
+
+OWASP's secure-by-design guidance similarly calls for retention/deletion policies per data class and verification that deletion propagates to backups and replicas.
+
+---
+
+# 26. Data Lifecycle
+
+The enterprise data lifecycle shall follow:
+
+```text
+Create
+  ↓
+Classify
+  ↓
+Assign Owner
+  ↓
+Collect
+  ↓
+Validate
+  ↓
+Store
+  ↓
+Use
+  ↓
+Share
+  ↓
+Process
+  ↓
+Archive
+  ↓
+Delete
+```
+
+Security controls must exist throughout the lifecycle.
+
+---
+
+# 27. Data Replication
+
+Replication shall not automatically imply unrestricted access.
+
+Replicated data must retain:
+
+* classification;
+* ownership;
+* access requirements;
+* retention requirements;
+* geographic constraints;
+* deletion requirements.
+
+Any replicated system must understand the security properties of the source data.
+
+---
+
+# 28. Backup Security
+
+Backups shall be treated as production-equivalent security assets where they contain production-sensitive information.
+
+Controls shall include:
+
+* encryption;
+* access restriction;
+* backup integrity;
+* controlled restoration;
+* retention limits;
+* monitoring;
+* recovery testing;
+* separation from ordinary production credentials where appropriate.
+
+A backup must not become an easier path to sensitive data than the primary system.
+
+---
+
+# 29. Data Export Security
+
+Exporting data creates a new security boundary.
+
+The platform shall control:
+
+* who can export;
+* what can be exported;
+* why it can be exported;
+* export volume;
+* export destination;
+* export format;
+* export frequency.
+
+Sensitive exports may require:
+
+* additional approval;
+* enhanced logging;
+* masking;
+* redaction;
+* time-limited access.
+
+---
+
+# 30. Data Masking and Redaction
+
+Where complete access is unnecessary, the system should expose a reduced representation.
+
+Examples include:
+
+* masked payment information;
+* partially masked contact information;
+* aggregated analytics;
+* redacted audit information;
+* anonymised datasets;
+* pseudonymised identifiers.
+
+The principle is:
+
+> **If someone only needs part of the information, do not give them all of it.**
+
+---
+
+# 31. Derived Data
+
+Derived information must inherit appropriate security considerations from its source data.
+
+Examples include:
+
+* customer intelligence scores;
+* behavioural profiles;
+* trust signals;
+* fraud indicators;
+* reward eligibility;
+* AI-generated household insights;
+* supplier performance scores.
+
+Derived data can be more sensitive than the underlying raw data because it may reveal conclusions that were not explicitly provided by the user.
+
+Therefore:
+
+> **Inference is data.**
+
+---
+
+# 32. Data Integrity
+
+Data security includes protection against unauthorized modification.
+
+Critical data must have controls appropriate to its importance, including:
+
+* validation;
+* authorization;
+* transactional integrity;
+* versioning where necessary;
+* immutable records where required;
+* integrity monitoring;
+* reconciliation;
+* anomaly detection.
+
+Critical business state must never rely solely on client-provided values.
+
+---
+
+# 33. Data Provenance
+
+Where important decisions depend upon data, Essentials Mart should be able to determine:
+
+* where the data came from;
+* when it was collected;
+* which service produced it;
+* whether it was modified;
+* which transformations occurred;
+* which AI process used it;
+* which decision depended upon it.
+
+This becomes particularly important for:
+
+* Trust Engine decisions;
+* Fraud Intelligence;
+* Reward Intelligence;
+* AI recommendations;
+* financial decisions;
+* security investigations.
+
+---
+
+# 34. Data Residency
+
+As Essentials Mart expands internationally, data residency requirements shall be treated as an architectural concern.
+
+The platform must be capable of distinguishing:
+
+* global data;
+* regional data;
+* country-specific data;
+* restricted data.
+
+The architecture must support regional processing and storage requirements without requiring a complete redesign of the enterprise platform.
+
+---
+
+# 35. Cross-Region Data Transfer
+
+Cross-region data movement must be controlled.
+
+The architecture shall define:
+
+* what data may cross borders;
+* why it may cross;
+* which service performs the transfer;
+* what protections apply;
+* whether the transfer is logged;
+* whether the receiving region is authorized.
+
+Sensitive data should not be globally replicated by default.
+
+---
+
+# 36. Environment Separation
+
+Data environments shall remain appropriately separated.
+
+The architecture shall distinguish:
+
+* development;
+* testing;
+* staging;
+* production;
+* security environments;
+* analytical environments.
+
+Production customer data must not casually appear in development or testing environments.
+
+Where realistic test data is required, synthetic or appropriately transformed data should be preferred.
+
+---
+
+# 37. Third-Party Data Sharing
+
+Third parties shall receive only the minimum data required for their authorized function.
+
+Integrations must define:
+
+* data shared;
+* purpose;
+* ownership;
+* retention;
+* security requirements;
+* authorization;
+* auditability;
+* deletion expectations.
+
+Third-party access must not create an uncontrolled secondary copy of Essentials Mart data.
+
+---
+
+# 38. Data Loss Prevention
+
+The enterprise shall progressively introduce controls capable of detecting and preventing inappropriate data movement.
+
+Potential channels include:
+
+* APIs;
+* exports;
+* messaging;
+* email;
+* downloads;
+* administrative tools;
+* AI tools;
+* third-party integrations;
+* analytics pipelines.
+
+Sensitive information leaving an authorized boundary should generate appropriate controls or alerts.
+
+---
+
+# 39. Data Access Logging
+
+Access to sensitive data shall be auditable.
+
+Security evidence should establish:
+
+```text
+Who?
+  ↓
+Accessed what?
+  ↓
+When?
+  ↓
+From where?
+  ↓
+Using which identity?
+  ↓
+Under which authority?
+  ↓
+For what purpose?
+  ↓
+What operation occurred?
+  ↓
+What changed?
+```
+
+This builds directly upon the enterprise auditability architecture established earlier in Part 2 and will later connect to Commit 015's Security Logging & Evidence architecture.
+
+---
+
+# 40. Security Monitoring Relationship
+
+Data security events should feed the enterprise security monitoring architecture.
+
+Potential signals include:
+
+* unusual data access;
+* large exports;
+* repeated denied access;
+* cross-tenant access attempts;
+* abnormal AI data requests;
+* unusual staff access;
+* unusual supplier access;
+* unexpected data movement;
+* repeated authentication/authorization failures.
+
+Data security therefore participates in the wider detection architecture rather than operating independently.
+
+---
+
+# 41. Data Security and Trust Engine
+
+The Trust Engine may use data security signals, but it must never be able to bypass data security controls.
+
+For example:
+
+> A high trust score must never grant access to restricted data that the identity is otherwise prohibited from accessing.
+
+Trust influences security decisions where explicitly designed to do so.
+
+Trust never replaces authorization.
+
+---
+
+# 42. Data Security and Reward Intelligence
+
+Reward Intelligence may process:
+
+* purchases;
+* milestones;
+* referrals;
+* engagement;
+* household activity.
+
+However, reward calculations must operate within defined data-access boundaries.
+
+Reward eligibility must never become an excuse to expose unnecessary personal information.
+
+---
+
+# 43. Data Security and Analytics
+
+Analytics shall use the minimum level of data required to answer the analytical question.
+
+Where aggregate information is sufficient:
+
+> **Aggregate rather than expose individual records.**
+
+Where individual-level information is necessary, access must be explicitly authorized and auditable.
+
+This protects both customer privacy and Essentials Mart's proprietary intelligence.
+
+---
+
+# 44. Data Security and AI Society
+
+AI Society agents shall be treated as data-consuming enterprise actors.
+
+Every agent must have:
+
+* an identity;
+* defined permissions;
+* defined data scopes;
+* defined tools;
+* defined purposes;
+* defined limits;
+* auditability.
+
+An agent must not inherit unrestricted access merely because it belongs to AI Society.
+
+---
+
+# 45. Security Boundaries
+
+The enterprise data architecture shall establish explicit security boundaries around:
+
+```text
+Customer
+Household
+Supplier
+Staff
+Store
+Region
+Service
+AI Agent
+Analytics
+Security
+Finance
+Enterprise Intelligence
+```
+
+Crossing a boundary requires an explicit architectural reason and authorization mechanism.
+
+---
+
+# 46. Failure Behaviour
+
+When data authorization or protection cannot be determined reliably, the system shall fail securely.
+
+Examples:
+
+* deny access;
+* withhold sensitive fields;
+* return a safe degraded response;
+* require additional verification;
+* escalate to an authorized process.
+
+The system must not:
+
+> "show everything because the security service is temporarily unavailable."
+
+Secure-by-design guidance explicitly treats fail-secure behaviour and secure defaults as architectural principles.
+
+---
+
+# 47. Global Scale Requirements
+
+The Data Security Architecture must remain viable at:
+
+* 100M+ users;
+* 10,000+ stores;
+* multiple countries;
+* multiple regions;
+* millions of daily transactions;
+* large AI workloads;
+* large-scale analytics.
+
+Security controls must therefore be:
+
+* centrally governed;
+* policy-driven;
+* automatable;
+* horizontally scalable;
+* observable;
+* resilient.
+
+Data security cannot depend on manual decisions for every individual access request.
+
+---
+
+# 48. Architectural Laws
+
+The following laws are established by this commit:
+
+### Law 1 — Data Classification
+
+Every significant data category must have a defined security classification.
+
+### Law 2 — Data Ownership
+
+Every significant data category must have an accountable owner.
+
+### Law 3 — Least Data
+
+Collect and retain only what is necessary.
+
+### Law 4 — Least Access
+
+Users, services and agents receive only the data necessary for their authorized purpose.
+
+### Law 5 — Encryption
+
+Sensitive data must be appropriately protected at rest and in transit.
+
+### Law 6 — No Implicit Trust
+
+Being authenticated or trusted does not automatically authorize data access.
+
+### Law 7 — Tenant Isolation
+
+One customer's, household's, supplier's or organization's data must not become accessible merely because it shares infrastructure.
+
+### Law 8 — AI Boundary
+
+AI agents receive only explicitly authorized data.
+
+### Law 9 — Auditability
+
+Sensitive data access must be traceable.
+
+### Law 10 — Lifecycle
+
+Data must have a defined lifecycle from creation to deletion.
+
+### Law 11 — Derived Data
+
+Inferred information is still protected information.
+
+### Law 12 — Secure Failure
+
+Uncertainty about authorization must result in restriction rather than exposure.
+
+### Law 13 — Sovereignty
+
+Data residency and cross-border movement must be explicitly governed.
+
+### Law 14 — Replication Awareness
+
+Copies of data inherit appropriate security requirements from the original data.
+
+---
+
+# 49. Relationship to Other Security Commitments
+
+This commit establishes the data layer of Part 3.
+
+```text
+001 Security Philosophy
+        ↓
+002 Identity
+        ↓
+003 Authentication
+        ↓
+004 Authorization
+        ↓
+005 Staff Clearance
+        ↓
+006 Data Security
+        ↓
+007 Application Security
+        ↓
+008 API & Service Security
+        ↓
+009 AI Security
+        ↓
+010 Trust Engine Security
+        ↓
+011 Reward Intelligence Security
+        ↓
+...
+```
+
+Commit 006 therefore becomes the foundation upon which later application, API and AI security controls operate.
+
+---
+
+# 50. Relationship to EDA-001 Part 2
+
+Part 2 defines:
+
+* enterprise domains;
+* ownership;
+* relationships;
+* users;
+* responsibilities;
+* analytics;
+* auditability;
+* intelligence boundaries.
+
+Commit 006 defines how the information produced and exchanged by those domains is protected.
+
+It does not redefine domain ownership.
+
+Instead:
+
+> **Part 2 defines what the enterprise owns. Part 3 defines how that information is protected.**
+
+---
+
+# 51. Relationship to EDA-001 Part 4
+
+Part 4 will address the protection of Essentials Mart's broader intellectual property and platform resilience, including:
+
+* client resilience;
+* anti-reverse-engineering measures;
+* anti-replication;
+* tamper resistance;
+* proprietary intelligence protection;
+* clone detection;
+* application resilience;
+* competitive IP protection.
+
+Commit 006 does not attempt to solve those problems.
+
+It protects the underlying information assets that Part 4 will help defend.
+
+---
+
+# 52. Success Criteria
+
+The Data Security Architecture succeeds when:
+
+* sensitive data is identifiable;
+* every major data category has an owner;
+* data access is purpose-bound;
+* customer data remains isolated;
+* household data remains appropriately private;
+* supplier data remains isolated;
+* staff access follows clearance;
+* analytics respects underlying data boundaries;
+* AI agents receive only authorized information;
+* Walk Mode cannot expose unauthorized shopper information;
+* WhatsApp and other external channels cannot bypass security boundaries;
+* encryption protects sensitive data;
+* retention is deliberate;
+* deletion is enforceable;
+* cross-region data movement is governed;
+* sensitive access is auditable;
+* derived intelligence is protected;
+* data security scales with the enterprise.
+
+The final objective is:
+
+> **Essentials Mart should be able to use information extensively without treating information casually.**
+
+Data should remain useful, intelligent and accessible to the people and systems that legitimately need it — while remaining protected from everyone and everything that does not.
