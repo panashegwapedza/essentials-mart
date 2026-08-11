@@ -4678,3 +4678,1579 @@ The Enterprise Authorization Architecture succeeds when:
 * the architecture remains viable at global scale.
 
 The Enterprise Authorization Architecture establishes the access-control foundation upon which the remaining Essentials Mart security architecture will operate.
+## 1.5 Staff Clearance Architecture
+
+### Purpose
+
+The Staff Clearance Architecture defines how Essentials Mart controls access granted to staff members beyond basic staff role membership.
+
+The architecture establishes that:
+
+> **Being an Essentials Mart staff member does not automatically grant access to every enterprise resource.**
+
+Staff access must be determined through a combination of:
+
+```text
+Staff Identity
+      ↓
+Employment Status
+      ↓
+Role
+      ↓
+Clearance
+      ↓
+Permissions
+      ↓
+Scope
+      ↓
+Context
+      ↓
+Authorization
+      ↓
+Action
+      ↓
+Audit
+```
+
+The purpose of Staff Clearance Architecture is to ensure that every staff member receives only the access necessary to perform their legitimate responsibilities.
+
+Clearance therefore becomes one of the enterprise security attributes used by the Authorization Architecture.
+
+---
+
+### Responsibilities
+
+The Staff Clearance Architecture is responsible for:
+
+* Staff security classification
+* Staff role relationships
+* Clearance levels
+* Clearance scopes
+* Clearance assignment
+* Clearance approval
+* Clearance activation
+* Clearance modification
+* Clearance suspension
+* Clearance revocation
+* Clearance expiry
+* Need-to-know restrictions
+* Privileged staff access
+* Sensitive-data access
+* Staff analytics access
+* Operational access
+* Financial access
+* Customer-data access
+* Supplier-data access
+* Inventory-data access
+* Security-data access
+* AI-system access
+* Administrative access
+* Store-level access
+* Department-level access
+* Regional access
+* Enterprise-wide access
+* Separation of duties
+* Conflict-of-interest controls
+* Temporary clearance
+* Emergency clearance
+* Clearance review
+* Clearance auditability
+
+---
+
+### Owns
+
+The Staff Clearance Architecture owns:
+
+* Staff Clearance
+* Clearance Level
+* Clearance Scope
+* Clearance Assignment
+* Clearance Status
+* Clearance Expiry
+* Clearance Approval
+* Clearance Review
+* Clearance Revocation
+* Need-to-Know Rule
+* Staff Access Profile
+* Staff Privilege Profile
+* Staff Access Exception
+* Temporary Clearance
+* Emergency Clearance
+* Clearance Conflict Rule
+* Staff Separation-of-Duties Rule
+
+---
+
+### Does Not Own
+
+The Staff Clearance Architecture does not own:
+
+* Staff identity
+* Staff authentication
+* Staff employment records
+* General authorization policy
+* Customer profiles
+* Supplier profiles
+* Product information
+* Inventory
+* Commerce
+* Financial records
+* Analytics generation
+* AI models
+* Security monitoring infrastructure
+
+Those remain owned by their respective enterprise domains.
+
+The Staff Clearance Architecture determines the **security authority of staff identities over those resources**.
+
+---
+
+## Staff Role vs Clearance
+
+Role and clearance must remain separate concepts.
+
+### Role
+
+A role describes the staff member's organisational responsibility.
+
+Examples include:
+
+* Cashier
+* Customer Service Representative
+* Service Desk Agent
+* Returns Agent
+* Inventory Associate
+* Inventory Supervisor
+* Store Supervisor
+* Store Manager
+* Regional Manager
+* Finance Officer
+* Procurement Officer
+* HR Officer
+* Security Officer
+* Security Administrator
+* System Administrator
+
+### Clearance
+
+Clearance describes the level and scope of sensitive access the staff member is authorised to receive.
+
+For example:
+
+```text
+Role:
+Inventory Supervisor
+
+Clearance:
+Inventory-L3
+
+Scope:
+Assigned Store
+
+Permissions:
+View Inventory
+Modify Inventory
+View Stock History
+Approve Stock Adjustment
+```
+
+Another employee may have:
+
+```text
+Role:
+Inventory Supervisor
+
+Clearance:
+Inventory-L1
+
+Scope:
+Assigned Department
+
+Permissions:
+View Inventory
+View Stock Status
+```
+
+The same role therefore does not necessarily imply identical access.
+
+---
+
+## Clearance Principle
+
+The fundamental law is:
+
+> **No staff member receives access merely because they possess a staff role.**
+
+A staff role creates a potential responsibility.
+
+Clearance determines whether the staff member may access sensitive resources associated with that responsibility.
+
+Authorization ultimately determines whether the specific requested action is permitted.
+
+---
+
+## Clearance Model
+
+Essentials Mart shall use a multidimensional clearance model rather than a single universal number.
+
+Conceptually:
+
+```text
+Clearance
+│
+├── Level
+├── Domain
+├── Scope
+├── Data Sensitivity
+├── Action Authority
+├── Temporal Validity
+└── Context Restrictions
+```
+
+For example:
+
+```text
+Inventory
+L3
+Store 004
+Sensitive
+Modify + Approve
+Active Shift
+```
+
+is materially different from:
+
+```text
+Inventory
+L3
+Enterprise
+Sensitive
+Modify + Approve
+Always Active
+```
+
+---
+
+## Clearance Levels
+
+Essentials Mart may use a conceptual hierarchy such as:
+
+### L0 — Basic Operational Access
+
+Access to ordinary operational functions required by frontline staff.
+
+Examples:
+
+* assigned tasks;
+* basic customer service;
+* ordinary operational information.
+
+### L1 — Operational Access
+
+Access to department-level operational information.
+
+Examples:
+
+* department inventory;
+* operational reports;
+* relevant customer-service information;
+* standard staff analytics.
+
+### L2 — Supervisory Access
+
+Access to broader operational information and selected approval functions.
+
+Examples:
+
+* team analytics;
+* operational exceptions;
+* selected approvals;
+* departmental performance.
+
+### L3 — Management Access
+
+Access to sensitive operational and management information within defined scope.
+
+Examples:
+
+* store-level analytics;
+* staff performance;
+* operational trends;
+* financial summaries;
+* inventory exceptions.
+
+### L4 — Regional / Strategic Access
+
+Access to information spanning multiple stores or business units.
+
+Examples:
+
+* regional performance;
+* cross-store analytics;
+* regional inventory;
+* regional supplier performance.
+
+### L5 — Enterprise Privileged Access
+
+Highly restricted access to enterprise-level resources.
+
+Examples:
+
+* enterprise security systems;
+* sensitive administrative functions;
+* privileged configuration;
+* enterprise security analytics;
+* critical operational controls.
+
+### Special Privileged Domains
+
+Certain capabilities must not be granted merely because a person has a high numerical clearance.
+
+Examples:
+
+* Cryptographic key management
+* Identity administration
+* Security policy administration
+* Audit administration
+* Production infrastructure administration
+* AI governance
+* Financial administration
+
+These require explicit domain-specific privileges.
+
+---
+
+## Clearance Is Not Automatically Hierarchical
+
+A higher clearance does not automatically mean unrestricted access to every lower-level resource.
+
+For example:
+
+```text
+Security-L5
+```
+
+does not automatically imply:
+
+```text
+Finance-L5
+```
+
+or:
+
+```text
+HR-L5
+```
+
+or:
+
+```text
+AI-L5
+```
+
+Clearance must therefore be:
+
+```text
+Domain-specific
++
+Scope-specific
++
+Purpose-specific
+```
+
+This prevents the dangerous assumption that:
+
+> "Senior employee = access to everything."
+
+---
+
+## Need-to-Know
+
+Clearance must operate alongside need-to-know.
+
+A staff member may possess a sufficiently high clearance level but still not have a legitimate need to access a particular resource.
+
+Therefore:
+
+```text
+Clearance
+      +
+Need-to-Know
+      +
+Permission
+      +
+Scope
+      ↓
+Authorization
+```
+
+A clearance level alone must never bypass authorization.
+
+---
+
+## Scope
+
+Every clearance must have an explicit scope.
+
+Possible scopes include:
+
+* Individual Store
+* Multiple Stores
+* Department
+* Region
+* Business Unit
+* Enterprise
+* Specific Resource
+* Specific Resource Class
+
+For example:
+
+```text
+Inventory-L2
+Scope = Store 004
+```
+
+does not automatically permit:
+
+```text
+Inventory-L2
+Scope = Store 019
+```
+
+---
+
+## Store-Bound Clearance
+
+Where staff are assigned to a store, their access should normally be constrained to that operational context.
+
+For example:
+
+```text
+Staff:
+Inventory Supervisor
+
+Store:
+Store 004
+
+Clearance:
+Inventory-L3
+
+Scope:
+Store 004
+```
+
+The staff member may access Store 004 inventory.
+
+Access to Store 019 requires separate authorization.
+
+This protects against unnecessary cross-store visibility.
+
+---
+
+## Regional Clearance
+
+Regional management may require access to multiple stores.
+
+Example:
+
+```text
+Regional Manager
+       ↓
+Regional Clearance
+       ↓
+Region = Harare
+       ↓
+Stores = 001–015
+```
+
+The manager may receive regional analytics without necessarily receiving enterprise-wide access.
+
+---
+
+## Enterprise Clearance
+
+Enterprise-wide access must be exceptional.
+
+It should be restricted to clearly defined responsibilities such as:
+
+* executive management;
+* security operations;
+* enterprise architecture;
+* enterprise administration;
+* approved strategic functions.
+
+Enterprise scope must receive enhanced monitoring and review.
+
+---
+
+## Department Clearance
+
+Staff access may be constrained by department.
+
+Examples:
+
+```text
+Inventory
+Finance
+Customer Service
+Human Resources
+Procurement
+Security
+IT
+Operations
+```
+
+A Finance Officer should not automatically receive Inventory Administration permissions.
+
+An Inventory Supervisor should not automatically receive Payroll permissions.
+
+---
+
+## Staff Analytics Clearance
+
+Analytics must respect staff clearance.
+
+This is particularly important because Essentials Mart will maintain extensive analytics.
+
+For example:
+
+### Frontline Staff
+
+May see:
+
+* own operational metrics;
+* relevant store information;
+* task-related analytics.
+
+### Supervisor
+
+May additionally see:
+
+* team performance;
+* department analytics;
+* operational exceptions.
+
+### Store Manager
+
+May additionally see:
+
+* store-wide performance;
+* staff analytics;
+* inventory analytics;
+* customer-service analytics;
+* selected financial summaries.
+
+### Regional Manager
+
+May additionally see:
+
+* regional store comparisons;
+* regional inventory;
+* regional performance;
+* supplier performance within authorised scope.
+
+### Enterprise Management
+
+May access:
+
+* enterprise-level analytics;
+* strategic performance;
+* cross-region analysis.
+
+### Security Staff
+
+May access:
+
+* security events;
+* suspicious activity;
+* audit information;
+* security analytics.
+
+The UI must therefore not be responsible for determining what a staff member is allowed to see.
+
+The backend authorization layer must enforce the boundary.
+
+---
+
+## Customer Data Clearance
+
+Access to customer information must be tightly controlled.
+
+Staff may require different levels of access.
+
+For example:
+
+```text
+Customer Service Representative
+→ Limited customer information
+
+Store Manager
+→ Broader customer-service information
+
+Security Investigator
+→ Security-relevant customer information where authorised
+
+Enterprise Administrator
+→ No automatic customer-data access
+```
+
+Administrative privilege must not automatically expose customer information.
+
+---
+
+## Supplier Data Clearance
+
+Supplier information must also be clearance-controlled.
+
+A procurement employee may access:
+
+* supplier contracts;
+* supplier performance;
+* supplier pricing;
+* supplier operational information.
+
+An inventory employee may only require:
+
+* product availability;
+* supplier-linked inventory information.
+
+A customer-service employee may require:
+
+* supplier/product complaint information.
+
+The underlying supplier data remains protected.
+
+---
+
+## Inventory Clearance
+
+Inventory access should support granular permissions.
+
+Examples:
+
+```text
+Inventory-L1
+→ View stock
+
+Inventory-L2
+→ View + Record operational adjustments
+
+Inventory-L3
+→ Modify + Approve defined adjustments
+
+Inventory-L4
+→ Regional inventory authority
+
+Inventory-L5
+→ Enterprise inventory administration
+```
+
+Sensitive inventory actions may additionally require separation of duties.
+
+---
+
+## Financial Clearance
+
+Financial permissions must be highly restricted.
+
+Potential levels may include:
+
+```text
+Finance-L1
+→ View authorised summaries
+
+Finance-L2
+→ Process defined transactions
+
+Finance-L3
+→ Approve defined transactions
+
+Finance-L4
+→ Regional financial authority
+
+Finance-L5
+→ Enterprise financial administration
+```
+
+Certain actions must require independent approval regardless of clearance.
+
+---
+
+## Refund and Return Clearance
+
+Returns and refunds present significant abuse risk.
+
+The architecture must therefore separate:
+
+```text
+Return Creation
+      ↓
+Return Review
+      ↓
+Refund Approval
+```
+
+where appropriate.
+
+A staff member who can initiate a return should not automatically be able to approve every resulting financial action.
+
+Separation of duties is specifically intended to prevent a single user from accumulating enough privilege to misuse a system independently. NIST describes both static and dynamic separation-of-duty controls, including two-person approval patterns.
+
+---
+
+## Security Clearance
+
+Security staff may receive specialised security clearance.
+
+Possible capabilities include:
+
+* security-event investigation;
+* audit-log investigation;
+* suspicious activity analysis;
+* incident response;
+* account investigation;
+* security monitoring.
+
+Security personnel must not automatically receive unrestricted business-data access.
+
+---
+
+## Audit Clearance
+
+Audit access must be separately controlled.
+
+An employee administering access control should not automatically administer or modify the audit evidence used to evaluate their actions.
+
+This preserves audit independence.
+
+NIST explicitly identifies separation between access-control administration and audit administration as an example of separation of duties.
+
+---
+
+## AI System Clearance
+
+AI systems require specialised staff access controls.
+
+Potential staff capabilities include:
+
+```text
+AI Viewer
+→ View permitted AI metrics
+
+AI Operator
+→ Operate approved AI systems
+
+AI Supervisor
+→ Manage approved AI workflows
+
+AI Administrator
+→ Configure approved AI infrastructure
+
+AI Governance Officer
+→ Review AI authority and policy
+
+AI Security Administrator
+→ Manage AI security controls
+```
+
+No staff member should automatically receive unrestricted access to AI models, prompts, contexts, tools or agent authority.
+
+---
+
+## AI Agent Clearance
+
+AI agents are not staff members and therefore must not receive staff clearance.
+
+An AI agent must receive its own:
+
+```text
+Agent Identity
++
+Agent Authority
++
+Agent Permissions
++
+Tool Permissions
++
+Resource Scope
+```
+
+A staff member may authorize an AI agent to perform a task, but that delegation must remain bounded by the agent's own authorization policy.
+
+---
+
+## Privileged Staff
+
+Privileged staff require special treatment.
+
+Examples:
+
+* System Administrator
+* Security Administrator
+* Identity Administrator
+* Database Administrator
+* AI Administrator
+* Infrastructure Administrator
+* Cryptographic Administrator
+
+Privileged staff should normally use separate privileged and non-privileged access paths.
+
+NIST guidance explicitly recommends restricting privileged accounts and requiring privileged users to use non-privileged accounts for ordinary non-security functions.
+
+---
+
+## Privileged Access Separation
+
+A privileged administrator should not need to use their highest privilege for ordinary work.
+
+Conceptually:
+
+```text
+Administrator
+     │
+     ├── Standard Account
+     │      ↓
+     │   Ordinary Work
+     │
+     └── Privileged Account
+            ↓
+        Approved Admin Task
+```
+
+This reduces the exposure of powerful credentials.
+
+---
+
+## Clearance Assignment
+
+Clearance assignment must follow a controlled process.
+
+Conceptually:
+
+```text
+Employment
+   ↓
+Role Assignment
+   ↓
+Business Justification
+   ↓
+Clearance Request
+   ↓
+Approval
+   ↓
+Clearance Assignment
+   ↓
+Authorization
+```
+
+No staff member should be able to grant themselves clearance.
+
+---
+
+## Clearance Approval
+
+Sensitive clearance assignments should require appropriate approval.
+
+Approval may depend upon:
+
+* role;
+* clearance level;
+* scope;
+* resource sensitivity;
+* department;
+* risk;
+* business necessity.
+
+Higher-risk clearances should require stronger approval.
+
+---
+
+## Clearance Activation
+
+A clearance should only become active once:
+
+* the staff identity is valid;
+* employment status permits access;
+* required approvals exist;
+* required training is complete where applicable;
+* required conditions are satisfied.
+
+---
+
+## Clearance Suspension
+
+Clearance may be temporarily suspended because of:
+
+* security investigation;
+* suspicious behaviour;
+* employment suspension;
+* device compromise;
+* policy violation;
+* incident response;
+* management decision.
+
+Suspension must immediately affect relevant authorization decisions.
+
+---
+
+## Clearance Revocation
+
+Clearance must be revoked when the underlying justification disappears.
+
+Examples:
+
+* role change;
+* department transfer;
+* store transfer;
+* employment termination;
+* supplier relationship termination;
+* security incident;
+* privilege reduction;
+* policy change.
+
+NIST's least-privilege controls explicitly include reviewing assigned privileges and reassigning or removing them when necessary.
+
+---
+
+## Clearance Expiration
+
+Certain clearances should automatically expire.
+
+Examples:
+
+* temporary project access;
+* incident-response privileges;
+* emergency administrative access;
+* temporary regional assignment;
+* temporary supplier-support access.
+
+Expiration prevents temporary authority from becoming permanent privilege.
+
+---
+
+## Emergency Clearance
+
+Essentials Mart may support emergency clearance.
+
+Emergency access must:
+
+* have a defined reason;
+* have an explicit scope;
+* have an explicit duration;
+* require appropriate authorization;
+* generate enhanced audit evidence;
+* trigger post-event review.
+
+Emergency access must not become a permanent backdoor.
+
+---
+
+## Temporary Clearance
+
+Temporary clearance may be granted for legitimate short-term requirements.
+
+Example:
+
+```text
+Staff Member
+      ↓
+Temporary Project
+      ↓
+Finance-L2
+      ↓
+Duration: 48 Hours
+      ↓
+Automatic Expiry
+```
+
+---
+
+## Clearance Conflicts
+
+Certain combinations of clearance must be prohibited.
+
+Examples:
+
+```text
+Refund Creator
++
+Refund Final Approver
+```
+
+or:
+
+```text
+Access Administrator
++
+Audit Administrator
+```
+
+or:
+
+```text
+Security Investigator
++
+Evidence Deletion Authority
+```
+
+where such combinations would undermine independent controls.
+
+NIST guidance recognises that separation-of-duty conflicts can span systems and application domains, meaning the enterprise must consider the complete architecture rather than individual applications in isolation.
+
+---
+
+## Dynamic Separation of Duties
+
+Some conflicts only become dangerous based on activity history.
+
+For example:
+
+```text
+Employee A
+→ Creates refund
+
+Employee A
+→ Attempts to approve same refund
+```
+
+The authorization engine should be capable of detecting the conflict and denying the second action.
+
+This allows separation of duties to operate dynamically rather than relying only on static role assignments.
+
+---
+
+## Clearance and Trust Engine
+
+The Trust Engine may influence authorization decisions but must not create clearance.
+
+Correct:
+
+```text
+Clearance
++
+Permission
++
+Context
++
+Trust Signal
+→ Authorization
+```
+
+Incorrect:
+
+```text
+High Trust Score
+→ Automatically Grant Staff Clearance
+```
+
+Trust is contextual evidence.
+
+Clearance is formal authority.
+
+The two must remain separate.
+
+---
+
+## Clearance and Fraud Intelligence
+
+Fraud signals may temporarily affect authorization.
+
+For example:
+
+```text
+Staff Clearance:
+Refund-L3
+
+Fraud Signal:
+High Risk
+
+Action:
+Large Refund
+```
+
+The resulting policy may require:
+
+```text
+Step-Up
++
+Independent Approval
+```
+
+rather than simply trusting the staff member's normal clearance.
+
+---
+
+## Clearance and Walk Mode
+
+Staff operating Walk Mode or store-management interfaces must receive only the information appropriate to their clearance.
+
+For example:
+
+A store employee may see:
+
+* store layout;
+* stock information;
+* operational tasks.
+
+A manager may additionally see:
+
+* operational analytics;
+* staff activity;
+* inventory exceptions.
+
+A security employee may see:
+
+* security-relevant events.
+
+A normal customer must never receive staff-level Walk Mode information.
+
+---
+
+## Clearance and Shopper Privacy
+
+Staff access to live shopper information must be particularly restricted.
+
+A staff member should not automatically be able to:
+
+* track arbitrary shoppers;
+* inspect private shopper behaviour;
+* identify shoppers from anonymous movement;
+* view another household's private information.
+
+Any operational requirement for shopper information must be explicitly authorised.
+
+---
+
+## Clearance and Logs
+
+Staff actions must be attributable to the appropriate identity.
+
+Where a staff member uses:
+
+* a standard account;
+* a privileged account;
+* a delegated identity;
+* an AI assistant;
+
+the audit system must preserve the identity chain.
+
+For AI-assisted actions:
+
+```text
+Staff Identity
+      ↓
+AI Agent Identity
+      ↓
+Delegated Authority
+      ↓
+Action
+```
+
+The system must be able to determine who initiated the authority and which agent performed the action.
+
+---
+
+## Clearance and Analytics
+
+Analytics visibility must be enforced server-side.
+
+The application must never simply hide restricted analytics in the UI and assume that this constitutes security.
+
+For example:
+
+```text
+Store Manager
+→ Store Analytics API
+→ Authorized
+
+Cashier
+→ Store Analytics API
+→ Restricted
+```
+
+The API must enforce the authorization boundary.
+
+---
+
+## Clearance Review
+
+Clearances must be periodically reviewed.
+
+Review should evaluate:
+
+* current role;
+* current department;
+* current store;
+* current region;
+* current responsibilities;
+* current permissions;
+* recent usage;
+* unused privileges;
+* security events;
+* policy changes.
+
+NIST explicitly includes periodic privilege review and removal or reassignment of unnecessary privileges as part of least-privilege control.
+
+---
+
+## Dormant Privileges
+
+Unused staff privileges should be identified.
+
+For example:
+
+```text
+Clearance:
+Finance-L3
+
+Last Used:
+14 months ago
+
+Current Role:
+Customer Operations
+
+Result:
+Review Required
+```
+
+The system should prevent privilege accumulation caused by historical roles.
+
+---
+
+## Privilege Accumulation
+
+Staff members may change roles over time.
+
+The architecture must prevent:
+
+```text
+Role 1
+→ Permissions A+B
+
+Role 2
+→ Permissions C+D
+
+Role 3
+→ Permissions E+F
+
+Result:
+A+B+C+D+E+F
+```
+
+when the staff member only needs the permissions associated with Role 3.
+
+Role changes must trigger authorization review.
+
+---
+
+## Staff Lifecycle
+
+Clearance must follow staff lifecycle events.
+
+```text
+Applicant
+   ↓
+Employee
+   ↓
+Role Assignment
+   ↓
+Clearance
+   ↓
+Active Employment
+   ↓
+Role Change
+   ↓
+Clearance Review
+   ↓
+Suspension / Transfer / Termination
+   ↓
+Clearance Revocation
+```
+
+Security authority must therefore evolve with employment state.
+
+---
+
+## Clearance Audit Trail
+
+Clearance changes must generate immutable or strongly protected audit evidence.
+
+The audit record should capture:
+
+* staff identity;
+* previous clearance;
+* new clearance;
+* scope;
+* requesting authority;
+* approving authority;
+* reason;
+* timestamp;
+* effective time;
+* expiry;
+* affected permissions;
+* resulting authorization state.
+
+---
+
+## Clearance Exceptions
+
+Exceptions must be explicit.
+
+A staff member must not receive undocumented additional access because:
+
+> "the manager said it was okay."
+
+Exceptions require:
+
+* documented justification;
+* defined scope;
+* defined duration;
+* approving authority;
+* audit record;
+* review.
+
+---
+
+## Clearance Governance
+
+Clearance governance should define:
+
+* who can request clearance;
+* who can approve clearance;
+* who can modify clearance;
+* who can revoke clearance;
+* who reviews clearance;
+* who audits clearance;
+* which clearances require dual approval;
+* which clearances require security approval.
+
+No single person should automatically control the entire clearance lifecycle for highly privileged access.
+
+---
+
+## Clearance Architecture Model
+
+The resulting model is:
+
+```text
+                   STAFF IDENTITY
+                         │
+                         ▼
+                 EMPLOYMENT STATUS
+                         │
+                         ▼
+                       ROLE
+                         │
+                         ▼
+                     CLEARANCE
+                    /    │     \
+                   /     │      \
+                LEVEL   DOMAIN   SCOPE
+                  │       │       │
+                  └───────┴───────┘
+                          │
+                          ▼
+                    PERMISSIONS
+                          │
+                          ▼
+                     CONTEXT
+                          │
+                          ▼
+                    AUTHORIZATION
+                          │
+                          ▼
+                       ACTION
+                          │
+                          ▼
+                        AUDIT
+```
+
+---
+
+## Architectural Principles
+
+The Staff Clearance Architecture must:
+
+* separate role from clearance;
+* enforce least privilege;
+* enforce need-to-know;
+* support domain-specific clearance;
+* support scope-specific clearance;
+* support temporal restrictions;
+* support contextual restrictions;
+* support privileged staff controls;
+* support separation of duties;
+* support dynamic separation of duties;
+* support temporary clearance;
+* support emergency clearance;
+* support clearance expiry;
+* support clearance suspension;
+* support clearance revocation;
+* support periodic review;
+* prevent privilege accumulation;
+* protect customer data;
+* protect supplier data;
+* protect inventory data;
+* protect financial data;
+* protect security data;
+* protect AI systems;
+* protect Walk Mode;
+* protect shopper privacy;
+* enforce analytics visibility;
+* maintain auditability;
+* remain integrated with enterprise authorization;
+* remain independent of individual business domains.
+
+---
+
+## Staff Clearance Laws
+
+The following laws are established by Commit 005:
+
+1. Staff membership does not imply unrestricted access.
+2. Role and clearance are separate concepts.
+3. Clearance does not replace authorization.
+4. Clearance must be explicit.
+5. Clearance must have a defined domain.
+6. Clearance must have a defined scope.
+7. Clearance must support least privilege.
+8. Clearance must support need-to-know.
+9. Higher clearance does not automatically imply access to every domain.
+10. Domain-specific privileged access must remain explicit.
+11. Customer-data access must be separately governed.
+12. Supplier-data access must be separately governed.
+13. Inventory access must be separately governed.
+14. Financial access must be separately governed.
+15. Security access must be separately governed.
+16. AI-system access must be separately governed.
+17. Analytics access must respect staff clearance.
+18. UI visibility must never be the sole security boundary.
+19. Backend authorization must enforce staff clearance.
+20. Staff access must be scope-aware.
+21. Store-level access must not automatically become enterprise-wide access.
+22. Regional access must not automatically become enterprise-wide access.
+23. Enterprise clearance must be exceptional.
+24. Privileged staff must receive enhanced controls.
+25. Privileged users should use non-privileged access for ordinary functions.
+26. Privileged functions must be explicitly authorized.
+27. Privileged actions must be auditable.
+28. Separation of duties must be supported.
+29. Conflicting privileges must be detectable.
+30. Dynamic separation of duties must be supported where required.
+31. Clearance assignment must require controlled approval.
+32. Staff cannot grant themselves clearance.
+33. Clearance must be suspendable.
+34. Clearance must be revocable.
+35. Temporary clearance must have explicit expiry.
+36. Emergency clearance must be bounded and auditable.
+37. Clearance changes must generate audit evidence.
+38. Staff role changes must trigger clearance review.
+39. Dormant privileges must be reviewable.
+40. Privilege accumulation must be prevented.
+41. Trust scores cannot create staff clearance.
+42. Fraud signals may restrict otherwise valid staff access where policy permits.
+43. AI agents must not inherit staff clearance.
+44. Delegated AI authority must remain separately bounded.
+45. Walk Mode staff capabilities must respect staff clearance.
+46. Shopper privacy must remain protected from unnecessary staff access.
+47. Clearance governance must support separation of requesting, approving and auditing responsibilities.
+48. Clearance must remain compatible with enterprise-scale authorization.
+49. Clearance decisions must remain attributable.
+50. Any future implementation may refine these laws but must not contradict them without an explicit architectural decision.
+
+---
+
+## Relationship to Commit 004
+
+Commit 005 builds directly upon:
+
+**EDA-001 Part 3 — Commit 004: Enterprise Authorization Architecture**
+
+Commit 004 established:
+
+* authorization;
+* RBAC;
+* ABAC;
+* permissions;
+* resource scope;
+* action scope;
+* contextual authorization;
+* risk-aware authorization;
+* privileged access;
+* separation of duties;
+* delegated authority.
+
+Commit 005 specializes those principles for staff identities.
+
+The resulting relationship is:
+
+```text
+Enterprise Authorization
+          ↓
+      Staff Identity
+          ↓
+          Role
+          ↓
+       Clearance
+          ↓
+      Permissions
+          ↓
+        Scope
+          ↓
+        Context
+          ↓
+     Authorization
+```
+
+---
+
+## Relationship to Future Architecture
+
+Commit 005 establishes the foundation for:
+
+* Data Security Architecture
+* Privileged Access Architecture
+* Security Logging & Evidence
+* Security Monitoring
+* Fraud & Abuse Architecture
+* AI Security Architecture
+* Walk Mode Security
+* Analytics Authorization
+* Enterprise Governance
+
+The Staff Clearance Architecture therefore becomes one of the central control mechanisms connecting human enterprise authority to the rest of the security architecture.
+
+---
+
+## Success Criteria
+
+The Staff Clearance Architecture succeeds when:
+
+* no staff member receives unrestricted access merely because they are employed;
+* staff roles and security clearances remain distinct;
+* clearance is domain-specific;
+* clearance is scope-specific;
+* least privilege is enforceable;
+* need-to-know is enforceable;
+* store boundaries are enforceable;
+* regional boundaries are enforceable;
+* enterprise-wide access is exceptional;
+* privileged staff are separately controlled;
+* conflicting duties can be detected;
+* temporary and emergency privileges can expire;
+* clearance can be suspended and revoked;
+* role changes trigger privilege review;
+* privilege accumulation is prevented;
+* customer information remains protected;
+* supplier information remains protected;
+* financial information remains protected;
+* security information remains protected;
+* AI systems remain protected;
+* analytics visibility follows clearance;
+* Walk Mode staff access follows clearance;
+* shopper privacy is preserved;
+* all sensitive clearance changes are auditable;
+* authorization remains the final enforcement mechanism.
+
+Staff clearance therefore becomes the formal bridge between **who an employee is within Essentials Mart** and **what level of enterprise authority that employee may exercise**.
