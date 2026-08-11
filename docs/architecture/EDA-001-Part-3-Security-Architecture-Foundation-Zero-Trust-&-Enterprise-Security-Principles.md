@@ -10852,3 +10852,1959 @@ The API & Service Security Architecture succeeds when:
 The final architectural objective is:
 
 > **Every API call in Essentials Mart must be treated as a potentially hostile request until its identity, authority, resource scope, business legitimacy and security context have been established.**
+
+# EDA-001 Part 3 — Commit 009
+
+# AI Security Architecture
+
+## 1. Purpose
+
+The AI Security Architecture defines how Essentials Mart protects the AI Society, its intelligence engines, AI agents, models, tools, memory, context, communications and autonomous actions.
+
+AI is treated as an enterprise security boundary.
+
+An AI agent is not merely software that generates text.
+
+An agent may:
+
+* access information;
+* reason over enterprise data;
+* maintain context;
+* call tools;
+* communicate with other agents;
+* make recommendations;
+* initiate actions;
+* act on behalf of users;
+* interact with external systems;
+* influence business decisions.
+
+Therefore:
+
+> **AI capability must never be equivalent to unrestricted authority.**
+
+The architecture shall ensure that every AI agent operates within explicit identity, authority, context, tool, data, action and risk boundaries.
+
+---
+
+# 2. Core Security Principle
+
+Essentials Mart shall follow:
+
+> **An AI agent may only do what it has been explicitly authorized to do, within the context in which that authority was granted.**
+
+The agent's intelligence does not determine its authority.
+
+Its permissions do.
+
+---
+
+# 3. AI Security Model
+
+The AI security architecture shall distinguish:
+
+```text
+User
+ ↓
+User Intent
+ ↓
+AI Agent
+ ↓
+Agent Identity
+ ↓
+Delegated Authority
+ ↓
+Context
+ ↓
+Policy
+ ↓
+Tool
+ ↓
+Action
+ ↓
+Domain Service
+ ↓
+Enterprise State
+```
+
+At every stage, security controls may:
+
+* allow;
+* deny;
+* restrict;
+* require confirmation;
+* require escalation;
+* terminate execution.
+
+---
+
+# 4. AI Society as a Security Boundary
+
+AI Society shall be treated as a controlled enterprise subsystem.
+
+It shall not receive unrestricted access to:
+
+* databases;
+* services;
+* customer information;
+* staff information;
+* supplier information;
+* payment systems;
+* administrative systems;
+* infrastructure.
+
+AI Society must interact with the enterprise through authorized interfaces.
+
+---
+
+# 5. AI Agent Identity
+
+Every persistent or operationally significant AI agent shall have an explicit identity.
+
+Examples include:
+
+* Household Intelligence Agent;
+* Customer Intelligence Agent;
+* Commerce Intelligence Agent;
+* Inventory Intelligence Agent;
+* Reward Intelligence Agent;
+* Trust Intelligence Agent;
+* Delivery Intelligence Agent;
+* Walk Mode Intelligence Agent;
+* Security Guardian Agent;
+* Orchestration Agent.
+
+The identity must establish:
+
+* agent type;
+* agent version;
+* owning domain;
+* environment;
+* permitted capabilities;
+* trust classification;
+* lifecycle state.
+
+NIST's current work on agent identity specifically considers how agents should be identified, authenticated, authorized and bound to human authority.
+
+---
+
+# 6. Agent Identity Is Not Human Identity
+
+An AI agent acting on behalf of a customer must not impersonate that customer.
+
+The system must preserve the distinction between:
+
+```text
+Human Identity
++
+Agent Identity
++
+Delegated Authority
+```
+
+This allows Essentials Mart to answer:
+
+> Who asked for this?
+
+and:
+
+> Which agent actually performed it?
+
+---
+
+# 7. Agent Authentication
+
+AI agents must authenticate when accessing protected enterprise resources.
+
+Authentication may use appropriately scoped mechanisms such as:
+
+* workload identity;
+* signed credentials;
+* short-lived tokens;
+* service identities;
+* cryptographic credentials;
+* environment-bound identities.
+
+Long-lived unrestricted agent credentials should be avoided.
+
+---
+
+# 8. Agent Credential Lifecycle
+
+Agent credentials shall support:
+
+* issuance;
+* rotation;
+* expiration;
+* revocation;
+* suspension;
+* replacement;
+* emergency termination.
+
+An agent that is compromised must be capable of being isolated without disabling the entire AI Society.
+
+---
+
+# 9. Agent Authorization
+
+Authentication only establishes:
+
+> **This is Agent X.**
+
+Authorization determines:
+
+> **What Agent X may do.**
+
+Agent authorization shall consider:
+
+* agent identity;
+* user;
+* household;
+* domain;
+* tool;
+* resource;
+* action;
+* sensitivity;
+* context;
+* risk;
+* time;
+* environment.
+
+---
+
+# 10. Least-Privilege Agency
+
+Every agent shall receive the minimum authority necessary for its purpose.
+
+For example:
+
+```text
+Household Agent
+ ↓
+Read Pantry
+ ↓
+Read Household Preferences
+ ↓
+Create Shopping Recommendation
+```
+
+does not automatically mean:
+
+```text
+Household Agent
+ ↓
+Refund Payment
+ ↓
+Modify Staff Permissions
+ ↓
+Change Security Configuration
+```
+
+OWASP specifically recommends minimum tool access and per-tool permission scoping rather than over-permissioned agents.
+
+---
+
+# 11. Capability-Based AI Tools
+
+Agents shall interact with enterprise functionality through explicit capabilities.
+
+For example:
+
+```text
+get_pantry()
+create_shopping_list()
+add_item_to_list()
+get_order_status()
+recommend_product()
+request_delivery()
+```
+
+rather than:
+
+```text
+database_access()
+execute_any_operation()
+```
+
+The capability model reduces the blast radius of a compromised agent.
+
+---
+
+# 12. Tool Authorization
+
+Every AI tool shall define:
+
+* tool identity;
+* owning domain;
+* permitted agents;
+* permitted operations;
+* permitted resources;
+* input schema;
+* output schema;
+* risk classification;
+* approval requirements;
+* audit requirements.
+
+An agent must not discover and automatically gain access to arbitrary tools.
+
+---
+
+# 13. Read vs Write Authority
+
+Tool permissions shall distinguish between:
+
+### Read
+
+Retrieving information.
+
+### Write
+
+Changing enterprise state.
+
+### High-impact write
+
+Changing sensitive or consequential state.
+
+For example:
+
+```text
+Read Pantry
+      ↓
+Low risk
+
+Add Item
+      ↓
+Moderate risk
+
+Place Order
+      ↓
+High impact
+
+Issue Refund
+      ↓
+Very high impact
+```
+
+The required controls increase with impact.
+
+---
+
+# 14. Action Risk Classification
+
+AI actions shall be classified according to potential impact.
+
+A conceptual classification:
+
+### Class A — Informational
+
+Examples:
+
+* answer questions;
+* explain products;
+* retrieve order status.
+
+May operate automatically.
+
+### Class B — Reversible Personal Actions
+
+Examples:
+
+* add item to shopping list;
+* create reminder;
+* modify non-critical preferences.
+
+May operate automatically when authorized.
+
+### Class C — Material Transactions
+
+Examples:
+
+* place order;
+* schedule delivery;
+* spend household funds.
+
+May require explicit user authorization depending on established policy.
+
+### Class D — High-Impact Actions
+
+Examples:
+
+* financial transfers;
+* refunds;
+* security changes;
+* staff privilege changes;
+* irreversible account changes.
+
+Require stronger controls and normally explicit human authorization.
+
+---
+
+# 15. Human Approval Thresholds
+
+AI must not be permitted to independently perform every action it can technically reach.
+
+High-impact actions shall support:
+
+```text
+AI proposes
+ ↓
+Policy evaluates
+ ↓
+Human confirms
+ ↓
+Action executes
+```
+
+The approval requirement must be determined by policy, not by the agent deciding whether it "feels confident."
+
+OWASP recommends human confirmation for irreversible or high-impact agent actions.
+
+---
+
+# 16. Human Authority Binding
+
+When an agent acts on behalf of a user, the action must remain attributable to both:
+
+```text
+Human Principal
++
+AI Agent
+```
+
+The enterprise should be able to determine:
+
+* who delegated authority;
+* what authority was delegated;
+* when it was delegated;
+* which agent received it;
+* what action was performed;
+* what policy allowed it.
+
+NIST explicitly identifies binding agent identity to human identity for human-in-the-loop authorization as an agent-security concern.
+
+---
+
+# 17. Delegation
+
+Delegated authority shall be:
+
+* explicit;
+* scoped;
+* revocable;
+* auditable;
+* time-bounded where appropriate.
+
+For example:
+
+```text
+User
+ ↓
+"Manage my shopping list."
+ ↓
+Household Agent
+ ↓
+Shopping-list capabilities only
+```
+
+The agent must not interpret this as:
+
+> "You may manage everything in my account."
+
+---
+
+# 18. Context-Bound Authorization
+
+Agent authority shall be evaluated in context.
+
+Relevant context may include:
+
+* user identity;
+* household;
+* location;
+* device;
+* session;
+* time;
+* transaction;
+* risk;
+* current workflow;
+* agent state.
+
+A permission valid in one context may not be valid in another.
+
+---
+
+# 19. Continuous Authorization
+
+Agent authorization should not be considered permanently valid merely because the agent authenticated earlier.
+
+Authorization may be reevaluated when:
+
+* the agent requests a new tool;
+* the requested resource changes;
+* risk increases;
+* the user's session changes;
+* the user's authority changes;
+* the agent changes state;
+* the workflow crosses a trust boundary.
+
+NIST's agent-authorization work explicitly considers dynamic policy changes as agent context changes.
+
+---
+
+# 20. Prompt Injection
+
+Prompt injection shall be treated as a security threat, not merely a model-quality problem.
+
+Prompt injection can manipulate an agent into ignoring intended instructions or performing unauthorized behaviour.
+
+Essentials Mart shall therefore assume:
+
+> **Instructions entering an agent may be malicious, regardless of their apparent source.**
+
+---
+
+# 21. Direct Prompt Injection
+
+Direct injection occurs when a user attempts to manipulate the agent's instructions.
+
+Examples include attempts to:
+
+* bypass system policies;
+* expose hidden instructions;
+* obtain restricted data;
+* manipulate tool calls;
+* escalate authority.
+
+The agent must not treat user content as higher-priority policy.
+
+---
+
+# 22. Indirect Prompt Injection
+
+External information may contain malicious instructions.
+
+Potential sources include:
+
+* product descriptions;
+* supplier data;
+* documents;
+* websites;
+* reviews;
+* emails;
+* APIs;
+* tool outputs;
+* external knowledge sources.
+
+These must be treated as **data**, not automatically as instructions.
+
+OWASP specifically warns that indirect prompt injection can originate in external web pages, documents or API responses and cause unauthorized tool calls or data exfiltration.
+
+---
+
+# 23. Instruction/Data Separation
+
+The architecture shall preserve a strong distinction between:
+
+```text
+Trusted System Instructions
+```
+
+and:
+
+```text
+Untrusted Data
+```
+
+External content must not be able to redefine:
+
+* security policies;
+* agent identity;
+* tool permissions;
+* approval thresholds;
+* system instructions.
+
+---
+
+# 24. Tool Output Is Untrusted
+
+An agent must not automatically trust the output of a tool.
+
+For example:
+
+```text
+Agent
+ ↓
+External API
+ ↓
+Malicious response
+ ↓
+Agent interprets response as instruction
+```
+
+must be prevented.
+
+Tool output should be treated as untrusted data and validated before it influences subsequent actions. OWASP explicitly recommends this approach.
+
+---
+
+# 25. Context Security
+
+Agent context may contain:
+
+* user information;
+* household information;
+* purchase history;
+* preferences;
+* location;
+* financial information;
+* security signals;
+* tool results;
+* previous conversations.
+
+Context must therefore be treated as protected enterprise data.
+
+---
+
+# 26. Context Isolation
+
+Context must be isolated according to appropriate boundaries.
+
+For example:
+
+```text
+User A
+ ↓
+User A Context
+
+User B
+ ↓
+User B Context
+```
+
+and:
+
+```text
+Household X
+ ↓
+Household X Context
+```
+
+Context must never leak between users or unauthorized households.
+
+---
+
+# 27. Memory Security
+
+Persistent AI memory shall be treated as a security-sensitive data store.
+
+Memory must have:
+
+* ownership;
+* access control;
+* retention;
+* validation;
+* integrity protection;
+* deletion mechanisms;
+* auditability.
+
+OWASP identifies memory poisoning as an agent-specific attack surface because malicious persistent memory can influence future sessions and behaviour.
+
+---
+
+# 28. Memory Poisoning Protection
+
+The system must prevent untrusted information from silently becoming trusted long-term memory.
+
+Memory writes should consider:
+
+```text
+Source
+ ↓
+Trust
+ ↓
+Validation
+ ↓
+Sensitivity
+ ↓
+Policy
+ ↓
+Persistence
+```
+
+Suspicious memory modifications may require additional validation or isolation.
+
+---
+
+# 29. Memory Integrity
+
+Critical agent memory should support integrity controls such as:
+
+* versioning;
+* provenance;
+* integrity verification;
+* immutable audit records;
+* rollback;
+* anomaly detection.
+
+The objective is to prevent an attacker from silently rewriting the agent's understanding of the user or enterprise.
+
+---
+
+# 30. Sensitive Data in Context
+
+Agents should receive only the data necessary for their current task.
+
+For example:
+
+A recipe recommendation agent may need:
+
+* pantry;
+* dietary preferences;
+* household size.
+
+It should not automatically receive:
+
+* staff salary information;
+* supplier contracts;
+* security credentials.
+
+---
+
+# 31. Aggregation Risk
+
+Even individually harmless pieces of information can become sensitive when combined.
+
+The security architecture must therefore consider:
+
+> **What can the agent infer from the combination of information it receives?**
+
+Authorization must account for aggregate information exposure where appropriate.
+
+NIST specifically raises this concern when considering whether newly accessible data and tools change the sensitivity of information an agent can aggregate.
+
+---
+
+# 32. Agent-to-Agent Communication
+
+AI Society agents will eventually communicate with one another.
+
+For example:
+
+```text
+Household Agent
+      ↓
+Commerce Agent
+      ↓
+Inventory Agent
+      ↓
+Delivery Agent
+```
+
+Inter-agent communication must be authenticated and authorized.
+
+One agent must not impersonate another.
+
+---
+
+# 33. Agent Message Integrity
+
+Agent-to-agent messages should support:
+
+* sender identity;
+* recipient identity;
+* message ID;
+* timestamp;
+* workflow ID;
+* integrity protection;
+* authorization context.
+
+This allows the system to detect spoofed or replayed messages.
+
+OWASP recommends authenticated inter-agent communication and message integrity.
+
+---
+
+# 34. Agent Communication Scope
+
+Agents should only communicate with approved agents.
+
+For example:
+
+```text
+Household Agent
+ ↓
+Commerce Agent
+```
+
+may be permitted.
+
+But:
+
+```text
+Household Agent
+ ↓
+Infrastructure Administration Agent
+```
+
+should not automatically be permitted.
+
+Agent communication becomes another authorization boundary.
+
+---
+
+# 35. Cascading Failure Protection
+
+A compromised agent must not automatically compromise every downstream agent.
+
+The architecture shall use:
+
+* scoped permissions;
+* communication allowlists;
+* rate limits;
+* workflow boundaries;
+* circuit breakers;
+* blast-radius controls.
+
+OWASP identifies cascading failures as a major agentic security concern because a compromised agent can propagate attacks across connected systems.
+
+---
+
+# 36. Agent Segmentation
+
+High-risk agents should be isolated from lower-risk agents.
+
+For example:
+
+```text
+Customer-facing Agents
+        │
+        ▼
+Business Intelligence Agents
+        │
+        ▼
+Privileged Agents
+        │
+        ▼
+Security / Infrastructure Agents
+```
+
+Higher-privilege agents should have substantially stronger controls.
+
+---
+
+# 37. Agent Tool Discovery
+
+Agents must not automatically gain authority simply because a tool is technically discoverable.
+
+Tool availability and tool authorization are separate concepts.
+
+```text
+Tool Exists
+      ≠
+Agent May Use Tool
+```
+
+---
+
+# 38. Tool Allowlisting
+
+Agents should use explicit tool allowlists.
+
+For example:
+
+```text
+Household Agent
+ ├── get_pantry
+ ├── get_budget
+ ├── create_list
+ └── add_list_item
+```
+
+Rather than:
+
+```text
+Household Agent
+ └── unrestricted enterprise API
+```
+
+---
+
+# 39. Tool Parameter Validation
+
+Tool inputs must be validated independently of the model.
+
+The backend must not assume:
+
+> "The model would never generate that."
+
+Every parameter must be checked server-side.
+
+---
+
+# 40. Output Validation
+
+AI-generated outputs must be validated before they are converted into consequential actions.
+
+For example:
+
+```text
+LLM
+ ↓
+Structured Action
+ ↓
+Schema Validation
+ ↓
+Authorization
+ ↓
+Risk Evaluation
+ ↓
+Tool Execution
+```
+
+The model must not directly control privileged execution.
+
+---
+
+# 41. AI Never Directly Controls Databases
+
+AI agents shall not receive unrestricted database credentials.
+
+Instead:
+
+```text
+AI
+ ↓
+Authorized Tool
+ ↓
+Domain Service
+ ↓
+Domain Validation
+ ↓
+Database
+```
+
+This ensures that AI cannot bypass:
+
+* authorization;
+* business rules;
+* audit;
+* domain ownership.
+
+---
+
+# 42. Autonomous Action Limits
+
+Autonomous agents shall operate within defined limits.
+
+Limits may include:
+
+* transaction amount;
+* number of actions;
+* time;
+* resource count;
+* tool calls;
+* API calls;
+* affected users;
+* affected records.
+
+---
+
+# 43. Agent Resource Budgets
+
+Agents shall have bounded resource consumption.
+
+Controls may include:
+
+* token budgets;
+* tool-call limits;
+* execution timeouts;
+* API quotas;
+* concurrency limits;
+* workflow depth;
+* financial limits.
+
+This helps protect against runaway loops and denial-of-wallet attacks. OWASP explicitly identifies excessive agent execution and compute consumption as a security concern.
+
+---
+
+# 44. Agent Circuit Breakers
+
+Agents must support emergency circuit breakers.
+
+For example:
+
+```text
+Unexpected Behaviour
+        ↓
+Threshold Exceeded
+        ↓
+Circuit Breaker
+        ↓
+Agent Actions Suspended
+```
+
+The rest of the platform should continue operating where possible.
+
+---
+
+# 45. Kill Switches
+
+Essentials Mart shall maintain the ability to:
+
+* disable an individual agent;
+* disable an agent version;
+* disable a tool;
+* disable a workflow;
+* disable inter-agent communication;
+* disable autonomous execution;
+* disable an entire AI subsystem.
+
+Kill switches must be independent enough to remain useful during AI compromise.
+
+---
+
+# 46. Guardian / Security Agents
+
+Essentials Mart may employ specialized security agents to monitor other agents.
+
+However:
+
+> **A guardian agent must not become the only security control.**
+
+Guardian agents should supplement deterministic security systems.
+
+Possible responsibilities include:
+
+* behavioural monitoring;
+* anomaly detection;
+* tool-use monitoring;
+* workflow analysis;
+* suspicious communication detection;
+* escalation.
+
+---
+
+# 47. AI Behavioural Monitoring
+
+Agent activity should be monitored for:
+
+* unusual tool usage;
+* unusual resources;
+* unexpected communication partners;
+* unusual execution sequences;
+* abnormal request volume;
+* privilege expansion;
+* repeated failures;
+* context anomalies.
+
+NIST recommends monitoring agent behaviour for drift, unexpected tool use and new communication partners.
+
+---
+
+# 48. Agent Drift Detection
+
+Agent behaviour may change because of:
+
+* model updates;
+* prompt changes;
+* tool changes;
+* policy changes;
+* context changes;
+* external dependencies.
+
+Security monitoring should therefore detect significant behavioural deviations.
+
+---
+
+# 49. Agent Provenance
+
+The enterprise should retain provenance for significant AI actions.
+
+The system should be able to establish:
+
+```text
+User Input
+ ↓
+Agent
+ ↓
+Model Version
+ ↓
+Context
+ ↓
+Tool
+ ↓
+Authorization
+ ↓
+Action
+ ↓
+Result
+```
+
+This supports:
+
+* investigation;
+* accountability;
+* debugging;
+* compliance;
+* incident response.
+
+---
+
+# 50. Non-Repudiation
+
+Where technically and legally appropriate, sensitive agent actions should have tamper-resistant evidence.
+
+The goal is to establish:
+
+> **What happened, which agent performed it, under whose authority, and why it was allowed.**
+
+NIST specifically identifies auditing and non-repudiation of agent actions as an architectural concern.
+
+---
+
+# 51. AI Security Logging
+
+AI logs must capture sufficient information without unnecessarily storing sensitive user data.
+
+Relevant records may include:
+
+* agent ID;
+* agent version;
+* model version;
+* user principal;
+* delegated authority;
+* tool;
+* resource;
+* action;
+* policy decision;
+* approval;
+* result;
+* timestamp;
+* correlation ID.
+
+---
+
+# 52. AI Privacy
+
+AI systems must not automatically ingest every piece of enterprise data.
+
+AI data access must follow:
+
+* data classification;
+* purpose limitation;
+* least privilege;
+* retention rules;
+* privacy controls.
+
+AI should receive the minimum information necessary for the task.
+
+---
+
+# 53. AI Data Exfiltration Protection
+
+The architecture shall defend against attempts to make an agent reveal:
+
+* credentials;
+* private customer information;
+* household information;
+* supplier information;
+* internal instructions;
+* security information;
+* proprietary business intelligence.
+
+Output must be evaluated according to the destination and authorization context.
+
+---
+
+# 54. Cross-Channel AI Security
+
+The same AI Society may operate through:
+
+* Essentials Mart app;
+* WhatsApp;
+* future SMS;
+* USSD;
+* voice;
+* Walk Mode.
+
+The channel must never determine authority.
+
+For example:
+
+```text
+WhatsApp
+ ↓
+AI Society
+ ↓
+Same authorization
+```
+
+rather than:
+
+```text
+WhatsApp
+ ↓
+Special unrestricted permissions
+```
+
+---
+
+# 55. WhatsApp AI Security
+
+WhatsApp requests shall pass through:
+
+```text
+WhatsApp
+ ↓
+Channel Gateway
+ ↓
+Identity
+ ↓
+Session
+ ↓
+Authorization
+ ↓
+AI Society
+ ↓
+Tool Authorization
+ ↓
+Domain API
+```
+
+WhatsApp must not directly invoke privileged enterprise functions.
+
+---
+
+# 56. Walk Mode AI Security
+
+Walk Mode introduces additional AI security concerns because the AI may receive:
+
+* location;
+* store context;
+* nearby products;
+* inventory;
+* navigation information;
+* real-time events.
+
+The AI must not expose unauthorized information about:
+
+* other shoppers;
+* store operations;
+* staff;
+* inventory-sensitive data;
+* security systems.
+
+---
+
+# 57. AI and Live Shopper Data
+
+If Walk Mode uses live shopper information, AI access must follow strict privacy boundaries.
+
+The agent should receive only the information necessary to perform the intended experience.
+
+A shopper must never be able to manipulate the AI into revealing another shopper's private presence or behaviour.
+
+---
+
+# 58. AI Supply Chain Security
+
+The AI supply chain shall include:
+
+* models;
+* model providers;
+* embeddings;
+* datasets;
+* tools;
+* agent frameworks;
+* MCP tools;
+* plugins;
+* APIs;
+* libraries;
+* prompts;
+* system configurations.
+
+Third-party components must be evaluated before being trusted.
+
+NIST recommends controls such as attestation or sandboxing for third-party models/tools and signed manifests or pinned versions for supply-chain assurance.
+
+---
+
+# 59. Model Integrity
+
+Models used in production should have controlled provenance.
+
+The enterprise should know:
+
+* model provider;
+* model identifier;
+* version;
+* deployment date;
+* configuration;
+* permitted use;
+* security assessment status.
+
+Unexpected model changes must be detectable.
+
+---
+
+# 60. Prompt / Policy Integrity
+
+Security-critical system prompts, policies and agent configurations must be treated as controlled artefacts.
+
+They must not be modifiable by:
+
+* ordinary users;
+* untrusted documents;
+* agents lacking authority;
+* external tool outputs.
+
+Security-sensitive configuration changes require appropriate approval.
+
+---
+
+# 61. Agent Configuration Security
+
+Agents must not be permitted to modify:
+
+* their own permissions;
+* security policies;
+* IAM policies;
+* system prompts;
+* tool allowlists;
+* security controls;
+* infrastructure configurations,
+
+unless a specifically authorized and independently controlled workflow permits it.
+
+OWASP's current agentic security guidance specifically highlights excessive autonomy that allows agents to modify permissions or security-relevant configuration.
+
+---
+
+# 62. Self-Modification Prohibition
+
+As a default architectural rule:
+
+> **An agent may not expand its own authority.**
+
+It may request additional authority through a controlled escalation process.
+
+It may not grant that authority to itself.
+
+---
+
+# 63. AI Approval Security
+
+Approval requests must identify:
+
+* proposed action;
+* affected resource;
+* expected consequence;
+* agent;
+* user;
+* risk classification.
+
+The user must not be tricked into approving an action different from the one actually executed.
+
+---
+
+# 64. Approval Integrity
+
+Approval must be cryptographically or logically bound to the intended action where appropriate.
+
+For example:
+
+```text
+Approval
+ ↓
+Order #1234
+ ↓
+£X
+ ↓
+Specific Items
+ ↓
+Specific Delivery
+```
+
+must not be reusable for:
+
+```text
+Refund #5678
+```
+
+---
+
+# 65. AI Transaction Security
+
+Financial and commercial AI actions shall use deterministic backend controls.
+
+The AI may propose:
+
+```text
+Place order for household
+```
+
+but the Commerce system remains responsible for:
+
+* price;
+* stock;
+* totals;
+* payment;
+* eligibility;
+* transaction state.
+
+The model cannot define financial truth.
+
+---
+
+# 66. AI and Reward Security
+
+Reward Intelligence remains authoritative for:
+
+* eligibility;
+* milestone completion;
+* reward calculation;
+* reward issuance.
+
+An AI agent may explain or recommend rewards but must not manufacture eligibility.
+
+---
+
+# 67. AI and Trust Engine
+
+The Trust Engine remains authoritative for trust signals.
+
+An AI agent may consume approved trust information where permitted.
+
+It must not:
+
+* directly rewrite trust scores;
+* manufacture reputation;
+* override fraud controls;
+* grant itself trust.
+
+---
+
+# 68. AI and Security Decisions
+
+AI may assist security teams, but deterministic security controls must remain capable of operating without AI.
+
+For critical controls:
+
+```text
+AI Recommendation
+        ↓
+Policy Engine
+        ↓
+Deterministic Decision
+```
+
+rather than:
+
+```text
+AI says yes
+ ↓
+Security automatically allows
+```
+
+---
+
+# 69. AI Fail-Secure Behaviour
+
+When AI security dependencies fail, the system must default to defined safe behaviour.
+
+Examples:
+
+```text
+Agent authorization unavailable
+ ↓
+Sensitive action
+ ↓
+DENY / REQUIRE HUMAN REVIEW
+```
+
+rather than:
+
+```text
+Authorization unavailable
+ ↓
+Allow everything
+```
+
+---
+
+# 70. Agent Isolation
+
+A compromised agent must be isolatable from:
+
+* other agents;
+* tools;
+* sensitive data;
+* external systems;
+* privileged APIs.
+
+Isolation should be possible without taking down unrelated AI capabilities.
+
+---
+
+# 71. Blast Radius
+
+Each agent shall have an explicitly bounded blast radius.
+
+Questions should include:
+
+* How many users can this agent affect?
+* Which domains can it reach?
+* Which resources can it modify?
+* What financial impact can it cause?
+* Which other agents can it contact?
+* How quickly can it be disabled?
+
+---
+
+# 72. AI Incident Response
+
+AI-specific incidents shall support:
+
+```text
+Detect
+ ↓
+Freeze Agent
+ ↓
+Revoke Credentials
+ ↓
+Contain Tools
+ ↓
+Preserve Evidence
+ ↓
+Investigate
+ ↓
+Recover
+ ↓
+Validate
+ ↓
+Restore
+ ↓
+Learn
+```
+
+---
+
+# 73. AI Red Teaming
+
+AI agents must undergo adversarial testing for:
+
+* direct prompt injection;
+* indirect prompt injection;
+* tool abuse;
+* privilege escalation;
+* memory poisoning;
+* data exfiltration;
+* agent impersonation;
+* inter-agent attacks;
+* runaway execution;
+* malicious tool responses;
+* excessive autonomy;
+* supply-chain attacks.
+
+OWASP recommends adversarial validation and red teaming as part of secure agent development.
+
+---
+
+# 74. AI Security Testing
+
+Security testing shall include:
+
+### Identity
+
+* agent impersonation;
+* credential theft;
+* delegation abuse.
+
+### Authorization
+
+* tool escalation;
+* resource traversal;
+* cross-household access;
+* cross-domain access.
+
+### Context
+
+* context leakage;
+* memory poisoning;
+* cross-user contamination.
+
+### Execution
+
+* malicious tool parameters;
+* replay;
+* runaway loops;
+* unauthorized actions.
+
+### Communication
+
+* agent spoofing;
+* message manipulation;
+* unauthorized agent communication.
+
+---
+
+# 75. AI Security Release Gates
+
+A new AI agent or major agent version should not enter production until it satisfies defined security gates.
+
+Possible gates include:
+
+* identity configured;
+* permissions reviewed;
+* tools scoped;
+* data access reviewed;
+* prompt-injection tests passed;
+* memory controls validated;
+* high-impact actions gated;
+* logging enabled;
+* kill switch verified;
+* rollback capability verified.
+
+---
+
+# 76. Agent Version Security
+
+Every production agent shall have an identifiable version.
+
+Security investigations must be able to establish:
+
+```text
+Agent
++
+Version
++
+Model
++
+Configuration
++
+Tools
+```
+
+at the time of an action.
+
+---
+
+# 77. AI Change Management
+
+Changes to:
+
+* model;
+* prompt;
+* tools;
+* permissions;
+* memory architecture;
+* agent workflows;
+* safety policies
+
+must follow controlled change processes.
+
+A seemingly harmless prompt change can alter security behaviour.
+
+---
+
+# 78. Security Boundaries Between Agents
+
+Different AI agents should not automatically inherit one another's authority.
+
+For example:
+
+```text
+Household Agent
+       ↓
+Commerce Agent
+```
+
+does not mean:
+
+```text
+Household Agent
+       ↓
+inherits Commerce Agent's permissions
+```
+
+Delegation must be explicit.
+
+---
+
+# 79. AI Society Orchestration Security
+
+The AI Coordinator / Orchestrator is a high-value security component.
+
+It must not become:
+
+> **the master key to the entire enterprise.**
+
+Its authority must be limited to orchestration.
+
+Individual domain actions remain subject to domain authorization.
+
+---
+
+# 80. Agent Workflow Security
+
+Multi-step workflows must maintain security context across every step.
+
+For example:
+
+```text
+User
+ ↓
+Household Agent
+ ↓
+Shopping Agent
+ ↓
+Commerce Agent
+ ↓
+Delivery Agent
+```
+
+Every transition must preserve:
+
+* originating user;
+* delegated authority;
+* workflow ID;
+* resource scope;
+* risk context.
+
+---
+
+# 81. No Authority Laundering
+
+An agent must not obtain greater authority by asking another agent to perform the operation.
+
+For example:
+
+```text
+Agent A
+ ↓
+asks Agent B
+ ↓
+forbidden operation
+```
+
+must still be denied.
+
+The system must evaluate the originating authority, not merely the immediate caller.
+
+---
+
+# 82. AI Security and Auditability
+
+Every consequential agent action must be reconstructable.
+
+The audit system should be able to answer:
+
+```text
+Who requested it?
+Which agent handled it?
+Which model was used?
+Which context was available?
+Which tools were called?
+Which policies were evaluated?
+Was approval required?
+Who approved it?
+What changed?
+What happened afterwards?
+```
+
+---
+
+# 83. AI Security and Privacy
+
+AI security must preserve user privacy.
+
+Agents should not expose:
+
+* household data;
+* personal analytics;
+* location;
+* shopping history;
+* financial information;
+* behavioural information
+
+to unauthorized users or agents.
+
+---
+
+# 84. AI Security and Analytics
+
+AI analytics access must follow the same authorization architecture established for enterprise analytics.
+
+A customer-facing agent should not be able to access supplier analytics merely because the analytics system technically exposes them.
+
+---
+
+# 85. AI Security at Global Scale
+
+The AI security architecture must remain viable at:
+
+* 100M+ users;
+* millions of AI interactions;
+* thousands of stores;
+* thousands of agents;
+* large-scale model workloads;
+* multiple regions;
+* multiple AI providers;
+* millions of tool calls.
+
+Security must therefore be:
+
+* policy-driven;
+* automated;
+* observable;
+* distributed;
+* scalable.
+
+---
+
+# 86. Architectural Laws
+
+### Law 1 — AI Identity Is Explicit
+
+Every significant AI agent must have an identifiable security principal.
+
+### Law 2 — Intelligence Is Not Authority
+
+A capable model does not receive unrestricted permission.
+
+### Law 3 — Agents Operate With Least Privilege
+
+Every agent receives only the capabilities necessary for its purpose.
+
+### Law 4 — Tools Are Security Boundaries
+
+Tool access must be explicitly authorized.
+
+### Law 5 — AI Cannot Grant Itself Authority
+
+Agents cannot expand their own permissions.
+
+### Law 6 — Human Delegation Must Remain Traceable
+
+Actions performed on behalf of humans must preserve the human-to-agent relationship.
+
+### Law 7 — External Data Is Untrusted
+
+User content, retrieved content, tool outputs and external APIs must not automatically become instructions.
+
+### Law 8 — Memory Is Protected Data
+
+Persistent AI memory requires ownership, validation, isolation and integrity controls.
+
+### Law 9 — Agents Must Not Bypass Domain Services
+
+AI interacts with enterprise state through authorized domain capabilities.
+
+### Law 10 — High-Impact Actions Require Stronger Controls
+
+Risk increases with impact and irreversibility.
+
+### Law 11 — Agents Cannot Launder Authority
+
+Delegating an action to another agent does not bypass the originating agent's restrictions.
+
+### Law 12 — Agent Communication Is Authenticated
+
+Agents must not blindly trust messages from other agents.
+
+### Law 13 — AI Must Be Containable
+
+Every significant autonomous subsystem requires isolation and emergency shutdown capability.
+
+### Law 14 — AI Security Decisions Must Be Auditable
+
+Consequential actions require traceable evidence.
+
+### Law 15 — AI Security Must Survive Model Failure
+
+The enterprise must remain secure even when the model behaves incorrectly.
+
+### Law 16 — AI Must Fail Securely
+
+Security dependency failure must never silently become unrestricted execution.
+
+---
+
+# 87. Relationship to Previous Commitments
+
+Commit 009 extends:
+
+```text
+001 Security Philosophy
+        ↓
+002 Enterprise Trust Architecture
+        ↓
+003 Identity & Access Security
+        ↓
+004 Authentication Security
+        ↓
+005 Staff Clearance Architecture
+        ↓
+006 Data Security Architecture
+        ↓
+007 Application Security Architecture
+        ↓
+008 API & Service Security Architecture
+        ↓
+009 AI Security Architecture
+```
+
+Commit 008 establishes the protected APIs and service boundaries.
+
+Commit 009 establishes how AI agents are permitted to use those boundaries.
+
+---
+
+# 88. Relationship to Future Commitments
+
+Commit 009 establishes the foundation for:
+
+* Trust Engine Security;
+* Reward Intelligence Security;
+* Fraud & Abuse Architecture;
+* Walk Mode Security;
+* Privacy Architecture;
+* Security Logging & Evidence;
+* Security Monitoring;
+* Incident Response;
+* Supply Chain Security;
+* Infrastructure & Network Security;
+* CI/CD Security;
+* Security Governance;
+* Global Security.
+
+---
+
+# 89. Success Criteria
+
+The AI Security Architecture succeeds when:
+
+* every significant AI agent has an identity;
+* every agent has explicitly bounded authority;
+* AI tools are least-privilege;
+* AI cannot access databases directly;
+* human delegation is traceable;
+* high-impact actions have stronger controls;
+* prompt injection cannot directly grant authority;
+* external data is treated as untrusted;
+* memory is isolated and protected;
+* agent-to-agent communication is authenticated;
+* agents cannot launder authority;
+* autonomous actions have resource limits;
+* runaway agents can be stopped;
+* compromised agents can be isolated;
+* AI actions are auditable;
+* model and configuration changes are controlled;
+* third-party AI components are governed;
+* WhatsApp and Walk Mode use the same security boundaries;
+* Trust Engine and Reward Intelligence remain authoritative;
+* AI cannot override deterministic enterprise security controls;
+* the architecture can support thousands of agents and millions of interactions without sacrificing security.
+
+The final architectural objective is:
+
+> **AI Society must be powerful enough to act as the intelligence layer of Essentials Mart, but constrained enough that no individual agent, model, tool, context or compromised workflow can obtain authority beyond what the enterprise explicitly grants it.**
