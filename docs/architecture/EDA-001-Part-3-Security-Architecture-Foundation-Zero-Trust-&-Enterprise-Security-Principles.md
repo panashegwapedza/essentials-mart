@@ -9090,3 +9090,1765 @@ The Application Security Architecture succeeds when:
 The final objective is:
 
 > **Every Essentials Mart application should behave as a controlled security boundary rather than an untrusted window into the enterprise.**
+
+# EDA-001 Part 3 — Commit 008
+
+# API & Service Security Architecture
+
+## 1. Purpose
+
+The API & Service Security Architecture defines how Essentials Mart protects communication between applications, services, domains, AI agents, external systems and infrastructure.
+
+APIs are the controlled interfaces through which the enterprise exposes capabilities.
+
+Therefore:
+
+> **An API is not merely a technical endpoint. It is a security boundary, an authority boundary and a business boundary.**
+
+The architecture must ensure that every request is:
+
+* authenticated where required;
+* authorized;
+* validated;
+* scoped;
+* observable;
+* rate-controlled where necessary;
+* executed only against permitted resources;
+* protected against replay and abuse;
+* prevented from bypassing domain ownership.
+
+The architecture applies to:
+
+* customer APIs;
+* staff APIs;
+* supplier APIs;
+* administrative APIs;
+* internal service APIs;
+* AI tool APIs;
+* partner APIs;
+* webhook endpoints;
+* channel gateways;
+* event interfaces;
+* future external integrations.
+
+---
+
+# 2. Core Principle
+
+Essentials Mart shall follow:
+
+> **Every API request must prove who or what is acting, what it is allowed to do, what resource it may affect, and under what context the action is permitted.**
+
+Being:
+
+* authenticated;
+* internal;
+* a staff member;
+* an AI agent;
+* a supplier;
+* a trusted device;
+
+does not automatically authorize an operation.
+
+Authentication establishes identity.
+
+Authorization establishes authority.
+
+---
+
+# 3. API Trust Model
+
+The enterprise shall use a zero-trust API model.
+
+The architecture must not assume:
+
+```text
+Internal = trusted
+```
+
+or:
+
+```text
+Authenticated = authorized
+```
+
+or:
+
+```text
+AI = trusted
+```
+
+or:
+
+```text
+Staff = unrestricted
+```
+
+Every request must be evaluated against the appropriate security context.
+
+---
+
+# 4. API Request Security Context
+
+Where applicable, a request security context should contain:
+
+```text
+Identity
+ ↓
+Identity Type
+ ↓
+Role
+ ↓
+Clearance
+ ↓
+Permissions
+ ↓
+Resource Ownership
+ ↓
+Household / Tenant
+ ↓
+Device / Session
+ ↓
+Trust Context
+ ↓
+Requested Action
+ ↓
+Risk
+ ↓
+Policy Decision
+```
+
+This context forms the basis for authorization.
+
+---
+
+# 5. API Gateway Architecture
+
+External application traffic should enter through controlled gateway infrastructure where appropriate.
+
+A conceptual structure is:
+
+```text
+Customer App
+Staff App
+Supplier App
+WhatsApp
+Web
+Future Channels
+       │
+       ▼
+API / Channel Gateway
+       │
+       ├── Authentication
+       ├── Rate Limiting
+       ├── Request Validation
+       ├── Threat Controls
+       ├── Routing
+       ├── Observability
+       └── Policy Enforcement
+       │
+       ▼
+Domain Services
+```
+
+The gateway is an important security layer but must not become the only security layer.
+
+---
+
+# 6. Defence in Depth
+
+API security shall be implemented at multiple levels.
+
+For example:
+
+```text
+Edge
+ ↓
+Gateway
+ ↓
+Service
+ ↓
+Domain
+ ↓
+Resource
+ ↓
+Database
+```
+
+A failure of one security layer must not automatically expose the enterprise.
+
+---
+
+# 7. API Authentication
+
+APIs shall authenticate callers according to their identity type.
+
+Possible callers include:
+
+* customers;
+* staff;
+* suppliers;
+* administrators;
+* services;
+* devices;
+* AI agents;
+* external partners.
+
+Authentication mechanisms must be appropriate to the caller and sensitivity of the operation.
+
+---
+
+# 8. Human API Identity
+
+Human requests must be associated with an authenticated user identity.
+
+The identity must not be inferred solely from:
+
+* user-supplied IDs;
+* email addresses;
+* phone numbers;
+* household IDs;
+* supplier IDs;
+* staff IDs.
+
+The authenticated security principal must be authoritative.
+
+---
+
+# 9. Service Identity
+
+Service-to-service communication must use explicit service identities.
+
+A service must not prove authority merely by originating from:
+
+> "inside the network."
+
+The architecture shall support:
+
+```text
+Service A
+   ↓
+Service Identity
+   ↓
+Authentication
+   ↓
+Authorization
+   ↓
+Service B
+```
+
+---
+
+# 10. AI Identity
+
+AI agents shall have explicit identities.
+
+An AI agent must not impersonate a human user simply because it is acting on that user's behalf.
+
+The security context should distinguish:
+
+```text
+Human Principal
+        +
+AI Agent Principal
+        +
+Delegated Authority
+```
+
+This allows the enterprise to determine:
+
+* who requested an action;
+* which agent performed it;
+* what authority was delegated;
+* which tools were used.
+
+---
+
+# 11. Delegated Authorization
+
+AI Society may perform actions on behalf of users where explicitly permitted.
+
+Delegation must be:
+
+* scoped;
+* time-bounded where appropriate;
+* revocable;
+* auditable;
+* limited to permitted actions.
+
+For example:
+
+```text
+User
+ ↓
+"Add milk to my shopping list."
+ ↓
+AI Agent
+ ↓
+Delegated Authority
+ ↓
+Shopping List API
+ ↓
+Authorized Action
+```
+
+The AI must not receive unrestricted authority over the user's entire account.
+
+---
+
+# 12. Object-Level Authorization
+
+Every API operation involving a specific resource must verify that the caller is authorized to access that resource.
+
+For example:
+
+```text
+GET /orders/{orderId}
+```
+
+must not assume that possessing an `orderId` grants access to it.
+
+The service must verify:
+
+```text
+Authenticated Identity
+        ↓
+Owns / may access Order?
+        ↓
+YES → return
+NO  → deny
+```
+
+This directly addresses OWASP API1: Broken Object Level Authorization.
+
+---
+
+# 13. Object Property Authorization
+
+Authorization may also need to occur at the property level.
+
+For example, a staff user might be permitted to modify:
+
+* operational notes;
+
+but not:
+
+* salary information;
+* security clearance;
+* authentication settings.
+
+Similarly, a supplier might access:
+
+* product performance;
+
+but not:
+
+* another supplier's commercial information.
+
+The API must not expose or modify properties beyond the caller's authority.
+
+---
+
+# 14. Function-Level Authorization
+
+APIs must distinguish between ordinary and privileged functions.
+
+For example:
+
+```text
+Customer
+ ↓
+View Order
+
+Staff
+ ↓
+Process Return
+
+Manager
+ ↓
+Approve Adjustment
+
+Administrator
+ ↓
+Modify Security Policy
+```
+
+A lower-privileged caller must not be able to invoke a higher-privileged function by discovering or manually calling its endpoint.
+
+This addresses OWASP API5: Broken Function Level Authorization.
+
+---
+
+# 15. Resource Ownership
+
+Every protected resource should have an authoritative ownership or access relationship.
+
+Possible ownership models include:
+
+* user;
+* household;
+* supplier;
+* store;
+* region;
+* department;
+* enterprise;
+* system.
+
+The API must resolve ownership from trusted backend state rather than blindly accepting ownership claims from the client.
+
+---
+
+# 16. Household Authorization
+
+Household resources require special handling.
+
+For example:
+
+```text
+User A
+ ↓
+Household X
+ ↓
+Shared Shopping List
+```
+
+A user who belongs to Household X may be authorized.
+
+A user outside Household X must be denied.
+
+Membership changes must immediately influence authorization decisions.
+
+---
+
+# 17. Supplier Isolation
+
+Supplier APIs must enforce strict tenant isolation.
+
+A supplier request must be evaluated against:
+
+```text
+Authenticated Supplier
+        ↓
+Supplier Ownership
+        ↓
+Requested Resource
+        ↓
+Allowed?
+```
+
+Supplier A must never be able to access Supplier B's:
+
+* products;
+* sales;
+* complaints;
+* returns;
+* breakage;
+* analytics;
+* commercial information.
+
+---
+
+# 18. Staff Clearance Enforcement
+
+Staff API authorization must incorporate the clearance model established earlier.
+
+The decision may be:
+
+```text
+Staff Identity
+ ↓
+Role
+ ↓
+Clearance
+ ↓
+Resource Classification
+ ↓
+Action
+ ↓
+Context
+ ↓
+ALLOW / DENY
+```
+
+The API must therefore remain authoritative even when the client interface incorrectly exposes a function.
+
+---
+
+# 19. Administrative API Security
+
+Administrative APIs represent a high-risk boundary.
+
+They shall receive enhanced protection such as:
+
+* strong authentication;
+* MFA;
+* privileged sessions;
+* enhanced logging;
+* additional authorization;
+* contextual risk checks;
+* approval workflows where appropriate;
+* just-in-time privilege where appropriate.
+
+Administrative APIs should not be exposed unnecessarily to public clients.
+
+---
+
+# 20. API Input Validation
+
+Every API must validate request data.
+
+Validation should consider:
+
+* type;
+* format;
+* size;
+* range;
+* allowed values;
+* resource ownership;
+* business rules;
+* state;
+* authorization context.
+
+Validation must occur server-side.
+
+---
+
+# 21. API Output Minimization
+
+APIs shall return only the information necessary for the caller.
+
+For example:
+
+```text
+Customer API
+     ↓
+Customer-authorized fields
+
+Supplier API
+     ↓
+Supplier-authorized fields
+
+Staff API
+     ↓
+Clearance-authorized fields
+```
+
+APIs must not expose sensitive fields merely because the underlying database contains them.
+
+---
+
+# 22. API Versioning
+
+APIs shall have controlled versioning.
+
+Versioning must support:
+
+* compatibility;
+* security patching;
+* controlled deprecation;
+* migration;
+* endpoint inventory.
+
+Deprecated versions must not remain exposed indefinitely.
+
+OWASP identifies improper API inventory management as a major API risk because forgotten, deprecated or undocumented endpoints can create exposed attack surfaces.
+
+---
+
+# 23. API Inventory
+
+Essentials Mart shall maintain an authoritative inventory of:
+
+* API endpoints;
+* API versions;
+* services;
+* owners;
+* authentication requirements;
+* authorization requirements;
+* sensitivity;
+* exposed environments;
+* dependencies.
+
+The enterprise must know:
+
+> **What APIs exist, who owns them, who can call them, and what they can do.**
+
+---
+
+# 24. Internal APIs
+
+Internal APIs must not automatically be treated as trusted.
+
+Internal service requests shall still use:
+
+* service identity;
+* authentication;
+* authorization;
+* input validation;
+* observability.
+
+This prevents a compromised internal service from becoming a universal access key.
+
+---
+
+# 25. Service-to-Service Authorization
+
+Each service should receive only the permissions necessary to perform its responsibilities.
+
+For example:
+
+```text
+Order Service
+   ↓
+Inventory API
+   ↓
+Reserve Stock
+```
+
+does not imply:
+
+```text
+Order Service
+   ↓
+Inventory Database
+   ↓
+Full Access
+```
+
+Service permissions should be action-specific where practical.
+
+---
+
+# 26. Service Boundary Enforcement
+
+Domain ownership must be enforced through service boundaries.
+
+If:
+
+**Inventory owns stock**
+
+then another service should not directly mutate inventory state through a shared database.
+
+Instead:
+
+```text
+Commerce
+ ↓
+Inventory API
+ ↓
+Inventory Domain
+ ↓
+Stock State
+```
+
+This preserves:
+
+* ownership;
+* validation;
+* authorization;
+* auditability;
+* consistency.
+
+---
+
+# 27. API Idempotency
+
+Sensitive state-changing APIs should support idempotency where appropriate.
+
+This is particularly important for:
+
+* payments;
+* orders;
+* reward issuance;
+* wallet transactions;
+* delivery assignments;
+* referrals;
+* notifications.
+
+A retry must not accidentally perform an operation twice.
+
+---
+
+# 28. Replay Protection
+
+Sensitive requests must be protected against replay.
+
+The architecture may use appropriate mechanisms such as:
+
+* request identifiers;
+* timestamps;
+* nonces;
+* short-lived credentials;
+* idempotency keys;
+* replay detection.
+
+The exact mechanism may vary according to protocol and operation sensitivity.
+
+---
+
+# 29. Rate Limiting
+
+API rate limits shall protect against:
+
+* brute-force attacks;
+* scraping;
+* denial of service;
+* automated abuse;
+* excessive AI usage;
+* financial abuse;
+* resource exhaustion.
+
+Limits should consider:
+
+* identity;
+* device;
+* session;
+* API key;
+* service;
+* IP;
+* operation;
+* risk context.
+
+OWASP API4 specifically identifies unrestricted resource consumption as an API security risk because excessive requests can exhaust infrastructure or create operational costs.
+
+---
+
+# 30. Sensitive Business Flows
+
+Certain APIs represent business flows that can be abused even when the API is technically functioning correctly.
+
+Examples include:
+
+* account creation;
+* reward claims;
+* referrals;
+* checkout;
+* returns;
+* promotional claims;
+* delivery booking;
+* reservation;
+* product purchasing.
+
+These flows require additional controls where appropriate.
+
+This directly corresponds to OWASP API6: Unrestricted Access to Sensitive Business Flows.
+
+---
+
+# 31. Abuse-Aware API Design
+
+API protection must consider the economics of abuse.
+
+For example:
+
+```text
+API
+ ↓
+Valid Request
+ ↓
+Business Impact
+```
+
+A request may be technically legitimate but commercially harmful when automated at scale.
+
+Therefore API security must collaborate with:
+
+* Trust Engine;
+* Fraud Intelligence;
+* Reward Intelligence;
+* Customer Intelligence;
+* Commerce;
+* Security Monitoring.
+
+---
+
+# 32. API Security and Trust Engine
+
+The Trust Engine may provide contextual signals to API authorization.
+
+However:
+
+> **Trust signals may influence risk decisions but cannot replace fundamental authorization.**
+
+A high-trust user cannot access another user's private resources.
+
+---
+
+# 33. API Security and Fraud Intelligence
+
+Fraud signals may influence:
+
+* rate limits;
+* transaction challenges;
+* additional verification;
+* temporary restrictions;
+* monitoring.
+
+For example:
+
+```text
+Normal User
+ ↓
+Normal Transaction
+ ↓
+Normal API Path
+```
+
+versus:
+
+```text
+Compromised / Suspicious Context
+ ↓
+High-Risk API Request
+ ↓
+Additional Verification / Block
+```
+
+---
+
+# 34. API Security and Reward Intelligence
+
+Reward-related APIs require strong server-side verification.
+
+The client must never be able to claim:
+
+> "I completed the milestone."
+
+Instead:
+
+```text
+Authoritative Events
+ ↓
+Reward Intelligence
+ ↓
+Eligibility Decision
+ ↓
+Reward API
+ ↓
+Issuance
+```
+
+Reward APIs must be protected against:
+
+* replay;
+* automation;
+* multi-account abuse;
+* manipulation;
+* collusion;
+* fabricated events.
+
+---
+
+# 35. API Security and Analytics
+
+Analytics APIs must enforce the same data-security boundaries as operational APIs.
+
+For example:
+
+```text
+Customer
+ → Personal analytics
+
+Supplier
+ → Own product analytics
+
+Staff
+ → Clearance-appropriate analytics
+
+Administrator
+ → Authorized enterprise analytics
+```
+
+Analytics must never become an indirect route around operational authorization.
+
+---
+
+# 36. API Security and Audit
+
+Sensitive API operations must generate security-relevant audit evidence.
+
+The audit record should establish:
+
+```text
+Caller
+ ↓
+Identity
+ ↓
+Agent / Application
+ ↓
+Endpoint
+ ↓
+Action
+ ↓
+Resource
+ ↓
+Authorization Decision
+ ↓
+Outcome
+ ↓
+Timestamp
+ ↓
+Correlation ID
+```
+
+This allows investigators to reconstruct the request.
+
+---
+
+# 37. Correlation IDs
+
+Requests should carry a correlation identifier through relevant service boundaries.
+
+For example:
+
+```text
+WhatsApp
+ ↓
+Channel Gateway
+ ↓
+AI Society
+ ↓
+Shopping Service
+ ↓
+Inventory
+ ↓
+Audit
+```
+
+A common correlation ID allows the enterprise to reconstruct the complete operation.
+
+---
+
+# 38. Distributed Trace Security
+
+Tracing must not leak secrets.
+
+Sensitive values must not be placed into:
+
+* trace attributes;
+* URLs;
+* headers exposed to telemetry;
+* log messages;
+* debugging payloads.
+
+Observability systems are themselves protected systems.
+
+---
+
+# 39. Webhook Security
+
+Incoming webhooks from external systems must be treated as untrusted.
+
+Webhook verification should consider appropriate mechanisms such as:
+
+* signatures;
+* shared secrets;
+* certificates;
+* timestamps;
+* replay protection;
+* source validation.
+
+A webhook must never be trusted merely because it originates from an expected URL.
+
+---
+
+# 40. Outbound Webhook Security
+
+Essentials Mart outbound webhooks must protect:
+
+* credentials;
+* payload confidentiality;
+* endpoint authenticity;
+* replay;
+* retries;
+* delivery status.
+
+The enterprise must also avoid sending unnecessary information to external recipients.
+
+---
+
+# 41. SSRF Protection
+
+Services that retrieve external resources must not blindly accept arbitrary URLs.
+
+The architecture must control:
+
+* permitted destinations;
+* protocols;
+* redirects;
+* private network access;
+* metadata endpoints;
+* DNS resolution;
+* outbound network access.
+
+OWASP identifies SSRF as API7 because attacker-controlled remote-resource requests can cause the server to access unintended destinations.
+
+---
+
+# 42. Third-Party API Consumption
+
+External API responses must be treated as untrusted data.
+
+Examples include:
+
+* payment providers;
+* delivery providers;
+* maps;
+* WhatsApp;
+* AI providers;
+* supplier integrations;
+* analytics services.
+
+The receiving service must validate:
+
+* response structure;
+* expected identity;
+* signatures where applicable;
+* allowed values;
+* state transitions.
+
+OWASP explicitly identifies unsafe consumption of APIs as API10 because integrated third-party APIs can become attack paths themselves.
+
+---
+
+# 43. Integration Isolation
+
+Third-party integrations should be isolated behind integration services or adapters where appropriate.
+
+For example:
+
+```text
+Essentials Mart
+      ↓
+Integration Service
+      ↓
+WhatsApp
+```
+
+rather than:
+
+```text
+Every Domain
+      ↓
+WhatsApp
+```
+
+This centralizes:
+
+* authentication;
+* credentials;
+* rate limits;
+* retries;
+* monitoring;
+* failure handling;
+* provider-specific logic.
+
+---
+
+# 44. WhatsApp API Boundary
+
+WhatsApp is a communication channel, not a trusted enterprise interface.
+
+The architecture shall therefore follow:
+
+```text
+WhatsApp
+ ↓
+WhatsApp Gateway
+ ↓
+Identity Resolution
+ ↓
+Authorization
+ ↓
+AI Society / Application Layer
+ ↓
+Authorized Domain API
+ ↓
+Enterprise State
+```
+
+A WhatsApp message must not directly modify enterprise data.
+
+For example:
+
+> "Add bread to my list."
+
+must become an authorized operation against the Shopping List domain.
+
+---
+
+# 45. WhatsApp Identity Security
+
+WhatsApp identity must not automatically be treated as sufficient authorization for sensitive operations.
+
+The system must establish the appropriate relationship between:
+
+* WhatsApp account;
+* Essentials Mart identity;
+* session;
+* household;
+* permissions.
+
+Higher-risk actions may require additional verification.
+
+---
+
+# 46. AI Tool APIs
+
+AI Society tools shall be implemented as controlled APIs.
+
+For example:
+
+```text
+Household Agent
+ ↓
+get_household_pantry()
+```
+
+or:
+
+```text
+Shopping Agent
+ ↓
+add_item_to_list()
+```
+
+Each tool must define:
+
+* permitted caller;
+* required authority;
+* input schema;
+* output schema;
+* resource scope;
+* risk level;
+* audit requirements.
+
+---
+
+# 47. AI Tool Least Privilege
+
+An AI agent should not receive a general-purpose API credential.
+
+Instead:
+
+```text
+Agent
+ ↓
+Tool
+ ↓
+Specific Capability
+ ↓
+Specific Resource
+```
+
+For example:
+
+An agent permitted to:
+
+> add an item to a shopping list
+
+should not automatically be able to:
+
+> issue a refund.
+
+---
+
+# 48. AI High-Risk Actions
+
+High-impact API operations should require additional controls.
+
+Examples:
+
+* financial transactions;
+* account changes;
+* refunds;
+* reward issuance;
+* delivery cancellation;
+* security changes;
+* privileged administration.
+
+Controls may include:
+
+* human confirmation;
+* additional authentication;
+* risk scoring;
+* approval workflows;
+* transaction limits.
+
+---
+
+# 49. API and Event Security
+
+Events must also have security boundaries.
+
+An event consumer must not assume that every event is trustworthy merely because it came from the internal event bus.
+
+Events should have:
+
+* producer identity;
+* schema;
+* version;
+* timestamp;
+* correlation ID;
+* event ID;
+* appropriate integrity controls.
+
+---
+
+# 50. Event Replay Protection
+
+Consumers must be able to identify duplicate events where required.
+
+For security-sensitive events:
+
+```text
+Event ID
+ ↓
+Seen Before?
+ ↓
+YES → Ignore / handle idempotently
+NO  → Process
+```
+
+This protects against duplicate processing.
+
+---
+
+# 51. Event Authorization
+
+Services must only subscribe to events necessary for their responsibilities.
+
+A service should not receive every enterprise event merely because it is technically possible.
+
+This limits information exposure and reduces blast radius.
+
+---
+
+# 52. API Secrets
+
+API credentials must be:
+
+* securely generated;
+* securely stored;
+* rotated;
+* scoped;
+* revocable;
+* monitored.
+
+Credentials should never be hardcoded into applications or repositories.
+
+---
+
+# 53. Token Security
+
+Tokens must have appropriate:
+
+* audience;
+* issuer;
+* lifetime;
+* scope;
+* signature;
+* revocation strategy.
+
+Services must validate tokens rather than trusting claims blindly.
+
+Sensitive tokens must not appear in:
+
+* logs;
+* URLs;
+* analytics;
+* error messages;
+* telemetry.
+
+---
+
+# 54. Service Credential Rotation
+
+Service credentials must support rotation without requiring uncontrolled application downtime.
+
+The architecture should allow:
+
+```text
+Credential A
+      ↓
+Credential B introduced
+      ↓
+Consumers migrate
+      ↓
+Credential A revoked
+```
+
+---
+
+# 55. API Configuration Security
+
+Security-sensitive API configuration must be centrally governed.
+
+Examples include:
+
+* authentication requirements;
+* allowed origins;
+* rate limits;
+* exposed endpoints;
+* service permissions;
+* webhook configuration;
+* integration credentials.
+
+Misconfiguration must be detectable.
+
+OWASP identifies security misconfiguration as API8 and recommends treating API configuration as part of the security surface.
+
+---
+
+# 56. API Deprecation Security
+
+Deprecated endpoints must have a controlled lifecycle.
+
+```text
+Active
+ ↓
+Deprecated
+ ↓
+Migration Period
+ ↓
+Restricted
+ ↓
+Removed
+```
+
+Deprecated APIs must not remain indefinitely available because an unknown client might still use them.
+
+---
+
+# 57. API Documentation Security
+
+API documentation must distinguish between:
+
+* public;
+* partner;
+* internal;
+* privileged;
+* administrative APIs.
+
+Sensitive internal documentation must not automatically be publicly exposed.
+
+API documentation must also remain synchronized with the actual API inventory.
+
+---
+
+# 58. API Discovery and Shadow APIs
+
+The enterprise must monitor for undocumented endpoints.
+
+Potential sources include:
+
+* forgotten deployments;
+* debug endpoints;
+* old versions;
+* temporary endpoints;
+* development services accidentally exposed.
+
+These must be discovered and either:
+
+* documented;
+* secured;
+* restricted;
+* or removed.
+
+---
+
+# 59. API Availability Protection
+
+API security must preserve availability.
+
+Controls include:
+
+* rate limiting;
+* quotas;
+* circuit breakers;
+* timeouts;
+* request size limits;
+* concurrency controls;
+* queues;
+* load shedding;
+* graceful degradation.
+
+Security must prevent attackers from turning expensive API operations into uncontrolled infrastructure costs.
+
+---
+
+# 60. API Cost Protection
+
+Some API calls may have direct financial costs.
+
+Examples:
+
+* SMS;
+* WhatsApp messages;
+* AI model requests;
+* payment verification;
+* maps;
+* external APIs.
+
+Abuse protection must therefore consider:
+
+```text
+Security Risk
++
+Infrastructure Cost
++
+Third-Party Cost
++
+Business Impact
+```
+
+---
+
+# 61. API Failure Behaviour
+
+When dependent services fail, API behaviour must remain secure.
+
+For example:
+
+```text
+Trust Engine unavailable
+        ↓
+Sensitive operation
+        ↓
+Defined safe-degraded policy
+```
+
+The system must not simply:
+
+> bypass the security check because the security service is unavailable.
+
+---
+
+# 62. Circuit Breakers
+
+Circuit breakers should protect services from cascading failures.
+
+For example:
+
+```text
+Service A
+ ↓
+Service B
+ ↓
+Service C
+```
+
+If Service C fails repeatedly, Service B must not endlessly consume resources attempting impossible requests.
+
+---
+
+# 63. Bulkheads
+
+Critical services should be isolated so failure in one area does not consume all shared resources.
+
+Examples:
+
+* AI workloads;
+* checkout;
+* analytics;
+* notifications;
+* supplier integrations;
+* Walk Mode.
+
+A high-volume AI workload must not be able to starve checkout APIs.
+
+---
+
+# 64. API Security Monitoring
+
+The platform shall monitor:
+
+* failed authorization;
+* unusual endpoint usage;
+* abnormal request rates;
+* suspicious resource enumeration;
+* token anomalies;
+* privilege escalation attempts;
+* unusual service-to-service calls;
+* webhook anomalies;
+* excessive AI tool calls.
+
+These signals feed Security Monitoring and Detection.
+
+---
+
+# 65. API Threat Detection
+
+The platform should identify patterns such as:
+
+```text
+GET /orders/1001
+GET /orders/1002
+GET /orders/1003
+GET /orders/1004
+...
+```
+
+which may indicate resource enumeration.
+
+Other patterns include:
+
+* repeated failed authorization;
+* rapid account creation;
+* excessive reward requests;
+* abnormal API sequencing;
+* suspicious supplier activity;
+* unusual administrative API usage.
+
+---
+
+# 66. API Security Testing
+
+API security testing shall include:
+
+* object-level authorization;
+* property-level authorization;
+* function-level authorization;
+* authentication;
+* rate limiting;
+* replay protection;
+* business-flow abuse;
+* SSRF;
+* webhook validation;
+* API inventory;
+* third-party integration security.
+
+The OWASP API Security Top 10 shall serve as one reference framework for API security assessment.
+
+---
+
+# 67. Negative API Testing
+
+Every sensitive API must be tested for unauthorized behaviour.
+
+Examples:
+
+```text
+Wrong user       → DENY
+Wrong household  → DENY
+Wrong supplier   → DENY
+Wrong role       → DENY
+Wrong clearance  → DENY
+Expired token    → DENY
+Replay request   → DENY / IDEMPOTENT
+Excessive calls  → THROTTLE
+Invalid object   → DENY
+Unauthorized AI → DENY
+```
+
+The denial path is part of the API contract.
+
+---
+
+# 68. API Security and Auditability
+
+Every significant API action must be traceable.
+
+At minimum, the enterprise should be able to determine:
+
+```text
+Who / What
+ ↓
+Called Which API
+ ↓
+For Which Resource
+ ↓
+With Which Authority
+ ↓
+From Which Application
+ ↓
+At What Time
+ ↓
+With What Result
+```
+
+---
+
+# 69. API Security and Privacy
+
+API design must minimize unnecessary personal information exposure.
+
+An API should not return:
+
+* unnecessary personal data;
+* unnecessary household data;
+* unnecessary location;
+* unnecessary behavioural information.
+
+Security and privacy must therefore be considered together at the API boundary.
+
+---
+
+# 70. API Security at Global Scale
+
+The architecture must support:
+
+* 100M+ users;
+* 10,000+ stores;
+* multiple countries;
+* multiple regions;
+* millions of daily transactions;
+* large AI workloads;
+* high-volume events;
+* extensive third-party integrations.
+
+Security controls must therefore be:
+
+* policy-driven;
+* automated;
+* distributed;
+* observable;
+* horizontally scalable.
+
+---
+
+# 71. Architectural Laws
+
+### Law 1 — Every Request Has a Principal
+
+Every meaningful API request must be attributable to a human, service, device or AI identity.
+
+### Law 2 — Authentication Is Not Authorization
+
+A valid identity does not automatically grant resource access.
+
+### Law 3 — Every Resource Requires Authorization
+
+Possessing an identifier does not grant access to the resource.
+
+### Law 4 — Every Privileged Function Requires Privileged Authority
+
+Discovering an endpoint does not grant permission to invoke it.
+
+### Law 5 — Internal Does Not Mean Trusted
+
+Internal services must authenticate and authorize one another.
+
+### Law 6 — AI Is an Explicit Principal
+
+AI agents require identity and bounded authority.
+
+### Law 7 — Channels Are Not Sources of Truth
+
+WhatsApp and future channels must operate through authorized enterprise interfaces.
+
+### Law 8 — Domain Ownership Is Enforced Through APIs
+
+Services must not bypass domain ownership through shared database access.
+
+### Law 9 — Sensitive Operations Must Be Idempotent Where Appropriate
+
+Retries must not create duplicate financial or business actions.
+
+### Law 10 — Third Parties Are Untrusted
+
+External API responses must be validated.
+
+### Law 11 — Every API Must Be Inventoried
+
+Unknown endpoints are unacceptable security debt.
+
+### Law 12 — Resource Consumption Is a Security Concern
+
+An API that can bankrupt or exhaust the enterprise is a security risk.
+
+### Law 13 — Authorization Must Be Auditable
+
+Sensitive authorization decisions must leave evidence.
+
+### Law 14 — Failure Must Not Become Bypass
+
+Unavailable security dependencies must produce defined safe behaviour.
+
+### Law 15 — API Security Must Scale
+
+Security architecture must remain viable at enterprise scale.
+
+---
+
+# 72. Relationship to Previous Commitments
+
+Commit 008 extends the security architecture established by:
+
+```text
+001 Security Philosophy
+        ↓
+002 Enterprise Trust Architecture
+        ↓
+003 Identity & Access Security
+        ↓
+004 Authentication Security
+        ↓
+005 Staff Clearance Architecture
+        ↓
+006 Data Security Architecture
+        ↓
+007 Application Security Architecture
+        ↓
+008 API & Service Security Architecture
+```
+
+Commit 007 protects the applications.
+
+Commit 008 protects the interfaces and service relationships through which those applications interact with the enterprise.
+
+---
+
+# 73. Relationship to Future Commitments
+
+Commit 008 establishes the foundation for:
+
+* AI Security Architecture;
+* Trust Engine Security;
+* Reward Intelligence Security;
+* Fraud & Abuse Architecture;
+* Walk Mode Security;
+* Privacy Architecture;
+* Security Logging & Evidence;
+* Security Monitoring;
+* Incident Response;
+* Supply Chain Security;
+* Infrastructure & Network Security;
+* CI/CD Security;
+* Security Governance;
+* Global Security.
+
+The AI-specific controls will be expanded in the dedicated AI Security commitment rather than duplicated here.
+
+---
+
+# 74. Success Criteria
+
+The API & Service Security Architecture succeeds when:
+
+* every sensitive API has an identifiable principal;
+* authentication and authorization are separated;
+* resource-level authorization is enforced;
+* function-level authorization is enforced;
+* household isolation works;
+* supplier isolation works;
+* staff clearance is enforced server-side;
+* AI agents have bounded identities and permissions;
+* service-to-service access is explicitly authorized;
+* APIs cannot bypass domain ownership;
+* sensitive operations resist replay and duplication;
+* sensitive business flows are abuse-resistant;
+* third-party APIs are treated as untrusted;
+* webhooks are verified;
+* undocumented APIs are discoverable;
+* deprecated APIs have controlled lifecycles;
+* API resource consumption is controlled;
+* failures cannot silently bypass security;
+* sensitive API activity is auditable;
+* WhatsApp remains a controlled channel;
+* AI tools remain controlled capabilities;
+* API security remains scalable to global enterprise requirements.
+
+The final architectural objective is:
+
+> **Every API call in Essentials Mart must be treated as a potentially hostile request until its identity, authority, resource scope, business legitimacy and security context have been established.**
