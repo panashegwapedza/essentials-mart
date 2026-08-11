@@ -2050,3 +2050,1060 @@ The Enterprise Identity Architecture succeeds when:
 * subsequent authentication and authorization architecture can build directly upon this foundation.
 
 The Enterprise Identity Architecture establishes the identity layer upon which the remaining Essentials Mart security architecture will operate.
+
+## 1.3 Enterprise Authentication Architecture
+
+### Purpose
+
+The Enterprise Authentication Architecture defines how Essentials Mart establishes confidence that an actor attempting to use an identity is legitimately in control of the required authentication mechanism.
+
+Authentication provides the security bridge between:
+
+* an identity;
+* an authentication attempt;
+* an authenticated session;
+* and subsequent authorization.
+
+The architecture must support authentication for:
+
+* customers;
+* household members;
+* staff;
+* suppliers;
+* administrators;
+* services;
+* devices;
+* AI agents;
+* external integrations.
+
+Authentication must be risk-aware, privacy-conscious, resilient and appropriate to the sensitivity of the requested operation.
+
+Authentication establishes confidence in the actor's control of an identity.
+
+It does not independently grant access to resources.
+
+---
+
+### Responsibilities
+
+The Enterprise Authentication Architecture is responsible for:
+
+* Authentication principles
+* Authentication lifecycle
+* Authenticator management
+* Authentication assurance
+* Authentication factors
+* Authentication methods
+* Authentication policy
+* Authentication step-up
+* Authentication re-verification
+* Authentication session establishment
+* Authentication session continuity
+* Authentication session termination
+* Authentication failure handling
+* Authentication throttling
+* Authentication recovery principles
+* Credential lifecycle principles
+* Device-bound authentication principles
+* Passwordless authentication principles
+* Multi-factor authentication principles
+* Biometric authentication principles
+* Authentication risk evaluation
+* Authentication event generation
+* Authentication auditability
+* Authentication revocation
+* Authentication compromise response
+
+The architecture defines the security model while individual authentication technologies may be selected and implemented later.
+
+---
+
+### Owns
+
+The Enterprise Authentication Architecture owns:
+
+* Authentication Policy
+* Authentication Assurance Model
+* Authenticator Classification
+* Authentication Factor Model
+* Authentication Lifecycle
+* Authentication Session Model
+* Authentication State
+* Authentication Failure Policy
+* Authentication Recovery Principles
+* Authentication Re-verification Principles
+* Step-Up Authentication Principles
+* Authentication Revocation Principles
+* Authentication Audit Requirements
+* Authentication Event Definitions
+* Authentication Risk Principles
+
+---
+
+### Does Not Own
+
+The Enterprise Authentication Architecture does not own:
+
+* Enterprise identity itself;
+* customer profiles;
+* staff profiles;
+* supplier records;
+* household records;
+* authorization policies;
+* role definitions;
+* staff clearances;
+* resource permissions;
+* Trust Engine scores;
+* business rules;
+* financial authority;
+* product information;
+* inventory information;
+* AI agent business capabilities.
+
+Identity is owned by the Enterprise Identity Architecture.
+
+Authorization is established by the subsequent Authorization Architecture.
+
+Authentication establishes confidence in control of an identity.
+
+---
+
+### Authentication Principle
+
+The fundamental relationship is:
+
+```text
+Identity
+    ↓
+Authentication Attempt
+    ↓
+Authenticator Verification
+    ↓
+Authentication Decision
+    ↓
+Authenticated Session
+    ↓
+Authorization Evaluation
+    ↓
+Resource
+```
+
+Successful authentication does not terminate security evaluation.
+
+Authorization, contextual risk and resource protection remain separate controls.
+
+---
+
+### Authentication Factors
+
+The architecture recognises authentication factors based on fundamentally different categories of evidence.
+
+These may include:
+
+* knowledge factors;
+* possession factors;
+* inherence factors;
+* cryptographic authenticators;
+* device-bound authenticators;
+* phishing-resistant authenticators.
+
+Multiple factors may be combined where the risk of the requested action requires greater assurance.
+
+The specific technology used to implement each factor remains an implementation decision.
+
+---
+
+### Multi-Factor Authentication
+
+Essentials Mart shall support multi-factor authentication where risk requires additional assurance.
+
+Multi-factor authentication must use authenticator factors that provide genuinely independent evidence rather than merely presenting multiple variations of the same factor.
+
+The required authentication strength must depend on:
+
+* identity type;
+* resource sensitivity;
+* requested action;
+* contextual risk;
+* device state;
+* session state;
+* regulatory requirements;
+* business impact.
+
+---
+
+### Authentication Assurance
+
+Authentication assurance represents the confidence that the actor currently controlling the authenticator is legitimately associated with the claimed identity.
+
+Authentication assurance must be:
+
+* measurable;
+* policy-driven;
+* risk-based;
+* appropriate to the action.
+
+Higher-risk operations should require stronger authentication assurance.
+
+This follows the broader digital-identity principle that assurance should be selected based on risk and impact rather than choosing technology first and designing risk controls around it.
+
+---
+
+### Risk-Based Authentication
+
+Authentication must not use a single fixed security requirement for every situation.
+
+The authentication requirement may change based on context.
+
+Relevant factors may include:
+
+* identity type;
+* previous authentication;
+* device;
+* session;
+* location;
+* behavioural signals;
+* requested resource;
+* requested action;
+* transaction value;
+* security alerts;
+* Trust Engine signals;
+* fraud signals.
+
+For example:
+
+```text
+Low-Risk Action
+      ↓
+Normal Authentication
+```
+
+while:
+
+```text
+High-Risk Action
+      ↓
+Additional Verification
+      ↓
+Stronger Authentication
+```
+
+---
+
+### Step-Up Authentication
+
+Essentials Mart must support step-up authentication.
+
+A user who has already authenticated may be required to authenticate again with a stronger mechanism when attempting a sensitive action.
+
+Examples include:
+
+* changing security settings;
+* changing account recovery information;
+* adding a payment method;
+* high-value financial activity;
+* administrative actions;
+* changing household authority;
+* granting sensitive AI authority;
+* performing privileged staff actions.
+
+Step-up authentication must not require unnecessary re-authentication for ordinary low-risk activities.
+
+---
+
+### Continuous Authentication Evaluation
+
+Authentication must not be treated as permanently valid simply because it succeeded once.
+
+The system must support reassessment based on changes in:
+
+* session risk;
+* device state;
+* identity state;
+* behaviour;
+* resource sensitivity;
+* security intelligence;
+* authentication validity.
+
+A previously authenticated session may therefore require:
+
+* re-authentication;
+* step-up authentication;
+* restriction;
+* session termination;
+* identity suspension.
+
+---
+
+### Authentication Session
+
+A successful authentication establishes an authenticated session.
+
+The session must have:
+
+* an identifiable identity;
+* authentication context;
+* authentication assurance;
+* creation time;
+* lifecycle state;
+* expiry policy;
+* revocation capability.
+
+A session must not become an independent identity.
+
+---
+
+### Session Context
+
+Authentication context should remain associated with the session.
+
+This may include:
+
+* authentication method;
+* authentication strength;
+* authentication time;
+* device;
+* session origin;
+* relevant risk signals;
+* re-authentication state.
+
+This information may be consumed by authorization and security systems.
+
+---
+
+### Session Expiration
+
+Sessions must have explicit lifecycle policies.
+
+Session validity may depend on:
+
+* elapsed time;
+* inactivity;
+* risk;
+* device state;
+* application sensitivity;
+* authentication assurance;
+* security events.
+
+Long-lived sessions must not automatically receive unlimited authority.
+
+---
+
+### Session Revocation
+
+Sessions must be capable of immediate or near-immediate revocation where required.
+
+Revocation may be triggered by:
+
+* compromised credentials;
+* identity suspension;
+* identity revocation;
+* device compromise;
+* suspicious behaviour;
+* security incident;
+* administrative action;
+* explicit user action.
+
+---
+
+### Authentication Failure
+
+Authentication failures must be handled without revealing unnecessary information to attackers.
+
+The system must avoid creating authentication responses that unnecessarily disclose:
+
+* whether an identity exists;
+* which credential is valid;
+* which security control failed;
+* internal authentication architecture.
+
+Failure handling must balance:
+
+* security;
+* usability;
+* fraud prevention;
+* accessibility.
+
+---
+
+### Authentication Throttling
+
+Repeated authentication failures must trigger appropriate protection.
+
+Controls may include:
+
+* rate limiting;
+* progressive delays;
+* temporary restrictions;
+* additional verification;
+* risk escalation;
+* security alerts.
+
+The exact thresholds should be determined through threat modelling and operational analysis rather than arbitrary fixed values.
+
+---
+
+### Credential Lifecycle
+
+Authentication credentials and authenticators must have controlled lifecycles.
+
+The architecture must support:
+
+```text
+Registration
+    ↓
+Activation
+    ↓
+Use
+    ↓
+Rotation / Replacement
+    ↓
+Suspension
+    ↓
+Revocation
+    ↓
+Retirement
+```
+
+Credential lifecycle must remain separate from identity lifecycle.
+
+Revoking an authenticator does not necessarily destroy the underlying identity.
+
+---
+
+### Password Authentication
+
+Passwords may be supported where appropriate.
+
+However, passwords must not become the sole architectural assumption for authentication.
+
+The architecture must remain capable of supporting stronger authentication mechanisms as technology and threat conditions evolve.
+
+Password storage and credential protection must use appropriate cryptographic controls and must never store recoverable plaintext passwords.
+
+Detailed password implementation belongs in the credential-security architecture.
+
+---
+
+### Passwordless Authentication
+
+Essentials Mart should support passwordless authentication mechanisms where appropriate.
+
+The architecture should favour authentication methods that reduce:
+
+* credential reuse;
+* phishing exposure;
+* credential theft;
+* recovery burden.
+
+Passwordless authentication must remain compatible with:
+
+* device changes;
+* account recovery;
+* accessibility;
+* regional constraints;
+* offline and low-connectivity environments where applicable.
+
+---
+
+### Phishing Resistance
+
+High-risk authentication should support phishing-resistant mechanisms.
+
+Authentication strength must not be judged solely by the number of factors presented.
+
+A multi-step authentication process may still be vulnerable if the underlying mechanism can be easily intercepted or replayed.
+
+---
+
+### Device-Bound Authentication
+
+Where appropriate, authentication may be associated with a particular trusted device or secure device capability.
+
+Device association must not automatically imply that:
+
+```text
+Trusted Device = Trusted User
+```
+
+Both identity and device security remain independently evaluated.
+
+---
+
+### Biometric Authentication
+
+Biometrics may be used as an authentication factor where appropriate.
+
+Biometric data must receive strong privacy and security protection.
+
+Biometric authentication must not imply that Essentials Mart should necessarily store raw biometric information centrally.
+
+Where possible, biometric verification should occur through secure device capabilities that minimise unnecessary exposure of biometric information.
+
+---
+
+### Authentication Recovery
+
+Authentication recovery must be treated as a security-sensitive process.
+
+Account recovery must not become a weaker path around authentication.
+
+Recovery mechanisms must consider:
+
+* identity assurance;
+* existing authenticators;
+* trusted devices;
+* recovery factors;
+* fraud risk;
+* account sensitivity;
+* financial exposure;
+* household authority;
+* staff privilege.
+
+A compromised recovery channel must not automatically allow unrestricted account takeover.
+
+---
+
+### Authentication Recovery for Different Identity Classes
+
+Recovery requirements must vary according to identity type.
+
+For example:
+
+**Customer**
+
+May require a consumer-friendly recovery process.
+
+**Staff**
+
+Requires stronger organisational controls.
+
+**Administrator**
+
+Requires substantially stronger recovery and verification.
+
+**Supplier**
+
+Requires organisational relationship verification.
+
+**Service**
+
+Requires controlled technical credential rotation.
+
+**AI Agent**
+
+Requires governed re-provisioning or credential replacement.
+
+Authentication recovery must therefore remain identity-aware.
+
+---
+
+### Staff Authentication
+
+Staff authentication must support stronger controls than ordinary customer access where operational risk requires it.
+
+Staff authentication may be influenced by:
+
+* role;
+* clearance;
+* store;
+* department;
+* device;
+* operation being performed;
+* resource sensitivity.
+
+Privileged staff operations must support stronger authentication assurance.
+
+---
+
+### Supplier Authentication
+
+Supplier authentication must establish both:
+
+* the individual supplier user's identity;
+* and the supplier relationship under which that identity operates.
+
+Supplier authentication must not allow a supplier user to authenticate into unrelated enterprise functions.
+
+---
+
+### Administrator Authentication
+
+Administrative authentication must require elevated assurance appropriate to the sensitivity of administrative operations.
+
+Administrator authentication should support:
+
+* stronger authentication;
+* privileged session controls;
+* additional verification;
+* enhanced monitoring;
+* rapid revocation.
+
+Administrative authentication must not be treated as ordinary employee authentication.
+
+---
+
+### Service Authentication
+
+Services must authenticate to other services using dedicated non-human authentication mechanisms.
+
+A service must not rely on:
+
+* a shared human password;
+* another service's credentials;
+* a generic enterprise credential.
+
+Service authentication must preserve:
+
+* service identity;
+* credential ownership;
+* lifecycle;
+* scope;
+* auditability.
+
+---
+
+### Device Authentication
+
+Devices participating in sensitive Essentials Mart operations must be capable of establishing their identity.
+
+Examples include:
+
+* staff terminals;
+* store devices;
+* operational scanners;
+* Walk Mode devices;
+* infrastructure components.
+
+Device authentication does not automatically authenticate the human using the device.
+
+---
+
+### AI Agent Authentication
+
+AI agents must authenticate as distinct non-human identities.
+
+An AI agent must not authenticate by simply presenting the identity of the human who initiated the interaction.
+
+The correct model is:
+
+```text
+Human Identity
+      ↓
+Delegation / Authority
+      ↓
+AI Agent Identity
+      ↓
+Authenticated Agent
+      ↓
+Authorization
+```
+
+This preserves accountability.
+
+---
+
+### AI Agent Session
+
+AI agents may establish sessions when operating continuously or across multiple service interactions.
+
+Agent sessions must have:
+
+* identifiable agent identity;
+* originating context;
+* authority context;
+* lifecycle state;
+* expiry or renewal policy;
+* revocation capability;
+* auditability.
+
+AI sessions must not become indefinite authority.
+
+---
+
+### Walk Mode Authentication
+
+Walk Mode must inherit the Enterprise Authentication Architecture.
+
+The system must distinguish:
+
+```text
+Customer Authentication
+        ↓
+Walk Mode Session
+        ↓
+Walk Mode AI Agent
+        ↓
+Navigation / Store Services
+```
+
+When Autopilot is enabled, the AI agent remains separately identifiable.
+
+The user's authenticated state does not become the AI agent's identity.
+
+---
+
+### Walk Mode Autopilot Takeover
+
+Walk Mode Autopilot must support explicit delegation by the user.
+
+The transition must preserve authentication and identity context.
+
+Example:
+
+```text
+User Authenticated
+        ↓
+Walk Mode Activated
+        ↓
+User Enables Autopilot
+        ↓
+AI Agent Authenticated
+        ↓
+Bounded Authority
+        ↓
+Navigation
+```
+
+If the user takes control:
+
+```text
+AI Autopilot
+     ↓
+USER TAKEOVER
+     ↓
+Human-Controlled Session
+```
+
+The transition must not require unnecessary re-authentication when the existing session remains valid and risk conditions have not changed.
+
+However, sensitive actions may still require step-up authentication.
+
+---
+
+### Authentication and Trust Engine
+
+The Trust Engine may provide signals relevant to authentication decisions.
+
+Examples include:
+
+* anomalous behaviour;
+* unusual device;
+* unusual location;
+* unusual transaction;
+* suspicious interaction patterns.
+
+However:
+
+> **Trust intelligence does not authenticate an identity.**
+
+The Trust Engine may influence whether stronger authentication is required.
+
+It must not independently declare an actor authenticated.
+
+---
+
+### Authentication and Fraud Intelligence
+
+Fraud systems may consume authentication signals.
+
+Examples include:
+
+* repeated failed authentication;
+* unusual login patterns;
+* impossible travel patterns;
+* credential misuse;
+* suspicious device behaviour.
+
+Fraud intelligence may trigger:
+
+* additional authentication;
+* session restriction;
+* identity suspension;
+* security investigation.
+
+---
+
+### Authentication and Privacy
+
+Authentication must minimise unnecessary collection of personal information.
+
+Strong authentication does not require collecting every possible identity attribute.
+
+Where an operation does not require knowledge of a person's real-world identity, the architecture should allow appropriate pseudonymous or minimally disclosed authentication patterns.
+
+Modern digital-identity guidance explicitly recognises the value of separating assurance requirements and supporting privacy-preserving approaches where appropriate.
+
+---
+
+### Authentication and Accessibility
+
+Authentication must remain usable by legitimate users with different:
+
+* devices;
+* abilities;
+* connectivity conditions;
+* technical capabilities;
+* regional circumstances.
+
+Security controls must not unnecessarily exclude legitimate customers.
+
+Where one authentication mechanism is unavailable, governed alternatives should exist without creating an insecure bypass.
+
+---
+
+### Authentication and Emerging Markets
+
+The architecture must support environments where users may experience:
+
+* limited connectivity;
+* shared devices;
+* changing devices;
+* limited access to high-end hardware;
+* varying payment infrastructure;
+* varying telecommunications reliability.
+
+Security must remain strong without assuming every customer possesses the same technology.
+
+---
+
+### Authentication Events
+
+The authentication architecture publishes security-relevant events including:
+
+* Authentication Attempted
+* Authentication Succeeded
+* Authentication Failed
+* Authentication Challenged
+* Authentication Stepped Up
+* Authentication Re-Verified
+* Authentication Revoked
+* Session Created
+* Session Expired
+* Session Revoked
+* Credential Registered
+* Credential Replaced
+* Credential Revoked
+* Recovery Initiated
+* Recovery Completed
+* Suspicious Authentication Detected
+
+Detailed enterprise event schemas will be defined in the Event Catalogue.
+
+---
+
+### Authentication Auditability
+
+Authentication events must be attributable.
+
+The audit record should be capable of identifying:
+
+* identity;
+* authenticator type;
+* authentication result;
+* authentication assurance;
+* session;
+* device where applicable;
+* timestamp;
+* relevant risk context;
+* originating service.
+
+Sensitive authentication secrets must never be written to ordinary audit logs.
+
+---
+
+### Authentication Security Principles
+
+The Enterprise Authentication Architecture must:
+
+* establish confidence in control of an identity;
+* separate authentication from authorization;
+* support multiple authentication factors;
+* support risk-based authentication;
+* support step-up authentication;
+* support continuous evaluation;
+* support session revocation;
+* support credential lifecycle;
+* support secure recovery;
+* support phishing-resistant authentication;
+* support passwordless authentication;
+* support device-aware authentication;
+* protect biometric information;
+* support human and non-human authentication;
+* support service authentication;
+* support device authentication;
+* support AI agent authentication;
+* support Walk Mode authentication;
+* preserve delegation context;
+* preserve auditability;
+* minimise unnecessary data collection;
+* support accessibility;
+* support regional operating conditions;
+* remain scalable to global deployment.
+
+---
+
+### Authentication Laws
+
+The following laws are established by Commit 003:
+
+1. Authentication establishes confidence in control of an identity.
+2. Authentication does not establish authorization.
+3. Successful authentication does not grant unrestricted resource access.
+4. Authentication requirements must be proportionate to risk.
+5. Higher-risk actions require stronger authentication where appropriate.
+6. Step-up authentication must be supported.
+7. Authentication must support session lifecycle management.
+8. Authentication sessions must be revocable.
+9. Authentication credentials must have controlled lifecycles.
+10. Credential revocation must not necessarily destroy the underlying identity.
+11. Recovery must not become an insecure bypass around authentication.
+12. Human and non-human authentication must remain distinguishable.
+13. Services must authenticate as services.
+14. Devices must authenticate as devices where required.
+15. AI agents must authenticate as AI agents.
+16. AI agents must not authenticate by impersonating their originating human.
+17. Delegated authority must remain distinguishable from authentication identity.
+18. Trust Engine intelligence may influence authentication requirements but cannot authenticate an actor.
+19. Fraud intelligence may influence authentication requirements but cannot independently establish identity.
+20. Authentication must preserve sufficient context for downstream authorization.
+21. Authentication must support re-verification.
+22. Authentication must support session termination.
+23. Authentication failures must not unnecessarily disclose security-sensitive information.
+24. Repeated authentication failures must trigger appropriate protective controls.
+25. Authentication must not depend exclusively on passwords.
+26. High-risk operations should support phishing-resistant authentication.
+27. Biometric authentication must respect privacy.
+28. Authentication must minimise unnecessary collection of personal information.
+29. Authentication mechanisms must support legitimate accessibility requirements.
+30. Authentication must support changing devices and recovery scenarios.
+31. Staff authentication must support stronger controls where operational risk requires them.
+32. Administrative authentication must receive elevated protection.
+33. Supplier authentication must preserve supplier boundaries.
+34. Service authentication must preserve service boundaries.
+35. AI agent authentication must preserve AI identity boundaries.
+36. Walk Mode Autopilot must operate within authenticated identity and delegation context.
+37. User takeover of Walk Mode must preserve the user's authenticated context where valid.
+38. Authentication architecture must remain independent of business-domain ownership.
+39. Authentication architecture must remain scalable to global deployment.
+40. Later authentication implementation may refine these laws but must not contradict them without an explicit architectural decision.
+
+---
+
+### Relationship to Commit 001
+
+Commit 003 implements the security foundation established by:
+
+**EDA-001 Part 3 — Commit 001: Enterprise Security Architecture Foundation & Zero Trust Architecture**
+
+Commit 001 established:
+
+* no implicit trust;
+* explicit security boundaries;
+* least privilege;
+* continuous verification;
+* human and non-human security;
+* AI authority boundaries;
+* resource protection.
+
+Authentication provides one of the mechanisms through which those principles are enforced.
+
+---
+
+### Relationship to Commit 002
+
+Commit 003 builds directly upon:
+
+**EDA-001 Part 3 — Commit 002: Enterprise Identity Architecture**
+
+Commit 002 established:
+
+* human identities;
+* non-human identities;
+* identity ownership;
+* identity lifecycle;
+* identity relationships;
+* identity provenance;
+* delegation;
+* acting-on-behalf-of relationships;
+* AI agent identities;
+* service identities;
+* device identities.
+
+Commit 003 establishes how those identities can be authenticated.
+
+Therefore:
+
+```text
+Identity
+   ↓
+Authentication
+   ↓
+Authorization
+```
+
+remains the foundational sequence.
+
+---
+
+### Relationship to Later Security Architecture
+
+Commit 003 establishes the foundation for:
+
+* Authorization Architecture
+* RBAC / ABAC
+* Staff Clearance
+* Privileged Access
+* Credential Security
+* Federation
+* Service-to-Service Security
+* Device Security
+* AI Agent Security
+* Security Monitoring
+* Fraud Detection
+* Incident Response
+
+The sequence remains:
+
+```text
+Commit 001
+Security Foundation
+        ↓
+Commit 002
+Identity
+        ↓
+Commit 003
+Authentication
+        ↓
+Commit 004
+Authorization
+        ↓
+Commit 005+
+Specialised Security Architecture
+```
+
+---
+
+### Success Criteria
+
+The Enterprise Authentication Architecture succeeds when:
+
+* every authentication attempt can be associated with an identity;
+* authentication assurance is appropriate to risk;
+* high-risk actions can require stronger authentication;
+* step-up authentication is available;
+* sessions can be revoked;
+* compromised credentials can be invalidated;
+* recovery cannot trivially bypass security;
+* staff and administrators receive appropriate authentication protection;
+* supplier authentication remains appropriately isolated;
+* services authenticate independently;
+* devices can be authenticated where required;
+* AI agents authenticate as distinct non-human identities;
+* Walk Mode Autopilot maintains explicit authentication and delegation context;
+* user takeover remains immediately possible within valid session conditions;
+* Trust Engine signals can strengthen authentication without becoming the authenticator;
+* authentication events remain auditable;
+* authentication architecture remains privacy-conscious;
+* legitimate users can authenticate across different devices and operating conditions;
+* the architecture can support global-scale authentication without abandoning the security principles established in Part 3.
