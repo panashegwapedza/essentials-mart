@@ -12808,3 +12808,1061 @@ The AI Security Architecture succeeds when:
 The final architectural objective is:
 
 > **AI Society must be powerful enough to act as the intelligence layer of Essentials Mart, but constrained enough that no individual agent, model, tool, context or compromised workflow can obtain authority beyond what the enterprise explicitly grants it.**
+
+## Commit 010 — Trust Engine Security Architecture
+
+### 1. Purpose
+
+The Trust Engine Security Architecture defines the security controls required to protect the Essentials Mart Trust Engine from manipulation, abuse, corruption, impersonation and unauthorised influence.
+
+The Trust Engine is a security-sensitive intelligence component because its outputs may influence:
+
+* access decisions;
+* fraud detection;
+* account protection;
+* reward eligibility;
+* transaction confidence;
+* behavioural risk assessment;
+* supplier trust;
+* staff risk signals;
+* AI decision-making;
+* adaptive authentication;
+* security monitoring;
+* platform reputation.
+
+The Trust Engine must therefore be treated as a **security-critical enterprise capability**, not merely as an analytics or scoring service.
+
+A compromised Trust Engine could allow an attacker to manipulate the platform into believing that an untrusted actor is trustworthy.
+
+This creates a fundamental architectural requirement:
+
+> **Trust must never become an attackable shortcut around security controls.**
+
+The Trust Engine may contribute intelligence to security decisions, but it must never become the sole authority for granting critical privileges.
+
+---
+
+### 2. Security Objective
+
+The primary security objective is to ensure that Trust Engine outputs remain:
+
+* authentic;
+* attributable;
+* explainable;
+* tamper-resistant;
+* contextually valid;
+* time-bounded;
+* independently verifiable;
+* resistant to manipulation;
+* resistant to replay;
+* resistant to coordinated abuse.
+
+The Trust Engine must protect both:
+
+**Trust Inputs**
+
+and:
+
+**Trust Decisions**
+
+An attacker must not be able to manipulate either side of the system to manufacture artificial trust.
+
+---
+
+### 3. Trust Engine Security Boundary
+
+The Trust Engine operates within a defined security boundary.
+
+```text
+                    SECURITY PERIMETER
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │   Trust Engine   │
+                  └──────────────────┘
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+              ▼            ▼            ▼
+        Trust Inputs   Trust Models   Trust Outputs
+              │            │            │
+              ▼            ▼            ▼
+          Evidence      Evaluation    Decisions
+```
+
+The Trust Engine must not directly trust arbitrary inputs from:
+
+* customers;
+* staff;
+* suppliers;
+* AI agents;
+* external integrations;
+* client applications;
+* devices;
+* third-party systems.
+
+All incoming signals must pass through validation, provenance and integrity controls.
+
+---
+
+### 4. Trust Is Evidence-Based
+
+The Trust Engine must never treat a claim of trustworthiness as evidence of trustworthiness.
+
+For example:
+
+```text
+User claims:
+"I am a trusted customer."
+
+≠
+
+Trust Engine evidence:
+"Customer has demonstrated trustworthy behaviour."
+```
+
+Trust must be derived from validated evidence.
+
+Evidence may include:
+
+* authenticated identity;
+* verified device;
+* transaction history;
+* behavioural consistency;
+* account age;
+* fraud indicators;
+* security events;
+* transaction anomalies;
+* verified supplier activity;
+* verified staff activity;
+* historical abuse indicators;
+* successful verification events;
+* reputation signals;
+* contextual risk signals.
+
+The Trust Engine must distinguish between:
+
+**claimed attributes**
+
+and:
+
+**verified evidence**.
+
+---
+
+### 5. Trust Signal Provenance
+
+Every significant Trust Engine input must have provenance.
+
+The system should be able to determine:
+
+* where the signal originated;
+* which system generated it;
+* when it was generated;
+* which identity generated it;
+* what event produced it;
+* whether it was independently verified;
+* whether it has been modified;
+* whether it has expired;
+* what confidence level applies to it.
+
+Conceptually:
+
+```text
+Signal
+  ↓
+Source
+  ↓
+Identity
+  ↓
+Timestamp
+  ↓
+Event
+  ↓
+Verification
+  ↓
+Trust Evidence
+```
+
+Trust signals without sufficient provenance must not be treated as high-confidence evidence.
+
+---
+
+### 6. Trust Signal Integrity
+
+Trust signals must be protected against tampering.
+
+Controls should include:
+
+* authenticated event sources;
+* integrity-protected messages;
+* immutable event identifiers;
+* timestamps;
+* replay protection;
+* source authentication;
+* schema validation;
+* event sequencing where required;
+* cryptographic integrity mechanisms where appropriate;
+* anomaly detection;
+* duplicate-event detection.
+
+A client application must never be permitted to directly submit:
+
+```text
+trustScore = 95
+```
+
+or:
+
+```text
+riskScore = 2
+```
+
+The client may submit an action or event.
+
+The Trust Engine determines the resulting intelligence.
+
+---
+
+### 7. Client-Side Trust Manipulation Prevention
+
+The client must never be authoritative for Trust Engine state.
+
+This applies to:
+
+* Flutter applications;
+* web clients;
+* Walk Mode;
+* WhatsApp;
+* future SMS/USSD interfaces;
+* external integrations.
+
+Client interfaces may request operations, but Trust Engine values must be generated server-side.
+
+For example:
+
+```text
+Client:
+"User completed purchase."
+
+        ↓
+
+Commerce Backend
+        ↓
+Verified Transaction Event
+        ↓
+Trust Engine
+        ↓
+Trust Evaluation
+```
+
+Not:
+
+```text
+Client
+  ↓
+"I completed a purchase."
+  ↓
+Trust increased
+```
+
+---
+
+### 8. Trust Score Protection
+
+Trust scores must be protected as security-sensitive derived information.
+
+Access to raw Trust Engine scores must therefore be restricted according to:
+
+* user type;
+* staff clearance;
+* service identity;
+* AI identity;
+* security role;
+* business purpose.
+
+Customers should generally receive understandable outcomes rather than exposing internal security scoring mechanisms.
+
+For example:
+
+Acceptable:
+
+> "Additional verification is required."
+
+Not necessarily:
+
+> "Your Trust Score dropped from 81 to 64 because signal X contributed -17."
+
+Exposing internal scoring mechanics could help attackers optimise behaviour specifically to manipulate the system.
+
+---
+
+### 9. Trust Must Be Contextual
+
+Trust must not be treated as a permanent property.
+
+A previously trustworthy entity can become risky.
+
+A previously unknown entity can become trustworthy after sufficient verified evidence.
+
+Therefore:
+
+```text
+Trust(Entity)
+        +
+Context
+        +
+Time
+        +
+Resource Sensitivity
+        +
+Current Risk
+        ↓
+Current Trust Assessment
+```
+
+The same user may therefore receive different trust treatment depending upon:
+
+* device;
+* location;
+* action;
+* transaction value;
+* session;
+* behavioural anomaly;
+* resource sensitivity;
+* recent security events;
+* account state.
+
+This aligns with Zero Trust principles in which access decisions are evaluated using current context rather than relying on static trust assumptions.
+
+---
+
+### 10. Trust Decay
+
+Trust must be capable of decaying over time where appropriate.
+
+Historical positive behaviour should not create unlimited permanent trust.
+
+Examples include:
+
+* dormant accounts;
+* inactive suppliers;
+* stale device relationships;
+* outdated verification;
+* long periods without activity;
+* changed behavioural patterns.
+
+Trust decay prevents historical reputation from becoming a permanent bypass mechanism.
+
+---
+
+### 11. Negative Trust Signals
+
+The Trust Engine must account for negative evidence.
+
+Examples include:
+
+* suspicious login behaviour;
+* credential compromise;
+* payment anomalies;
+* fraudulent returns;
+* reward manipulation;
+* referral abuse;
+* suspicious supplier activity;
+* staff policy violations;
+* device compromise;
+* abnormal API behaviour;
+* repeated failed authentication;
+* suspicious AI activity.
+
+Negative signals must not necessarily erase all historical trust.
+
+Instead, the Trust Engine should maintain a contextual security assessment.
+
+---
+
+### 12. Trust Manipulation Resistance
+
+The Trust Engine must defend against attempts to artificially increase trust.
+
+Potential attacks include:
+
+* transaction farming;
+* repeated low-value transactions;
+* synthetic purchases;
+* fake reviews;
+* coordinated referrals;
+* multi-account activity;
+* collusive behaviour;
+* artificial engagement;
+* manufactured household activity;
+* reward farming;
+* device rotation;
+* identity cycling;
+* transaction laundering;
+* AI-generated synthetic activity.
+
+The system must therefore distinguish:
+
+**activity**
+
+from:
+
+**meaningful evidence of trustworthy behaviour**.
+
+Large quantities of activity must not automatically produce high trust.
+
+---
+
+### 13. Sybil Resistance
+
+The Trust Engine must resist Sybil attacks in which one actor creates or controls multiple identities.
+
+Relevant signals may include:
+
+* device relationships;
+* account relationships;
+* payment relationships;
+* behavioural similarity;
+* network patterns;
+* household relationships;
+* referral graphs;
+* transaction patterns;
+* identity verification;
+* suspicious account creation patterns.
+
+The Trust Engine should avoid relying on any single signal because sophisticated attackers may deliberately manipulate individual signals.
+
+---
+
+### 14. Collusion Detection
+
+Trust must account for coordinated behaviour.
+
+Examples include:
+
+```text
+Account A
+   ↓
+Referral
+   ↓
+Account B
+   ↓
+Purchase
+   ↓
+Reward
+   ↓
+Account A
+```
+
+Individually, each action may appear legitimate.
+
+Collectively, the pattern may indicate abuse.
+
+The Trust Engine must therefore support relationship and network-level analysis where appropriate.
+
+This is especially important for:
+
+* referrals;
+* rewards;
+* reviews;
+* suppliers;
+* staff;
+* marketplace activity;
+* household activity;
+* promotions.
+
+---
+
+### 15. Trust Graph
+
+Where appropriate, the Trust Engine may maintain a relationship graph representing relevant entities and interactions.
+
+```text
+User
+ │
+ ├── Device
+ │
+ ├── Household
+ │
+ ├── Payment Instrument
+ │
+ ├── Orders
+ │
+ ├── Referrals
+ │
+ └── Rewards
+```
+
+The graph must itself be protected.
+
+Access to graph relationships must be restricted because relationship data can expose highly sensitive security and behavioural information.
+
+---
+
+### 16. Trust Engine and Identity
+
+The Trust Engine must integrate with Identity & Access without replacing it.
+
+Identity establishes:
+
+> **Who or what is requesting access?**
+
+Trust intelligence contributes:
+
+> **What is the current confidence and risk associated with this request?**
+
+The final security decision may incorporate both.
+
+```text
+Identity
+   +
+Authentication
+   +
+Device
+   +
+Context
+   +
+Trust Intelligence
+   +
+Resource Sensitivity
+   ↓
+Authorization Decision
+```
+
+The Trust Engine must therefore never become an alternative authentication system.
+
+---
+
+### 17. Trust Engine and Authorization
+
+Critical authorization decisions must not rely exclusively on a Trust Score.
+
+For example:
+
+```text
+Trust Score = High
+```
+
+must not automatically grant:
+
+* administrator privileges;
+* financial authority;
+* production access;
+* security administration;
+* unrestricted staff access;
+* unrestricted AI tool access.
+
+Authorization remains governed by Identity & Access, policy and clearance architecture.
+
+Trust intelligence may provide a risk signal.
+
+It does not override explicit authorization boundaries.
+
+---
+
+### 18. Trust Engine and AI Society
+
+AI agents may consume Trust Engine intelligence.
+
+However, AI agents must not be able to freely modify their own trust status.
+
+For example:
+
+```text
+AI Agent
+   ↓
+Request elevated privilege
+   ↓
+Trust Engine
+   ↓
+"AI says it is trustworthy"
+```
+
+must never be accepted as sufficient evidence.
+
+AI trust must be based on independently observable evidence.
+
+The Trust Engine must also monitor:
+
+* agent behaviour;
+* tool usage;
+* failed actions;
+* unusual requests;
+* policy violations;
+* escalation attempts;
+* communication patterns;
+* anomalous decision patterns.
+
+This is particularly important because AI agents are themselves access-bearing entities within the platform.
+
+---
+
+### 19. Trust Engine and Reward Intelligence
+
+The Trust Engine and Reward Intelligence must remain separate but coordinated.
+
+```text
+Trust Engine
+     │
+     │ security / behavioural confidence
+     ▼
+Reward Intelligence
+     │
+     │ eligibility / recommendation
+     ▼
+Reward Decision
+```
+
+Reward Intelligence must not be allowed to manufacture trust signals simply because a reward would otherwise be beneficial.
+
+Likewise, Trust Engine controls must not be bypassed by Reward Intelligence.
+
+This separation reduces the risk of reward systems becoming an indirect path to privilege escalation or abuse.
+
+---
+
+### 20. Trust Engine and Fraud Detection
+
+Fraud systems may provide signals to the Trust Engine.
+
+However, fraud detection and trust evaluation should remain logically distinguishable.
+
+For example:
+
+```text
+Fraud Engine
+     ↓
+Fraud Evidence
+     ↓
+Trust Engine
+     ↓
+Trust Assessment
+```
+
+This prevents the Trust Engine from becoming a monolithic intelligence system where every security decision becomes impossible to understand or audit.
+
+---
+
+### 21. Trust Engine Tamper Detection
+
+The platform must detect attempts to manipulate Trust Engine inputs or outputs.
+
+Potential indicators include:
+
+* unusual score changes;
+* sudden trust increases;
+* repeated favourable signals;
+* abnormal event frequency;
+* impossible event sequences;
+* conflicting signals;
+* unusual source behaviour;
+* suspicious model outputs;
+* unexpected administrative changes;
+* unusual changes to trust policies.
+
+High-risk anomalies should generate security events.
+
+---
+
+### 22. Trust Engine Administrative Access
+
+Administrative access must be tightly restricted.
+
+No ordinary administrator should automatically be able to:
+
+* modify Trust Engine algorithms;
+* alter historical evidence;
+* delete trust events;
+* manually increase trust;
+* suppress negative evidence;
+* change security thresholds;
+* alter trust policies.
+
+Highly privileged operations should require:
+
+* explicit authorization;
+* separation of duties;
+* strong authentication;
+* audit logging;
+* reason codes;
+* approval where appropriate.
+
+---
+
+### 23. Manual Trust Overrides
+
+Manual overrides must be exceptional.
+
+Where a legitimate operational requirement exists, an override should record:
+
+* who performed it;
+* when;
+* why;
+* affected entity;
+* previous state;
+* new state;
+* authorization basis;
+* approval;
+* expiration time;
+* related incident or case.
+
+Overrides should preferably be:
+
+**temporary**
+
+rather than permanent.
+
+---
+
+### 24. Trust Override Expiration
+
+Security-sensitive trust overrides should have explicit expiration.
+
+For example:
+
+```text
+Override Created
+      ↓
+Reason Recorded
+      ↓
+Temporary Trust Adjustment
+      ↓
+Expiration
+      ↓
+Normal Trust Evaluation Resumes
+```
+
+This prevents temporary emergency decisions from silently becoming permanent security weaknesses.
+
+---
+
+### 25. Trust Engine Auditability
+
+All security-sensitive Trust Engine operations must be auditable.
+
+The audit record should capture:
+
+* actor;
+* actor type;
+* actor identity;
+* service identity;
+* AI identity where applicable;
+* timestamp;
+* action;
+* affected entity;
+* source evidence;
+* policy version;
+* Trust Engine version;
+* resulting decision;
+* reason;
+* authorization context;
+* originating device or system where relevant.
+
+Audit records must themselves be protected from unauthorised modification.
+
+---
+
+### 26. Trust Decision Explainability
+
+Trust decisions should be explainable to authorized internal users.
+
+The platform should be able to determine:
+
+* which evidence influenced a decision;
+* which policies applied;
+* which risk factors were present;
+* which Trust Engine version produced the decision;
+* which contextual attributes were considered.
+
+However, internal explanations must be separated from customer-facing explanations where revealing detailed security logic would create additional attack opportunities.
+
+---
+
+### 27. Model and Algorithm Security
+
+Where machine-learning models contribute to trust evaluation, the model lifecycle must be secured.
+
+Controls should include:
+
+* model versioning;
+* approved model registry;
+* model integrity verification;
+* controlled deployment;
+* training-data provenance;
+* model evaluation;
+* rollback capability;
+* monitoring;
+* anomaly detection;
+* access control.
+
+An unapproved model must never be able to silently replace a production Trust Engine model.
+
+---
+
+### 28. Trust Data Protection
+
+Trust data may contain sensitive behavioural and security information.
+
+Therefore it must be protected according to the platform's Data Security Architecture.
+
+Controls include:
+
+* encryption in transit;
+* encryption at rest;
+* restricted access;
+* data classification;
+* retention controls;
+* minimisation;
+* secure deletion;
+* access logging.
+
+Raw security intelligence should not be exposed unnecessarily to ordinary application components.
+
+---
+
+### 29. Trust Engine Availability
+
+The Trust Engine must not become a single point of catastrophic failure.
+
+If Trust Engine availability is degraded, the platform must fail safely.
+
+Critical security controls must not simply interpret:
+
+```text
+Trust Engine unavailable
+```
+
+as:
+
+```text
+User trusted
+```
+
+Depending on the sensitivity of the requested operation, the system may:
+
+* deny the operation;
+* require additional verification;
+* apply a conservative policy;
+* queue the action;
+* use independently validated fallback signals.
+
+The fallback behaviour must be explicitly defined rather than improvised at runtime.
+
+---
+
+### 30. Trust Engine Compromise
+
+If compromise of the Trust Engine is suspected, the platform must be able to:
+
+* isolate affected components;
+* suspend suspicious trust signals;
+* revoke affected trust assertions;
+* invalidate compromised credentials;
+* switch to conservative security policies;
+* preserve forensic evidence;
+* investigate affected decisions;
+* restore trusted models and policies;
+* recalculate affected trust assessments.
+
+The architecture must assume that the Trust Engine itself can eventually be attacked.
+
+---
+
+### 31. Blast Radius Limitation
+
+Trust Engine compromise must not automatically compromise:
+
+* Identity;
+* Authentication;
+* Authorization;
+* Payments;
+* Commerce;
+* Inventory;
+* Rewards;
+* AI Society;
+* Delivery;
+* administrative infrastructure.
+
+The architecture must therefore enforce separation between intelligence and authority.
+
+This principle is fundamental to reducing security blast radius.
+
+---
+
+### 32. Trust Assertions
+
+Where Trust Engine results are consumed by other services, the result should be represented as a controlled trust assertion rather than unrestricted internal state.
+
+Conceptually:
+
+```text
+Trust Engine
+      ↓
+Signed / authenticated assertion
+      ↓
+Authorised consumer
+      ↓
+Policy evaluation
+      ↓
+Decision
+```
+
+The consumer must verify that the assertion:
+
+* originated from the Trust Engine;
+* is valid;
+* has not expired;
+* applies to the intended entity;
+* applies to the intended context;
+* has not been replayed;
+* was generated under an accepted Trust Engine version.
+
+---
+
+### 33. Trust Assertion Expiration
+
+Trust assertions must not remain valid indefinitely.
+
+Security-sensitive assertions should have bounded lifetimes.
+
+This prevents an attacker from obtaining a legitimate high-trust state and replaying it indefinitely.
+
+---
+
+### 34. Trust Engine Security Events
+
+The Trust Engine should publish security-relevant events such as:
+
+* Trust Signal Rejected
+* Trust Signal Invalidated
+* Trust Anomaly Detected
+* Trust Manipulation Suspected
+* Trust Override Requested
+* Trust Override Approved
+* Trust Override Expired
+* Trust Assertion Issued
+* Trust Assertion Revoked
+* Trust Model Changed
+* Trust Policy Changed
+* Trust Engine Integrity Failure
+* Trust Engine Compromise Suspected
+
+These events feed into the broader Security Monitoring and Incident Response architecture.
+
+---
+
+### 35. Security Monitoring
+
+The platform must monitor:
+
+* unusual trust changes;
+* unusual trust-source behaviour;
+* repeated trust manipulation attempts;
+* unusual administrator activity;
+* abnormal AI trust interactions;
+* anomalous service requests;
+* excessive trust overrides;
+* model changes;
+* policy changes;
+* trust assertion failures.
+
+Monitoring should identify both individual anomalies and coordinated attacks.
+
+---
+
+### 36. Trust Engine Security Principle
+
+The following principle becomes an architectural rule:
+
+> **Trust is intelligence, not authority.**
+
+The Trust Engine can inform security decisions.
+
+It cannot independently grant authority that the identity, access-control and policy systems have not authorized.
+
+---
+
+### 37. Architectural Relationship
+
+The Trust Engine therefore occupies the following position within the security architecture:
+
+```text
+                 Identity
+                    │
+                    ▼
+              Authentication
+                    │
+                    ▼
+              Trust Signals
+                    │
+                    ▼
+              Trust Engine
+                    │
+          ┌─────────┴─────────┐
+          │                   │
+          ▼                   ▼
+     Risk Context        Behavioural
+                          Intelligence
+          │                   │
+          └─────────┬─────────┘
+                    ▼
+             Policy Engine
+                    │
+                    ▼
+             Authorization
+                    │
+                    ▼
+                 Action
+                    │
+                    ▼
+                  Audit
+```
+
+This ensures that Trust Engine intelligence participates in the security decision without becoming an uncontrolled authority layer.
+
+---
+
+### 38. Architectural Principles
+
+The Trust Engine Security Architecture must:
+
+* never trust client-provided trust scores;
+* require provenance for significant trust signals;
+* protect trust evidence from manipulation;
+* resist Sybil and collusion attacks;
+* treat trust as contextual;
+* support trust decay;
+* separate trust intelligence from authorization authority;
+* prevent AI agents from manipulating their own trust;
+* protect Trust Engine administrative operations;
+* require auditable manual overrides;
+* limit the lifetime of sensitive trust assertions;
+* protect Trust Engine models and policies;
+* preserve forensic evidence;
+* support conservative failure modes;
+* limit blast radius;
+* maintain independent security controls outside the Trust Engine.
+
+---
+
+### 39. Success Criteria
+
+The Trust Engine Security Architecture succeeds when:
+
+* attackers cannot directly manipulate trust scores;
+* fabricated activity does not automatically create trust;
+* compromised accounts cannot easily manufacture reputation;
+* coordinated abuse can be detected;
+* Trust Engine decisions remain attributable and auditable;
+* AI agents cannot self-elevate their trust;
+* Reward Intelligence cannot bypass Trust Engine security;
+* Trust intelligence cannot override authorization;
+* compromised Trust Engine components cannot automatically compromise the wider platform;
+* sensitive trust assertions expire appropriately;
+* security teams can investigate suspicious trust decisions;
+* the Trust Engine remains usable at global platform scale.
+
+The ultimate objective is:
+
+> **Essentials Mart must be able to use trust intelligently without ever allowing trust itself to become a vulnerability.**
