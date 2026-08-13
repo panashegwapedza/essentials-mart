@@ -19145,3 +19145,1950 @@ and
 being authorized.
 
 That distinction becomes particularly important as Walk Mode evolves from assisted navigation into the AI-assisted, Autopilot-enabled Living Digital Supermarket experience we have been designing.
+
+Commit 014 — Privacy Architecture
+
+1. Purpose
+The Privacy Architecture establishes how Essentials Mart collects, uses, processes, shares, retains, protects and disposes of information relating to individuals, households and organisations.
+
+It exists to ensure that the platform can provide increasingly intelligent services without allowing intelligence to become an excuse for unnecessary surveillance or uncontrolled data collection.
+
+The architecture must protect:
+
+customers;
+
+household members;
+
+staff;
+
+suppliers;
+
+delivery participants;
+
+administrators;
+
+business partners;
+
+visitors and other indirectly observed individuals.
+
+Privacy must apply across:
+
+the mobile application;
+
+WhatsApp;
+
+Walk Mode;
+
+AI Society;
+
+household intelligence;
+
+analytics;
+
+commerce;
+
+rewards;
+
+Trust Engine;
+
+fraud detection;
+
+delivery;
+
+customer support;
+
+staff systems;
+
+supplier systems;
+
+backend services;
+
+external integrations.
+
+2. Privacy Objective
+Essentials Mart must provide:
+
+data minimisation;
+
+purpose limitation;
+
+controlled disclosure;
+
+transparent processing;
+
+user control;
+
+appropriate consent mechanisms;
+
+privacy-preserving defaults;
+
+appropriate retention;
+
+controlled deletion;
+
+access boundaries;
+
+household privacy;
+
+location privacy;
+
+AI privacy;
+
+analytics privacy;
+
+staff privacy;
+
+supplier privacy;
+
+cross-border data controls;
+
+privacy-preserving security monitoring.
+
+The goal is not to eliminate useful data processing.
+
+The goal is:
+
+Collect and use the information necessary to provide legitimate value while minimising unnecessary privacy risk.
+
+3. Privacy Is Not the Same as Security
+Security and privacy must cooperate but remain conceptually distinct.
+
+SECURITY
+    │
+    └──► Protect information and systems
+          from unauthorised access or misuse.
+
+PRIVACY
+    │
+    └──► Govern whether, why, how and for how long
+          information about people is processed.
+A system can therefore be:
+
+secure but privacy-invasive.
+
+For example:
+
+A database may be perfectly encrypted, but the platform may still be collecting far more location history than the service actually needs.
+
+Conversely, a system may have:
+
+privacy-friendly intentions but inadequate security.
+
+Both dimensions must therefore be addressed.
+
+4. Privacy Boundary
+Privacy becomes a cross-domain architectural boundary.
+
+                         PRIVACY GOVERNANCE
+                                │
+        ┌───────────────────────┼───────────────────────┐
+        │                       │                       │
+     Identity                Commerce                 AI
+        │                       │                       │
+     Household              Walk Mode              Analytics
+        │                       │                       │
+      Rewards               Delivery                Fraud
+        │                       │                       │
+        └───────────────────────┼───────────────────────┘
+                                │
+                        Privacy Controls
+                                │
+                   ┌────────────┴────────────┐
+                   │                         │
+              Data Subjects             Enterprise
+                   │                         │
+              User Controls             Governance
+Privacy is therefore not owned exclusively by one application service.
+
+Every domain processing personal or sensitive information must implement the privacy policies applicable to that domain.
+
+5. Privacy-by-Design
+Privacy must be considered before functionality is implemented.
+
+The platform should not follow:
+
+Build Feature
+    ↓
+Collect Data
+    ↓
+Ask "Is this private?"
+Instead:
+
+Feature Requirement
+       ↓
+Data Requirement
+       ↓
+Privacy Assessment
+       ↓
+Minimise
+       ↓
+Authorise
+       ↓
+Implement
+       ↓
+Monitor
+This is consistent with the broader risk-management approach of the NIST Privacy Framework, which is designed to help organisations consider privacy impacts as systems and services are developed. 
+
+6. Data Minimisation
+Every data element should have a justified purpose.
+
+Before collecting a data element, the architecture should be able to answer:
+
+Why is it needed?
+
+Which feature needs it?
+
+Who needs access?
+
+How long is it needed?
+
+What happens if it is unavailable?
+
+Can a less precise value achieve the same purpose?
+
+Can it be derived temporarily rather than stored?
+
+Can it be aggregated?
+
+Can it be pseudonymised?
+
+If the answer is:
+
+"We might need it someday."
+
+that is not sufficient architectural justification.
+
+7. Purpose Limitation
+Data collected for one purpose must not automatically become available for every other purpose.
+
+For example:
+
+Location
+   ↓
+Walk Mode navigation
+does not automatically mean:
+
+Location
+   ↓
+Permanent behavioural surveillance
+Likewise:
+
+Shopping history
+   ↓
+Personal recommendations
+does not automatically mean:
+
+Shopping history
+   ↓
+External advertising
+without the appropriate authority, purpose and controls.
+
+8. Data Classification
+Essentials Mart should classify information according to sensitivity and risk.
+
+A conceptual classification is:
+
+Public
+Information intended for public consumption.
+
+Examples:
+
+public product descriptions;
+
+public store locations;
+
+public promotions.
+
+Internal
+Business information not intended for public disclosure.
+
+Examples:
+
+internal operational procedures;
+
+internal service metadata.
+
+Confidential
+Information requiring controlled access.
+
+Examples:
+
+supplier commercial information;
+
+internal analytics;
+
+operational reports.
+
+Sensitive
+Information where inappropriate disclosure could materially affect individuals or the business.
+
+Examples:
+
+customer information;
+
+household information;
+
+staff information;
+
+detailed purchasing history;
+
+location data.
+
+Highly Sensitive / Restricted
+Information requiring exceptional controls.
+
+Examples may include:
+
+authentication secrets;
+
+highly sensitive security evidence;
+
+privileged administrative information;
+
+certain fraud investigations;
+
+security-sensitive AI information.
+
+Classification must determine handling requirements.
+
+9. Data Ownership
+Every significant data category must have an accountable owner.
+
+For example:
+
+Customer Profile
+       ↓
+User Domain
+
+Household Data
+       ↓
+Household Domain
+
+Order Data
+       ↓
+Commerce Domain
+
+Inventory Data
+       ↓
+Inventory Intelligence
+
+Audit Records
+       ↓
+Audit / Security Architecture
+
+AI Context
+       ↓
+AI Society Governance
+Privacy governance operates across these domains but does not replace their ownership.
+
+10. Data Lifecycle
+Every sensitive data category should have an explicit lifecycle.
+
+Collect
+   ↓
+Validate
+   ↓
+Use
+   ↓
+Store
+   ↓
+Share / Process
+   ↓
+Retain
+   ↓
+Archive where justified
+   ↓
+Delete / Dispose
+The NIST Privacy Framework explicitly treats operations such as collection, retention, logging, generation, transformation, use, disclosure, transmission and disposal as part of the data lifecycle. 
+
+11. Collection Controls
+Collection must be:
+
+intentional;
+
+documented;
+
+authorised;
+
+minimised;
+
+secure;
+
+attributable.
+
+The system should distinguish between:
+
+required data
+
+and
+
+optional data.
+
+Users should not be forced to provide unnecessary information merely because the platform could theoretically benefit from it.
+
+12. User Choice
+Where a processing activity is optional, users should have meaningful control.
+
+Examples include:
+
+marketing;
+
+optional personalisation;
+
+optional location services;
+
+optional WhatsApp communication;
+
+optional analytics participation where applicable;
+
+optional AI features requiring additional data.
+
+The platform should not disguise optional processing as mandatory functionality.
+
+13. Consent
+Where consent is the appropriate legal or product basis for processing, it must be:
+
+specific;
+
+understandable;
+
+appropriately recorded;
+
+revocable;
+
+attributable.
+
+Consent should not be treated as a permanent blanket permission.
+
+For example:
+
+User
+ ↓
+Allows WhatsApp Notifications
+ ↓
+WhatsApp Channel Enabled
+If the user later revokes it:
+
+User
+ ↓
+Revokes WhatsApp Permission
+ ↓
+WhatsApp Notification Permission Disabled
+The system must respect the change.
+
+14. Notification Privacy
+This directly incorporates the WhatsApp architecture we previously established.
+
+Users may independently control:
+
+Essentials Mart App
+orders;
+
+delivery;
+
+pantry;
+
+household;
+
+Club;
+
+milestones;
+
+promotions.
+
+WhatsApp
+orders;
+
+delivery;
+
+pantry;
+
+household;
+
+Club;
+
+milestones;
+
+promotions.
+
+The Channel Controller must evaluate the user's current preferences before sending messages.
+
+15. WhatsApp Privacy
+WhatsApp must not become a privacy bypass.
+
+The system must verify:
+
+WhatsApp Request
+      ↓
+Channel Identity
+      ↓
+User Identity
+      ↓
+Authorization
+      ↓
+Privacy Policy
+      ↓
+Backend Action
+The fact that a message arrived from a known WhatsApp account must not automatically authorise access to every piece of customer information.
+
+16. Household Privacy
+Household intelligence introduces a unique privacy boundary.
+
+A household can contain multiple people with different expectations and permissions.
+
+Therefore:
+
+Shared household membership does not mean unrestricted access to every member's personal information.
+
+For example, household members may share:
+
+shopping lists;
+
+budgets;
+
+household goals;
+
+pantry information.
+
+But an individual member's:
+
+private purchases;
+
+private conversations;
+
+personal preferences;
+
+private notifications;
+
+may require separate privacy controls.
+
+17. Household Privacy Model
+Conceptually:
+
+                    HOUSEHOLD
+                        │
+            ┌───────────┴───────────┐
+            │                       │
+       Shared State            Private State
+            │                       │
+      Lists / Goals            Personal Data
+      Pantry / Budget           Private AI
+      Household Activity        Personal History
+The architecture must explicitly distinguish the two.
+
+18. AI Privacy
+The AI Society will have access to significant amounts of contextual information.
+
+This creates a critical rule:
+
+AI access to data must be governed by purpose and authorization rather than by the assumption that "the AI needs everything to be intelligent."
+
+An AI agent should only receive the context required to perform its assigned task.
+
+19. AI Context Minimisation
+For example:
+
+A Shopping Intelligence Agent requesting:
+
+"Generate this week's grocery list."
+
+may need:
+
+household shopping list;
+
+pantry state;
+
+relevant preferences;
+
+budget.
+
+It should not automatically receive:
+
+unrelated staff records;
+
+another user's private AI conversations;
+
+security investigations;
+
+unrelated supplier information.
+
+20. AI Memory Privacy
+AI memory must be governed separately from ordinary application data.
+
+The architecture should distinguish:
+
+short-term conversation context;
+
+persistent user preferences;
+
+household memory;
+
+operational memory;
+
+model training data;
+
+security logs.
+
+These must not automatically be interchangeable.
+
+21. AI Conversation Privacy
+Conversations may contain:
+
+personal information;
+
+household information;
+
+financial context;
+
+shopping intentions;
+
+preferences;
+
+sensitive requests.
+
+Conversation data must therefore have:
+
+access controls;
+
+retention rules;
+
+deletion rules;
+
+audit controls;
+
+purpose restrictions.
+
+22. AI Training Boundary
+A critical architectural rule is:
+
+Customer conversations and personal data must not automatically become model-training data.
+
+Any future use of customer-derived information for model improvement must be governed separately and subject to appropriate privacy, security and governance requirements.
+
+23. AI Agent-to-Agent Privacy
+The AI Society consists of specialised agents.
+
+An agent requesting information from another agent must not receive unrestricted data.
+
+Agent A
+   ↓
+Request Context
+   ↓
+Policy Check
+   ↓
+Agent B
+   ↓
+Minimised Response
+Agents should receive the smallest useful information set.
+
+24. Walk Mode Privacy
+Walk Mode requires special treatment because it may process:
+
+exact or approximate location;
+
+store presence;
+
+navigation;
+
+product interactions;
+
+movement;
+
+dwell time;
+
+device signals.
+
+Walk Mode must not become a mechanism for monitoring shoppers unnecessarily.
+
+The Commit 013 rule remains:
+
+A shopper must never be able to use Walk Mode to infer information they are not authorised to know about another shopper.
+
+25. Location Privacy
+Location processing should use the minimum precision necessary.
+
+For example:
+
+Store Discovery
+    ↓
+Approximate Location
+
+Store Navigation
+    ↓
+More Precise Context
+
+Historical Analytics
+    ↓
+Aggregated / Reduced Precision
+Exact location should not automatically be retained merely because it was available.
+
+26. Location History
+The platform must distinguish between:
+
+real-time location
+
+and
+
+historical location.
+
+Historical location should require a specific legitimate purpose.
+
+A user using Walk Mode today does not automatically authorise Essentials Mart to maintain an indefinite record of every movement they have ever made inside every store.
+
+27. Shopper Behaviour Privacy
+Walk Mode may produce behavioural information such as:
+
+products viewed;
+
+products searched;
+
+navigation paths;
+
+dwell time;
+
+interactions.
+
+This information can be commercially useful but is potentially privacy-sensitive.
+
+The architecture must therefore distinguish:
+
+individual behavioural data
+
+from:
+
+aggregated retail intelligence.
+
+28. Analytics Privacy
+The role-specific analytics architecture established earlier must be preserved.
+
+Standard Customer
+May see:
+
+amount spent;
+
+favourite products;
+
+purchase trends;
+
+household spending;
+
+personal milestones.
+
+Supplier
+May see authorised:
+
+product sales;
+
+performance;
+
+complaints;
+
+returns;
+
+breakage;
+
+aggregate product behaviour.
+
+Staff
+May see operational analytics according to clearance.
+
+Administrators
+May access broader analytics according to privileged authorization.
+
+No role should automatically receive raw individual-level data merely because aggregated analytics exist.
+
+29. Aggregation
+Where the business purpose does not require individual-level information, the platform should prefer aggregate information.
+
+For example:
+
+Instead of:
+
+Customer A examined Product X for 17 minutes.
+
+a supplier might receive:
+
+Product X experienced increased shopper engagement in Store 12.
+
+This preserves business intelligence while reducing unnecessary individual exposure.
+
+30. Small-Group Privacy
+Aggregation can still leak information when groups are very small.
+
+Therefore the platform should consider whether an aggregate report could effectively reveal an individual.
+
+For example:
+
+"Three customers purchased Product X"
+may be harmless.
+
+But:
+
+"One customer purchased Product X"
+can effectively reveal the individual's behaviour in some contexts.
+
+Sensitive analytics should therefore include appropriate minimum-group or suppression rules where necessary.
+
+31. Supplier Privacy
+Suppliers must only receive information relevant to their authorised relationship with Essentials Mart.
+
+A supplier should not automatically gain access to:
+
+unrelated suppliers;
+
+customer identities;
+
+household information;
+
+staff information;
+
+internal security information.
+
+Supplier analytics must respect both commercial confidentiality and individual privacy.
+
+32. Staff Privacy
+Staff activity must be auditable without creating unnecessary employee surveillance.
+
+The system may need to record:
+
+actions;
+
+access;
+
+approvals;
+
+security events.
+
+But the organisation should distinguish:
+
+security evidence
+
+from:
+
+unnecessary behavioural surveillance.
+
+Staff monitoring must remain proportionate to the legitimate security and operational purpose.
+
+33. Security Log Privacy
+Commit 015 established enterprise auditability.
+
+However:
+
+Auditability does not mean "store everything forever."
+
+Security logs may contain:
+
+identities;
+
+device information;
+
+locations;
+
+IP information;
+
+actions;
+
+affected records.
+
+Retention must therefore be explicitly governed.
+
+34. Privacy-Preserving Auditability
+Where possible, audit systems should preserve evidence without retaining unnecessary content.
+
+For example, an audit record may need to establish:
+
+"User X accessed record Y at time Z."
+
+without permanently storing the entire underlying record.
+
+35. Fraud Privacy
+Fraud Intelligence may process sensitive information.
+
+However:
+
+Fraud prevention does not create unrestricted surveillance authority.
+
+Fraud systems must have:
+
+purpose limitation;
+
+role-based access;
+
+evidence controls;
+
+retention;
+
+investigation boundaries;
+
+appropriate disclosure controls.
+
+36. Trust Engine Privacy
+The Trust Engine may process:
+
+behavioural signals;
+
+reputation;
+
+fraud indicators;
+
+identity signals.
+
+Trust-related information must not automatically become visible to the customer as a raw internal score.
+
+Nor should suppliers or staff automatically gain access to private trust assessments.
+
+37. Reward Privacy
+Reward systems may reveal:
+
+purchasing patterns;
+
+household activity;
+
+referral relationships;
+
+milestone progress.
+
+The platform must expose only the information necessary to provide the reward experience.
+
+38. Data Sharing
+Internal data sharing should be governed.
+
+A domain requesting data should provide:
+
+purpose;
+
+requesting identity;
+
+required fields;
+
+intended use;
+
+retention requirement.
+
+The receiving domain should not automatically receive the complete source record.
+
+39. Data Access Gateway
+Sensitive data access should conceptually follow:
+
+Request
+  ↓
+Identity
+  ↓
+Purpose
+  ↓
+Authorization
+  ↓
+Privacy Policy
+  ↓
+Data Minimisation
+  ↓
+Approved Response
+This provides a privacy-aware complement to the existing authorization architecture.
+
+40. Privacy-Aware APIs
+APIs should expose only the fields required for the consuming service.
+
+Avoid:
+
+GET /customer/{id}
+→ entire customer record
+where the caller only needs:
+
+GET /customer/{id}/shopping-preferences
+The architectural principle is:
+
+Do not expose an entire data object merely because the caller technically has permission to access it.
+
+41. Data Masking
+Sensitive fields may require masking depending on the requester.
+
+For example:
+
+Customer
+→ own full information
+
+Staff
+→ permitted operational fields
+
+Supplier
+→ authorised aggregate information
+
+Security
+→ investigation-specific information
+
+Administrator
+→ privileged access under policy
+42. Pseudonymisation
+Where individual identity is not required for processing, pseudonymous identifiers should be preferred.
+
+For example:
+
+Customer ID
+     ↓
+Analytics Identifier
+     ↓
+Aggregate Analysis
+The mapping back to the real identity should remain separately controlled.
+
+Pseudonymisation is not equivalent to making information anonymous; re-identification risk must still be considered.
+
+43. Anonymisation
+Where appropriate, information may be transformed so that individuals cannot reasonably be identified from the resulting dataset.
+
+However, anonymisation claims must be conservative.
+
+Combining:
+
+location;
+
+timestamps;
+
+purchases;
+
+household characteristics;
+
+can potentially re-identify individuals even if obvious identifiers have been removed.
+
+44. Privacy-Preserving Analytics
+For high-scale analytics, Essentials Mart may eventually consider techniques such as:
+
+aggregation;
+
+suppression;
+
+pseudonymisation;
+
+differential privacy;
+
+privacy-preserving computation;
+
+federated approaches where appropriate.
+
+These should be used where the privacy/utility trade-off makes architectural sense rather than being adopted as buzzwords.
+
+45. Data Retention
+Every significant data category must have a retention policy.
+
+Conceptually:
+
+Data Created
+    ↓
+Operational Need
+    ↓
+Retention Period
+    ↓
+Review
+    ↓
+Delete / Anonymise / Archive
+Retention must be based on:
+
+business need;
+
+security need;
+
+legal requirements;
+
+contractual obligations;
+
+user expectations;
+
+technical necessity.
+
+46. Indefinite Retention
+Indefinite retention must not be the default.
+
+The question should be:
+
+Why must we still have this information?
+
+rather than:
+
+Why delete it?
+
+47. Deletion
+The platform must support controlled deletion where applicable.
+
+Deletion may involve:
+
+primary records;
+
+indexes;
+
+caches;
+
+search systems;
+
+analytics stores;
+
+derived datasets;
+
+AI memory;
+
+backups where appropriate.
+
+Deletion must therefore be treated as a distributed architectural operation.
+
+48. Deletion vs Audit Evidence
+Some records may need to be retained for security, financial or legal reasons.
+
+The architecture must therefore distinguish:
+
+user data deletion
+
+from:
+
+legitimate retention obligations.
+
+Where full deletion is not immediately possible, access should remain restricted and retention should be governed.
+
+49. Backup Privacy
+Backups contain copies of sensitive information and therefore form part of the privacy boundary.
+
+Backup systems require:
+
+encryption;
+
+access control;
+
+retention;
+
+deletion lifecycle;
+
+restoration controls;
+
+environment isolation.
+
+A deleted record should not simply remain indefinitely in unmanaged backup systems.
+
+50. Cache Privacy
+Application caches can contain sensitive information.
+
+Caches should therefore have:
+
+appropriate TTLs;
+
+access controls;
+
+encryption where required;
+
+invalidation mechanisms;
+
+no unnecessary persistence.
+
+51. Search Privacy
+Search indexes may contain sensitive information.
+
+A deleted or restricted record must not remain discoverable through an index merely because the primary database has been updated.
+
+Search systems therefore form part of the privacy lifecycle.
+
+52. Third-Party Privacy
+External services may process Essentials Mart information.
+
+Examples include:
+
+payment providers;
+
+messaging providers;
+
+WhatsApp infrastructure;
+
+cloud providers;
+
+analytics services;
+
+mapping providers;
+
+AI model providers;
+
+delivery partners.
+
+Third-party processing must therefore be explicitly governed.
+
+NIST's Privacy Framework recognises the importance of managing privacy risk across the wider data-processing ecosystem, including external parties. 
+
+53. Third-Party Data Minimisation
+The platform should send external services only the data required for the intended operation.
+
+For example, a delivery provider may need:
+
+delivery address;
+
+recipient contact information;
+
+order information.
+
+It should not automatically receive:
+
+household history;
+
+personal shopping history;
+
+AI conversations;
+
+unrelated rewards data.
+
+54. AI Provider Boundary
+External AI providers require particularly strong controls.
+
+Before sending information to an external model provider, Essentials Mart must determine:
+
+what information is being sent;
+
+why it is being sent;
+
+whether the provider retains it;
+
+whether it is used for training;
+
+where it is processed;
+
+who can access it;
+
+how it can be deleted;
+
+what contractual protections exist.
+
+55. Regional Data Processing
+As Essentials Mart expands globally, privacy requirements may differ by:
+
+country;
+
+region;
+
+sector;
+
+user category;
+
+data type.
+
+The architecture must therefore support region-aware processing policies.
+
+Conceptually:
+
+Data
+ ↓
+Classification
+ ↓
+User / Region
+ ↓
+Applicable Policy
+ ↓
+Processing Location
+ ↓
+Allowed / Restricted
+This should be designed before global expansion rather than retrofitted afterwards.
+
+56. Data Residency
+Where required by applicable law, contract or business policy, specific data categories may need to remain within defined jurisdictions or approved processing environments.
+
+The architecture should therefore support:
+
+regional data stores;
+
+regional processing;
+
+controlled cross-region replication;
+
+data-transfer policies;
+
+region-aware encryption/key management.
+
+57. Cross-Border Transfers
+Cross-border processing must be governed rather than treated as an infrastructure detail.
+
+The system should know:
+
+where data originated;
+
+where it is processed;
+
+where it is stored;
+
+which service processed it;
+
+under which policy.
+
+58. Privacy Metadata
+Sensitive data should carry metadata where useful.
+
+For example:
+
+Data Object
+ ├── Classification
+ ├── Purpose
+ ├── Owner
+ ├── Region
+ ├── Retention Policy
+ ├── Access Policy
+ └── Sensitivity
+This allows privacy controls to become enforceable rather than existing only in documentation.
+
+59. Privacy Policy Enforcement
+Privacy controls should exist at multiple layers:
+
+UI
+ ↓
+API
+ ↓
+Authorization
+ ↓
+Service
+ ↓
+Data Layer
+ ↓
+Storage
+The UI should communicate privacy choices.
+
+But the backend must enforce them.
+
+60. Client Cannot Override Privacy
+A malicious client must not be able to modify:
+
+"marketingConsent": false
+into:
+
+"marketingConsent": true
+and thereby grant itself permission.
+
+Privacy state must be authoritative on the backend.
+
+61. Privacy by Default
+The default state for optional processing should generally favour the individual's privacy.
+
+Examples include:
+
+unnecessary location history disabled;
+
+optional marketing disabled until appropriately enabled;
+
+third-party data sharing restricted;
+
+unnecessary personal analytics exposure restricted.
+
+The exact defaults may depend on the feature and applicable requirements.
+
+62. Privacy Transparency
+Users should be able to understand:
+
+what information is collected;
+
+why it is collected;
+
+how it is used;
+
+who receives it;
+
+how long it is retained;
+
+what controls they have.
+
+Privacy notices should be understandable rather than written solely for legal defensibility.
+
+NIST specifically identifies communication of data-processing purposes, practices, associated privacy risks and individual options as part of privacy governance. 
+
+63. Privacy Centre
+Essentials Mart should eventually provide a central:
+
+Privacy Centre
+Potential capabilities:
+
+data categories;
+
+permissions;
+
+notification channels;
+
+location settings;
+
+AI data settings;
+
+personalisation;
+
+marketing;
+
+household privacy;
+
+connected services;
+
+data download;
+
+deletion requests;
+
+privacy history.
+
+64. Privacy Dashboard
+Users should be able to see meaningful information such as:
+
+Your location is currently being used by Walk Mode.
+
+WhatsApp notifications are enabled for deliveries.
+
+Your household shares your shared shopping lists.
+
+AI uses your household preferences to personalise recommendations.
+
+This turns privacy from an invisible policy into a user-visible capability.
+
+65. Privacy Activity
+Where appropriate, users may be able to see important privacy-related events:
+
+permission granted;
+
+permission revoked;
+
+connected service added;
+
+data export requested;
+
+deletion requested;
+
+household sharing changed.
+
+This supports transparency.
+
+66. Data Subject Requests
+Where applicable, the platform should support controlled requests such as:
+
+access;
+
+correction;
+
+deletion;
+
+export;
+
+restriction;
+
+objection;
+
+consent withdrawal.
+
+The exact rights and workflows must be implemented according to the jurisdictions in which Essentials Mart operates.
+
+The architecture should therefore remain jurisdiction-aware rather than assuming one global legal model.
+
+67. Identity Verification for Privacy Requests
+Sensitive privacy requests must themselves be protected.
+
+For example:
+
+"Delete my account"
+
+must not be executable merely because an unauthenticated request contains the correct email address.
+
+The platform must verify the requester appropriately before performing high-impact privacy actions.
+
+68. Privacy Request Lifecycle
+Request
+   ↓
+Authenticate
+   ↓
+Validate Authority
+   ↓
+Determine Data Scope
+   ↓
+Assess Restrictions
+   ↓
+Execute
+   ↓
+Audit
+   ↓
+Confirm
+69. Privacy Exceptions
+Privacy restrictions may have legitimate exceptions.
+
+Examples may include:
+
+legal obligations;
+
+security investigations;
+
+financial records;
+
+fraud investigations;
+
+regulatory requirements.
+
+Exceptions must be:
+
+documented;
+
+authorised;
+
+scoped;
+
+time-bounded where appropriate;
+
+auditable.
+
+70. Privacy Incident
+A privacy incident may occur even when no traditional cybersecurity breach occurred.
+
+Examples:
+
+information sent to the wrong recipient;
+
+excessive data exposed through analytics;
+
+incorrect household visibility;
+
+accidental location disclosure;
+
+AI revealing private context;
+
+supplier receiving unauthorised customer information.
+
+Privacy incident handling must therefore integrate with Incident Response.
+
+71. Privacy Incident Flow
+Detected
+   ↓
+Contain
+   ↓
+Assess
+   ↓
+Determine Impact
+   ↓
+Investigate
+   ↓
+Remediate
+   ↓
+Notify where required
+   ↓
+Learn
+   ↓
+Improve
+72. AI Privacy Incident
+A particularly important case is:
+
+AI disclosure of information that the user was not authorised to receive.
+
+For example, a household member asks:
+
+"What did my partner buy privately?"
+
+The AI must not infer that because it knows the answer, it may disclose it.
+
+AI privacy boundaries must therefore be enforced before generation, not merely through prompt instructions.
+
+73. Privacy and AI Hallucination
+Privacy protection must also account for false disclosure.
+
+An AI could incorrectly state:
+
+"Your neighbour bought medication X."
+
+Even if the underlying database never contained that information.
+
+Therefore AI output security must consider both:
+
+actual data disclosure;
+
+fabricated sensitive claims.
+
+74. Privacy and Personalisation
+Personalisation should be explainable enough for users to understand the broad basis of recommendations.
+
+For example:
+
+"Recommended because you frequently buy this product."
+
+rather than silently using a large hidden profile without any meaningful user control.
+
+75. Privacy and Trust
+Trust Engine signals should not become an invisible permanent reputation system without governance.
+
+The platform must determine:
+
+what signals are collected;
+
+why;
+
+how long;
+
+who can access them;
+
+how they affect decisions;
+
+whether users can challenge incorrect outcomes.
+
+76. Privacy and Fraud
+Fraud systems require sensitive data but should not automatically expose it.
+
+A customer may be told:
+
+"Additional verification is required."
+
+without being shown:
+
+"Our internal fraud model assigns you a 0.87 fraud probability based on these 17 behavioural signals."
+
+Internal security intelligence and customer transparency must therefore be balanced appropriately.
+
+77. Privacy and Staff Clearance
+Privacy controls must interact with the staff clearance system.
+
+Staff
+ ↓
+Role
+ ↓
+Clearance
+ ↓
+Purpose
+ ↓
+Privacy Policy
+ ↓
+Data Access
+ ↓
+Audit
+Clearance alone does not necessarily mean:
+
+"You may access every piece of customer information."
+
+78. Privacy and Analytics
+Analytics access must follow:
+
+Need to know + purpose + clearance + minimisation.
+
+This preserves the role-specific analytics model we previously established.
+
+79. Privacy and Auditability
+The platform must avoid the false choice:
+
+"Either we protect privacy or we keep logs."
+
+The architecture should instead preserve proportionate evidence.
+
+For example:
+
+Sensitive Data
+      ↓
+Privacy Controls
+
+Security Event
+      ↓
+Audit Evidence
+
+Both
+      ↓
+Controlled Access + Retention
+80. Privacy and Global Scale
+At 100M+ users, privacy cannot depend entirely on manual review.
+
+The architecture must support:
+
+automated classification;
+
+policy enforcement;
+
+regional controls;
+
+automated retention;
+
+automated deletion workflows;
+
+privacy-aware APIs;
+
+access monitoring;
+
+privacy incident detection.
+
+Privacy must therefore become part of the platform's infrastructure.
+
+81. Privacy Governance
+Every major data-processing capability should have:
+
+data owner;
+
+purpose;
+
+classification;
+
+processing rules;
+
+retention;
+
+access policy;
+
+regional policy;
+
+third-party dependencies;
+
+privacy risk assessment.
+
+NIST's Privacy Framework is intentionally risk- and outcome-based rather than tied to one particular law or jurisdiction, which makes that approach useful for Essentials Mart's intended international expansion. 
+
+82. Privacy Risk Assessment
+Before introducing a new capability, Essentials Mart should ask:
+
+What data is involved?
+        ↓
+Whose data?
+        ↓
+Why is it needed?
+        ↓
+What could go wrong?
+        ↓
+Who could be harmed?
+        ↓
+Who can access it?
+        ↓
+How long is it retained?
+        ↓
+Can we minimise it?
+        ↓
+Can we aggregate it?
+        ↓
+Can we avoid collecting it?
+This is the foundation of privacy engineering.
+
+83. Privacy Threat Model
+Privacy threats should include:
+
+unwanted disclosure;
+
+excessive collection;
+
+excessive retention;
+
+inappropriate access;
+
+re-identification;
+
+inference;
+
+correlation;
+
+tracking;
+
+secondary use;
+
+unauthorised sharing;
+
+AI disclosure;
+
+household privacy leakage;
+
+analytics leakage;
+
+location leakage.
+
+84. Privacy by Architecture
+The architecture should make the privacy-preserving path the easiest path.
+
+For example:
+
+Instead of allowing every service to request an entire customer profile:
+
+Customer Service
+      ↓
+Entire Customer Object
+provide:
+
+Customer Service
+      ↓
+Authorised Customer View
+      ↓
+Only Required Fields
+85. Privacy Control Plane
+A future Privacy Control Plane may centrally manage:
+
+policies;
+
+consent;
+
+processing purposes;
+
+retention;
+
+data classifications;
+
+regional restrictions;
+
+data-sharing rules;
+
+privacy requests.
+
+However, domain services must still enforce the resulting decisions.
+
+86. Privacy Policy Engine
+Conceptually:
+
+Data Request
+     ↓
+Privacy Policy Engine
+     │
+     ├── Purpose
+     ├── User
+     ├── Role
+     ├── Region
+     ├── Data Class
+     ├── Consent
+     └── Retention
+     ↓
+Decision
+Possible outcomes:
+
+ALLOW
+ALLOW_REDACTED
+ALLOW_AGGREGATED
+ALLOW_PSEUDONYMISED
+DENY
+87. Privacy-Preserving Defaults
+The platform should favour:
+
+minimum data;
+
+minimum precision;
+
+minimum retention;
+
+minimum visibility;
+
+minimum privilege.
+
+When greater access is genuinely required, it should be explicitly granted.
+
+88. Architectural Principles
+The Privacy Architecture must:
+
+treat privacy as a first-class architectural concern;
+
+distinguish privacy from cybersecurity;
+
+minimise data collection;
+
+limit processing by purpose;
+
+provide meaningful user control;
+
+protect household boundaries;
+
+protect location information;
+
+protect AI context;
+
+protect analytics;
+
+protect staff information;
+
+protect supplier information;
+
+control third-party processing;
+
+support regional privacy policies;
+
+support data residency requirements;
+
+govern retention;
+
+support deletion;
+
+preserve appropriate security evidence;
+
+minimise unnecessary disclosure;
+
+support privacy-preserving analytics;
+
+make privacy enforceable at the backend;
+
+remain auditable;
+
+scale globally.
+
+89. Non-Negotiable Rules
+Rule 1
+The ability to collect data does not constitute authorization to collect it.
+
+Rule 2
+The ability to access data does not constitute authorization to use it for every purpose.
+
+Rule 3
+Household membership does not automatically grant access to every member's private information.
+
+Rule 4
+AI knowledge does not automatically imply AI disclosure authority.
+
+Rule 5
+Walk Mode location data must not become unrestricted historical surveillance.
+
+Rule 6
+Analytics must expose only the level of information appropriate to the recipient's role, purpose and authorization.
+
+Rule 7
+WhatsApp must never bypass privacy or authorization controls.
+
+Rule 8
+Auditability must not become justification for indefinite retention of unnecessary personal data.
+
+Rule 9
+Third-party services receive only the information required for their authorised purpose.
+
+Rule 10
+Privacy controls must be enforced server-side and cannot depend solely on client behaviour.
+
+Rule 11
+Optional processing must not be disguised as mandatory functionality.
+
+Rule 12
+Privacy must be considered before a feature is built, not after data has already been collected.
+
+90. Success Criteria
+The Privacy Architecture succeeds when:
+
+customers understand how their information is used;
+
+users can meaningfully control optional processing;
+
+household privacy boundaries remain intact;
+
+Walk Mode does not become a surveillance system;
+
+WhatsApp respects channel permissions;
+
+AI agents receive only required context;
+
+AI cannot disclose information outside the user's authority;
+
+analytics remain appropriately scoped;
+
+staff access remains controlled;
+
+suppliers receive only authorised information;
+
+third-party processing is governed;
+
+data retention is intentional;
+
+deletion is technically achievable;
+
+regional privacy requirements can be represented architecturally;
+
+sensitive information can be aggregated or pseudonymised where appropriate;
+
+privacy incidents can be detected and investigated;
+
+privacy decisions are auditable;
+
+privacy controls scale with the platform.
+
+91. Foundational Principle
+The central privacy principle for Essentials Mart is:
+
+Intelligence must never require unnecessary exposure of the individual.
+
+The platform can become highly intelligent while still following:
+
+Collect Less
+     ↓
+Understand Better
+     ↓
+Use Precisely
+     ↓
+Share Carefully
+     ↓
+Retain Deliberately
+     ↓
+Delete Appropriately
+This is particularly important for Essentials Mart because the platform's competitive advantage will increasingly come from understanding context. The architecture must ensure that contextual intelligence does not evolve into uncontrolled personal surveillance.
