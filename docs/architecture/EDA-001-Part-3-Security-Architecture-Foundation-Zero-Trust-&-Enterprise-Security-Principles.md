@@ -24553,4 +24553,1795 @@ Together:
                └──────────→ Better Detection
 That creates the core security operations loop for Essentials Mart.
 
+Commit 017 — Incident Response Architecture
+1. Purpose
+The Incident Response Architecture defines how Essentials Mart responds when a security event is determined to represent, or potentially represent, a cybersecurity incident.
 
+The objective is to ensure that Essentials Mart can:
+
+contain threats;
+
+protect customers;
+
+protect staff;
+
+protect suppliers;
+
+protect AI systems;
+
+preserve evidence;
+
+limit business disruption;
+
+investigate incidents;
+
+eradicate threats;
+
+recover safely;
+
+communicate appropriately;
+
+learn from incidents;
+
+improve the security architecture.
+
+The architecture establishes the transition:
+
+Security Monitoring
+        ↓
+Detection
+        ↓
+Security Alert
+        ↓
+Triage
+        ↓
+Incident Determination
+        ↓
+Response
+        ↓
+Containment
+        ↓
+Investigation
+        ↓
+Eradication
+        ↓
+Recovery
+        ↓
+Lessons Learned
+        ↓
+Security Improvement
+2. Core Principle
+The central principle is:
+
+Essentials Mart must respond to security incidents in a controlled, proportionate, evidence-preserving and continuously improving manner.
+
+A security incident must never result in uncontrolled improvisation.
+
+The system should already know:
+
+who can respond;
+
+what authority they have;
+
+which systems can be isolated;
+
+which actions can be automated;
+
+which actions require approval;
+
+how evidence is preserved;
+
+how affected users are protected;
+
+how recovery is validated.
+
+3. Incident Response Lifecycle
+The primary lifecycle is:
+
+              DETECT
+                ↓
+             RESPOND
+                ↓
+             RECOVER
+                ↓
+          IMPROVEMENT
+                ↓
+        ┌───────┴───────┐
+        ↓               ↓
+     Detect          Protect
+        ↓               ↓
+      Better          Better
+This follows the current NIST SP 800-61 Rev. 3 approach, which integrates incident response into broader cybersecurity risk management rather than treating it as an isolated after-the-fact process. 
+
+4. Incident Response Is Not Detection
+Commit 016 determines:
+
+"Something may be wrong."
+
+Commit 017 determines:
+
+"What are we going to do about it?"
+
+Therefore:
+
+Detection
+   ≠
+Incident Response
+Detection feeds incident response.
+
+5. Security Event
+A security event is an observable occurrence.
+
+Examples:
+
+failed login;
+
+unusual API request;
+
+privilege change;
+
+suspicious AI action;
+
+unusual data access.
+
+A security event does not necessarily represent a security incident.
+
+6. Security Signal
+A security signal is an event or combination of events that warrants additional analysis.
+
+For example:
+
+New Device
++
+New Location
++
+MFA Failure
++
+Credential Change
+may become a high-priority security signal.
+
+7. Security Incident
+A security incident occurs when available evidence indicates that an event or collection of events has caused, is causing, or may cause a violation of security policy, compromise, unauthorized access, disruption or other significant security impact.
+
+The precise incident classification should be determined through the incident-triage process.
+
+8. Incident Classification
+Incidents should be classified according to:
+
+type;
+
+severity;
+
+affected assets;
+
+affected identities;
+
+business impact;
+
+data sensitivity;
+
+geographical scope;
+
+confidence;
+
+containment status.
+
+Possible categories include:
+
+Identity Incident
+Account compromise or credential abuse.
+
+Authorization Incident
+Unauthorized privilege or permission activity.
+
+Data Incident
+Unauthorized access, exposure or exfiltration.
+
+Application Incident
+Application exploitation or compromise.
+
+Infrastructure Incident
+Infrastructure or network compromise.
+
+AI Security Incident
+Compromised or manipulated AI behaviour.
+
+Fraud/Abuse Incident
+Malicious exploitation of business systems.
+
+Walk Mode Incident
+Security or privacy incident involving Walk Mode.
+
+Supply Chain Incident
+Compromise involving a dependency, provider or external service.
+
+9. Incident Severity
+A standard severity model should be established.
+
+Severity 1 — Critical
+Potential or confirmed major compromise.
+
+Examples:
+
+large-scale customer data exposure;
+
+production infrastructure compromise;
+
+AI control-plane compromise;
+
+widespread account takeover.
+
+Severity 2 — High
+Significant but contained compromise.
+
+Severity 3 — Medium
+Limited security incident requiring investigation and remediation.
+
+Severity 4 — Low
+Minor incident with limited impact.
+
+Informational
+Security event requiring documentation but not formal incident response.
+
+10. Business Impact
+Technical severity alone is insufficient.
+
+The incident evaluation should consider:
+
+Technical Impact
++
+Customer Impact
++
+Financial Impact
++
+Operational Impact
++
+Privacy Impact
++
+Reputational Impact
++
+Regulatory Impact
+11. Incident Triage
+Every significant security alert enters triage.
+
+The triage process determines:
+
+What happened?
+       ↓
+Is it real?
+       ↓
+What is affected?
+       ↓
+How serious is it?
+       ↓
+Is it still happening?
+       ↓
+What must happen immediately?
+12. Incident Commander
+Major incidents should have a designated Incident Commander.
+
+The Incident Commander is responsible for coordinating the response.
+
+They do not necessarily perform every technical action.
+
+Their responsibilities include:
+
+coordinating responders;
+
+establishing priorities;
+
+approving response strategy where required;
+
+maintaining situational awareness;
+
+coordinating communications;
+
+ensuring decisions are documented.
+
+13. Separation of Duties
+Incident response must preserve separation of duties.
+
+For example:
+
+Detection
+   ↓
+Investigation
+   ↓
+Response Authority
+   ↓
+Recovery Approval
+A single individual should not automatically have unrestricted control over every stage of a critical incident.
+
+14. Incident Response Roles
+Potential roles include:
+
+Incident Commander;
+
+Security Analyst;
+
+Security Engineer;
+
+Infrastructure Engineer;
+
+Application Engineer;
+
+Data Protection/Privacy representative;
+
+AI Security specialist;
+
+Fraud specialist;
+
+Legal/compliance representative;
+
+Communications representative;
+
+Business owner.
+
+The actual roster can evolve with organizational scale.
+
+15. Incident Response Authority
+Each responder must have explicitly defined authority.
+
+For example:
+
+Analyst
+ ↓
+Investigate
+
+Security Engineer
+ ↓
+Contain technical systems
+
+Incident Commander
+ ↓
+Coordinate major response
+
+Executive Authority
+ ↓
+Approve high-impact business decisions
+16. Automated Response
+Essentials Mart may automate predefined responses.
+
+Examples:
+
+revoke a session;
+
+revoke a token;
+
+force MFA;
+
+temporarily disable an API credential;
+
+rate-limit an endpoint;
+
+quarantine a device;
+
+suspend a suspicious AI tool;
+
+freeze a sensitive action.
+
+Automation should be used where the action is:
+
+reversible;
+
+well understood;
+
+appropriately low-risk;
+
+governed by policy.
+
+17. Human Approval Thresholds
+High-impact actions should have stronger approval requirements.
+
+Examples:
+
+permanently deleting an account;
+
+disabling an entire supplier;
+
+shutting down a production service;
+
+freezing significant financial activity;
+
+disabling a critical AI subsystem;
+
+taking an entire store offline.
+
+These should not depend on a single autonomous decision.
+
+18. Containment
+Containment limits the ability of an attacker or compromised component to continue causing harm.
+
+Examples:
+
+Compromised Account
+       ↓
+Revoke Sessions
+       ↓
+Force Reauthentication
+or:
+
+Compromised Service
+       ↓
+Isolate Service
+       ↓
+Restrict Network Access
+       ↓
+Preserve Evidence
+19. Containment Strategies
+Containment may be:
+
+Identity containment
+revoke sessions;
+
+disable credentials;
+
+require MFA;
+
+restrict permissions.
+
+Device containment
+quarantine device;
+
+revoke device trust;
+
+restrict access.
+
+Service containment
+isolate service;
+
+disable endpoints;
+
+restrict network communication.
+
+Data containment
+restrict access;
+
+disable exports;
+
+isolate affected datasets.
+
+AI containment
+revoke tools;
+
+restrict agent permissions;
+
+suspend autonomous actions.
+
+20. Blast-Radius Reduction
+Containment should minimize:
+
+How much of Essentials Mart can be affected by one compromised component?
+
+This directly supports the Part 3 principle of minimising blast radius.
+
+21. Account Compromise Response
+For a suspected compromised customer account:
+
+Detect
+ ↓
+Risk Evaluation
+ ↓
+Session Revocation
+ ↓
+Credential Protection
+ ↓
+MFA/Reauthentication
+ ↓
+Investigate
+ ↓
+Restore Access
+Customer access should not simply be permanently destroyed because of an automated suspicion.
+
+22. Staff Account Compromise
+Staff accounts require stronger containment because their permissions may be broader.
+
+Possible actions:
+
+immediate session revocation;
+
+privileged-access suspension;
+
+device quarantine;
+
+credential reset;
+
+clearance review;
+
+investigation of actions performed under the identity.
+
+23. Supplier Account Compromise
+Possible actions include:
+
+supplier-session revocation;
+
+API credential revocation;
+
+catalogue modification freeze;
+
+pricing-action restriction;
+
+transaction restrictions;
+
+supplier notification.
+
+24. AI Incident Response
+AI requires a dedicated response model.
+
+Potential AI incidents include:
+
+prompt injection;
+
+context poisoning;
+
+tool abuse;
+
+agent impersonation;
+
+privilege escalation;
+
+unauthorized delegation;
+
+malicious tool execution;
+
+model compromise;
+
+AI supply-chain compromise.
+
+25. AI Containment
+An AI agent must have a containment mechanism.
+
+For example:
+
+AI Agent
+   ↓
+Suspicious Behaviour
+   ↓
+Tool Access Restricted
+   ↓
+Autonomous Actions Disabled
+   ↓
+Human/Security Review
+26. AI Kill Switch
+Critical AI systems should have an emergency mechanism capable of stopping defined autonomous capabilities.
+
+For example:
+
+AI Society
+    ↓
+Guardian / Control Plane
+    ↓
+Agent Permission Revocation
+    ↓
+Tool Access Disabled
+The kill mechanism itself must be protected against unauthorized activation.
+
+27. AI Society Containment
+A compromised AI agent should not automatically compromise the entire AI Society.
+
+Therefore:
+
+Agent A
+   ↓
+Compromised
+   X
+Agent B
+Agent C
+Agent D
+The architecture should support isolating individual agents and limiting agent-to-agent propagation.
+
+28. Trust Engine Incident Response
+If Trust Engine manipulation is detected:
+
+Suspicious Trust Signals
+        ↓
+Trust Evaluation Frozen
+        ↓
+Affected Decisions Identified
+        ↓
+Signals Investigated
+        ↓
+Trust State Recalculated
+The platform should avoid blindly trusting a potentially manipulated trust state.
+
+29. Reward Intelligence Incident Response
+For reward abuse:
+
+Suspicious Reward Activity
+        ↓
+Reward Action Restricted
+        ↓
+Transactions/Events Investigated
+        ↓
+Legitimate Activity Identified
+        ↓
+Reward State Corrected
+This must avoid unnecessarily penalising legitimate users.
+
+30. Walk Mode Incident Response
+If Walk Mode is compromised:
+
+Potential actions include:
+
+terminate active Walk Mode session;
+
+revoke location access;
+
+invalidate proximity sessions;
+
+disable suspicious device;
+
+restrict inventory-query access;
+
+investigate affected location data.
+
+The system should prioritize user safety and privacy.
+
+31. Data Breach Response
+If sensitive data is suspected to have been exposed:
+
+Detect
+ ↓
+Contain Access
+ ↓
+Identify Data
+ ↓
+Determine Exposure
+ ↓
+Identify Affected Parties
+ ↓
+Preserve Evidence
+ ↓
+Remediate
+ ↓
+Required Notification
+Notification obligations must be determined according to the applicable jurisdiction and incident circumstances.
+
+32. Evidence Preservation
+Incident response must not destroy the evidence needed to understand the incident.
+
+Evidence may include:
+
+audit logs;
+
+authentication events;
+
+API records;
+
+device information;
+
+network evidence;
+
+system state;
+
+AI activity;
+
+transaction records.
+
+This directly connects Commit 017 to Commit 015.
+
+33. Chain of Custody
+Where evidence may be required for formal investigation, the system should preserve:
+
+who collected it;
+
+when it was collected;
+
+where it came from;
+
+how it was preserved;
+
+who accessed it;
+
+whether it was modified.
+
+34. Investigation
+Investigation should establish:
+
+Initial Entry
+     ↓
+Attacker/Actor
+     ↓
+Affected Identity
+     ↓
+Affected System
+     ↓
+Actions Performed
+     ↓
+Data Accessed
+     ↓
+Propagation
+     ↓
+Current State
+35. Root Cause Analysis
+The response must determine not only:
+
+What happened?
+
+but:
+
+Why was it possible?
+
+Possible root causes:
+
+vulnerability;
+
+compromised credential;
+
+excessive privilege;
+
+configuration error;
+
+insecure integration;
+
+malicious insider;
+
+AI failure;
+
+supply-chain compromise;
+
+inadequate detection.
+
+36. Eradication
+Eradication removes the cause of compromise.
+
+Examples:
+
+remove malicious code;
+
+patch vulnerability;
+
+rotate credentials;
+
+remove unauthorized accounts;
+
+revoke compromised tokens;
+
+replace compromised infrastructure;
+
+remove malicious AI tools;
+
+correct configuration.
+
+37. Credential Rotation
+When credentials may be compromised, rotation should consider:
+
+user credentials;
+
+service credentials;
+
+API keys;
+
+signing keys;
+
+database credentials;
+
+AI service credentials;
+
+integration credentials.
+
+Rotation should be carefully coordinated to avoid creating secondary outages.
+
+38. Recovery
+Recovery restores affected systems to a trusted operational state.
+
+Contain
+ ↓
+Eradicate
+ ↓
+Restore
+ ↓
+Validate
+ ↓
+Monitor
+ ↓
+Return to Normal Operation
+39. Recovery Must Not Be Immediate by Default
+A compromised system should not simply be switched back on.
+
+Before restoration:
+
+root cause should be understood sufficiently;
+
+vulnerabilities should be addressed;
+
+credentials should be secured;
+
+monitoring should be active;
+
+recovery validation should be completed.
+
+40. Recovery Validation
+Recovered systems should be checked for:
+
+integrity;
+
+configuration;
+
+authorization;
+
+data consistency;
+
+monitoring;
+
+logging;
+
+security controls.
+
+41. Staged Recovery
+Critical services should support staged restoration.
+
+Recovery Environment
+       ↓
+Validation
+       ↓
+Limited Production
+       ↓
+Monitoring
+       ↓
+Full Production
+This reduces the risk of reintroducing the compromise.
+
+42. Business Continuity
+Security incidents may disrupt normal operations.
+
+Essentials Mart should therefore maintain mechanisms for:
+
+degraded operation;
+
+service failover;
+
+manual procedures;
+
+alternate communication;
+
+data recovery;
+
+priority services.
+
+43. Customer Protection During Incidents
+During a security incident, customer protection takes priority.
+
+Possible actions:
+
+temporarily restrict risky transactions;
+
+require reauthentication;
+
+protect payment operations;
+
+provide clear communication;
+
+preserve customer data;
+
+prevent secondary fraud.
+
+44. Staff Protection
+Staff affected by security incidents should receive appropriate guidance.
+
+For example:
+
+"Your account may have been compromised. Do not attempt to bypass the security restriction. Contact the security response team."
+
+45. Supplier Communication
+Supplier incidents may require:
+
+supplier notification;
+
+credential rotation;
+
+API restrictions;
+
+transaction controls;
+
+investigation;
+
+coordinated recovery.
+
+46. AI Communication During Incidents
+AI systems should not independently communicate sensitive incident information to customers unless explicitly authorised.
+
+For example, an AI agent should not spontaneously tell a customer:
+
+"Essentials Mart has suffered a major data breach."
+
+unless the communication policy permits that action.
+
+47. Incident Communications
+Incident communications should be:
+
+accurate;
+
+timely;
+
+authorized;
+
+consistent;
+
+appropriate to the audience.
+
+Potential audiences:
+
+customers;
+
+staff;
+
+suppliers;
+
+partners;
+
+regulators;
+
+executives;
+
+security teams.
+
+48. Communication Channels
+Depending on the situation, communications may use:
+
+Essentials Mart app;
+
+WhatsApp;
+
+email;
+
+SMS;
+
+internal staff channels;
+
+official status systems.
+
+The communication channel must respect the user's notification preferences where applicable, except where legal or safety requirements require otherwise.
+
+49. WhatsApp Incident Response
+WhatsApp must remain a channel rather than becoming the security authority.
+
+For example:
+
+WhatsApp
+   ↓
+Identity Verification
+   ↓
+Authorised Command
+   ↓
+Backend
+   ↓
+Security Controls
+A message such as:
+
+"Disable my account."
+
+must still pass through the normal identity and authorization mechanisms.
+
+50. Incident Status
+Major incidents should have a controlled status.
+
+Possible states:
+
+Detected
+ ↓
+Under Investigation
+ ↓
+Contained
+ ↓
+Eradication
+ ↓
+Recovery
+ ↓
+Resolved
+ ↓
+Closed
+51. Incident Timeline
+Every major incident should have a chronological timeline.
+
+Example:
+
+09:14 — First suspicious event
+09:16 — Detection generated
+09:18 — Analyst notified
+09:22 — Incident declared
+09:25 — Account contained
+09:31 — Investigation begins
+09:48 — Root cause identified
+10:12 — Remediation deployed
+10:40 — Recovery begins
+11:15 — Service restored
+This becomes part of the permanent security evidence.
+
+52. Incident Documentation
+Each significant incident should record:
+
+incident ID;
+
+detection source;
+
+classification;
+
+severity;
+
+affected systems;
+
+affected identities;
+
+timeline;
+
+actions taken;
+
+evidence;
+
+decisions;
+
+responders;
+
+communications;
+
+recovery status;
+
+root cause;
+
+lessons learned.
+
+53. Decision Logging
+Important decisions should record:
+
+Who decided?
+What was decided?
+Why?
+What evidence supported it?
+What authority permitted it?
+When?
+What was the outcome?
+This is especially important for high-impact automated and AI-assisted decisions.
+
+54. Automated Response Audit
+Every automated containment action should produce an audit record.
+
+Example:
+
+Rule: ACCOUNT_COMPROMISE_HIGH
+Action: Revoke Sessions
+Target: User Identity
+Reason: Correlated Risk Signals
+Timestamp: ...
+Result: Successful
+55. Failed Response
+The architecture must also handle failed containment.
+
+For example:
+
+Containment Attempt
+       ↓
+FAILED
+       ↓
+Escalate
+       ↓
+Alternative Containment
+       ↓
+Human Intervention
+A failed automated response must never silently disappear.
+
+56. Incident Escalation
+Escalation should occur when:
+
+severity increases;
+
+containment fails;
+
+scope expands;
+
+sensitive data is involved;
+
+critical infrastructure is affected;
+
+AI control is compromised;
+
+customer impact increases.
+
+57. Incident Expansion
+The platform must detect when a localized incident becomes systemic.
+
+For example:
+
+One Account
+    ↓
+Multiple Accounts
+    ↓
+Multiple Stores
+    ↓
+Multiple Regions
+    ↓
+Enterprise Incident
+Response authority must scale accordingly.
+
+58. Regional Incidents
+For a global Essentials Mart deployment, an incident may affect:
+
+one user;
+
+one store;
+
+one region;
+
+multiple countries;
+
+the entire platform.
+
+The architecture must support localized containment before global shutdown where possible.
+
+59. Third-Party Incidents
+If an external provider is compromised:
+
+Provider Incident
+       ↓
+Identify Dependencies
+       ↓
+Assess Essentials Mart Exposure
+       ↓
+Restrict Integration
+       ↓
+Activate Alternative
+       ↓
+Monitor
+60. Supply-Chain Incident
+If a dependency is compromised:
+
+identify affected versions;
+
+determine where deployed;
+
+isolate affected components;
+
+revoke compromised credentials;
+
+replace dependency;
+
+verify integrity;
+
+monitor for persistence.
+
+61. Infrastructure Incident
+For infrastructure compromise:
+
+Detect
+ ↓
+Isolate
+ ↓
+Preserve Evidence
+ ↓
+Rebuild/Remediate
+ ↓
+Validate
+ ↓
+Restore
+Where practical, rebuilding trusted infrastructure may be safer than attempting to clean compromised systems in place.
+
+62. Ransomware / Destructive Attack
+The architecture must support:
+
+isolation;
+
+credential protection;
+
+backup protection;
+
+recovery from trusted copies;
+
+investigation;
+
+controlled restoration.
+
+Critical recovery infrastructure should not be dependent on the compromised environment.
+
+63. Security Incident vs Business Incident
+Not every incident is purely technical.
+
+A security event can create:
+
+financial loss;
+
+customer disruption;
+
+supply disruption;
+
+reputational damage;
+
+regulatory consequences.
+
+Therefore incident response must integrate with business continuity and operational response.
+
+64. Incident Response and Fraud
+Some incidents may simultaneously be:
+
+Cybersecurity Incident
++
+Fraud Incident
+For example:
+
+compromised account → fraudulent purchase → fraudulent refund.
+
+The response should coordinate security and fraud teams rather than treating them as unrelated events.
+
+65. Incident Response and Trust
+If an incident involves Trust Engine manipulation:
+
+Security response should identify:
+
+manipulated signals;
+
+affected trust decisions;
+
+affected privileges;
+
+affected rewards;
+
+downstream actions.
+
+The Trust Engine must then be recalculated from trusted evidence.
+
+66. Incident Response and Analytics
+Analytics may become important during investigations.
+
+However, investigators must only access analytics appropriate to their clearance.
+
+This preserves the role-based analytics model established earlier.
+
+67. Incident Response and Auditability
+Every major incident should be reconstructable from the evidence layer.
+
+The objective is:
+
+A sufficiently authorized investigator should be able to reconstruct what happened without relying on someone's memory.
+
+68. Incident Response Testing
+The architecture must be tested.
+
+Testing may include:
+
+tabletop exercises;
+
+simulated account compromise;
+
+simulated API attacks;
+
+AI containment exercises;
+
+disaster recovery exercises;
+
+supplier compromise exercises;
+
+Walk Mode security exercises.
+
+69. Red-Team Integration
+Security testing teams may deliberately simulate attacks.
+
+The incident response system should determine whether the simulated activity:
+
+is detected;
+
+is correctly classified;
+
+triggers appropriate response;
+
+is contained;
+
+is documented.
+
+70. AI Incident Exercises
+AI-specific exercises should test:
+
+Prompt Injection
+Context Poisoning
+Tool Abuse
+Agent Impersonation
+Privilege Escalation
+Malicious Delegation
+AI Supply Chain Compromise
+71. Recovery Testing
+Backups and recovery mechanisms must themselves be tested.
+
+A backup that has never been successfully restored cannot be assumed to be a reliable recovery mechanism.
+
+72. Post-Incident Review
+After significant incidents:
+
+Incident
+ ↓
+Recovery
+ ↓
+Post-Incident Review
+ ↓
+Root Cause
+ ↓
+Lessons
+ ↓
+Improvements
+73. Lessons Learned
+The review should identify:
+
+what worked;
+
+what failed;
+
+what was missing;
+
+what was too slow;
+
+what created unnecessary impact;
+
+what detection should improve;
+
+what architecture should change.
+
+74. Security Improvement Loop
+The ultimate objective is:
+
+Incident
+ ↓
+Learning
+ ↓
+Architecture Change
+ ↓
+Implementation
+ ↓
+Testing
+ ↓
+Improved Security
+NIST's current incident-response model explicitly places continuous improvement alongside Detect, Respond and Recover, with lessons feeding back into the broader cybersecurity functions. 
+
+75. Incident Knowledge Base
+Lessons from incidents should become reusable knowledge.
+
+Examples:
+
+known attack patterns;
+
+detection rules;
+
+response playbooks;
+
+affected components;
+
+indicators;
+
+remediation procedures.
+
+This knowledge should improve future response.
+
+76. Response Playbooks
+Common incidents should have predefined playbooks.
+
+Examples:
+
+Account Compromise
+Verify
+ ↓
+Contain
+ ↓
+Investigate
+ ↓
+Secure
+ ↓
+Restore
+API Abuse
+Detect
+ ↓
+Rate Limit
+ ↓
+Identify Source
+ ↓
+Contain
+ ↓
+Investigate
+AI Agent Compromise
+Detect
+ ↓
+Revoke Tools
+ ↓
+Restrict Agent
+ ↓
+Preserve Context/Evidence
+ ↓
+Investigate
+ ↓
+Restore
+77. Playbook Governance
+Every playbook should have:
+
+owner;
+
+version;
+
+scope;
+
+prerequisites;
+
+approval requirements;
+
+automation boundaries;
+
+rollback;
+
+testing schedule.
+
+78. Response Automation Safety
+Automated response should follow:
+
+Known Threat
++
+Known Response
++
+Bounded Impact
++
+Reversible Action
+=
+Suitable Automation
+Uncertain/high-impact actions should escalate.
+
+79. Security Response Resilience
+Incident response itself must remain operational during an attack.
+
+The response infrastructure should therefore have:
+
+independent authentication paths where appropriate;
+
+protected communications;
+
+redundant systems;
+
+emergency access;
+
+protected evidence;
+
+resilient coordination mechanisms.
+
+80. Emergency Security Authority
+A controlled emergency authority may be required for catastrophic incidents.
+
+However, emergency authority must be:
+
+explicitly defined;
+
+limited;
+
+time-bound;
+
+logged;
+
+reviewed afterwards.
+
+Emergency access must not become permanent privilege.
+
+81. Break-Glass Access
+Critical security personnel may require emergency access.
+
+Break-glass access should require:
+
+explicit invocation;
+
+strong authentication;
+
+justification;
+
+comprehensive logging;
+
+automatic alerting;
+
+post-event review.
+
+82. Incident Closure
+An incident should not be considered closed merely because:
+
+"The system is working again."
+
+Closure should require:
+
+containment confirmed;
+
+eradication completed;
+
+recovery validated;
+
+evidence preserved;
+
+required communications completed;
+
+root cause documented;
+
+residual risk accepted;
+
+improvement actions recorded.
+
+83. Residual Risk
+After recovery:
+
+Incident Resolved
+       ↓
+Residual Risk
+       ↓
+Risk Acceptance / Remediation
+Some risk may remain.
+
+That risk must be explicitly understood rather than silently ignored.
+
+84. Metrics
+Essentials Mart should measure:
+
+mean time to detect;
+
+mean time to contain;
+
+mean time to respond;
+
+mean time to recover;
+
+incident frequency;
+
+false-positive rate;
+
+containment success rate;
+
+recovery success rate;
+
+repeated incidents;
+
+unresolved residual risk.
+
+85. AI Response Metrics
+AI-specific metrics may include:
+
+AI incident detection time;
+
+autonomous-action containment time;
+
+unauthorized tool-call rate;
+
+agent isolation success;
+
+false-positive containment rate;
+
+AI recovery time.
+
+86. Customer Impact Metrics
+Measure:
+
+affected customers;
+
+transaction disruption;
+
+service downtime;
+
+notification time;
+
+recovery time;
+
+customer remediation.
+
+87. Incident Response at Global Scale
+At:
+
+100M+ users
+
+10,000+ stores
+
+multiple countries
+
+millions of daily transactions
+
+incident response cannot rely entirely on humans manually investigating every event.
+
+The architecture therefore needs:
+
+Automation
++
+AI Assistance
++
+Human Oversight
++
+Regional Response
++
+Central Coordination
+88. Global Incident Architecture
+                    GLOBAL SECURITY
+                          │
+                  Incident Command
+                          │
+          ┌───────────────┼───────────────┐
+          │               │               │
+       Region A        Region B        Region C
+          │               │               │
+       Store            Store            Store
+       Systems          Systems          Systems
+Localized incidents should remain localized whenever possible.
+
+89. Global Kill-Switches
+Global emergency controls may exist for catastrophic scenarios.
+
+However:
+
+Global shutdown must be an exceptional capability, not the default incident response mechanism.
+
+Regional containment should be preferred where technically feasible.
+
+90. Security Incident Communication at Scale
+The platform should support coordinated communications across:
+
+countries;
+
+languages;
+
+regulatory environments;
+
+customer segments;
+
+staff groups.
+
+91. Privacy During Incident Response
+Incident response must still respect privacy.
+
+Investigators should access only information necessary for the investigation and within their authorized clearance.
+
+Security incidents do not create unlimited access rights.
+
+92. Data Minimisation During Investigation
+Where possible:
+
+use the minimum necessary records;
+
+restrict sensitive information;
+
+pseudonymize where practical;
+
+control investigator access;
+
+maintain investigation logs.
+
+93. Incident Response Principles
+Incident Response must:
+
+act quickly;
+
+preserve evidence;
+
+minimize blast radius;
+
+prioritize human safety;
+
+protect customers;
+
+protect critical infrastructure;
+
+separate investigation from authorization;
+
+use automation carefully;
+
+escalate appropriately;
+
+recover from trusted state;
+
+document decisions;
+
+learn from incidents.
+
+94. Non-Negotiable Rules
+Rule 1
+Every significant security incident must have an accountable response authority.
+
+Rule 2
+Containment must prioritize limiting blast radius.
+
+Rule 3
+Automated response must remain bounded by policy.
+
+Rule 4
+High-impact actions require stronger authorization.
+
+Rule 5
+Evidence must be preserved before destructive remediation where feasible.
+
+Rule 6
+Compromised AI agents must be capable of rapid containment.
+
+Rule 7
+Incident response infrastructure must remain available during attacks.
+
+Rule 8
+Recovery requires validation, not merely restoration.
+
+Rule 9
+Incident closure requires documented lessons and residual-risk assessment.
+
+Rule 10
+Every significant incident should improve the security architecture.
+
+95. Success Criteria
+The Incident Response Architecture succeeds when Essentials Mart can:
+
+rapidly classify security incidents;
+
+assign response authority;
+
+contain compromised identities;
+
+contain compromised services;
+
+isolate affected infrastructure;
+
+protect customers;
+
+protect staff;
+
+protect suppliers;
+
+contain compromised AI agents;
+
+preserve evidence;
+
+investigate root causes;
+
+eradicate threats;
+
+recover trusted systems;
+
+coordinate communications;
+
+operate through regional incidents;
+
+handle third-party incidents;
+
+recover from destructive attacks;
+
+learn from incidents;
+
+improve detection and prevention after incidents.
+
+Most importantly:
+
+A successful incident response is not simply one that restores the system. It is one that restores the system to a trusted state while preserving evidence, limiting harm and reducing the probability of recurrence.
+
+96. Architectural Outcome
+Commit 015 gave Essentials Mart:
+
+EVIDENCE
+Commit 016 gave it:
+
+AWARENESS
+Commit 017 gives it:
+
+RESPONSE
+Together:
+
+                  SECURITY ARCHITECTURE
+
+                         Evidence
+                            │
+                            ↓
+                       Monitoring
+                            │
+                            ↓
+                       Detection
+                            │
+                            ↓
+                      Incident
+                            │
+                            ↓
+                       Response
+                            │
+                 ┌──────────┴──────────┐
+                 ↓                     ↓
+             Containment          Investigation
+                 │                     │
+                 └──────────┬──────────┘
+                            ↓
+                        Eradication
+                            │
+                            ↓
+                         Recovery
+                            │
+                            ↓
+                     Lessons Learned
+                            │
+                            ↓
+                    Security Improvement
+                            │
+                            └────────────→ Better Detection
+This completes the core Detect → Respond → Recover → Improve security loop.
