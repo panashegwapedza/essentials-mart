@@ -22880,3 +22880,1675 @@ LEARNING
    ↓
 ARCHITECTURAL IMPROVEMENT
 This means Commit 015 is the bridge between the preventive security architecture we've been designing and the detective/response architecture that comes next.
+
+Commit 016 — Security Monitoring & Detection Architecture
+1. Purpose
+The Security Monitoring & Detection Architecture defines how Essentials Mart continuously observes the security posture of the platform, identifies abnormal or potentially malicious activity, correlates signals from multiple sources, evaluates their significance and generates actionable security alerts.
+
+The objective is not simply:
+
+"Collect security logs."
+
+Commit 015 already established that capability.
+
+The objective of Commit 016 is:
+
+Detect meaningful security threats as early as possible and distinguish genuine threats from normal platform activity.
+
+The architecture therefore establishes the bridge:
+
+Security Evidence
+       ↓
+Monitoring
+       ↓
+Signal Detection
+       ↓
+Correlation
+       ↓
+Risk Evaluation
+       ↓
+Alert
+       ↓
+Investigation
+       ↓
+Incident Response
+This follows the current NIST model in which continuous monitoring identifies anomalies and indicators of compromise, while adverse-event analysis determines whether those events may constitute cybersecurity incidents. 
+
+2. Core Principle
+The central principle is:
+
+Essentials Mart must continuously know enough about its security state to recognise when that state changes unexpectedly.
+
+The platform should not rely exclusively on users reporting problems.
+
+It should be capable of detecting:
+
+compromised accounts;
+
+abnormal staff activity;
+
+privilege escalation;
+
+suspicious supplier activity;
+
+AI-agent anomalies;
+
+API abuse;
+
+data exfiltration;
+
+infrastructure attacks;
+
+Trust Engine manipulation;
+
+reward abuse;
+
+unusual Walk Mode behaviour;
+
+suspicious device activity.
+
+3. Detection Is Not the Same as Blocking
+An important distinction:
+
+Detection
+    ≠
+Prevention
+    ≠
+Response
+For example:
+
+Prevention
+Stops an unauthorized action.
+
+Detection
+Recognises that suspicious activity is occurring.
+
+Response
+Takes action after the threat is identified.
+
+A single event may therefore pass through:
+
+Prevent
+   ↓
+Detect
+   ↓
+Contain
+   ↓
+Investigate
+4. Security Monitoring Architecture
+The conceptual architecture is:
+
+                     SECURITY SIGNAL SOURCES
+                              │
+       ┌──────────────┬───────┼────────┬──────────────┐
+       │              │       │        │              │
+     Users          Staff    AI      Services       Devices
+       │              │       │        │              │
+     APIs          Suppliers Walk     Network       Infrastructure
+       │              │     Mode        │              │
+       └──────────────┴───────┼────────┴──────────────┘
+                              ↓
+                       Evidence Layer
+                              ↓
+                    Detection Pipeline
+                              ↓
+             ┌────────────────┼────────────────┐
+             │                │                │
+          Rules          Behaviour         Threat Intel
+             │            Analysis              │
+             └────────────────┼────────────────┘
+                              ↓
+                       Correlation Engine
+                              ↓
+                        Risk Evaluation
+                              ↓
+                     Security Alerting
+                              ↓
+                  ┌───────────┴───────────┐
+                  │                       │
+             Automated Action        Human Analysis
+                  │                       │
+                  └───────────┬───────────┘
+                              ↓
+                     Incident Response
+5. Monitoring Domains
+Security monitoring should operate across multiple domains.
+
+Identity
+Monitor:
+
+authentication;
+
+MFA;
+
+sessions;
+
+devices;
+
+credential changes;
+
+account recovery.
+
+Authorization
+Monitor:
+
+permission requests;
+
+denials;
+
+privilege escalation;
+
+clearance changes;
+
+unusual authorization patterns.
+
+Application
+Monitor:
+
+application behaviour;
+
+API activity;
+
+errors;
+
+suspicious requests;
+
+abnormal workflows.
+
+Data
+Monitor:
+
+sensitive-data access;
+
+unusual retrieval;
+
+bulk access;
+
+exports;
+
+deletion.
+
+Infrastructure
+Monitor:
+
+servers;
+
+containers;
+
+networks;
+
+databases;
+
+storage;
+
+deployment systems.
+
+AI
+Monitor:
+
+agent behaviour;
+
+tool usage;
+
+data access;
+
+autonomous actions;
+
+policy violations.
+
+Business Security
+Monitor:
+
+payments;
+
+rewards;
+
+refunds;
+
+inventory;
+
+supplier activity;
+
+delivery;
+
+Walk Mode.
+
+6. Continuous Monitoring
+Monitoring must be continuous rather than periodic wherever the risk warrants it.
+
+The platform should monitor:
+
+Networks
+Services
+Applications
+Data
+Devices
+Users
+Staff
+Suppliers
+AI Agents
+Physical/Store Context
+External Providers
+This is consistent with NIST's current guidance, which describes continuous monitoring across networks, computing environments, data, personnel activity, physical environments and external service providers. 
+
+7. Security Signals
+A security signal is an observable indication that something may deserve attention.
+
+Examples:
+
+17 failed logins in 30 seconds.
+
+Staff member suddenly accesses hundreds of customer records.
+
+AI agent suddenly invokes a tool it has never previously used.
+
+Supplier account changes product prices repeatedly.
+
+One device begins accessing multiple accounts.
+
+API requests suddenly increase 500×.
+
+Customer account changes location dramatically.
+
+Large amounts of data are exported.
+
+A signal is not automatically an incident.
+
+8. Normal Behaviour
+Detection requires understanding what normal looks like.
+
+The system therefore needs baselines for appropriate activity.
+
+For example:
+
+Normal:
+Customer → 5–20 API requests/minute
+
+Potential anomaly:
+Customer → 2,000 API requests/minute
+But the platform must recognise that different actors have different normal behaviour.
+
+A customer, staff member and backend service should not share the same baseline.
+
+9. Identity-Specific Monitoring
+Detection must understand actor type.
+
+Customer
+Staff
+Supplier
+Administrator
+Service
+AI Agent
+Device
+External System
+Each has different:
+
+capabilities;
+
+normal behaviour;
+
+risk profile;
+
+expected access patterns.
+
+10. Behavioural Baselines
+The platform may establish behavioural profiles such as:
+
+Customer
+normal login times;
+
+normal devices;
+
+usual locations;
+
+normal purchasing activity.
+
+Staff
+normal store;
+
+normal working hours;
+
+normal systems;
+
+normal customer records;
+
+normal operations.
+
+Supplier
+normal catalogue activity;
+
+normal pricing;
+
+normal order volume;
+
+normal account behaviour.
+
+AI Agent
+normal tools;
+
+normal data domains;
+
+normal action frequency;
+
+normal delegation patterns.
+
+11. Anomaly Detection
+Anomaly detection identifies activity that deviates significantly from expected behaviour.
+
+Conceptually:
+
+Expected Behaviour
+       ↓
+Observed Behaviour
+       ↓
+Deviation
+       ↓
+Risk Evaluation
+However:
+
+Anomaly ≠ malicious activity.
+
+A legitimate event may be unusual.
+
+12. Avoiding False Positives
+This is critical.
+
+If Essentials Mart generates thousands of false alarms, security staff will eventually stop trusting the system.
+
+Therefore detection should consider:
+
+actor;
+
+context;
+
+history;
+
+location;
+
+device;
+
+time;
+
+permissions;
+
+transaction;
+
+current incident state;
+
+known business events.
+
+13. Contextual Detection
+A suspicious event should be evaluated within context.
+
+For example:
+
+New device login
+alone may be harmless.
+
+But:
+
+New device
++
+New location
++
+Password changed
++
+MFA failure
++
+Large purchase
+is considerably more concerning.
+
+14. Correlation
+Commit 015 established correlation IDs and causation relationships.
+
+Commit 016 uses those relationships to identify patterns.
+
+For example:
+
+Login Failure
+      +
+New Device
+      +
+Password Reset
+      +
+Large Transaction
+may produce a higher-confidence security signal than any individual event.
+
+NIST specifically recommends correlating information from multiple sources as part of adverse-event analysis. 
+
+15. Detection Rules
+The system should support deterministic detection rules.
+
+Example:
+
+IF
+    failed_login_count > threshold
+AND
+    time_window < threshold
+THEN
+    generate security signal
+Rules should be versioned and auditable.
+
+16. Behavioural Detection
+Rules alone are insufficient at Essentials Mart's eventual scale.
+
+Behavioural systems can identify patterns such as:
+
+This staff member normally performs 20 inventory adjustments per day.
+
+but suddenly:
+
+600 adjustments occurred in one hour.
+
+That deviation may warrant investigation.
+
+17. Statistical Detection
+The detection layer may use:
+
+frequency analysis;
+
+deviation analysis;
+
+rate changes;
+
+clustering;
+
+historical comparisons;
+
+temporal patterns.
+
+The objective is to identify behaviour that is statistically unusual.
+
+18. Machine Learning Detection
+Where appropriate, machine-learning systems may identify complex patterns that deterministic rules cannot.
+
+However:
+
+Machine-learning detection must never automatically become an unquestionable authority.
+
+Its outputs should be treated as security signals that require contextual evaluation.
+
+19. AI-Assisted Detection
+The AI Society may assist security analysis.
+
+For example, a Security Intelligence Agent could correlate:
+
+Identity Events
++
+API Events
++
+Device Events
++
+Transaction Events
++
+Behavioural Signals
+and explain:
+
+"These events are consistent with possible account compromise."
+
+But the AI must operate under explicit permissions and must itself be monitored.
+
+20. AI Cannot Self-Authorize Security Decisions
+An AI monitoring agent should not automatically grant itself:
+
+broader data access;
+
+unrestricted log access;
+
+administrative privileges;
+
+investigation privileges.
+
+Its own access must remain bounded by the security architecture.
+
+21. AI Agent Behaviour Monitoring
+Every AI agent should have a behavioural baseline.
+
+Monitor:
+
+tools invoked;
+
+frequency of invocation;
+
+data accessed;
+
+services contacted;
+
+action types;
+
+delegation;
+
+failed authorization;
+
+unusual reasoning/action patterns where observable.
+
+22. AI Anomaly Example
+Suppose the Household Intelligence Agent normally performs:
+
+Read Pantry
+Read Household List
+Create Recommendation
+Then suddenly:
+
+Read Pantry
+Read Household List
+Access Staff Records
+Query Supplier Financial Data
+Export Customer Dataset
+That is a significant deviation.
+
+The system should detect it even if each individual API call is technically valid.
+
+23. AI-to-AI Monitoring
+The AI Society contains multiple agents.
+
+Therefore the platform must monitor:
+
+Agent A
+   ↓
+Agent B
+   ↓
+Agent C
+   ↓
+Tool
+The system should know:
+
+which agent initiated the chain;
+
+which agent delegated;
+
+what authority was transferred;
+
+what tools were invoked;
+
+whether the delegation was permitted.
+
+24. Privilege Escalation Detection
+The system should detect attempts to move from:
+
+Low Privilege
+      ↓
+Higher Privilege
+Examples:
+
+staff requesting unauthorized clearance;
+
+service attempting administrative APIs;
+
+AI requesting unavailable tools;
+
+customer attempting staff endpoints.
+
+25. Privilege Creep Detection
+Even legitimate permissions can become dangerous over time.
+
+The system should identify:
+
+"This account has accumulated permissions inconsistent with its role."
+
+This connects monitoring with the least-privilege architecture.
+
+26. Staff Abuse Detection
+Staff monitoring should identify unusual behaviour without turning employees into permanent surveillance subjects.
+
+Examples:
+
+excessive customer-record access;
+
+unusual refunds;
+
+repeated overrides;
+
+unusual inventory adjustments;
+
+unusual access outside assigned store;
+
+repeated permission denials.
+
+Monitoring must remain proportionate and policy-governed.
+
+27. Supplier Abuse Detection
+Examples:
+
+abnormal catalogue changes;
+
+suspicious pricing manipulation;
+
+unusual return activity;
+
+artificial order generation;
+
+repeated account changes;
+
+abnormal inventory submissions.
+
+28. Customer Account Compromise
+Possible signals include:
+
+new device;
+
+new location;
+
+credential changes;
+
+unusual purchase behaviour;
+
+unusual session patterns;
+
+repeated failed authentication;
+
+abnormal API activity.
+
+The platform should combine signals rather than relying on one indicator.
+
+29. Device Anomaly Detection
+Devices may develop unusual behaviour.
+
+Monitor:
+
+new device registration;
+
+device switching;
+
+impossible travel;
+
+suspicious client versions;
+
+abnormal API patterns;
+
+device reputation.
+
+30. API Abuse Detection
+The API layer should detect:
+
+request floods;
+
+endpoint enumeration;
+
+credential stuffing;
+
+unusual request patterns;
+
+invalid payload patterns;
+
+token abuse;
+
+replay attempts;
+
+scraping;
+
+automated abuse.
+
+31. Rate Anomalies
+A simple example:
+
+Normal:
+100 requests/minute
+
+Observed:
+20,000 requests/minute
+The system should rapidly recognise this as abnormal.
+
+But thresholds must be contextual.
+
+A major internal service may legitimately generate far more requests than a customer device.
+
+32. Data Exfiltration Detection
+The system should monitor for:
+
+bulk exports;
+
+unusual downloads;
+
+abnormal database queries;
+
+unusual API retrieval;
+
+repeated sensitive-data access;
+
+suspicious transfer patterns.
+
+This is especially important for:
+
+customer data;
+
+supplier data;
+
+business intelligence;
+
+analytics;
+
+AI context.
+
+33. Database Monitoring
+Sensitive database access should generate detection signals for:
+
+unusual query volumes;
+
+privileged access;
+
+bulk extraction;
+
+unusual tables;
+
+unusual service identities;
+
+access outside expected patterns.
+
+34. Payment Security Monitoring
+Monitor:
+
+payment failures;
+
+repeated attempts;
+
+unusual transaction velocity;
+
+suspicious refund patterns;
+
+account/payment instrument relationships.
+
+This complements fraud detection rather than replacing it.
+
+35. Reward Abuse Detection
+Monitoring should identify:
+
+repeated milestone manipulation;
+
+referral farming;
+
+synthetic activity;
+
+suspicious account clusters;
+
+unusual reward claims.
+
+This connects directly to the Reward Intelligence security architecture.
+
+36. Trust Engine Monitoring
+The Trust Engine itself must be monitored.
+
+Potential attacks include:
+
+Fake Behaviour
+      ↓
+Trust Signals
+      ↓
+Trust Score Manipulation
+      ↓
+Increased Privileges
+Detection must therefore monitor unusual trust-score changes and their underlying signals.
+
+37. Trust Signal Integrity
+The system should detect:
+
+sudden trust-score jumps;
+
+coordinated activity;
+
+repeated synthetic events;
+
+suspicious reputation changes;
+
+anomalous reward eligibility.
+
+38. Walk Mode Monitoring
+Walk Mode creates unique signals:
+
+unusual navigation;
+
+abnormal proximity interactions;
+
+excessive inventory queries;
+
+unusual store switching;
+
+suspicious device behaviour;
+
+automated interaction patterns.
+
+However:
+
+Location-based detection must not become uncontrolled location surveillance.
+
+39. Physical Store Security Signals
+Where integrated with store systems, signals may include:
+
+unusual staff terminal activity;
+
+abnormal POS interactions;
+
+inventory anomalies;
+
+unusual service-desk activity;
+
+suspicious access patterns.
+
+40. External Service Monitoring
+Monitor external integrations such as:
+
+payment providers;
+
+WhatsApp;
+
+mapping providers;
+
+delivery systems;
+
+AI providers;
+
+cloud services.
+
+The system should detect:
+
+unexpected response patterns;
+
+authentication failures;
+
+unusual traffic;
+
+provider compromise indicators;
+
+integration failures.
+
+41. Threat Intelligence
+External threat intelligence may improve detection.
+
+It can provide information about:
+
+malicious IPs;
+
+malicious domains;
+
+known attack patterns;
+
+compromised credentials;
+
+indicators of compromise;
+
+emerging threats.
+
+NIST's current guidance specifically identifies cyber threat intelligence as useful for improving detection and identifying malicious activity earlier. 
+
+42. Detection Pipeline
+The conceptual pipeline is:
+
+Raw Evidence
+      ↓
+Normalization
+      ↓
+Enrichment
+      ↓
+Rule Evaluation
+      ↓
+Behavioural Analysis
+      ↓
+Threat Intelligence
+      ↓
+Correlation
+      ↓
+Risk Evaluation
+      ↓
+Alert Decision
+43. Signal Enrichment
+A raw event may be insufficient.
+
+Example:
+
+Login failed
+can be enriched with:
+
+account;
+
+device;
+
+location;
+
+historical behaviour;
+
+IP reputation;
+
+recent password change;
+
+recent MFA failures.
+
+The resulting signal becomes much more useful.
+
+44. Risk Scoring
+Security signals can contribute to a contextual risk score.
+
+For example:
+
+New Device             +10
+New Location            +15
+MFA Failure             +20
+Credential Change       +20
+Suspicious IP           +30
+Large Transaction       +25
+The exact scoring system must be formally defined later.
+
+The important principle is:
+
+Risk is contextual, not binary.
+
+45. Risk Is Not Trust
+The Trust Engine and Security Detection System must remain conceptually distinct.
+
+Trust
+ ↓
+Longer-term confidence
+
+Security Risk
+ ↓
+Current threat likelihood
+A highly trusted user can still have a compromised account.
+
+A low-trust user is not automatically malicious.
+
+46. Detection Confidence
+Detection systems should distinguish:
+
+Signal
+Something unusual happened.
+
+Suspicion
+The activity may be malicious.
+
+High-confidence threat
+Multiple independent signals strongly support malicious activity.
+
+Incident
+The organization has determined that a security incident is occurring.
+
+This prevents premature escalation.
+
+47. Alert Generation
+Not every signal becomes an alert.
+
+10,000 Events
+      ↓
+1,000 Signals
+      ↓
+100 Suspicious Patterns
+      ↓
+20 Alerts
+      ↓
+3 Investigations
+      ↓
+1 Confirmed Incident
+The exact ratios will vary.
+
+The architectural principle is progressive filtering.
+
+48. Alert Severity
+Alerts should be classified, for example:
+
+Informational
+Awareness only.
+
+Low
+Minor anomaly.
+
+Medium
+Potential security issue.
+
+High
+Likely security threat.
+
+Critical
+Active or potentially severe compromise.
+
+49. Alert Prioritisation
+Priority should consider:
+
+Likelihood
+×
+Impact
+×
+Asset Criticality
+×
+Confidence
+A suspicious event involving a critical production identity should rank higher than an equivalent anomaly involving a low-risk test environment.
+
+50. Alert Fatigue Protection
+The system must prevent:
+
+Alert storms.
+
+Techniques may include:
+
+deduplication;
+
+suppression;
+
+aggregation;
+
+thresholding;
+
+correlation;
+
+prioritization;
+
+adaptive alerting.
+
+51. Security Operations Centre
+At sufficient scale, Essentials Mart may operate a dedicated Security Operations capability.
+
+Conceptually:
+
+Detection
+    ↓
+SOC
+    ↓
+Triage
+    ↓
+Investigation
+    ↓
+Response
+NIST's security-control guidance describes a SOC as a focal point for monitoring, detecting, analysing and responding to cybersecurity incidents using correlated data from multiple sources. 
+
+52. Automated Detection
+Automation should handle high-volume repetitive analysis.
+
+Examples:
+
+impossible travel;
+
+brute-force detection;
+
+API abuse;
+
+known malicious indicators;
+
+repeated authorization failures;
+
+known malware indicators.
+
+53. Human Analysis
+Humans should handle situations requiring:
+
+context;
+
+judgment;
+
+ambiguous evidence;
+
+business impact assessment;
+
+high-impact decisions;
+
+sensitive investigations.
+
+Automation should augment security professionals rather than blindly replacing them.
+
+54. Automated Containment
+Certain high-confidence threats may trigger predefined containment actions.
+
+Examples:
+
+Suspend Session
+Revoke Token
+Require MFA
+Rate Limit
+Disable API Key
+Quarantine Device
+Freeze Sensitive Action
+These actions must be policy-controlled.
+
+55. High-Impact Automated Actions
+Actions such as:
+
+permanently deleting accounts;
+
+freezing large financial balances;
+
+disabling critical suppliers;
+
+terminating staff access;
+
+shutting down infrastructure
+
+should normally require stronger authority and/or human approval.
+
+56. Detection Kill Switch
+Security automation must have a way to disable a malfunctioning detection or response rule.
+
+For example:
+
+Detection Rule
+      ↓
+False Positive Explosion
+      ↓
+Emergency Disable
+      ↓
+Investigation
+This protects the platform from its own automation.
+
+57. Detection Rule Governance
+Every detection rule should have:
+
+owner;
+
+version;
+
+purpose;
+
+scope;
+
+severity;
+
+dependencies;
+
+testing status;
+
+change history;
+
+rollback mechanism.
+
+58. Detection Testing
+Detection logic should be tested against:
+
+known attacks;
+
+simulated attacks;
+
+benign unusual activity;
+
+false-positive scenarios;
+
+edge cases.
+
+59. Detection Coverage
+Essentials Mart should maintain visibility into what it can and cannot detect.
+
+For example:
+
+Identity       ██████████
+API            █████████
+AI             ████████
+Walk Mode      ███████
+Infrastructure █████████
+Supplier       ██████
+The exact implementation comes later.
+
+The principle is:
+
+Security cannot protect what it cannot observe.
+
+60. Blind Spots
+The architecture must explicitly identify monitoring blind spots.
+
+Examples:
+
+encrypted traffic without appropriate metadata;
+
+external provider activity;
+
+offline devices;
+
+unsupported client versions;
+
+third-party infrastructure;
+
+uninstrumented services.
+
+Blind spots should become documented security risks.
+
+61. Monitoring Health
+The platform must monitor the monitoring system.
+
+It should detect:
+
+missing logs;
+
+dead collectors;
+
+failed detection pipelines;
+
+delayed ingestion;
+
+storage failures;
+
+broken correlation;
+
+disabled detection rules.
+
+This is essential because:
+
+A silent monitoring failure can look like a secure system.
+
+62. Detection Latency
+The architecture should measure:
+
+Event Occurred
+      ↓
+Event Collected
+      ↓
+Signal Generated
+      ↓
+Alert Created
+      ↓
+Human/Automated Action
+Metrics should include:
+
+detection latency;
+
+alert latency;
+
+response latency.
+
+63. Detection Availability
+Security monitoring must be resilient.
+
+The detection architecture should support:
+
+redundancy;
+
+failover;
+
+buffering;
+
+recovery;
+
+degraded operation.
+
+64. Detection During Incidents
+During a major incident, attackers may deliberately attempt to disable monitoring.
+
+Therefore:
+
+Application
+     ↓
+Monitoring
+     ↓
+Protected Security Infrastructure
+must be designed so compromising one application does not automatically disable enterprise detection.
+
+65. Security Monitoring Data Flow
+The system should maintain a clear flow:
+
+Source
+ ↓
+Evidence
+ ↓
+Detection
+ ↓
+Correlation
+ ↓
+Risk
+ ↓
+Alert
+ ↓
+Investigation
+ ↓
+Response
+Every transition should be observable.
+
+66. Privacy-Preserving Monitoring
+Security monitoring must respect Commit 014.
+
+Monitoring should prefer:
+
+metadata where sufficient;
+
+pseudonymization;
+
+minimum necessary data;
+
+restricted access;
+
+purpose limitation.
+
+The goal is:
+
+Detect threats without turning security infrastructure into unrestricted surveillance infrastructure.
+
+67. Customer Monitoring
+Customers should not be treated as inherently suspicious.
+
+Detection should focus on:
+
+behavioural risk signals
+
+rather than arbitrary profiling.
+
+68. Staff Monitoring
+Staff monitoring must be:
+
+role-aware;
+
+proportionate;
+
+policy-governed;
+
+auditable;
+
+limited to legitimate security/operational purposes.
+
+69. AI Monitoring
+AI agents require stronger observability because they can potentially:
+
+access data;
+
+call tools;
+
+make decisions;
+
+delegate;
+
+act autonomously.
+
+Every consequential AI action therefore becomes both:
+
+an operational event
+
+and potentially:
+
+a security signal.
+
+70. Security Detection for Prompt Injection
+The monitoring system should identify suspicious AI interaction patterns such as:
+
+repeated attempts to override system instructions;
+
+attempts to access restricted tools;
+
+malicious tool requests;
+
+unusual context manipulation;
+
+suspicious external content.
+
+Detection should complement the preventative controls established in AI Security Architecture.
+
+71. Context Poisoning Detection
+The platform should monitor for suspicious changes in AI context.
+
+For example:
+
+Trusted Context
+      ↓
+Unexpected Instruction
+      ↓
+Authority Change Attempt
+      ↓
+AI Tool Request
+The combination may warrant investigation.
+
+72. Agent Impersonation
+Detection should identify:
+
+unexpected agent identity;
+
+invalid agent credentials;
+
+unusual agent communication;
+
+unauthorized delegation.
+
+73. Security Monitoring of WhatsApp
+WhatsApp interactions should be monitored for:
+
+authentication anomalies;
+
+account takeover;
+
+unusual message/action patterns;
+
+unauthorized commands;
+
+channel abuse;
+
+suspicious action escalation.
+
+But WhatsApp should remain a channel, not a separate security authority.
+
+74. Security Monitoring of Delivery
+Monitor for:
+
+abnormal delivery changes;
+
+repeated address changes;
+
+suspicious delivery cancellations;
+
+delivery-account compromise;
+
+unusual courier/system interactions.
+
+75. Security Monitoring of Analytics
+Analytics systems should be monitored for:
+
+unauthorized analytics access;
+
+unusual data exports;
+
+abnormal query patterns;
+
+privilege escalation;
+
+sensitive customer-data exposure.
+
+This matters because the analytics system contains different views for customers, suppliers, staff and administrators.
+
+76. Security Monitoring of Audit Logs
+Commit 015 established that logs are evidence.
+
+Commit 016 must therefore detect:
+
+missing logs;
+
+abnormal log deletion;
+
+unexpected log volume;
+
+evidence-store access anomalies;
+
+attempts to manipulate evidence.
+
+77. Security Monitoring and Incident Response
+Commit 016 ends where Commit 017 begins:
+
+Monitoring
+     ↓
+Detection
+     ↓
+Alert
+     ↓
+Incident
+     ↓
+Incident Response
+NIST's current SP 800-61 Rev. 3 explicitly treats detection and response as integrated cybersecurity risk-management activities rather than isolated functions. 
+
+78. Detection Feedback Loop
+Security detection should continuously improve.
+
+Incident
+ ↓
+Investigation
+ ↓
+Root Cause
+ ↓
+New Detection
+ ↓
+Testing
+ ↓
+Deployment
+ ↓
+Future Detection
+This means every serious incident can improve the security architecture.
+
+79. Detection Intelligence
+The platform should learn from:
+
+previous incidents;
+
+false positives;
+
+confirmed attacks;
+
+threat intelligence;
+
+behavioural changes;
+
+new vulnerabilities.
+
+But automated learning must be governed so attackers cannot poison the detection models.
+
+80. Detection Model Security
+Detection models themselves must be protected against:
+
+poisoning;
+
+manipulation;
+
+unauthorized changes;
+
+model drift;
+
+adversarial inputs.
+
+A compromised detection model could deliberately create blindness.
+
+81. Detection Architecture Principles
+Security Monitoring & Detection must:
+
+continuously monitor security-relevant activity;
+
+correlate multiple evidence sources;
+
+understand actor context;
+
+distinguish anomalies from confirmed threats;
+
+minimize false positives;
+
+support deterministic and behavioural detection;
+
+monitor humans, services, devices and AI agents;
+
+protect detection infrastructure;
+
+detect monitoring failures;
+
+support automated and human analysis;
+
+integrate with incident response;
+
+respect privacy;
+
+scale globally.
+
+82. Non-Negotiable Rules
+Rule 1
+Security monitoring must be continuous for appropriately critical assets.
+
+Rule 2
+An anomaly is not automatically a security incident.
+
+Rule 3
+Detection decisions must use context.
+
+Rule 4
+Multiple independent signals should increase confidence.
+
+Rule 5
+AI detection systems must themselves be monitored.
+
+Rule 6
+The detection infrastructure must be protected from the systems it monitors.
+
+Rule 7
+Monitoring failures must themselves generate security signals.
+
+Rule 8
+High-impact automated containment must be policy-controlled.
+
+Rule 9
+Security monitoring must not become uncontrolled surveillance.
+
+Rule 10
+Detection rules must be versioned, tested and auditable.
+
+Rule 11
+Security blind spots must be visible and treated as risks.
+
+Rule 12
+Detection must feed incident response and continuous security improvement.
+
+83. Success Criteria
+The Security Monitoring & Detection Architecture succeeds when Essentials Mart can:
+
+continuously observe critical security activity;
+
+detect abnormal behaviour;
+
+identify likely compromise;
+
+correlate events across systems;
+
+detect staff abuse;
+
+detect supplier abuse;
+
+detect API attacks;
+
+detect account compromise;
+
+detect data exfiltration;
+
+detect AI-agent anomalies;
+
+detect Trust Engine manipulation;
+
+detect reward abuse;
+
+detect Walk Mode security anomalies;
+
+identify monitoring failures;
+
+prioritize alerts;
+
+minimise false positives;
+
+escalate confirmed threats;
+
+support incident response.
+
+Most importantly:
+
+Essentials Mart should be able to detect an attack before the attacker has achieved their full objective whenever technically and operationally feasible.
+
+84. Architectural Outcome
+Commit 016 creates the detection nervous system of Essentials Mart.
+
+Commit 015 gave us:
+
+MEMORY
+Commit 016 gives us:
+
+AWARENESS
+And Commit 017 will give us:
+
+RESPONSE
+Together:
+
+        SECURITY EVIDENCE
+               │
+               ↓
+       MONITORING & DETECTION
+               │
+               ↓
+          INCIDENT
+               │
+               ↓
+       INCIDENT RESPONSE
+               │
+               ↓
+          RECOVERY
+               │
+               ↓
+          LEARNING
+               │
+               └──────────→ Better Detection
+That creates the core security operations loop for Essentials Mart.
