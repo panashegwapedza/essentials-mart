@@ -26345,3 +26345,1753 @@ Together:
                             │
                             └────────────→ Better Detection
 This completes the core Detect → Respond → Recover → Improve security loop.
+
+Commit 018 — Supply-Chain Security Architecture
+1. Purpose
+The Supply-Chain Security Architecture defines how Essentials Mart identifies, evaluates, authorizes, monitors, limits and responds to security risks originating from suppliers, technology providers, software dependencies, AI providers, infrastructure providers, integrations and other external entities.
+
+The objective is to ensure that:
+
+Essentials Mart does not automatically trust something simply because it is required by the platform.
+
+Every external dependency represents a potential extension of the platform's attack surface.
+
+The architecture therefore establishes:
+
+External Entity
+      ↓
+Identification
+      ↓
+Due Diligence
+      ↓
+Risk Assessment
+      ↓
+Trust Decision
+      ↓
+Controlled Integration
+      ↓
+Continuous Monitoring
+      ↓
+Incident Response
+      ↓
+Review / Renewal / Revocation
+2. Core Principle
+The fundamental principle is:
+
+Every external dependency must be treated as a potential security boundary.
+
+This applies to:
+
+suppliers;
+
+software libraries;
+
+cloud providers;
+
+AI models;
+
+AI providers;
+
+APIs;
+
+payment providers;
+
+WhatsApp;
+
+mapping providers;
+
+delivery providers;
+
+analytics services;
+
+infrastructure providers;
+
+development tools;
+
+contractors;
+
+managed services.
+
+NIST describes C-SCRM as identifying, assessing and mitigating supply-chain cybersecurity risks throughout the lifecycle of acquired products and services. 
+
+3. Two Supply-Chain Domains
+Essentials Mart should distinguish between:
+
+Technology Supply Chain
+Code
+Dependencies
+Infrastructure
+Cloud
+AI
+APIs
+Devices
+Security Products
+Commercial Supply Chain
+Manufacturers
+Suppliers
+Distributors
+Warehouses
+Logistics
+Delivery Providers
+Service Providers
+They have different risks, but both must operate under the same overarching supply-chain security principles.
+
+4. Supply-Chain Trust Model
+The platform must not use:
+
+Supplier = Trusted
+Instead:
+
+Supplier
+   ↓
+Identity
+   ↓
+Verification
+   ↓
+Risk
+   ↓
+Capabilities
+   ↓
+Permissions
+   ↓
+Context
+   ↓
+Continuous Monitoring
+Trust should therefore remain contextual and revocable.
+
+5. Supply-Chain Entity Types
+The architecture should recognise:
+
+commercial suppliers;
+
+manufacturers;
+
+distributors;
+
+logistics providers;
+
+delivery providers;
+
+payment providers;
+
+technology vendors;
+
+cloud providers;
+
+software vendors;
+
+API providers;
+
+AI providers;
+
+model providers;
+
+data providers;
+
+security providers;
+
+contractors;
+
+managed-service providers.
+
+6. Supplier Identity
+Every supplier or external organization interacting with Essentials Mart should have an authoritative identity.
+
+The platform should maintain:
+
+supplier identity;
+
+legal identity;
+
+organization status;
+
+authorized representatives;
+
+associated accounts;
+
+associated services;
+
+associated stores/regions;
+
+contracts;
+
+risk classification;
+
+security status.
+
+7. Supplier Authentication
+External organizations must authenticate through controlled mechanisms.
+
+Possible mechanisms include:
+
+strong user authentication;
+
+MFA;
+
+organization credentials;
+
+API credentials;
+
+certificates;
+
+service identities;
+
+machine identities.
+
+Shared credentials should be avoided.
+
+8. Supplier Authorization
+Authentication establishes:
+
+Who are you?
+
+Authorization establishes:
+
+What are you allowed to do?
+
+A verified supplier should not automatically receive access to:
+
+all stores;
+
+all products;
+
+all inventory;
+
+all customer information;
+
+all analytics;
+
+all APIs.
+
+9. Supplier Clearance
+Supplier access should be scoped.
+
+For example:
+
+Supplier
+ ↓
+Supplier Role
+ ↓
+Supplier Clearance
+ ↓
+Permissions
+ ↓
+Products / Stores / Regions
+ ↓
+Context
+This mirrors the staff-clearance architecture established earlier.
+
+10. Supplier Segmentation
+Suppliers should be classified according to their relationship with Essentials Mart.
+
+For example:
+
+Tier 1
+Critical strategic suppliers.
+
+Tier 2
+Important operational suppliers.
+
+Tier 3
+Standard suppliers.
+
+Tier 4
+Low-risk/non-critical providers.
+
+The precise classification system should be established through governance.
+
+11. Critical Suppliers
+A critical supplier is one whose compromise or failure could materially affect Essentials Mart.
+
+Examples:
+
+payment provider;
+
+cloud infrastructure;
+
+primary AI provider;
+
+identity provider;
+
+core logistics provider;
+
+critical inventory provider.
+
+Critical suppliers require stronger controls.
+
+12. Supplier Risk Assessment
+Before onboarding a significant supplier, Essentials Mart should assess:
+
+security posture;
+
+business criticality;
+
+data access;
+
+system access;
+
+geographic exposure;
+
+dependency concentration;
+
+incident history;
+
+resilience;
+
+contractual protections;
+
+regulatory considerations.
+
+NIST's C-SCRM framework explicitly integrates supply-chain risk assessments into organizational risk management. 
+
+13. Security Due Diligence
+Depending on risk, due diligence may examine:
+
+security policies;
+
+authentication;
+
+encryption;
+
+vulnerability management;
+
+incident response;
+
+business continuity;
+
+access control;
+
+data protection;
+
+software development practices;
+
+personnel security.
+
+The amount of due diligence should be proportional to the supplier's risk.
+
+14. Risk-Based Onboarding
+Not every supplier requires identical scrutiny.
+
+Conceptually:
+
+Low Risk
+   ↓
+Light Due Diligence
+
+Medium Risk
+   ↓
+Standard Due Diligence
+
+High Risk
+   ↓
+Enhanced Due Diligence
+
+Critical
+   ↓
+Enhanced Due Diligence
++
+Executive/Security Approval
+15. Supplier Security Requirements
+Contracts and onboarding requirements should establish appropriate security expectations.
+
+Depending on the relationship, these may include:
+
+security controls;
+
+incident notification;
+
+vulnerability disclosure;
+
+access restrictions;
+
+data protection;
+
+audit rights;
+
+security testing;
+
+breach cooperation;
+
+termination requirements.
+
+16. Continuous Supplier Monitoring
+Supplier security cannot be assessed only once.
+
+The platform should continuously monitor relevant indicators such as:
+
+security incidents;
+
+abnormal access;
+
+credential activity;
+
+API activity;
+
+service availability;
+
+security posture changes;
+
+risk changes.
+
+17. Supplier Trust Score
+Where appropriate, the Trust Engine may maintain a supplier trust/risk representation.
+
+However:
+
+Supplier trust must never become an opaque single number that overrides security controls.
+
+The score should be explainable and supported by evidence.
+
+18. Supplier Risk vs Supplier Trust
+These should remain separate concepts.
+
+Supplier Trust
+ ↓
+Longer-term confidence
+
+Supplier Risk
+ ↓
+Current exposure / threat
+A highly trusted supplier can still become compromised.
+
+19. Supplier Access Tokens
+Supplier credentials should be:
+
+scoped;
+
+short-lived where practical;
+
+revocable;
+
+auditable;
+
+rotated.
+
+Long-lived unrestricted credentials should be avoided.
+
+20. Supplier API Security
+Supplier APIs should require:
+
+authenticated requests;
+
+authorization;
+
+request validation;
+
+rate limiting;
+
+replay protection;
+
+monitoring;
+
+audit logging.
+
+21. Supplier Data Isolation
+A supplier must only access data necessary for its legitimate function.
+
+For example:
+
+Supplier A
+    ↓
+Products A
+Stores A
+Orders A
+should not imply:
+
+All Suppliers
++
+All Stores
++
+All Customers
+22. Customer Data Boundary
+Commercial suppliers should not receive customer data merely because they participate in commerce.
+
+Customer information must remain protected by explicit authorization.
+
+23. Supplier Analytics
+Suppliers may receive analytics relevant to their business.
+
+For example:
+
+product sales;
+
+product performance;
+
+returns;
+
+complaints;
+
+breakage;
+
+inventory performance.
+
+But supplier analytics must be:
+
+tenant-scoped, role-scoped and authorization-controlled.
+
+A supplier must not see another supplier's confidential performance data.
+
+24. Staff Access to Supplier Systems
+Staff access to supplier-related information should follow the staff-clearance architecture.
+
+A staff member may have:
+
+Supplier Operations Clearance
+without having:
+
+Supplier Financial Clearance
+25. Technology Supply Chain
+The technology supply chain includes:
+
+Source Code
+ ↓
+Dependencies
+ ↓
+Build
+ ↓
+Artifacts
+ ↓
+Deployment
+ ↓
+Infrastructure
+ ↓
+Runtime
+Every stage is a potential security boundary.
+
+26. Software Dependency Security
+Essentials Mart will eventually depend on:
+
+Flutter packages;
+
+Dart packages;
+
+backend libraries;
+
+database libraries;
+
+authentication libraries;
+
+SDKs;
+
+frontend dependencies;
+
+build tooling.
+
+These dependencies must be tracked.
+
+27. Dependency Inventory
+The platform should maintain an authoritative inventory of:
+
+dependency;
+
+version;
+
+source;
+
+license;
+
+maintainer;
+
+vulnerability status;
+
+usage;
+
+affected systems.
+
+28. Dependency Integrity
+Dependencies should be obtained from trusted sources where possible.
+
+Integrity mechanisms may include:
+
+checksums;
+
+signatures;
+
+verified repositories;
+
+pinned versions;
+
+controlled lockfiles.
+
+29. Dependency Vulnerabilities
+When a dependency becomes vulnerable:
+
+Vulnerability Identified
+        ↓
+Affected Versions
+        ↓
+Essentials Mart Exposure
+        ↓
+Risk Assessment
+        ↓
+Patch / Upgrade / Replace
+        ↓
+Validation
+30. Malicious Dependency Detection
+The platform should protect against:
+
+malicious packages;
+
+typosquatting;
+
+compromised maintainers;
+
+dependency hijacking;
+
+malicious updates;
+
+abandoned packages.
+
+31. Software Bill of Materials
+Essentials Mart should maintain an SBOM for important software artifacts.
+
+Conceptually:
+
+Application
+   ↓
+Components
+   ↓
+Dependencies
+   ↓
+Versions
+   ↓
+Known Vulnerabilities
+This dramatically improves incident response when a dependency is compromised.
+
+32. Build Supply Chain
+The build system is itself part of the security boundary.
+
+Monitor:
+
+build agents;
+
+build dependencies;
+
+build credentials;
+
+source inputs;
+
+generated artifacts;
+
+signing processes.
+
+33. Artifact Integrity
+Build artifacts should have mechanisms for establishing:
+
+provenance;
+
+integrity;
+
+version;
+
+source commit;
+
+build process;
+
+signer.
+
+34. Deployment Integrity
+Production deployments should only accept authorized artifacts.
+
+Conceptually:
+
+Source
+ ↓
+Approved Build
+ ↓
+Verified Artifact
+ ↓
+Authorized Deployment
+ ↓
+Production
+35. CI/CD Supply-Chain Security
+The CI/CD pipeline must be protected against:
+
+credential theft;
+
+malicious workflow changes;
+
+unauthorized builds;
+
+compromised runners;
+
+artifact substitution;
+
+secret exposure.
+
+This connects directly to the later dedicated CI/CD & Deployment Security architecture within Part 3.
+
+Commit 018 establishes the supply-chain boundary; later commits can deepen the individual pipeline controls.
+
+36. Cloud Provider Security
+Cloud providers should be treated as critical external dependencies where they host essential infrastructure.
+
+Controls should address:
+
+account security;
+
+privileged access;
+
+regions;
+
+encryption;
+
+network controls;
+
+service identities;
+
+logging;
+
+resilience;
+
+provider incidents.
+
+37. Cloud Concentration Risk
+Essentials Mart should identify where excessive dependency on one provider creates systemic risk.
+
+For example:
+
+100% Infrastructure
+        ↓
+One Provider
+        ↓
+Provider Outage
+        ↓
+Enterprise Impact
+Critical dependencies should therefore be assessed for concentration risk.
+
+38. AI Supply Chain
+The AI supply chain is particularly important.
+
+It may include:
+
+foundation models;
+
+hosted AI providers;
+
+model APIs;
+
+embedding models;
+
+vector services;
+
+AI tools;
+
+agent frameworks;
+
+datasets;
+
+evaluation systems.
+
+39. AI Provider Security
+AI providers must be evaluated for:
+
+data handling;
+
+retention;
+
+isolation;
+
+model security;
+
+API security;
+
+availability;
+
+incident response;
+
+geographic considerations.
+
+40. Model Provenance
+The system should know:
+
+Model
+ ↓
+Provider
+ ↓
+Version
+ ↓
+Source
+ ↓
+Configuration
+ ↓
+Deployment
+A model should not silently change beneath a critical AI workflow without the platform knowing.
+
+41. Model Integrity
+Critical AI models/configurations should have mechanisms for:
+
+versioning;
+
+integrity verification;
+
+approval;
+
+rollback.
+
+42. Model Change Monitoring
+If an external AI provider changes the model behind an API:
+
+Model Change
+ ↓
+Detection
+ ↓
+Impact Assessment
+ ↓
+Validation
+ ↓
+Approval / Restriction
+This is particularly important because model behaviour can change even when an API contract appears unchanged.
+
+43. AI Data Supply Chain
+Training, retrieval and contextual data may come from:
+
+internal systems;
+
+suppliers;
+
+external datasets;
+
+APIs;
+
+user-generated content.
+
+Data provenance should therefore be considered part of AI supply-chain security.
+
+44. AI Tool Supply Chain
+An AI agent may call external tools.
+
+Each tool becomes a potential supply-chain dependency.
+
+For example:
+
+AI Agent
+ ↓
+Tool
+ ↓
+External API
+ ↓
+External Service
+Every stage must have appropriate authorization.
+
+45. Malicious Tool Risk
+An external tool could potentially:
+
+capture information;
+
+alter data;
+
+return malicious content;
+
+manipulate AI context;
+
+cause unauthorized actions.
+
+Therefore:
+
+AI tools must be treated as privileged integrations.
+
+46. API Provider Security
+External APIs should be:
+
+authenticated;
+
+authorized;
+
+monitored;
+
+rate-limited;
+
+isolated;
+
+revocable.
+
+47. WhatsApp Integration
+The WhatsApp integration discussed earlier belongs inside this architecture as an external service dependency.
+
+The architecture should maintain:
+
+Essentials Mart
+      ↓
+Channel Controller
+      ↓
+WhatsApp Integration
+      ↓
+WhatsApp Platform
+WhatsApp should never become the source of truth.
+
+The Essentials Mart backend remains authoritative.
+
+48. Payment Provider Security
+Payment providers represent critical dependencies.
+
+Security architecture should consider:
+
+credentials;
+
+API permissions;
+
+transaction integrity;
+
+callback validation;
+
+webhook authentication;
+
+replay protection;
+
+provider outages;
+
+incident response.
+
+49. Delivery Provider Security
+Delivery providers may receive limited information required to fulfil deliveries.
+
+Their access should be:
+
+scoped;
+
+time-bound where practical;
+
+monitored;
+
+revocable.
+
+50. Mapping Provider Security
+Walk Mode may depend on mapping/location providers.
+
+Security considerations include:
+
+location data;
+
+API keys;
+
+map data;
+
+routing requests;
+
+provider availability;
+
+privacy.
+
+51. External Service Isolation
+A compromised provider should not automatically compromise Essentials Mart.
+
+For example:
+
+External Provider
+       X
+       │
+       ↓
+Integration Boundary
+       ↓
+Authorized API
+       ↓
+Essentials Mart Service
+52. Integration Gateway
+External services should ideally interact through controlled integration boundaries rather than direct access to internal systems.
+
+This creates:
+
+authorization;
+
+validation;
+
+monitoring;
+
+rate limiting;
+
+isolation;
+
+auditability.
+
+53. Webhook Security
+External callbacks must be treated as untrusted input.
+
+The system should validate:
+
+source;
+
+signature;
+
+timestamp;
+
+request integrity;
+
+replay;
+
+expected event;
+
+authorization.
+
+54. Supplier Software
+Suppliers may provide:
+
+integrations;
+
+data feeds;
+
+inventory systems;
+
+APIs;
+
+hardware;
+
+software.
+
+Those components must be treated as part of the supply-chain attack surface.
+
+55. Hardware Supply Chain
+Where Essentials Mart deploys hardware, security should consider:
+
+device provenance;
+
+firmware;
+
+secure configuration;
+
+update mechanisms;
+
+device identity;
+
+tampering;
+
+replacement.
+
+56. Firmware Security
+Where relevant:
+
+Firmware
+ ↓
+Authenticity
+ ↓
+Integrity
+ ↓
+Authorized Update
+ ↓
+Device
+Unauthorized firmware must not be accepted.
+
+57. Store Technology Supply Chain
+Store systems may include:
+
+POS;
+
+staff terminals;
+
+scanners;
+
+inventory devices;
+
+Walk Mode infrastructure;
+
+networking equipment;
+
+cameras/sensors where applicable.
+
+These should be included in the technology supply-chain inventory.
+
+58. Supplier Software Updates
+External software updates should not automatically enter production without appropriate controls.
+
+Potential flow:
+
+Update Available
+ ↓
+Verify Source
+ ↓
+Assess Risk
+ ↓
+Test
+ ↓
+Approve
+ ↓
+Deploy
+ ↓
+Monitor
+59. Emergency Supplier Updates
+Emergency patches may require accelerated approval.
+
+However:
+
+Emergency does not mean unverified.
+
+The process should remain auditable.
+
+60. Supplier Incident Notification
+Contracts with critical suppliers should establish appropriate notification expectations.
+
+For example:
+
+Supplier Incident
+       ↓
+Supplier Notification
+       ↓
+Essentials Mart Assessment
+       ↓
+Containment
+       ↓
+Investigation
+61. Supplier Incident Integration
+Supplier incidents must feed into Commit 016 and 017.
+
+Supplier Monitoring
+       ↓
+Detection
+       ↓
+Incident Response
+62. Supplier Offboarding
+When a supplier relationship ends:
+
+credentials revoked;
+
+API keys revoked;
+
+access removed;
+
+data returned/deleted where required;
+
+integrations disabled;
+
+devices reclaimed where applicable;
+
+certificates revoked.
+
+63. Technology Offboarding
+The same principle applies to technology providers.
+
+When an external service is retired:
+
+Service
+ ↓
+Dependency Inventory
+ ↓
+Consumers Identified
+ ↓
+Migration
+ ↓
+Credentials Revoked
+ ↓
+Integration Disabled
+64. Dependency Mapping
+Essentials Mart should understand:
+
+Which system
+     ↓
+depends on which provider
+     ↓
+for which function
+     ↓
+with which data
+     ↓
+under which credentials
+This becomes extremely valuable during incidents.
+
+65. Critical Dependency Register
+The platform should maintain a register of critical dependencies containing:
+
+dependency;
+
+owner;
+
+purpose;
+
+risk;
+
+criticality;
+
+data access;
+
+authentication method;
+
+geographic exposure;
+
+alternative provider;
+
+incident contact;
+
+recovery strategy.
+
+66. Single-Provider Risk
+Where a single external dependency can cause catastrophic failure, the platform should identify the concentration risk.
+
+Examples:
+
+AI Provider
+Payment Provider
+Cloud Provider
+Messaging Provider
+Delivery Provider
+67. Alternative Providers
+Critical services should consider whether alternatives exist.
+
+For example:
+
+Primary Provider
+      ↓
+Failure
+      ↓
+Fallback Provider
+Not every service requires a fallback.
+
+Criticality determines the requirement.
+
+68. Dependency Failure vs Compromise
+These are different.
+
+Failure
+Provider stops working.
+
+Compromise
+Provider becomes malicious or is compromised.
+
+The response strategy must differ.
+
+69. Compromised Provider
+If a provider becomes compromised:
+
+Provider
+ ↓
+Trust Revoked
+ ↓
+Credentials Revoked
+ ↓
+Integration Restricted
+ ↓
+Alternative Activated
+ ↓
+Investigation
+70. Supply-Chain Risk Monitoring
+Monitoring should combine:
+
+internal security signals;
+
+provider notifications;
+
+vulnerability intelligence;
+
+threat intelligence;
+
+supplier assessments;
+
+dependency changes.
+
+71. Vulnerability Intelligence
+A newly discovered vulnerability in a dependency should automatically trigger:
+
+Vulnerability
+ ↓
+Dependency Inventory
+ ↓
+Affected Systems
+ ↓
+Risk Evaluation
+ ↓
+Remediation
+72. Supply-Chain Attack Detection
+The platform should be capable of detecting indicators such as:
+
+unexpected dependency changes;
+
+suspicious build activity;
+
+unusual provider behaviour;
+
+unexpected outbound connections;
+
+malicious package indicators;
+
+artifact integrity failures.
+
+73. Supply-Chain Evidence
+Supply-chain activity should be auditable.
+
+Examples:
+
+supplier onboarding;
+
+security assessment;
+
+approval;
+
+access grant;
+
+dependency change;
+
+model change;
+
+provider change;
+
+credential issuance;
+
+offboarding.
+
+74. Supply-Chain Auditability
+Every critical external relationship should answer:
+
+Who?
+What?
+Why?
+When?
+Which authority?
+Which data?
+Which system?
+Which dependency?
+What changed?
+75. Supply-Chain Security and Trust Engine
+The Trust Engine may provide supporting signals.
+
+However:
+
+Security controls must never be bypassed because the Trust Engine considers a supplier highly trusted.
+
+76. Supply-Chain Security and AI Society
+AI agents may interact with external services.
+
+Therefore the AI Society must inherit supply-chain controls.
+
+For example:
+
+AI Agent
+ ↓
+Tool Permission
+ ↓
+Integration
+ ↓
+External Provider
+Every layer remains governed.
+
+77. AI Cannot Add Arbitrary Dependencies
+An AI agent must not autonomously introduce a new external integration simply because it believes it would be useful.
+
+New integrations require architectural authorization.
+
+78. Supply-Chain Security and Analytics
+Supplier and dependency analytics should be access-controlled.
+
+For example:
+
+procurement staff may see supplier risk;
+
+security staff may see security posture;
+
+executives may see aggregate exposure;
+
+suppliers see only their own authorized information.
+
+79. Supply-Chain Security and Privacy
+Supplier access must respect privacy architecture.
+
+A supplier should never receive customer information merely because the supplier is operationally connected to Essentials Mart.
+
+80. Supply-Chain Security and Incident Response
+Commit 018 directly connects with Commit 017.
+
+Supply-Chain Monitoring
+        ↓
+Detection
+        ↓
+Incident Response
+        ↓
+Provider Containment
+        ↓
+Recovery / Replacement
+81. Supply-Chain Security and Business Continuity
+Critical suppliers should have appropriate continuity considerations.
+
+Examples:
+
+alternate providers;
+
+fallback processes;
+
+backup credentials;
+
+alternate logistics;
+
+manual procedures.
+
+82. Supplier Resilience
+Supplier evaluation should consider:
+
+financial resilience;
+
+operational resilience;
+
+geographic concentration;
+
+disaster recovery;
+
+incident response capability.
+
+Security is not only about malicious attackers.
+
+A supplier failure can also create systemic risk.
+
+83. Supply-Chain Governance
+Every critical external dependency should have an accountable owner.
+
+That owner is responsible for:
+
+relationship;
+
+risk;
+
+access;
+
+security review;
+
+renewal;
+
+offboarding.
+
+84. Security Approval
+Critical dependencies should require appropriate security review before production use.
+
+85. Exception Management
+Sometimes a dependency cannot satisfy every security requirement.
+
+Exceptions should therefore require:
+
+justification;
+
+risk assessment;
+
+compensating controls;
+
+owner;
+
+expiry date;
+
+approval.
+
+86. No Permanent Exceptions
+Security exceptions should not silently become permanent architecture.
+
+Expired exceptions should trigger review.
+
+87. Supply-Chain Change Management
+Changes to critical dependencies should be controlled.
+
+Examples:
+
+provider changes;
+
+dependency upgrades;
+
+API changes;
+
+model changes;
+
+supplier ownership changes;
+
+geographic changes.
+
+88. Change Impact Analysis
+Before significant changes:
+
+Change
+ ↓
+Affected Systems
+ ↓
+Affected Data
+ ↓
+Security Impact
+ ↓
+Operational Impact
+ ↓
+Approval
+89. Supply-Chain Security Testing
+Critical integrations should undergo security testing appropriate to their risk.
+
+Possible testing includes:
+
+API testing;
+
+penetration testing;
+
+dependency scanning;
+
+artifact verification;
+
+configuration review;
+
+resilience testing.
+
+90. Continuous Assurance
+Security assurance must continue throughout the relationship.
+
+The lifecycle is:
+
+Onboard
+ ↓
+Assess
+ ↓
+Authorize
+ ↓
+Integrate
+ ↓
+Monitor
+ ↓
+Review
+ ↓
+Renew / Remediate / Replace
+ ↓
+Offboard
+91. Global Supply-Chain Architecture
+At:
+
+100M+ users
+
+10,000+ stores
+
+multiple countries
+
+millions of transactions
+
+Essentials Mart may depend on thousands of external entities.
+
+The platform therefore needs centralized supply-chain visibility while allowing regional risk differences.
+
+92. Regional Supply Chains
+Different countries may have:
+
+different suppliers;
+
+different payment providers;
+
+different logistics;
+
+different cloud regions;
+
+different regulations.
+
+The architecture must support regional dependency maps.
+
+93. Global Dependency Registry
+Conceptually:
+
+                 GLOBAL DEPENDENCY REGISTRY
+                           │
+           ┌───────────────┼───────────────┐
+           ↓               ↓               ↓
+        Region A        Region B        Region C
+           ↓               ↓               ↓
+      Providers        Providers        Providers
+94. Supply-Chain Blast Radius
+The platform should understand:
+
+If this dependency is compromised, what can it reach?
+
+For example:
+
+Provider
+ ↓
+Service
+ ↓
+Data
+ ↓
+Users
+ ↓
+Stores
+ ↓
+Regions
+This allows response teams to prioritize containment.
+
+95. Dependency Graph
+A dependency graph should represent:
+
+Application
+   ↓
+Service
+   ↓
+Library
+   ↓
+Provider
+   ↓
+External System
+and:
+
+Supplier
+   ↓
+Product
+   ↓
+Inventory
+   ↓
+Store
+   ↓
+Customer
+96. Supply-Chain Risk Scoring
+A dependency's risk may consider:
+
+Criticality
++
+Access
++
+Data Sensitivity
++
+Exposure
++
+Concentration
++
+Security Posture
++
+Recovery Difficulty
+The resulting risk supports decision-making but does not replace explicit security controls.
+
+97. Security Boundaries
+Every external dependency must have a defined boundary.
+
+The architecture must answer:
+
+What can this dependency see?
+
+What can it change?
+
+What can it invoke?
+
+What happens if it is compromised?
+
+98. Zero Trust Application
+Supply-chain security follows the wider Zero Trust philosophy.
+
+External entities should not receive implicit trust simply because:
+
+they have a contract;
+
+they have been a supplier for years;
+
+they are a major technology company;
+
+they are inside a trusted network.
+
+Access remains explicitly authorized.
+
+99. Non-Negotiable Rules
+Rule 1
+Every critical external dependency must have an identifiable owner.
+
+Rule 2
+External entities receive only the minimum necessary access.
+
+Rule 3
+Supplier trust does not override security controls.
+
+Rule 4
+Critical dependencies require risk-based security assessment.
+
+Rule 5
+Software dependencies must be inventoried and traceable.
+
+Rule 6
+Critical artifacts must have integrity/provenance controls.
+
+Rule 7
+AI providers, models and tools are supply-chain dependencies.
+
+Rule 8
+External integrations must be isolated through controlled boundaries.
+
+Rule 9
+Critical supplier relationships must be continuously monitored.
+
+Rule 10
+Supplier and dependency access must be revocable.
+
+Rule 11
+Supply-chain incidents must integrate with Incident Response.
+
+Rule 12
+Critical dependency concentration must be identified.
+
+Rule 13
+AI agents cannot autonomously introduce arbitrary external dependencies.
+
+Rule 14
+Offboarding must revoke access and remove dependency trust.
+
+Rule 15
+Supply-chain security must cover the entire dependency lifecycle.
+
+100. Success Criteria
+The Supply-Chain Security Architecture succeeds when Essentials Mart can:
+
+identify critical dependencies;
+
+identify supplier relationships;
+
+assess supply-chain risks;
+
+control supplier access;
+
+isolate external integrations;
+
+track software dependencies;
+
+track AI dependencies;
+
+establish artifact provenance;
+
+monitor critical providers;
+
+detect dependency compromise;
+
+revoke compromised providers;
+
+contain supplier incidents;
+
+protect customer data from suppliers;
+
+manage supplier analytics securely;
+
+detect concentration risk;
+
+maintain fallback strategies where justified;
+
+securely onboard suppliers;
+
+securely offboard suppliers;
+
+integrate supply-chain incidents with incident response.
+
+Most importantly:
+
+Essentials Mart must remain secure even when an external dependency is compromised.
+
+101. Architectural Outcome
+Commit 018 creates the Supply-Chain Security Boundary.
+
+The progression is now:
+
+015 — Evidence
+       ↓
+016 — Detection
+       ↓
+017 — Response
+       ↓
+018 — Supply-Chain Security
+And the broader relationship becomes:
+
+                    EXTERNAL WORLD
+                         │
+       ┌─────────────────┼─────────────────┐
+       │                 │                 │
+   Suppliers         Technology        AI Providers
+       │                 │                 │
+       └─────────────────┼─────────────────┘
+                         ↓
+              SUPPLY-CHAIN BOUNDARY
+                         ↓
+                  TRUST + RISK
+                         ↓
+                CONTROLLED ACCESS
+                         ↓
+                  INTEGRATIONS
+                         ↓
+                 ESSENTIALS MART
+                         ↓
+          ┌──────────────┴──────────────┐
+          ↓                             ↓
+       Monitoring                  Audit Evidence
+          ↓                             ↓
+       Detection                  Incident Response
+This also makes something we discussed earlier much stronger: WhatsApp, delivery providers, payment providers, mapping services and AI providers are not random integrations scattered throughout the architecture. They all become governed external dependencies.
