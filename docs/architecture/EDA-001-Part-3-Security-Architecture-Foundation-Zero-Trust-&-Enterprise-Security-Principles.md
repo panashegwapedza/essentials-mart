@@ -16141,3 +16141,1497 @@ reward security scales with the wider Essentials Mart platform.
 The ultimate objective is:
 
 Essentials Mart must make its reward systems attractive to legitimate customers without making those same incentives attractive attack surfaces for economically motivated abuse.
+
+Commit 012 — Fraud & Abuse Architecture
+1. Purpose
+The Fraud & Abuse Architecture defines how Essentials Mart detects, prevents, contains, investigates and learns from malicious, deceptive, manipulative and economically abusive behaviour across the platform.
+
+Fraud and abuse are broader than conventional cybersecurity.
+
+Cybersecurity primarily protects:
+
+systems;
+
+identities;
+
+infrastructure;
+
+data;
+
+services.
+
+Fraud and abuse additionally protect the economic and operational integrity of the marketplace.
+
+Essentials Mart must therefore protect against abuse originating from:
+
+customers;
+
+households;
+
+staff;
+
+suppliers;
+
+administrators;
+
+delivery participants;
+
+external actors;
+
+compromised accounts;
+
+automated systems;
+
+AI-assisted attackers;
+
+coordinated groups.
+
+The architecture must operate across the full platform rather than treating fraud as an isolated feature.
+
+2. Security Objective
+The Fraud & Abuse Architecture must ensure that Essentials Mart can:
+
+detect suspicious activity;
+
+distinguish legitimate unusual behaviour from abuse;
+
+prevent fraudulent transactions;
+
+detect account compromise;
+
+detect coordinated abuse;
+
+protect customers from fraudulent activity;
+
+protect suppliers from manipulation;
+
+protect staff from impersonation and abuse;
+
+protect rewards and promotions;
+
+protect returns and refunds;
+
+protect deliveries;
+
+protect marketplace integrity;
+
+protect AI-driven operations;
+
+contain attacks before significant damage occurs;
+
+investigate incidents using reliable evidence;
+
+recover affected accounts and transactions;
+
+continuously improve detection.
+
+The central principle is:
+
+The platform must evaluate behaviour in context rather than assuming that a valid identity automatically represents legitimate activity.
+
+This aligns with the Zero Trust approach in which identity, device, behaviour and resource context contribute to security decisions rather than implicit trust based on location or affiliation. 
+
+3. Fraud & Abuse Security Boundary
+Fraud Intelligence operates across multiple enterprise domains.
+
+                         ENTERPRISE ACTIVITY
+                                │
+        ┌───────────────────────┼────────────────────────┐
+        │                       │                        │
+      Identity               Commerce                 Rewards
+        │                       │                        │
+        └───────────────────────┼────────────────────────┘
+                                │
+                                ▼
+                     ┌────────────────────┐
+                     │ Fraud Intelligence │
+                     │      Engine        │
+                     └────────────────────┘
+                                │
+             ┌──────────────────┼──────────────────┐
+             │                  │                  │
+             ▼                  ▼                  ▼
+          Signals            Risk              Patterns
+             │              Assessment           │
+             └──────────────────┼──────────────────┘
+                                ▼
+                         Fraud Decision
+                                │
+               ┌────────────────┼────────────────┐
+               │                │                │
+             Allow            Review            Block
+               │                │                │
+               └────────────────┼────────────────┘
+                                ▼
+                              Audit
+Fraud Intelligence provides intelligence and decisions within its authorised boundary.
+
+It must not become an unrestricted authority over unrelated enterprise resources.
+
+4. Fraud Is Not the Same as Trust
+The Trust Engine and Fraud Intelligence must remain separate.
+
+Trust Engine
+     │
+     └──► Trust / confidence signals
+
+Fraud Intelligence
+     │
+     └──► Fraud / abuse risk signals
+A trusted customer can commit fraud.
+
+A new customer can be completely legitimate.
+
+Therefore:
+
+Trust is not proof of legitimacy, and low trust is not proof of fraud.
+
+Fraud decisions must consider multiple contextual signals.
+
+5. Fraud Is Not the Same as Cybersecurity
+A compromised credential may represent a cybersecurity event.
+
+What happens afterwards may become a fraud event.
+
+For example:
+
+Credential Compromise
+        ↓
+Account Takeover
+        ↓
+Unauthorised Purchase
+        ↓
+Delivery Interception
+        ↓
+Financial Loss
+The security architecture must allow these domains to cooperate without collapsing their responsibilities into one system.
+
+6. Fraud Intelligence Responsibilities
+Fraud Intelligence is responsible for:
+
+fraud detection;
+
+abuse detection;
+
+behavioural anomaly analysis;
+
+transaction risk;
+
+account risk;
+
+promotion abuse detection;
+
+reward abuse detection;
+
+return abuse detection;
+
+delivery abuse detection;
+
+supplier abuse detection;
+
+staff abuse detection;
+
+marketplace manipulation detection;
+
+coordinated activity analysis;
+
+fraud case creation;
+
+risk signals;
+
+fraud decision support;
+
+fraud investigation support.
+
+7. Does Not Own
+Fraud Intelligence does not own:
+
+identity;
+
+authentication;
+
+user accounts;
+
+payments;
+
+orders;
+
+inventory;
+
+rewards;
+
+trust scores;
+
+audit records;
+
+customer profiles.
+
+Those remain owned by their respective domains.
+
+Fraud Intelligence consumes authorised information and publishes fraud intelligence.
+
+8. Fraud Signals
+Fraud detection may consume signals including:
+
+transaction behaviour;
+
+account behaviour;
+
+device behaviour;
+
+location patterns;
+
+payment patterns;
+
+order patterns;
+
+delivery patterns;
+
+refund patterns;
+
+return patterns;
+
+referral patterns;
+
+reward patterns;
+
+promotion patterns;
+
+staff activity;
+
+supplier activity;
+
+AI activity;
+
+network signals;
+
+historical fraud cases.
+
+No single signal should automatically determine fraud unless explicitly justified by policy.
+
+9. Contextual Risk
+Fraud risk should be evaluated in context.
+
+Conceptually:
+
+Identity
+   +
+Device
+   +
+Behaviour
+   +
+Transaction
+   +
+Location
+   +
+History
+   +
+Relationship
+   +
+Timing
+   +
+Threat Signals
+   ↓
+Fraud Risk Assessment
+This supports the wider Essentials Mart principle that security decisions should be contextual and continuously evaluated. NIST's Zero Trust implementation guidance similarly describes risk-based assessment using requester identity, role, device health, resource sensitivity, location and behavioural consistency. 
+
+10. Account Takeover
+The platform must detect indicators of account takeover including:
+
+unusual login behaviour;
+
+unexpected device changes;
+
+unusual location;
+
+sudden credential changes;
+
+unusual payment activity;
+
+abnormal shopping behaviour;
+
+unexpected address changes;
+
+unusual WhatsApp activity;
+
+unusual API activity;
+
+abnormal household changes.
+
+A suspicious account should not necessarily be immediately deleted.
+
+The system may instead:
+
+Normal
+  ↓
+Suspicious
+  ↓
+Step-up Verification
+  ↓
+Restricted
+  ↓
+Confirmed Compromise
+  ↓
+Contained
+11. Transaction Fraud
+Transaction risk controls must consider:
+
+unusual transaction value;
+
+unusual frequency;
+
+unusual product combinations;
+
+unusual payment behaviour;
+
+unusual delivery destination;
+
+account history;
+
+device relationships;
+
+geographic anomalies;
+
+previous fraud indicators.
+
+The objective is to identify suspicious transactions without unnecessarily blocking legitimate customers.
+
+12. Payment Abuse
+Fraud controls must protect against:
+
+stolen payment instruments;
+
+payment testing;
+
+repeated failed payment attempts;
+
+transaction manipulation;
+
+refund manipulation;
+
+payment-method cycling;
+
+account/payment-instrument farming;
+
+suspicious high-frequency transactions.
+
+Payment systems remain the authoritative source for payment status.
+
+Fraud Intelligence must not invent payment outcomes.
+
+13. Refund Abuse
+The system must detect patterns such as:
+
+repeated refund requests;
+
+refund after consumption;
+
+refund after successful delivery;
+
+repeated claims for the same order;
+
+refund cycling;
+
+suspicious account clusters;
+
+coordinated refund behaviour.
+
+A refund decision must remain attributable to the underlying order and payment state.
+
+14. Return Abuse
+Return abuse may include:
+
+returning unrelated products;
+
+repeated suspicious returns;
+
+product substitution;
+
+false damage claims;
+
+serial return behaviour;
+
+returning consumed goods;
+
+exploiting return windows.
+
+Returns must therefore be evaluated against:
+
+order;
+
+product;
+
+customer;
+
+delivery;
+
+timestamps;
+
+return history;
+
+relevant evidence.
+
+15. Delivery Fraud
+Delivery abuse must consider:
+
+false delivery claims;
+
+delivery interception;
+
+repeated failed deliveries;
+
+suspicious address changes;
+
+driver/customer collusion;
+
+delivery confirmation manipulation;
+
+package substitution;
+
+fraudulent proof of delivery.
+
+The Delivery system remains responsible for fulfilment state.
+
+Fraud Intelligence evaluates suspicious behaviour surrounding it.
+
+16. Promotion Abuse
+Promotion abuse includes:
+
+repeated promotion use;
+
+account cycling;
+
+referral farms;
+
+synthetic customers;
+
+household manipulation;
+
+geographic manipulation;
+
+product substitution;
+
+campaign exploitation.
+
+Promotion rules must remain server-authoritative.
+
+17. Reward Abuse
+Fraud Intelligence works with Reward Intelligence to detect:
+
+reward farming;
+
+referral abuse;
+
+synthetic activity;
+
+milestone manipulation;
+
+coordinated reward extraction;
+
+abnormal redemption;
+
+reward laundering.
+
+The separation remains:
+
+Fraud Intelligence
+        │
+        ▼
+Risk Signal
+        │
+        ▼
+Reward Intelligence
+        │
+        ▼
+Reward Decision
+Fraud Intelligence does not directly modify rewards.
+
+18. Supplier Abuse
+Supplier fraud and abuse may include:
+
+false inventory reports;
+
+manipulated product performance;
+
+fraudulent fulfilment;
+
+pricing manipulation;
+
+promotion manipulation;
+
+counterfeit products;
+
+false returns;
+
+complaint manipulation;
+
+coordinated customer activity;
+
+incentive manipulation.
+
+Supplier risk must therefore be evaluated independently from customer fraud.
+
+19. Staff Abuse
+Staff have elevated access and therefore represent a distinct risk category.
+
+Potential abuse includes:
+
+unauthorised customer access;
+
+reward manipulation;
+
+refund manipulation;
+
+inventory manipulation;
+
+order manipulation;
+
+information theft;
+
+suppression of fraud flags;
+
+unauthorised account changes;
+
+collusion.
+
+Staff activity must be evaluated against:
+
+role;
+
+clearance;
+
+authorised duties;
+
+location;
+
+shift;
+
+normal behaviour;
+
+affected records.
+
+This builds directly upon the Staff Clearance Architecture.
+
+20. Privileged Abuse
+Administrative identities require especially strong controls.
+
+Privileged fraud signals may include:
+
+unusual administrative actions;
+
+bulk modifications;
+
+unusual access times;
+
+unexpected geographic access;
+
+abnormal data exports;
+
+unusual configuration changes;
+
+repeated overrides.
+
+High-impact privileged actions should trigger stronger monitoring.
+
+21. Collusion Detection
+Fraud may involve multiple apparently legitimate participants.
+
+Potential relationships include:
+
+Customer
+    ↕
+Staff
+    ↕
+Supplier
+    ↕
+Delivery Participant
+The platform must therefore detect suspicious networks rather than only individual accounts.
+
+Possible signals include:
+
+repeated interaction patterns;
+
+shared devices;
+
+shared payment instruments;
+
+shared addresses;
+
+unusual transaction relationships;
+
+repeated staff/customer relationships;
+
+referral clusters;
+
+coordinated timing.
+
+22. Sybil and Synthetic Identity Abuse
+The platform must resist attackers creating many identities to exploit:
+
+rewards;
+
+promotions;
+
+referrals;
+
+household benefits;
+
+new-user incentives;
+
+marketplace privileges.
+
+Detection may consider relationships between:
+
+identity;
+
+device;
+
+payment;
+
+phone number;
+
+email;
+
+household;
+
+address;
+
+behaviour.
+
+No single shared attribute should automatically result in account denial.
+
+23. Household Fraud Boundaries
+Households introduce special complexity.
+
+The platform must distinguish:
+
+legitimate shared behaviour
+
+from:
+
+coordinated exploitation.
+
+For example, multiple household members may legitimately:
+
+use the same address;
+
+use the same payment method;
+
+share products;
+
+place multiple orders.
+
+Therefore household relationships must be treated as legitimate context rather than automatically suspicious.
+
+24. Walk Mode Fraud & Abuse
+Walk Mode introduces additional fraud surfaces.
+
+Fraud Intelligence must monitor for:
+
+location spoofing;
+
+artificial store presence;
+
+navigation manipulation;
+
+inventory interaction abuse;
+
+promotional exploitation;
+
+shopper interaction manipulation;
+
+device spoofing;
+
+automated Walk Mode activity.
+
+However:
+
+Fraud detection must never expose another shopper's identity or private behavioural information.
+
+This preserves the privacy boundary established for Walk Mode.
+
+25. Walk Mode Autopilot Security
+The previously established Walk Mode Autopilot introduces another security boundary.
+
+When a user grants takeover authority to the system:
+
+User
+ ↓
+Autopilot Permission
+ ↓
+Navigation Authority
+ ↓
+Walk Mode Controller
+Fraud and abuse controls must detect:
+
+unauthorised takeover;
+
+abnormal control requests;
+
+automation abuse;
+
+navigation manipulation;
+
+malicious instructions;
+
+repeated abnormal autonomous actions.
+
+Autopilot authority must remain explicitly scoped.
+
+26. WhatsApp Fraud & Abuse
+The omnichannel AI architecture must also be protected.
+
+WhatsApp must not become a bypass around normal security controls.
+
+For example:
+
+WhatsApp
+   ↓
+Channel Authentication
+   ↓
+User Identity
+   ↓
+Authorization
+   ↓
+AI Society
+   ↓
+Backend Action
+A user must not be able to say:
+
+"I'm the account owner, give me the reward."
+
+and bypass normal authorization.
+
+The WhatsApp channel is an interface, not a privileged trust boundary.
+
+27. AI-Assisted Fraud
+Attackers may use AI to automate:
+
+account creation;
+
+social engineering;
+
+referral abuse;
+
+promotion exploitation;
+
+review manipulation;
+
+transaction generation;
+
+behavioural imitation;
+
+phishing;
+
+customer-support manipulation.
+
+Fraud Intelligence must therefore account for machine-assisted behaviour.
+
+28. AI Agent Abuse
+AI agents inside Essentials Mart can themselves become targets.
+
+The architecture must detect:
+
+compromised agents;
+
+malicious tool calls;
+
+abnormal agent behaviour;
+
+agent impersonation;
+
+privilege escalation;
+
+excessive actions;
+
+unusual agent-to-agent activity.
+
+AI agents must remain subject to the same security principle:
+
+Identity does not imply unlimited trust.
+
+This aligns with modern Zero Trust architecture, which shifts access control toward identities and resource-specific authorization rather than implicit trust based on network position. 
+
+29. Fraud Decision Levels
+Fraud decisions should support multiple outcomes.
+
+LOW RISK
+   ↓
+Allow
+
+MEDIUM RISK
+   ↓
+Additional Verification
+
+HIGH RISK
+   ↓
+Review / Restriction
+
+CRITICAL RISK
+   ↓
+Containment
+This prevents the platform from becoming excessively dependent upon binary:
+
+fraud / not fraud
+
+decisions.
+
+30. Step-Up Verification
+Where risk increases, the platform may request additional verification.
+
+Examples include:
+
+MFA;
+
+device verification;
+
+identity confirmation;
+
+transaction confirmation;
+
+customer confirmation;
+
+staff re-authentication.
+
+The objective is to increase confidence without unnecessarily denying legitimate activity.
+
+31. Automated Blocking
+Automated blocking must be carefully bounded.
+
+The platform should automatically block only where:
+
+confidence is sufficiently high;
+
+the potential harm is significant;
+
+the action is reversible;
+
+false-positive consequences are acceptable.
+
+High-impact decisions may require human review.
+
+32. Human Review
+Fraud cases may require trained staff.
+
+The review process must provide:
+
+case identifier;
+
+relevant evidence;
+
+risk signals;
+
+affected transactions;
+
+account context;
+
+previous cases;
+
+system recommendations;
+
+reviewer identity;
+
+reviewer decision.
+
+Reviewers must not be shown information beyond their clearance.
+
+33. Fraud Case Management
+Fraud cases must have controlled lifecycle states.
+
+Detected
+   ↓
+Triaged
+   ↓
+Investigating
+   ↓
+Confirmed / Unconfirmed
+   ↓
+Actioned
+   ↓
+Resolved
+   ↓
+Closed
+Cases may also be reopened where new evidence emerges.
+
+34. Evidence Integrity
+Fraud investigations depend on trustworthy evidence.
+
+Evidence must preserve:
+
+source;
+
+timestamp;
+
+identity;
+
+event;
+
+context;
+
+relationship;
+
+original state;
+
+subsequent actions.
+
+Fraud evidence must not be casually overwritten.
+
+This integrates with the enterprise audit architecture established earlier.
+
+35. Fraud Analytics
+Fraud analytics must be role-specific.
+
+Customer
+Customers should not see internal fraud scores.
+
+They may see:
+
+account security status;
+
+verification requests;
+
+relevant transaction restrictions;
+
+appeal information.
+
+Staff
+Staff may see only cases permitted by clearance.
+
+Security Personnel
+Security personnel may access broader investigation information.
+
+Administrators
+Administrative access remains subject to privileged authorization.
+
+Suppliers
+Suppliers receive only information relevant to their permitted business relationship.
+
+36. Fraud Model Security
+If machine-learning models are used, the architecture must protect against:
+
+model manipulation;
+
+poisoned training data;
+
+adversarial inputs;
+
+model drift;
+
+false positives;
+
+false negatives;
+
+model abuse.
+
+Model outputs must remain attributable to a specific model version.
+
+37. Model Decision Governance
+A fraud model must not become an invisible authority.
+
+For significant decisions, the system should preserve:
+
+model version;
+
+input context;
+
+output;
+
+confidence;
+
+applicable policy;
+
+final decision;
+
+human override where applicable.
+
+This allows later reconstruction.
+
+38. False Positives
+Fraud systems inevitably produce false positives.
+
+Essentials Mart must therefore support:
+
+appeal;
+
+review;
+
+correction;
+
+restoration;
+
+learning from incorrect decisions.
+
+A legitimate customer must not be permanently classified as fraudulent because of one anomalous event.
+
+39. False Negatives
+The opposite risk also matters.
+
+A fraudulent activity that initially appears legitimate may later be identified.
+
+The architecture must support:
+
+retrospective investigation;
+
+transaction linkage;
+
+account linkage;
+
+reward reversal;
+
+refund review;
+
+supplier investigation;
+
+incident escalation.
+
+Fraud detection therefore remains a continuous process.
+
+40. Fraud Feedback Loop
+The platform should learn from confirmed outcomes.
+
+Detection
+   ↓
+Investigation
+   ↓
+Outcome
+   ↓
+Evidence
+   ↓
+Fraud Intelligence
+   ↓
+Improved Detection
+However, confirmed fraud data must be governed carefully to prevent incorrect labels from propagating indefinitely.
+
+41. Fraud Containment
+When fraud is confirmed, containment may include:
+
+session termination;
+
+temporary account restriction;
+
+transaction blocking;
+
+reward suspension;
+
+promotion suspension;
+
+payment review;
+
+delivery review;
+
+staff access restriction;
+
+supplier review;
+
+AI action restriction.
+
+Containment must remain proportionate to the threat.
+
+42. Kill Switches
+High-risk systems must have controlled emergency controls.
+
+Examples:
+
+disable promotion;
+
+freeze reward issuance;
+
+suspend referral programme;
+
+suspend affected payment route;
+
+restrict compromised staff identity;
+
+disable compromised AI tool;
+
+restrict Walk Mode feature;
+
+suspend affected supplier workflow.
+
+Each emergency action must be:
+
+authorised;
+
+logged;
+
+attributable;
+
+reversible where appropriate.
+
+43. Fraud Blast Radius
+Fraud controls must minimise blast radius.
+
+A compromised:
+
+customer account
+
+must not compromise:
+
+household-wide authority beyond permission;
+
+unrelated customers;
+
+supplier systems;
+
+staff systems;
+
+platform administration.
+
+A compromised:
+
+staff account
+
+must not automatically provide:
+
+global administrative authority;
+
+unrestricted customer data;
+
+unrestricted reward authority.
+
+A compromised:
+
+AI agent
+
+must not automatically access every enterprise domain.
+
+44. Rate and Velocity Controls
+The architecture must support rate and velocity analysis.
+
+Examples include:
+
+transactions per period;
+
+referrals per period;
+
+reward claims per period;
+
+refunds per period;
+
+account creation rate;
+
+delivery changes;
+
+authentication attempts;
+
+AI actions.
+
+Velocity is a signal, not automatically proof of fraud.
+
+45. Geographic Risk
+The system may consider:
+
+impossible travel;
+
+unusual store locations;
+
+unusual delivery regions;
+
+location changes;
+
+suspicious geographic clusters.
+
+However, location must be treated as sensitive information and handled according to the Privacy Architecture.
+
+46. Device Risk
+Device intelligence may consider:
+
+device identity;
+
+device integrity;
+
+device history;
+
+abnormal device changes;
+
+automation indicators;
+
+suspicious device relationships.
+
+Device signals must not become an excuse for unrestricted device surveillance.
+
+47. External Fraud Intelligence
+Where legally and operationally appropriate, Essentials Mart may consume external fraud intelligence.
+
+External intelligence must be:
+
+validated;
+
+attributable;
+
+appropriately scoped;
+
+protected;
+
+periodically reviewed.
+
+External data must not automatically override internal evidence without defined policy.
+
+48. Fraud Events
+Fraud Intelligence should publish events including:
+
+Fraud Signal Detected
+
+Fraud Risk Increased
+
+Fraud Risk Reduced
+
+Account Compromise Suspected
+
+Account Compromise Confirmed
+
+Transaction Flagged
+
+Transaction Blocked
+
+Transaction Released
+
+Fraud Case Created
+
+Fraud Case Escalated
+
+Fraud Case Resolved
+
+Abuse Pattern Detected
+
+Coordinated Activity Detected
+
+Staff Abuse Suspected
+
+Supplier Abuse Suspected
+
+AI Abuse Suspected
+
+Fraud Control Triggered
+
+Fraud Restriction Applied
+
+Fraud Restriction Removed
+
+These events integrate with Security Monitoring and Incident Response.
+
+49. Fraud Auditability
+Every material fraud decision must be reconstructable.
+
+The platform must be able to answer:
+
+Who or what triggered the decision?
+What happened?
+When?
+Where?
+Which identity was involved?
+Which device?
+Which transaction?
+Which signals?
+Which policy?
+Which model?
+Which authority?
+What action was taken?
+Who approved it?
+What happened afterwards?
+This directly connects Commit 012 with the enterprise audit model.
+
+50. Fraud Privacy Boundary
+Fraud detection must not become unrestricted surveillance.
+
+Fraud Intelligence must operate according to:
+
+data minimisation;
+
+purpose limitation;
+
+authorised access;
+
+retention policies;
+
+role-based visibility;
+
+regional requirements;
+
+privacy controls.
+
+Security intelligence must be powerful without becoming a mechanism for unnecessary collection of personal information.
+
+51. Fraud & Abuse Governance
+Fraud policies must be:
+
+versioned;
+
+approved;
+
+auditable;
+
+reviewable;
+
+measurable.
+
+Changes to major fraud rules must have:
+
+change owner;
+
+reason;
+
+approval;
+
+version;
+
+effective date;
+
+rollback strategy.
+
+52. Fraud Exceptions
+Exceptions must never become permanent undocumented bypasses.
+
+An exception must have:
+
+reason;
+
+owner;
+
+scope;
+
+start date;
+
+expiration;
+
+approval;
+
+audit trail.
+
+Temporary fraud overrides must automatically expire unless renewed through the appropriate authority.
+
+53. Fraud Security at Global Scale
+Fraud detection must remain effective at:
+
+100M+ users;
+
+10,000+ stores;
+
+millions of daily transactions;
+
+multiple countries;
+
+multiple currencies;
+
+multiple payment systems;
+
+multiple delivery networks;
+
+large AI workloads.
+
+The architecture must support distributed detection while preserving consistent security policies.
+
+54. Architectural Principles
+Fraud & Abuse Architecture must:
+
+treat fraud as an enterprise-wide concern;
+
+distinguish fraud from ordinary cybersecurity;
+
+distinguish fraud from trust;
+
+use contextual risk;
+
+avoid dependence on single signals;
+
+protect legitimate customers from unnecessary blocking;
+
+detect coordinated behaviour;
+
+protect economic systems;
+
+protect staff and supplier operations;
+
+protect AI agents and AI tools;
+
+preserve privacy;
+
+support human review;
+
+preserve evidence;
+
+support appeals;
+
+enable rapid containment;
+
+minimise blast radius;
+
+fail securely;
+
+continuously learn from confirmed outcomes;
+
+remain auditable;
+
+scale globally.
+
+55. Core Security Principle
+The following architectural rule is established:
+
+Fraud Intelligence may identify, assess and communicate fraud risk, but it must not become an unrestricted authority over the enterprise domains whose activity it evaluates.
+
+Fraud Intelligence informs and, where explicitly authorised, initiates security actions through controlled interfaces.
+
+It does not bypass domain ownership.
+
+56. Success Criteria
+The Fraud & Abuse Architecture succeeds when:
+
+compromised accounts can be detected and contained;
+
+transaction abuse can be identified;
+
+reward and promotion exploitation can be detected;
+
+referral farms can be identified;
+
+coordinated abuse can be detected;
+
+staff abuse can be investigated;
+
+supplier abuse can be investigated;
+
+delivery fraud can be detected;
+
+Walk Mode abuse can be contained;
+
+WhatsApp cannot bypass security controls;
+
+AI-assisted abuse can be identified;
+
+false positives can be corrected;
+
+confirmed fraud can feed future intelligence;
+
+fraud evidence remains trustworthy;
+
+security decisions remain auditable;
+
+privacy boundaries remain intact;
+
+fraud controls do not become a single point of catastrophic failure;
+
+the system remains effective at global scale.
+
+57. Foundational Principle
+Essentials Mart must not be designed around the assumption:
+
+"The user authenticated successfully, therefore the activity is legitimate."
+
+Instead:
+
+Identity
+   ↓
+Authorization
+   ↓
+Context
+   ↓
+Behaviour
+   ↓
+Transaction
+   ↓
+Risk
+   ↓
+Decision
+   ↓
+Continuous Monitoring
+This is consistent with the wider Zero Trust architecture already established for Essentials Mart, where access and security decisions are based on continuously evaluated context rather than implicit trust.
