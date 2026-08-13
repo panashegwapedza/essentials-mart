@@ -21092,3 +21092,1791 @@ Retain Deliberately
      ↓
 Delete Appropriately
 This is particularly important for Essentials Mart because the platform's competitive advantage will increasingly come from understanding context. The architecture must ensure that contextual intelligence does not evolve into uncontrolled personal surveillance.
+
+Commit 015 — Security Logging & Evidence Architecture
+1. Purpose
+The Security Logging & Evidence Architecture defines how Essentials Mart records, protects, correlates, retains and uses evidence of security-relevant activity across the entire platform.
+
+The objective is not simply to "keep logs."
+
+The objective is to ensure that when something happens, Essentials Mart can reliably determine:
+
+Who did what, when, where, using which identity, from which device, under which authority, through which system, what decision permitted it, what changed, and what happened afterwards.
+
+This architecture provides the evidentiary foundation required for:
+
+security investigations;
+
+fraud investigations;
+
+staff accountability;
+
+privileged-access monitoring;
+
+AI-agent accountability;
+
+incident response;
+
+privacy investigations;
+
+regulatory requirements;
+
+operational troubleshooting;
+
+dispute resolution;
+
+forensic analysis;
+
+security monitoring;
+
+Trust Engine integrity.
+
+2. Core Principle
+The central principle is:
+
+Every security-relevant action must leave sufficient trustworthy evidence to reconstruct what happened.
+
+However:
+
+Evidence must be proportional and privacy-aware.
+
+Commit 014 established that auditability does not justify indefinite collection of unnecessary personal information.
+
+Therefore:
+
+Security Evidence
+        +
+Privacy Controls
+        ↓
+Trusted Auditability
+3. Security Evidence Is Different From Application Logs
+Essentials Mart must distinguish between:
+
+Application Logs
+Used primarily for:
+
+debugging;
+
+performance;
+
+application health;
+
+errors;
+
+diagnostics.
+
+Security Logs
+Used for:
+
+authentication;
+
+authorization;
+
+privilege changes;
+
+suspicious activity;
+
+security events.
+
+Audit Records
+Used to establish:
+
+who performed an action;
+
+what action occurred;
+
+what resource was affected;
+
+under which authority.
+
+Forensic Evidence
+Used for deeper investigation following an incident.
+
+These systems may overlap technically, but their purposes, retention and integrity requirements differ.
+
+4. Evidence Architecture
+The conceptual architecture is:
+
+                     PLATFORM ACTIVITY
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+       Users              Staff            AI Agents
+          │                 │                 │
+       Suppliers          Services          Devices
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            ↓
+                     Event Generation
+                            ↓
+                    Evidence Collector
+                            ↓
+                 ┌──────────┴──────────┐
+                 │                     │
+             Security Logs        Audit Records
+                 │                     │
+                 └──────────┬──────────┘
+                            ↓
+                    Evidence Pipeline
+                            ↓
+                Integrity / Validation
+                            ↓
+                     Evidence Store
+                            ↓
+              ┌─────────────┼─────────────┐
+              │             │             │
+           Detection    Investigation   Analytics
+              │             │             │
+              └─────────────┼─────────────┘
+                            ↓
+                    Incident Response
+5. Events That Must Be Logged
+Security-relevant events include:
+
+login;
+
+logout;
+
+failed authentication;
+
+MFA challenge;
+
+MFA failure;
+
+password reset;
+
+credential change;
+
+session creation;
+
+session termination;
+
+device registration;
+
+device removal;
+
+permission changes;
+
+role changes;
+
+clearance changes;
+
+privilege escalation;
+
+privileged operations;
+
+account suspension;
+
+account recovery;
+
+API authentication;
+
+service authentication;
+
+AI-agent authentication;
+
+token creation;
+
+token revocation;
+
+sensitive data access;
+
+sensitive data modification;
+
+sensitive data deletion;
+
+security-policy changes;
+
+security configuration changes.
+
+6. Staff Activity
+Staff actions require particularly strong auditability.
+
+Examples include:
+
+viewing customer information;
+
+modifying customer records;
+
+issuing refunds;
+
+overriding transactions;
+
+changing inventory;
+
+modifying prices;
+
+approving returns;
+
+changing supplier information;
+
+accessing security systems;
+
+changing permissions;
+
+approving sensitive operations.
+
+The system must be able to reconstruct these actions.
+
+7. Staff Clearance Evidence
+The clearance architecture established earlier creates an important requirement.
+
+When a staff member performs a sensitive action, the evidence should establish:
+
+Staff Identity
+      ↓
+Role
+      ↓
+Clearance
+      ↓
+Permission
+      ↓
+Requested Action
+      ↓
+Policy Decision
+      ↓
+Action
+This is stronger than simply recording:
+
+"Staff member accessed record."
+
+It should be possible to determine why the access was permitted.
+
+8. AI Agent Logging
+The AI Society requires its own evidence model.
+
+Every consequential AI action should be attributable to:
+
+AI agent identity;
+
+agent version;
+
+initiating user;
+
+initiating channel;
+
+delegated authority;
+
+tools invoked;
+
+backend actions;
+
+policy decisions;
+
+approvals;
+
+result;
+
+errors;
+
+timestamps.
+
+For example:
+
+User
+ ↓
+WhatsApp
+ ↓
+AI Coordinator
+ ↓
+Shopping Intelligence Agent
+ ↓
+Shopping List Tool
+ ↓
+Authorization Check
+ ↓
+List Updated
+The evidence chain must preserve this sequence.
+
+9. AI Cannot Hide Behind the User
+A critical architectural rule:
+
+An AI agent performing an action on behalf of a user must be attributable both to the initiating user and to the specific AI agent that executed the action.
+
+The audit record should therefore distinguish:
+
+Actor
+
+from
+
+Delegated executor.
+
+For example:
+
+Initiator:
+User-123
+
+Channel:
+WhatsApp
+
+Agent:
+Household Intelligence Agent v4
+
+Authority:
+Household Shopping Permission
+
+Action:
+Added Product X to Shopping List
+
+Result:
+Success
+10. Autonomous AI Actions
+For autonomous actions, the system must record:
+
+which agent acted;
+
+what triggered the action;
+
+which policy allowed it;
+
+what authority the agent possessed;
+
+whether human approval was required;
+
+what context was used;
+
+what action occurred.
+
+This becomes essential as AI Society capabilities become increasingly autonomous.
+
+11. Human Approval Evidence
+Where an AI action requires human approval, the approval must itself be logged.
+
+AI Recommendation
+      ↓
+Approval Required
+      ↓
+Human Reviewer
+      ↓
+Approval / Rejection
+      ↓
+Action
+The system must not merely record:
+
+"Action approved."
+
+It should preserve the relationship between the approval and the action.
+
+12. WhatsApp Evidence
+The omnichannel architecture requires channel attribution.
+
+A WhatsApp action should be traceable through:
+
+WhatsApp Identity
+       ↓
+Channel Authentication
+       ↓
+User Identity
+       ↓
+AI Session
+       ↓
+Agent
+       ↓
+Backend Action
+       ↓
+Audit Event
+This prevents WhatsApp from becoming an unaudited side door into the platform.
+
+13. App Evidence
+The same principle applies to the Essentials Mart application.
+
+For example:
+
+Flutter App
+    ↓
+Authenticated User
+    ↓
+API Request
+    ↓
+Authorization
+    ↓
+Backend Service
+    ↓
+Database Change
+    ↓
+Audit Event
+The audit record must be generated by trusted backend components rather than relying solely on the client to report what happened.
+
+14. Client-Side Logs Are Not Authoritative Evidence
+A malicious client can manipulate its own local state.
+
+Therefore:
+
+Client-generated logs must never be treated as the authoritative record of security-sensitive activity.
+
+The authoritative security evidence must originate from trusted infrastructure.
+
+15. Required Evidence Fields
+Security-relevant events should contain, where applicable:
+
+Event ID
+Timestamp
+Actor ID
+Actor Type
+Action
+Resource
+Resource ID
+Channel
+Device ID
+Session ID
+Request ID
+Service ID
+Agent ID
+Authorization Context
+Policy Decision
+Result
+Reason
+Location Context
+Previous State
+New State
+Correlation ID
+Risk / Security Context
+Not every event needs every field.
+
+The event schema should be purpose-specific.
+
+16. Time Integrity
+Reliable timestamps are essential.
+
+Security evidence should use:
+
+synchronized system clocks;
+
+UTC as the canonical storage representation;
+
+high-resolution timestamps where necessary;
+
+trusted time sources;
+
+consistent timestamp formats.
+
+User-facing systems may display local time, but the evidence layer should retain an unambiguous canonical timestamp.
+
+17. Event Ordering
+Distributed systems create a difficult problem:
+
+Events may arrive out of order.
+
+Therefore Essentials Mart should use mechanisms such as:
+
+event IDs;
+
+sequence numbers where appropriate;
+
+correlation IDs;
+
+causation IDs;
+
+service timestamps;
+
+ingestion timestamps.
+
+This allows investigators to reconstruct event relationships.
+
+18. Correlation IDs
+A single customer action can cross many services.
+
+For example:
+
+Customer
+ ↓
+App
+ ↓
+API Gateway
+ ↓
+Order Service
+ ↓
+Payment Service
+ ↓
+Inventory
+ ↓
+Delivery
+ ↓
+Notification
+A correlation ID allows the entire transaction to be reconstructed.
+
+19. Causation IDs
+Correlation tells us:
+
+"These events belong to the same operation."
+
+Causation tells us:
+
+"This event was caused by that event."
+
+This becomes particularly valuable for AI.
+
+Example:
+
+User Message
+      ↓
+AI Decision
+      ↓
+Tool Invocation
+      ↓
+Order Modification
+      ↓
+Notification
+Each event can preserve causal relationships.
+
+20. Immutable Evidence
+Security evidence should be protected against unauthorised modification.
+
+An attacker who compromises an administrator account must not be able to:
+
+Attack
+ ↓
+Modify Logs
+ ↓
+Erase Evidence
+The architecture must therefore provide appropriate immutability or tamper resistance.
+
+21. Tamper Detection
+Where appropriate, evidence can use:
+
+cryptographic integrity mechanisms;
+
+append-only storage;
+
+hash chains;
+
+signed events;
+
+immutable storage;
+
+write-once retention controls.
+
+The exact mechanism may vary by evidence class.
+
+22. Evidence Integrity
+The system should be able to determine whether an evidence record has been modified.
+
+Conceptually:
+
+Event
+ ↓
+Integrity Metadata
+ ↓
+Stored Evidence
+ ↓
+Verification
+ ↓
+Trusted / Suspect
+23. Log Separation
+Security evidence should be separated from the systems being monitored wherever practical.
+
+This reduces the possibility of:
+
+Compromised Application
+       ↓
+Deletes Its Own Evidence
+Instead:
+
+Application
+       ↓
+External Evidence Pipeline
+       ↓
+Protected Evidence Store
+24. Privileged Access to Logs
+Logs themselves are sensitive.
+
+Access should therefore require:
+
+identity;
+
+authorization;
+
+clearance;
+
+purpose;
+
+audit.
+
+A security analyst viewing an investigation should not automatically have unrestricted access to every customer record embedded in logs.
+
+25. Log Data Minimisation
+Security logging must follow Commit 014.
+
+Do not log sensitive information simply because it is technically available.
+
+Avoid unnecessary storage of:
+
+passwords;
+
+authentication secrets;
+
+access tokens;
+
+full payment credentials;
+
+unnecessary personal data;
+
+complete AI conversations where metadata is sufficient.
+
+26. Secrets Must Never Be Logged
+Non-negotiable:
+
+Secrets must never appear in ordinary logs.
+
+This includes:
+
+passwords;
+
+private keys;
+
+API secrets;
+
+session tokens;
+
+refresh tokens;
+
+encryption keys;
+
+recovery codes.
+
+If accidental secret leakage is detected, the system should trigger remediation procedures.
+
+27. Sensitive Data Redaction
+Where sensitive information is required for evidence, appropriate masking should be used.
+
+For example:
+
+Full card number
+      ↓
+**** **** **** 1234
+or:
+
+Personal identifier
+      ↓
+Pseudonymous identifier
+28. AI Log Redaction
+AI logs require special handling.
+
+The platform may need to preserve:
+
+agent identity;
+
+tool calls;
+
+decisions;
+
+authorization;
+
+outcomes.
+
+But it may not need to permanently store the entire sensitive conversation.
+
+The architecture should therefore distinguish:
+
+AI operational evidence
+
+from
+
+AI conversational content.
+
+29. Security Event Severity
+Events should be classified by severity.
+
+For example:
+
+Informational
+Normal security-relevant activity.
+
+Low
+Minor anomaly.
+
+Medium
+Potentially suspicious activity.
+
+High
+Likely security violation.
+
+Critical
+Active or potentially catastrophic security event.
+
+Severity should influence:
+
+alerting;
+
+retention;
+
+escalation;
+
+investigation priority.
+
+30. Audit Categories
+Evidence should be categorised.
+
+Possible categories include:
+
+Identity;
+
+Access;
+
+Authorization;
+
+Privilege;
+
+Data;
+
+Payments;
+
+Commerce;
+
+Staff;
+
+Supplier;
+
+AI;
+
+Walk Mode;
+
+Trust;
+
+Fraud;
+
+Rewards;
+
+Delivery;
+
+Infrastructure;
+
+Configuration;
+
+Privacy;
+
+Incident.
+
+31. Walk Mode Evidence
+Walk Mode introduces real-time events.
+
+Relevant security evidence may include:
+
+Walk Mode session start;
+
+session end;
+
+device;
+
+store;
+
+navigation requests;
+
+proximity interactions;
+
+inventory requests;
+
+suspicious navigation behaviour;
+
+unauthorized access attempts.
+
+Again, privacy requirements from Commit 014 apply.
+
+The goal is not to create a permanent surveillance diary.
+
+32. Trust Engine Evidence
+Trust decisions should themselves be auditable.
+
+If the Trust Engine changes a user's trust state, the system should be able to determine:
+
+what signal changed;
+
+when it changed;
+
+which model/rule processed it;
+
+what decision resulted;
+
+what action followed.
+
+This prevents the Trust Engine from becoming an opaque authority.
+
+33. Fraud Evidence
+Fraud decisions should preserve enough evidence to explain:
+
+triggering signals;
+
+relevant transactions;
+
+risk decision;
+
+policy invoked;
+
+action taken.
+
+But internal fraud intelligence must remain protected from unnecessary disclosure.
+
+34. Reward Evidence
+Reward actions should be traceable.
+
+For example:
+
+User
+ ↓
+Milestone
+ ↓
+Eligibility Evaluation
+ ↓
+Reward Decision
+ ↓
+Reward Issued
+This protects against:
+
+reward manipulation;
+
+duplicate claims;
+
+synthetic activity;
+
+staff abuse;
+
+system errors.
+
+35. Financial Evidence
+Commerce-related events require particularly strong evidence.
+
+Examples:
+
+order creation;
+
+payment authorization;
+
+payment failure;
+
+refund;
+
+cancellation;
+
+wallet change;
+
+reward credit;
+
+reward reversal.
+
+Financial evidence must be carefully separated from sensitive payment credentials.
+
+36. Inventory Evidence
+Inventory changes should be attributable.
+
+For example:
+
+Stock:
+100
+ ↓
+Staff Adjustment
+ ↓
+Reason:
+Breakage
+ ↓
+New Stock:
+98
+ ↓
+Audit Event
+This supports both operational accountability and supplier-facing reporting.
+
+37. Supplier Evidence
+Supplier-facing actions should be recorded where security-relevant:
+
+catalogue updates;
+
+price submissions;
+
+inventory submissions;
+
+dispute creation;
+
+return decisions;
+
+complaint handling;
+
+supplier account changes.
+
+38. Configuration Evidence
+Configuration changes are often more dangerous than ordinary transactions.
+
+Log changes to:
+
+authorization policies;
+
+staff clearances;
+
+security settings;
+
+API configuration;
+
+AI tool permissions;
+
+Trust Engine rules;
+
+reward rules;
+
+fraud rules;
+
+notification policies;
+
+infrastructure configuration.
+
+39. Policy Decision Logging
+For sensitive actions, Essentials Mart should record not only:
+
+"Allowed."
+
+but where appropriate:
+
+Request
+ ↓
+Policy Evaluation
+ ↓
+Relevant Policy
+ ↓
+Decision
+ ↓
+Action
+This becomes extremely important when debugging authorization failures or investigating abuse.
+
+40. Evidence Pipeline
+A conceptual pipeline:
+
+Event Producers
+      ↓
+Collection
+      ↓
+Validation
+      ↓
+Normalization
+      ↓
+Enrichment
+      ↓
+Classification
+      ↓
+Integrity Protection
+      ↓
+Storage
+      ↓
+Monitoring
+      ↓
+Retention / Disposal
+41. Event Validation
+The evidence pipeline must validate:
+
+schema;
+
+timestamps;
+
+required fields;
+
+source identity;
+
+event type;
+
+integrity metadata.
+
+Malformed security events should not silently disappear.
+
+42. Evidence Loss
+If the security logging infrastructure itself fails, that failure must be visible.
+
+For example:
+
+Application
+    ↓
+Security Event
+    ↓
+Evidence Pipeline Failure
+    ↓
+Security Alert
+The platform must not assume:
+
+"No log = no security event."
+
+43. High-Assurance Events
+Some events require stronger guarantees.
+
+Examples:
+
+administrator privilege changes;
+
+root-level infrastructure changes;
+
+security policy modifications;
+
+encryption-key operations;
+
+identity recovery;
+
+AI permission changes;
+
+Trust Engine rule changes.
+
+These should receive stronger evidence controls than ordinary application telemetry.
+
+44. Evidence Retention
+Retention must be based on:
+
+security value;
+
+legal requirements;
+
+operational requirements;
+
+privacy;
+
+regulatory obligations;
+
+investigation requirements.
+
+Not every log needs to be kept forever.
+
+45. Evidence Lifecycle
+Generate
+   ↓
+Collect
+   ↓
+Protect
+   ↓
+Use
+   ↓
+Investigate
+   ↓
+Retain
+   ↓
+Review
+   ↓
+Dispose
+The lifecycle must be governed.
+
+46. Evidence Deletion
+Deletion must itself be controlled and logged.
+
+An administrator should not simply execute:
+
+DELETE security_logs;
+without:
+
+authorization;
+
+reason;
+
+approval where required;
+
+audit trail.
+
+47. Evidence Backup
+Security evidence must itself be resilient.
+
+Use appropriate:
+
+redundancy;
+
+replication;
+
+protected backups;
+
+disaster recovery;
+
+integrity verification.
+
+Otherwise an attacker could destroy the evidence store as part of an attack.
+
+48. Evidence Isolation
+The evidence platform should be isolated from ordinary application administration.
+
+For example:
+
+Application Admin
+      ✕
+      │
+      └── Cannot silently erase security evidence
+This reinforces separation of duties.
+
+49. Security Investigator Role
+A dedicated investigation capability may eventually exist.
+
+Investigators should receive controlled access to:
+
+relevant events;
+
+correlated evidence;
+
+security alerts;
+
+incident timelines.
+
+They should not automatically receive unrestricted platform privileges.
+
+50. Evidence Querying
+Investigators should be able to search by:
+
+user;
+
+staff member;
+
+supplier;
+
+device;
+
+IP;
+
+session;
+
+request;
+
+transaction;
+
+order;
+
+AI agent;
+
+event;
+
+time range;
+
+location context;
+
+incident.
+
+51. Timeline Reconstruction
+A major capability should be the ability to construct:
+
+Security Timeline
+For example:
+
+09:41:02
+User login
+
+09:41:08
+New device registered
+
+09:42:11
+Privilege request
+
+09:42:12
+Authorization denied
+
+09:42:19
+Repeated attempt
+
+09:42:20
+Risk score increased
+
+09:42:21
+Session terminated
+This dramatically improves incident investigation.
+
+52. Cross-System Correlation
+A security incident rarely remains inside one service.
+
+The platform should correlate:
+
+Identity
+   +
+API
+   +
+Database
+   +
+AI
+   +
+Device
+   +
+Network
+   +
+Commerce
+into a unified investigation timeline.
+
+53. Security Evidence Graph
+At scale, Essentials Mart could maintain an evidence graph:
+
+User
+ │
+ ├── Device
+ │
+ ├── Session
+ │
+ ├── Request
+ │
+ ├── Transaction
+ │
+ ├── AI Agent
+ │
+ ├── Location Context
+ │
+ └── Security Event
+This would allow investigators and detection systems to identify relationships between otherwise separate events.
+
+54. Evidence and Detection
+Security logging provides the raw material for Commit 016.
+
+Evidence
+   ↓
+Detection
+   ↓
+Alert
+   ↓
+Investigation
+   ↓
+Incident Response
+Without reliable evidence, detection becomes unreliable.
+
+55. Evidence and Trust Engine
+The Trust Engine may consume security signals.
+
+However:
+
+Security evidence must remain independent from the Trust Engine's interpretation of that evidence.
+
+This prevents a corrupted trust score from becoming the authoritative historical record.
+
+56. Evidence and AI Monitoring
+AI monitoring should be able to identify:
+
+unusual tool use;
+
+excessive access;
+
+unexpected data retrieval;
+
+unusual agent-to-agent communication;
+
+repeated authorization failures;
+
+unexpected autonomous actions.
+
+The underlying evidence must remain independently preserved.
+
+57. Evidence and Privacy
+Commit 014 establishes an important constraint:
+
+More Logging
+      ≠
+Better Security
+The objective is:
+
+Sufficient Evidence
++
+Minimum Necessary Data
+=
+Privacy-Aware Security
+This is especially important because NIST defines privacy risk around the likelihood and impact of problems arising from data processing, rather than treating all processing as inherently harmless. 
+
+58. Evidence and Compliance
+The evidence architecture should support future requirements without designing around one specific jurisdiction.
+
+It should provide:
+
+traceability;
+
+accountability;
+
+access records;
+
+change records;
+
+incident evidence;
+
+retention controls.
+
+This also aligns with NIST's current system-plan approach, which explicitly includes data created, collected, disseminated, used, stored and disposed of, along with responsibilities and controls. 
+
+59. Evidence Security
+The evidence platform itself must be protected against:
+
+unauthorized access;
+
+deletion;
+
+modification;
+
+forgery;
+
+replay;
+
+poisoning;
+
+flooding;
+
+privilege abuse.
+
+A compromised logging system can blind the entire security operation.
+
+60. Log Injection
+Attackers may attempt to manipulate logs by inserting malicious content.
+
+The platform must therefore:
+
+validate structured events;
+
+avoid ambiguous parsing;
+
+sanitize display contexts;
+
+preserve event boundaries;
+
+prevent forged identities.
+
+61. Log Flooding
+Attackers may deliberately generate enormous numbers of events.
+
+This could cause:
+
+storage exhaustion;
+
+detection delays;
+
+cost spikes;
+
+important events being buried.
+
+Therefore logging infrastructure must have:
+
+quotas;
+
+prioritization;
+
+rate controls;
+
+anomaly detection;
+
+capacity management.
+
+62. Evidence Availability
+Security evidence must remain available during incidents.
+
+Therefore high-value evidence should have:
+
+resilient storage;
+
+redundancy;
+
+controlled recovery;
+
+tested restoration.
+
+63. Evidence Integrity Testing
+The platform should periodically verify:
+
+evidence integrity;
+
+retention;
+
+recovery;
+
+schema validity;
+
+event completeness;
+
+correlation;
+
+alerting.
+
+Security evidence that has never been tested should not be assumed reliable.
+
+64. Audit of the Audit System
+The logging system must itself generate evidence.
+
+For example:
+
+Investigator accesses logs
+       ↓
+Audit Event
+Administrator changes retention
+       ↓
+Audit Event
+Evidence deleted
+       ↓
+Audit Event
+The system must be capable of auditing its own privileged operations.
+
+65. Security Evidence for Data Access
+Sensitive data access should generate an appropriate record.
+
+For example:
+
+Actor:
+Staff-184
+
+Resource:
+Customer Record
+
+Purpose:
+Return Investigation
+
+Authorization:
+Returns Clearance
+
+Decision:
+Allowed
+
+Time:
+...
+
+Result:
+Record Viewed
+This creates accountability without necessarily copying the entire customer record into the log.
+
+66. Evidence for Authorization Denials
+Denied access is also valuable evidence.
+
+Repeated denial may indicate:
+
+misconfiguration;
+
+compromised account;
+
+privilege escalation attempt;
+
+malicious insider;
+
+automated attack.
+
+Therefore:
+
+Security-relevant denials must be observable.
+
+67. Evidence for Permission Changes
+Permission changes require strong auditing.
+
+Before:
+Clearance = C2
+
+Request:
+Upgrade to C4
+
+Approver:
+Security Administrator
+
+Policy:
+Privileged Access Policy
+
+Result:
+Approved
+
+After:
+Clearance = C4
+68. Evidence for Emergency Access
+Emergency or break-glass access must be especially visible.
+
+It should record:
+
+requester;
+
+reason;
+
+approval;
+
+time;
+
+scope;
+
+actions performed;
+
+automatic expiry.
+
+Break-glass access must never become a permanent bypass.
+
+69. Evidence for Service Accounts
+Machine identities require the same accountability principles as humans.
+
+For example:
+
+Service:
+Delivery Orchestrator
+
+Credential:
+Service Identity X
+
+Action:
+Update Delivery Status
+
+Authorization:
+Delivery Service Policy
+
+Result:
+Success
+70. Evidence for External Systems
+External integrations should be attributable.
+
+Examples:
+
+payment provider;
+
+WhatsApp;
+
+mapping provider;
+
+AI provider;
+
+delivery partner.
+
+The evidence should establish:
+
+Essentials Mart Service
+       ↓
+External System
+       ↓
+Request
+       ↓
+Response
+       ↓
+Outcome
+Sensitive external responses should not necessarily be stored verbatim.
+
+71. Evidence and Data Integrity
+Where an event changes important business state, the evidence should establish:
+
+Previous State
+      ↓
+Action
+      ↓
+New State
+This is particularly useful for:
+
+inventory;
+
+payments;
+
+rewards;
+
+permissions;
+
+household state;
+
+orders.
+
+72. Evidence and Disputes
+Security evidence can support legitimate disputes.
+
+Examples:
+
+"I didn't make this change."
+
+"My reward disappeared."
+
+"Someone changed my delivery address."
+
+"A staff member altered my return."
+
+Evidence should allow investigation without automatically exposing internal security information to the customer.
+
+73. Customer-Facing Transparency
+Where appropriate, customers may receive a simplified version of relevant activity.
+
+For example:
+
+"Your delivery address was changed on 13 August."
+
+But the customer does not necessarily need:
+
+internal security model details, IP intelligence or staff investigation information.
+
+Different audiences require different evidence views.
+
+74. Role-Based Evidence Views
+Customer
+ ↓
+Own relevant activity
+
+Staff
+ ↓
+Authorized operational evidence
+
+Security Investigator
+ ↓
+Investigation evidence
+
+Administrator
+ ↓
+Privileged evidence
+
+System
+ ↓
+Machine-readable evidence
+75. Evidence Export
+Authorized investigators may need to export evidence.
+
+Exports should be:
+
+authenticated;
+
+authorized;
+
+scoped;
+
+logged;
+
+integrity-protected;
+
+appropriately encrypted.
+
+76. Evidence Chain of Custody
+For serious investigations, evidence may require chain-of-custody metadata:
+
+Created
+ ↓
+Collected
+ ↓
+Stored
+ ↓
+Accessed
+ ↓
+Exported
+ ↓
+Reviewed
+Each transition should be attributable.
+
+77. Forensic Preservation
+When an incident occurs, relevant evidence may need preservation beyond normal retention.
+
+The platform should support:
+
+Legal / Security Hold
+
+which prevents relevant evidence from being automatically deleted during an active investigation, subject to applicable policy and law.
+
+78. Security Evidence Classification
+Evidence itself should be classified.
+
+For example:
+
+Public;
+
+Internal;
+
+Confidential;
+
+Sensitive;
+
+Restricted.
+
+This prevents the audit system from becoming an uncontrolled data lake.
+
+79. Evidence Access Principle
+The rule is:
+
+Investigators receive the evidence required for the investigation, not unrestricted access to the underlying platform.
+
+80. Evidence Architecture Principles
+The Security Logging & Evidence Architecture must:
+
+record security-relevant events;
+
+preserve actor attribution;
+
+preserve AI-agent attribution;
+
+preserve authorization context;
+
+support distributed correlation;
+
+protect evidence integrity;
+
+prevent unauthorized deletion;
+
+minimize sensitive data in logs;
+
+protect secrets;
+
+support timeline reconstruction;
+
+support incident response;
+
+support fraud investigation;
+
+support privacy investigations;
+
+support privileged-access review;
+
+support forensic preservation;
+
+support global scale;
+
+remain privacy-aware.
+
+81. Non-Negotiable Rules
+Rule 1
+Security-relevant actions must be attributable.
+
+Rule 2
+AI actions must be attributable to both the initiating authority and executing agent.
+
+Rule 3
+Client-side logs are never authoritative security evidence.
+
+Rule 4
+Secrets must never be stored in ordinary logs.
+
+Rule 5
+Security evidence must be protected against unauthorized modification and deletion.
+
+Rule 6
+Logging must not become an excuse for unnecessary personal-data collection.
+
+Rule 7
+Sensitive evidence access must itself be audited.
+
+Rule 8
+Authorization decisions should be reconstructable for high-risk actions.
+
+Rule 9
+Evidence must remain useful even when individual services are compromised.
+
+Rule 10
+The evidence system itself must be treated as a security-critical system.
+
+Rule 11
+Evidence retention must be intentional and policy-driven.
+
+Rule 12
+High-impact security evidence must be independently protected from the systems it monitors.
+
+82. Success Criteria
+The Security Logging & Evidence Architecture succeeds when Essentials Mart can reliably answer:
+
+Who?
+
+What?
+
+When?
+
+Where?
+
+Using which identity?
+
+Using which device or service?
+
+Through which channel?
+
+Under which authority?
+
+Which policy allowed it?
+
+What changed?
+
+What happened afterwards?
+
+Can we prove the evidence wasn't tampered with?
+
+while simultaneously ensuring:
+
+We did not collect more personal information than necessary to answer those questions.
+
+83. Architectural Outcome
+Commit 015 establishes the evidentiary foundation underneath the rest of Part 3:
+
+IDENTITY
+   ↓
+AUTHORIZATION
+   ↓
+ACTION
+   ↓
+EVIDENCE
+   ↓
+DETECTION
+   ↓
+INVESTIGATION
+   ↓
+INCIDENT RESPONSE
+   ↓
+LEARNING
+   ↓
+ARCHITECTURAL IMPROVEMENT
+This means Commit 015 is the bridge between the preventive security architecture we've been designing and the detective/response architecture that comes next.
