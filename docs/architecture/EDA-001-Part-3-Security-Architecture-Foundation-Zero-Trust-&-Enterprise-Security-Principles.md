@@ -14991,3 +14991,1153 @@ The Reward Intelligence Security Architecture succeeds when:
 The ultimate objective is:
 
 > **Essentials Mart must make its reward systems attractive to legitimate customers without making those same incentives attractive attack surfaces for economically motivated abuse.**
+
+Commit 011 — Reward Intelligence Security Architecture
+1. Purpose
+The Reward Intelligence Security Architecture defines how Essentials Mart protects its reward, incentive, loyalty, referral, milestone and benefit systems from manipulation, fraud, exploitation and unintended economic consequences.
+
+Reward systems are economically sensitive components.
+
+A weakness in ordinary application functionality may expose data or disrupt a workflow.
+
+A weakness in reward logic can directly create financial loss by allowing an attacker to manufacture value.
+
+The Reward Intelligence security architecture therefore treats rewards as a business-critical economic security boundary.
+
+The architecture must protect:
+
+reward eligibility;
+
+reward calculation;
+
+reward issuance;
+
+reward redemption;
+
+referral benefits;
+
+promotional incentives;
+
+milestones;
+
+loyalty benefits;
+
+household rewards;
+
+supplier incentives;
+
+staff incentives;
+
+AI-generated recommendations;
+
+reward reversals;
+
+reward adjustments;
+
+reward-related analytics.
+
+The central security principle is:
+
+Rewards must be generated from verified economic activity, not merely from activity that appears legitimate.
+
+2. Security Objective
+Reward Intelligence must ensure that:
+
+rewards are earned legitimately;
+
+eligibility rules cannot be bypassed;
+
+rewards cannot be claimed twice;
+
+concurrent requests cannot multiply rewards;
+
+users cannot manufacture qualifying activity;
+
+referrals cannot be artificially generated;
+
+milestones cannot be falsely completed;
+
+reward values cannot be manipulated by clients;
+
+AI agents cannot grant themselves or users unauthorised rewards;
+
+staff cannot silently alter reward outcomes;
+
+suppliers cannot manipulate incentive reporting;
+
+administrators cannot make unaudited economic changes;
+
+reward decisions remain explainable and auditable.
+
+3. Reward Intelligence Security Boundary
+                    VERIFIED EVENTS
+                           │
+                           ▼
+              ┌────────────────────────┐
+              │  Reward Intelligence   │
+              │        Engine          │
+              └────────────────────────┘
+                           │
+             ┌─────────────┼─────────────┐
+             │             │             │
+             ▼             ▼             ▼
+        Eligibility    Calculation   Risk Signals
+             │             │             │
+             └─────────────┼─────────────┘
+                           ▼
+                    Reward Decision
+                           │
+                           ▼
+                  Authorization Layer
+                           │
+                           ▼
+                    Reward Issuance
+                           │
+                           ▼
+                         Audit
+The client application must never be the authority for reward state.
+
+4. Server-Authoritative Reward State
+The client must never be trusted to determine:
+
+reward balance;
+
+points balance;
+
+milestone completion;
+
+referral qualification;
+
+reward eligibility;
+
+reward value;
+
+redemption status.
+
+For example, the client must never be able to submit:
+
+rewardPoints = 10,000
+or:
+
+milestoneCompleted = true
+Instead:
+
+Verified Event
+      ↓
+Backend Validation
+      ↓
+Reward Intelligence
+      ↓
+Eligibility Evaluation
+      ↓
+Reward Decision
+      ↓
+Authorised State Change
+Security-relevant values must be derived or re-derived server-side rather than trusted from client state. 
+
+5. Verified Activity
+Reward Intelligence must distinguish between:
+
+activity reported by a participant
+
+and:
+
+activity independently verified by the platform.
+
+Examples of stronger evidence include:
+
+completed order;
+
+confirmed payment;
+
+verified delivery;
+
+validated referral;
+
+completed qualifying transaction;
+
+confirmed challenge completion;
+
+authenticated household event;
+
+confirmed supplier activity.
+
+A user claiming:
+
+"I completed the challenge."
+
+must not automatically result in a reward.
+
+The underlying qualifying conditions must be verified.
+
+6. Reward Eligibility
+Every reward must have an explicit eligibility definition.
+
+Eligibility may depend on:
+
+user type;
+
+account state;
+
+household membership;
+
+transaction history;
+
+qualifying products;
+
+transaction value;
+
+promotion period;
+
+geographic region;
+
+supplier;
+
+Club status;
+
+milestone status;
+
+previous reward usage;
+
+fraud/risk state;
+
+applicable campaign rules.
+
+Eligibility must be evaluated by trusted backend logic.
+
+7. Separation of Eligibility and Issuance
+Reward eligibility and reward issuance must remain logically separated.
+
+Eligibility Evaluation
+        ↓
+     Eligible?
+        ↓
+  Reward Decision
+        ↓
+   Authorization
+        ↓
+      Issuance
+An eligibility result must not automatically equal a financial transfer.
+
+This creates an additional security boundary between intelligence and economic authority.
+
+8. Reward Calculation Integrity
+Reward calculations must be deterministic and versioned.
+
+The platform must record:
+
+rule version;
+
+calculation version;
+
+qualifying event;
+
+inputs;
+
+calculation result;
+
+currency/value where applicable;
+
+timestamp;
+
+applicable campaign;
+
+authorization context.
+
+If reward logic changes, historical decisions must remain attributable to the rule version under which they were made.
+
+9. Double-Reward Prevention
+A qualifying event must not produce multiple rewards unless explicitly permitted.
+
+The system must support:
+
+unique qualification identifiers;
+
+idempotency;
+
+duplicate detection;
+
+transactional constraints;
+
+atomic state changes;
+
+concurrency protection.
+
+This is especially important for:
+
+referrals;
+
+coupons;
+
+milestone rewards;
+
+cashback;
+
+promotional benefits;
+
+loyalty points.
+
+OWASP specifically identifies repeated execution of single-use operations such as coupon redemption and refunds as a business-logic abuse class. 
+
+10. Race-Condition Protection
+Reward issuance must remain safe under concurrent requests.
+
+The system must prevent:
+
+Request A → Eligible → Reward
+Request B → Eligible → Reward
+when only one reward was intended.
+
+Check-and-act operations involving economic value must therefore execute atomically or under appropriate concurrency controls. 
+
+11. Idempotency
+Reward-generating operations must be idempotent where appropriate.
+
+A repeated request referencing the same qualifying event must not create additional economic value.
+
+Qualification ID
+      ↓
+Already Processed?
+   ↙          ↘
+ YES           NO
+  ↓             ↓
+Return       Process
+Existing        │
+Result          ▼
+              Record
+This is particularly important where:
+
+mobile connectivity is unreliable;
+
+requests are retried;
+
+users repeat actions;
+
+APIs retry automatically;
+
+distributed events are duplicated.
+
+12. Referral Security
+Referral systems must resist:
+
+self-referrals;
+
+circular referrals;
+
+synthetic accounts;
+
+referral farms;
+
+device cycling;
+
+identity cycling;
+
+collusive groups;
+
+reward splitting;
+
+referral laundering.
+
+A referral must represent a verified qualifying relationship and activity rather than merely the existence of a referral code.
+
+13. Multi-Account Abuse
+Reward Intelligence must consider suspicious relationships between accounts.
+
+Potential signals include:
+
+shared devices;
+
+shared payment instruments;
+
+shared addresses;
+
+repeated behavioural patterns;
+
+referral relationships;
+
+transaction relationships;
+
+household relationships;
+
+suspicious account creation patterns.
+
+These signals should contribute to risk evaluation rather than automatically declaring a user fraudulent.
+
+14. Reward Farming
+The system must detect attempts to generate rewards primarily for the purpose of earning rewards rather than performing meaningful qualifying activity.
+
+Examples include:
+
+repeated low-value transactions;
+
+artificial purchasing cycles;
+
+repeated cancellations;
+
+referral loops;
+
+promotion cycling;
+
+synthetic engagement;
+
+repeated milestone resets;
+
+reward-redemption loops.
+
+The system must distinguish economic participation from economic manipulation.
+
+15. Promotion Abuse
+Promotions may have:
+
+usage limits;
+
+time limits;
+
+account limits;
+
+household limits;
+
+product restrictions;
+
+geographic restrictions;
+
+campaign restrictions.
+
+These restrictions must be enforced server-side rather than relying upon client behaviour.
+
+16. Coupon and Voucher Security
+Coupons and vouchers must have controlled lifecycle states.
+
+Created
+   ↓
+Eligible
+   ↓
+Issued
+   ↓
+Redeemed
+   ↓
+Consumed
+Additional terminal states may include:
+
+Expired
+Revoked
+Cancelled
+A consumed coupon must not become redeemable again.
+
+A replayed request must not recreate a previously consumed benefit.
+
+17. Reward Redemption Security
+Redemption must verify:
+
+identity;
+
+ownership;
+
+eligibility;
+
+current reward state;
+
+redemption status;
+
+applicable limits;
+
+transaction context;
+
+fraud/risk signals.
+
+The redemption operation must be atomic where economic value could otherwise be duplicated.
+
+18. Reward Reversal and Clawback
+The platform must support controlled reversal of rewards that were issued incorrectly or fraudulently.
+
+Possible causes include:
+
+cancelled qualifying transaction;
+
+refunded purchase;
+
+fraudulent activity;
+
+system error;
+
+campaign correction;
+
+duplicate issuance;
+
+policy violation.
+
+A clawback must never silently rewrite history.
+
+Original Reward
+      ↓
+Reversal Event
+      ↓
+Reason
+      ↓
+Adjustment
+      ↓
+Audit Record
+The original reward remains preserved.
+
+19. Reward Expiration
+Rewards may have explicit expiration policies.
+
+Expiration must be:
+
+predictable;
+
+auditable;
+
+consistently enforced;
+
+represented as an explicit state transition.
+
+The system must record:
+
+earned date;
+
+expiration date;
+
+expiration rule;
+
+expiration event.
+
+20. Household Reward Security
+Essentials Mart must distinguish between:
+
+individual rewards;
+
+household rewards;
+
+shared benefits;
+
+household milestones.
+
+A household member must not automatically be able to claim another member's individual reward.
+
+Conversely, a household reward must not accidentally be duplicated for every member unless the business rule explicitly permits it.
+
+21. Staff Reward Security
+Staff who can influence reward-related workflows must operate under their assigned clearance.
+
+Staff must not automatically be able to:
+
+create arbitrary rewards;
+
+mark milestones complete;
+
+issue unlimited coupons;
+
+alter balances;
+
+suppress fraud flags;
+
+reverse rewards without authority.
+
+Privileged reward operations must be authorised and audited.
+
+22. Supplier Incentive Security
+Supplier incentives may depend on:
+
+sales;
+
+product performance;
+
+availability;
+
+promotional campaigns;
+
+fulfilment;
+
+customer feedback;
+
+returns;
+
+breakage;
+
+contractual metrics.
+
+Supplier-submitted information must not automatically become authoritative reward evidence.
+
+Where possible, incentives should be based on independently verified platform events.
+
+23. AI Reward Security
+AI agents may recommend rewards or explain eligibility.
+
+However:
+
+An AI agent must never be able to grant itself or arbitrarily grant a user economic value.
+
+AI reward operations must pass through authorised backend tools and policies.
+
+AI Agent
+   ↓
+Reward Request
+   ↓
+Authorization
+   ↓
+Eligibility
+   ↓
+Risk Controls
+   ↓
+Reward Issuance
+The AI's recommendation is not the reward authorization.
+
+24. AI-Assisted Reward Manipulation
+The platform must anticipate attackers using automation or AI to scale:
+
+account creation;
+
+referral generation;
+
+synthetic transactions;
+
+promotion exploitation;
+
+behavioural imitation;
+
+review manipulation;
+
+reward farming.
+
+Detection must therefore consider behavioural patterns and relationships rather than only individual events.
+
+25. Trust Engine Relationship
+Reward Intelligence may consume signals from the Trust Engine.
+
+Trust Engine
+     │
+     ▼
+Risk / Confidence Signal
+     │
+     ▼
+Reward Intelligence
+     │
+     ▼
+Eligibility / Decision
+However:
+
+Trust does not equal reward eligibility.
+
+A highly trusted user must still satisfy the explicit reward rules.
+
+Likewise, a low-trust user must not automatically be permanently excluded from legitimate rewards.
+
+26. Fraud Intelligence Relationship
+Fraud Intelligence may provide signals to Reward Intelligence.
+
+Fraud Intelligence
+        │
+        ▼
+     Risk Signal
+        │
+        ▼
+Reward Intelligence
+        │
+        ▼
+      Decision
+Fraud controls therefore remain part of the wider security architecture rather than becoming permanently embedded inside reward logic.
+
+27. Reward Guardrails
+Reward programmes must support configurable guardrails including:
+
+maximum reward per event;
+
+maximum reward per account;
+
+maximum reward per household;
+
+maximum reward per campaign;
+
+maximum redemption frequency;
+
+maximum referral benefit;
+
+transaction qualification thresholds;
+
+temporal limits;
+
+geographic limits;
+
+campaign budget limits.
+
+These must be enforced by trusted backend components.
+
+28. Economic Blast Radius
+A compromised reward rule must not be capable of damaging the entire reward economy.
+
+A single campaign must not be able to:
+
+drain unrelated reward budgets;
+
+generate unlimited value;
+
+modify unrelated programmes;
+
+access customer payment balances;
+
+rewrite historical reward records.
+
+Reward programmes must therefore operate within bounded economic permissions.
+
+29. Reward Budget Controls
+Where rewards represent monetary or economically convertible value, campaigns should have explicit budgets.
+
+Campaign Budget
+      ↓
+Remaining Allocation
+      ↓
+Reward Request
+      ↓
+Budget Check
+      ↓
+Approved / Rejected
+Budget allocation must be concurrency-safe so simultaneous reward requests cannot collectively exceed the authorised allocation.
+
+30. Reward Rule Versioning
+Every reward decision must be attributable to:
+
+reward programme;
+
+rule version;
+
+configuration version;
+
+campaign version;
+
+model version where applicable.
+
+Historical decisions must remain reconstructable after future policy changes.
+
+31. Reward Configuration Security
+Reward configuration is privileged business logic.
+
+It includes:
+
+reward multipliers;
+
+thresholds;
+
+campaign dates;
+
+eligibility rules;
+
+reward values;
+
+redemption limits;
+
+geographic restrictions;
+
+product restrictions.
+
+Changes require:
+
+authorization;
+
+appropriate clearance;
+
+audit logging;
+
+versioning;
+
+change attribution.
+
+32. Separation of Duties
+High-impact reward operations should use separation of duties.
+
+Campaign Creator
+      ↓
+Campaign Reviewer
+      ↓
+Campaign Approver
+      ↓
+Deployment
+      ↓
+Monitoring
+No individual should possess unrestricted authority over creation, approval, deployment and reconciliation of high-value reward programmes where segregation is required.
+
+33. Manual Reward Adjustments
+Manual adjustments must be exceptional.
+
+Each adjustment must record:
+
+actor;
+
+role;
+
+clearance;
+
+affected account;
+
+original state;
+
+adjusted state;
+
+amount/value;
+
+reason;
+
+authorization;
+
+timestamp;
+
+related case or incident;
+
+applicable expiry.
+
+Silent direct database modification must not be an approved operational workflow.
+
+34. Reward Audit Trail
+The complete reward lifecycle must be auditable.
+
+Qualification
+      ↓
+Eligibility
+      ↓
+Calculation
+      ↓
+Authorization
+      ↓
+Issuance
+      ↓
+Redemption
+      ↓
+Reversal / Expiration
+Every meaningful state transition must be attributable.
+
+35. Customer Transparency
+Customers should be able to understand legitimate reward outcomes without exposing sensitive security controls.
+
+For example:
+
+"You earned 120 points from this qualifying purchase."
+
+rather than exposing internal fraud thresholds or security rules.
+
+Transparency should explain the business outcome, while sensitive security mechanisms remain protected.
+
+36. Reward Analytics Security
+Reward analytics must follow the differentiated access model established in Part 2.
+
+Customers may see:
+
+their rewards;
+
+their progress;
+
+qualifying activity;
+
+redemption history.
+
+Suppliers may see:
+
+permitted campaign performance;
+
+relevant incentive metrics.
+
+Staff may see only information permitted by their clearance.
+
+Administrators and security personnel may have broader access according to privileged authorization.
+
+Reward analytics must not expose:
+
+other customers' activity;
+
+internal fraud signals;
+
+confidential campaign rules;
+
+security thresholds;
+
+restricted supplier information.
+
+37. Reward Security Events
+Reward Intelligence should publish security-relevant events including:
+
+Reward Eligibility Evaluated
+
+Reward Issued
+
+Reward Redemption Requested
+
+Reward Redeemed
+
+Reward Rejected
+
+Reward Reversed
+
+Reward Expired
+
+Reward Adjustment Requested
+
+Reward Adjustment Approved
+
+Reward Adjustment Rejected
+
+Referral Flagged
+
+Reward Abuse Suspected
+
+Reward Limit Reached
+
+Campaign Budget Threshold Reached
+
+Campaign Budget Exhausted
+
+Reward Rule Changed
+
+Reward Configuration Changed
+
+These events feed the wider audit, monitoring and incident-response architecture.
+
+38. Abuse Detection
+The system should monitor for:
+
+sudden reward accumulation;
+
+abnormal redemption rates;
+
+referral clusters;
+
+repeated qualifying transactions;
+
+suspicious account relationships;
+
+reward reversals;
+
+unusual staff adjustments;
+
+campaign anomalies;
+
+geographic anomalies;
+
+device anomalies;
+
+coordinated behaviour.
+
+The objective is to detect economic manipulation patterns, not merely isolated fraudulent events.
+
+39. Reward System Availability
+Reward Intelligence must fail securely.
+
+If the system cannot confidently determine eligibility:
+
+Do not issue uncontrolled value.
+Depending on the operation, the platform may:
+
+defer the reward;
+
+place it into a pending state;
+
+request additional verification;
+
+reject the operation;
+
+queue it for later evaluation.
+
+Security-control failure must never become automatic reward approval.
+
+40. Reward Engine Compromise
+If Reward Intelligence is suspected of compromise, the platform must be capable of:
+
+disabling affected programmes;
+
+freezing suspicious issuance;
+
+suspending affected campaigns;
+
+preserving evidence;
+
+identifying affected transactions;
+
+identifying affected accounts;
+
+reversing fraudulent rewards where authorised;
+
+restoring trusted configuration;
+
+rotating compromised credentials;
+
+recalculating affected decisions;
+
+conducting incident review.
+
+The system must support containment without unnecessarily taking the entire commerce platform offline.
+
+41. Reward Programme Kill Switch
+High-risk reward programmes should have controlled emergency shutdown capability.
+
+The kill switch must:
+
+require privileged authorization;
+
+record the activating identity;
+
+record the reason;
+
+stop new issuance;
+
+preserve historical records;
+
+generate a security event;
+
+support controlled restoration.
+
+It must not erase reward history.
+
+42. Reward Model Security
+If models are used for:
+
+reward-abuse prediction;
+
+eligibility assistance;
+
+campaign effectiveness;
+
+fraud probability;
+
+customer response prediction;
+
+model outputs must remain intelligence signals rather than becoming unrestricted economic authority.
+
+Model versions and decision context must be auditable.
+
+43. Reward Supply-Chain Security
+Reward logic may depend upon:
+
+third-party services;
+
+campaign data;
+
+supplier feeds;
+
+analytics;
+
+AI models;
+
+external promotions.
+
+External inputs must not directly modify privileged reward state without validation and authorization.
+
+44. Reward Security and Reverse Engineering
+Essentials Mart must assume attackers can inspect client behaviour.
+
+Security-sensitive reward rules must therefore be enforced server-side.
+
+The client must not contain authoritative:
+
+reward signing keys;
+
+privileged campaign credentials;
+
+eligibility authority;
+
+internal fraud thresholds;
+
+administrative reward controls.
+
+Obfuscation must never be treated as the primary reward-security mechanism.
+
+45. Reward Security at Scale
+The architecture must remain secure at:
+
+100M+ users;
+
+millions of transactions;
+
+high-concurrency reward claims;
+
+multiple countries;
+
+multiple currencies;
+
+multiple stores;
+
+multiple suppliers;
+
+large AI workloads.
+
+The distributed architecture must preserve economic integrity even under high concurrency.
+
+46. Architectural Principles
+Reward Intelligence Security must:
+
+treat rewards as economic assets;
+
+make the backend authoritative;
+
+require verified qualifying activity;
+
+prevent duplicate issuance;
+
+protect against concurrency attacks;
+
+use idempotent operations;
+
+resist multi-account and collusion abuse;
+
+separate eligibility from issuance;
+
+separate intelligence from authorization;
+
+prevent AI self-authorization;
+
+constrain staff and administrator authority;
+
+protect campaign configuration;
+
+enforce economic limits;
+
+preserve historical evidence;
+
+support controlled reversals;
+
+support emergency shutdown;
+
+maintain bounded blast radius;
+
+fail securely;
+
+remain auditable.
+
+47. Core Security Principle
+The following architectural rule is established:
+
+Reward Intelligence may determine whether an event qualifies for consideration, but only authorised platform components may create, transfer, redeem or modify economic value.
+
+This is the fundamental boundary between reward intelligence and economic authority.
+
+48. Success Criteria
+The Reward Intelligence Security Architecture succeeds when:
+
+customers cannot manufacture rewards through client manipulation;
+
+one qualifying event cannot unintentionally produce multiple rewards;
+
+race conditions cannot multiply economic value;
+
+referral systems resist self-referral and coordinated abuse;
+
+reward farming can be detected;
+
+campaign budgets cannot be bypassed;
+
+staff cannot silently manipulate rewards;
+
+AI agents cannot grant unauthorized rewards;
+
+Trust Engine signals cannot become a reward bypass;
+
+reward decisions remain reconstructable;
+
+reversals preserve historical evidence;
+
+reward programmes can be rapidly contained during incidents;
+
+economic blast radius remains bounded;
+
+reward security scales with the wider Essentials Mart platform.
+
+The ultimate objective is:
+
+Essentials Mart must make its reward systems attractive to legitimate customers without making those same incentives attractive attack surfaces for economically motivated abuse.
