@@ -28095,3 +28095,1183 @@ And the broader relationship becomes:
           ↓                             ↓
        Detection                  Incident Response
 This also makes something we discussed earlier much stronger: WhatsApp, delivery providers, payment providers, mapping services and AI providers are not random integrations scattered throughout the architecture. They all become governed external dependencies.
+
+Commit 019 — Infrastructure & Network Security Architecture
+19. Infrastructure & Network Security Architecture
+Purpose
+The Infrastructure & Network Security Architecture defines how the Essentials Mart infrastructure, networks, workloads, services, devices and environments are separated, authenticated, monitored and protected against unauthorized access, lateral movement, compromise and infrastructure failure.
+
+The architecture is based on the principle that network location alone must never establish trust.
+
+Essentials Mart will therefore use infrastructure and network controls as layers of defence while maintaining the broader Zero Trust principle that users, devices, workloads and services must be explicitly authenticated and authorized before accessing protected resources. NIST's Zero Trust Architecture specifically emphasizes protecting resources rather than trusting entities based on their network location, and its cloud-native guidance extends this model to application and service identities. 
+
+The objective is to ensure that:
+
+A compromise of one device, service, environment, store, network segment or infrastructure component does not automatically compromise the wider Essentials Mart platform.
+
+Architectural Principle
+Infrastructure security must be designed around containment and blast-radius reduction.
+
+The architecture therefore follows:
+
+Identity
+   ↓
+Authentication
+   ↓
+Authorization
+   ↓
+Network / Resource Policy
+   ↓
+Access
+   ↓
+Monitoring
+   ↓
+Audit
+   ↓
+Detection
+   ↓
+Containment
+Network controls reinforce authorization but do not replace it.
+
+Infrastructure Security Model
+Essentials Mart infrastructure will be treated as a collection of protected resources rather than one trusted internal network.
+
+The infrastructure security model consists of:
+
+cloud infrastructure;
+
+application infrastructure;
+
+data infrastructure;
+
+AI infrastructure;
+
+integration infrastructure;
+
+store infrastructure;
+
+endpoint infrastructure;
+
+development infrastructure;
+
+deployment infrastructure;
+
+security infrastructure;
+
+observability infrastructure.
+
+Each category must have defined security boundaries.
+
+19.1 Infrastructure Domains
+Purpose
+Infrastructure Domains separate major classes of infrastructure according to their function, sensitivity and risk.
+
+The architecture recognizes:
+
+Core Platform Infrastructure
+
+Application Infrastructure
+
+Data Infrastructure
+
+AI Infrastructure
+
+Integration Infrastructure
+
+Store Infrastructure
+
+Identity Infrastructure
+
+Security Infrastructure
+
+Observability Infrastructure
+
+Development Infrastructure
+
+Staging Infrastructure
+
+Production Infrastructure
+
+Owns
+Infrastructure Security owns the security boundaries governing:
+
+infrastructure communication;
+
+workload isolation;
+
+network access;
+
+infrastructure identities;
+
+environment separation;
+
+infrastructure monitoring;
+
+secure connectivity;
+
+infrastructure containment.
+
+Does Not Own
+Infrastructure Security does not own:
+
+business authorization policies;
+
+customer profiles;
+
+product catalogue;
+
+household data;
+
+supplier relationships;
+
+AI agent decisions;
+
+business analytics.
+
+Those remain owned by their respective domains.
+
+19.2 Environment Separation
+Essentials Mart must maintain distinct environments for:
+
+Development
+      ↓
+Testing
+      ↓
+Staging
+      ↓
+Production
+These environments must not be treated as interchangeable.
+
+Production represents the highest operational and security boundary.
+
+Development and testing environments must not receive unrestricted access to production systems or production secrets.
+
+Production Isolation
+Production infrastructure must be isolated from lower-trust environments.
+
+Conceptually:
+
+DEVELOPMENT
+     │
+     X
+     │
+TESTING
+     │
+     X
+     │
+STAGING
+     │
+     ↓
+CONTROLLED RELEASE
+     ↓
+PRODUCTION
+The architecture must prevent a compromise of development infrastructure from becoming an unrestricted path into production.
+
+19.3 Production Security Boundary
+Production must have:
+
+restricted administrative access;
+
+dedicated credentials;
+
+dedicated secrets;
+
+controlled deployment mechanisms;
+
+strong monitoring;
+
+enhanced logging;
+
+restricted network connectivity;
+
+controlled outbound access;
+
+infrastructure integrity controls.
+
+Production access must be explicitly authorized.
+
+19.4 Infrastructure Identity
+Infrastructure components must have identities.
+
+This includes:
+
+services;
+
+workloads;
+
+machines;
+
+devices;
+
+deployment systems;
+
+AI services;
+
+integration services;
+
+infrastructure components.
+
+A system must not be trusted merely because it originates from an internal network.
+
+NIST's cloud-native Zero Trust guidance specifically emphasizes application and service identities alongside user and network controls. 
+
+19.5 Workload Identity
+Each important workload should have an identifiable identity.
+
+Conceptually:
+
+Workload
+   ↓
+Workload Identity
+   ↓
+Authentication
+   ↓
+Authorization
+   ↓
+Resource
+This allows the platform to determine not merely:
+
+"Where did this request originate?"
+
+but:
+
+"Which workload made this request, under what authority, and for what resource?"
+
+19.6 Network Segmentation
+Essentials Mart infrastructure must use logical segmentation to reduce unnecessary communication between systems.
+
+A conceptual structure is:
+
+                         INTERNET
+                            │
+                       EDGE SECURITY
+                            │
+                       API / GATEWAY
+                            │
+             ┌──────────────┼──────────────┐
+             ↓              ↓              ↓
+       APPLICATION       AI SERVICES   INTEGRATIONS
+             │              │              │
+             └──────────────┼──────────────┘
+                            ↓
+                       DATA SERVICES
+                            │
+                 ┌──────────┼──────────┐
+                 ↓          ↓          ↓
+             DATABASE     CACHE     STORAGE
+The exact implementation may vary as the platform evolves.
+
+19.7 Security Zones
+Major infrastructure classes should be placed within appropriate security zones.
+
+Examples include:
+
+Public/Edge Zone
+Systems exposed to external traffic.
+
+Application Zone
+Application services and workloads.
+
+Protected Services Zone
+Sensitive internal services.
+
+Data Zone
+Databases and sensitive storage.
+
+Management Zone
+Privileged infrastructure-management systems.
+
+Security Zone
+Security monitoring and control infrastructure.
+
+Integration Zone
+Controlled connections to external systems.
+
+Store Zone
+Store-level infrastructure.
+
+19.8 Default-Deny Communication
+Communication between infrastructure components should be denied by default unless explicitly required.
+
+Conceptually:
+
+Service A
+    │
+    ├── Service B → ALLOWED
+    ├── Database A → ALLOWED
+    ├── Database B → DENIED
+    ├── Identity Service → ALLOWED
+    └── Payment Database → DENIED
+This reduces unnecessary lateral movement.
+
+19.9 Microsegmentation
+Where appropriate, Essentials Mart should use microsegmentation to restrict communication at the workload or resource level.
+
+Microsegmentation may be implemented through network, host, workload or application-level controls.
+
+NIST explicitly identifies microsegmentation as one approach for enforcing Zero Trust protections around individual resources or small groups of resources. 
+
+19.10 Service-to-Service Security
+Services must authenticate when communicating with other services.
+
+For example:
+
+Order Service
+     ↓
+Authenticated Request
+     ↓
+Inventory Service
+     ↓
+Authorization
+     ↓
+Inventory Data
+The Inventory Service must not assume that every internal service is trusted.
+
+19.11 API Gateway Boundary
+External application traffic should pass through controlled entry points.
+
+Conceptually:
+
+Customer
+   ↓
+Internet
+   ↓
+Edge Protection
+   ↓
+API Gateway
+   ↓
+Authentication
+   ↓
+Authorization
+   ↓
+Application Service
+The API Gateway must not become a substitute for authorization inside individual services.
+
+19.12 Direct Database Access
+Application clients must not directly access protected databases.
+
+The intended pattern is:
+
+Customer App
+     ↓
+API
+     ↓
+Authorized Service
+     ↓
+Database
+rather than:
+
+Customer App
+     ↓
+Database
+This principle also applies to Walk Mode.
+
+19.13 AI Infrastructure Boundary
+AI infrastructure must be separately protected.
+
+Conceptually:
+
+AI Society
+    ↓
+AI Control Layer
+    ↓
+Authorized AI Service
+    ↓
+Approved Tool
+    ↓
+Authorized Backend Service
+AI workloads must not automatically receive unrestricted infrastructure or database access.
+
+19.14 AI-to-Infrastructure Access
+An AI agent must never receive infrastructure privileges merely because it is an internal Essentials Mart component.
+
+Its authority must be:
+
+explicit;
+
+scoped;
+
+auditable;
+
+revocable;
+
+limited to approved tools and resources.
+
+19.15 Store Network Security
+Each Essentials Mart store should be treated as a distinct security environment.
+
+Conceptually:
+
+                         ESSENTIALS MART CLOUD
+                                  │
+                         Secure Store Gateway
+                                  │
+                           STORE BOUNDARY
+                                  │
+                ┌─────────────────┼─────────────────┐
+                ↓                 ↓                 ↓
+               POS           Inventory          Staff
+             Systems          Devices          Devices
+                │                 │                 │
+                └─────────────────┼─────────────────┘
+                                  ↓
+                           Store Services
+A store network must not automatically become a trusted extension of the global production network.
+
+19.16 Store-to-Cloud Connectivity
+Store infrastructure must communicate with central systems through controlled and authenticated connections.
+
+The architecture should support:
+
+authentication;
+
+encryption;
+
+authorization;
+
+monitoring;
+
+connection control;
+
+failure handling.
+
+19.17 Store Isolation
+A compromise of one store should not automatically provide access to:
+
+another store;
+
+global production;
+
+customer databases;
+
+supplier systems;
+
+payment infrastructure;
+
+identity infrastructure.
+
+Conceptually:
+
+Store A
+   X
+Store B
+
+Store A
+   X
+Global Infrastructure
+
+Store A
+   ↓
+Authorized Store Services
+19.18 Walk Mode Infrastructure Boundary
+Walk Mode must operate through a controlled application interface.
+
+A customer's device must never directly join or traverse the internal store network merely because Walk Mode is active.
+
+The intended model is:
+
+Customer Device
+      ↓
+Walk Mode
+      ↓
+Walk Mode API
+      ↓
+Authorization
+      ↓
+Sanitized Store Information
+The customer may receive authorized information such as:
+
+product location;
+
+product availability;
+
+navigation;
+
+recommendations;
+
+promotions.
+
+The customer must not receive unrestricted access to:
+
+POS systems;
+
+staff systems;
+
+internal databases;
+
+cameras;
+
+internal devices;
+
+other shoppers' information.
+
+19.19 Device Security
+Devices interacting with Essentials Mart infrastructure should be treated according to their risk.
+
+Relevant device categories include:
+
+customer devices;
+
+staff devices;
+
+POS devices;
+
+inventory devices;
+
+store infrastructure;
+
+administrative devices;
+
+development devices;
+
+infrastructure-management devices.
+
+Device identity and security posture may contribute to access decisions.
+
+19.20 Administrative Access
+Infrastructure administration must occur through dedicated privileged access mechanisms.
+
+Administrative access should require:
+
+strong authentication;
+
+appropriate clearance;
+
+authorized device;
+
+contextual verification;
+
+audit logging;
+
+least privilege.
+
+19.21 Privileged Infrastructure Access
+Privileged users should not operate with unrestricted permanent access.
+
+Where practical:
+
+Request
+   ↓
+Verification
+   ↓
+Approval
+   ↓
+Temporary Privilege
+   ↓
+Action
+   ↓
+Audit
+   ↓
+Privilege Revoked
+This aligns infrastructure security with the previously established Just-in-Time and Just-enough-access principles.
+
+19.22 Management Plane Separation
+The infrastructure management plane must be separated from ordinary application traffic.
+
+Management systems should not be directly exposed to general customer or store traffic.
+
+19.23 Secrets Infrastructure
+Infrastructure credentials must be managed through controlled secrets-management mechanisms.
+
+Secrets include:
+
+database credentials;
+
+API keys;
+
+service credentials;
+
+certificates;
+
+signing keys;
+
+AI provider credentials;
+
+payment credentials;
+
+messaging credentials;
+
+infrastructure credentials.
+
+Secrets must not be embedded directly into source code.
+
+19.24 Secret Access
+Applications should receive only the secrets required for their function.
+
+Conceptually:
+
+Application
+     ↓
+Identity
+     ↓
+Secrets Manager
+     ↓
+Authorized Secret
+A compromise of one workload should not expose unrelated credentials.
+
+19.25 Encryption in Transit
+Sensitive communication should use authenticated and encrypted transport mechanisms appropriate to the communication path.
+
+This applies to:
+
+customer → platform;
+
+store → platform;
+
+service → service;
+
+AI → tool;
+
+infrastructure → infrastructure;
+
+administrative access.
+
+19.26 Internal Traffic
+Internal network traffic must not automatically be considered trusted simply because it remains inside an Essentials Mart environment.
+
+Zero Trust explicitly rejects implicit trust based on network location. 
+
+19.27 Egress Security
+Outbound connections from infrastructure should be controlled.
+
+Services should only communicate with external destinations required for their function.
+
+For example:
+
+Order Service
+    ↓
+Approved Payment API
+       ALLOWED
+
+Order Service
+    ↓
+Unknown External Host
+       DENIED
+This reduces data-exfiltration and command-and-control opportunities.
+
+19.28 Ingress Security
+Inbound traffic must be:
+
+authenticated where appropriate;
+
+authorized;
+
+validated;
+
+monitored;
+
+rate-controlled;
+
+routed through approved boundaries.
+
+19.29 Infrastructure Firewalling
+Infrastructure firewalls and equivalent controls should enforce approved communication paths.
+
+They form one layer of defence rather than the sole security mechanism.
+
+19.30 Network Security Does Not Replace Identity
+The architecture explicitly rejects:
+
+"Internal network = trusted."
+
+Instead:
+
+Network Location
+      +
+Identity
+      +
+Device
+      +
+Workload
+      +
+Context
+      +
+Policy
+      ↓
+Access Decision
+This reflects the core Zero Trust principle that resource access should not be granted solely because an entity is located on an internal network. 
+
+19.31 Infrastructure Monitoring
+Infrastructure should produce security telemetry covering:
+
+network connections;
+
+authentication;
+
+authorization failures;
+
+configuration changes;
+
+privileged activity;
+
+workload behaviour;
+
+unusual traffic;
+
+service failures;
+
+device events;
+
+infrastructure changes.
+
+19.32 Network Anomaly Detection
+The security monitoring architecture should identify unusual behaviour such as:
+
+unexpected service communication;
+
+unusual outbound traffic;
+
+lateral movement;
+
+abnormal administrative access;
+
+unexpected geographic activity;
+
+unauthorized ports/services;
+
+unusual data transfer.
+
+19.33 Infrastructure Auditability
+Sensitive infrastructure actions must produce audit evidence.
+
+At minimum:
+
+Who?
+What?
+When?
+Where?
+Which identity?
+Which device?
+Which resource?
+Which authority?
+What changed?
+Result?
+This connects directly to the Security Logging & Evidence architecture.
+
+19.34 Infrastructure Configuration Management
+Infrastructure configuration must be controlled and traceable.
+
+Important configuration changes should identify:
+
+actor;
+
+change;
+
+reason;
+
+approval;
+
+affected resource;
+
+timestamp;
+
+resulting state.
+
+19.35 Infrastructure as Code
+Where infrastructure is managed programmatically, infrastructure-as-code should be treated as privileged code.
+
+Changes should therefore follow appropriate:
+
+source control;
+
+review;
+
+testing;
+
+approval;
+
+deployment;
+
+audit.
+
+This will connect directly to the later CI/CD & Deployment Security architecture.
+
+19.36 Infrastructure Drift
+The platform should detect unauthorized divergence between approved infrastructure configuration and actual deployed configuration.
+
+Conceptually:
+
+Approved State
+      ↓
+Actual State
+      ↓
+Compare
+      ↓
+Drift Detected
+      ↓
+Investigate
+      ↓
+Remediate
+19.37 Infrastructure Integrity
+Critical infrastructure should have mechanisms to establish that:
+
+the expected configuration is running;
+
+unauthorized components have not been introduced;
+
+critical software has not been modified;
+
+deployments originate from authorized sources.
+
+19.38 Infrastructure Resilience
+Security architecture must also address infrastructure failure.
+
+Critical services should be designed with appropriate:
+
+redundancy;
+
+failover;
+
+backup;
+
+recovery;
+
+regional resilience;
+
+graceful degradation.
+
+19.39 Regional Isolation
+As Essentials Mart expands globally, regional infrastructure may require controlled separation.
+
+For example:
+
+                  GLOBAL CONTROL
+                       │
+          ┌────────────┼────────────┐
+          ↓            ↓            ↓
+       Region A     Region B     Region C
+          │            │            │
+       Services     Services     Services
+A regional compromise should have a controlled blast radius.
+
+19.40 Data Infrastructure Boundary
+Databases and sensitive storage should reside within protected infrastructure boundaries.
+
+Applications should access them through authorized services rather than arbitrary network connectivity.
+
+19.41 Database Segmentation
+Different classes of data may require separate security boundaries.
+
+For example:
+
+Identity Data
+     X
+Customer Data
+     X
+Payment Data
+     X
+Analytics Data
+     X
+Operational Data
+The exact physical implementation will be determined later through architecture and technology ADRs.
+
+19.42 Storage Security
+Storage systems should enforce:
+
+authorization;
+
+encryption;
+
+access logging;
+
+isolation;
+
+retention controls;
+
+deletion controls.
+
+19.43 Backup Infrastructure
+Backups must not simply inherit the same access controls as production.
+
+A compromised production environment must not automatically provide unrestricted ability to destroy all backups.
+
+19.44 Backup Isolation
+Critical backups should have appropriate:
+
+access isolation;
+
+integrity protection;
+
+retention protection;
+
+recovery verification.
+
+19.45 Security Infrastructure
+Security systems themselves are high-value infrastructure.
+
+Examples include:
+
+security monitoring;
+
+logging;
+
+identity infrastructure;
+
+secrets management;
+
+detection systems;
+
+incident-response systems.
+
+A compromise of the security infrastructure could allow attackers to hide activity.
+
+Therefore security infrastructure requires elevated protection.
+
+19.46 Observability Security
+Logs, metrics and traces may contain sensitive information.
+
+Observability systems must therefore be protected against:
+
+unauthorized access;
+
+manipulation;
+
+deletion;
+
+data leakage.
+
+19.47 Infrastructure Supply-Chain Integration
+Infrastructure providers and infrastructure software fall under the Supply-Chain Security architecture established in Commit 018.
+
+For example:
+
+Infrastructure Provider
+        ↓
+Supply-Chain Controls
+        ↓
+Infrastructure Boundary
+        ↓
+Essentials Mart
+19.48 Infrastructure Incident Containment
+When infrastructure compromise is detected:
+
+Detection
+    ↓
+Identify Resource
+    ↓
+Restrict Connectivity
+    ↓
+Revoke Credentials
+    ↓
+Isolate Workload
+    ↓
+Preserve Evidence
+    ↓
+Investigate
+    ↓
+Recover
+This connects directly to the Incident Response architecture.
+
+19.49 Blast-Radius Reduction
+Every major infrastructure component should have a defined maximum expected blast radius.
+
+The architecture should continuously ask:
+
+If this component is compromised, what can it reach?
+
+and:
+
+What prevents it from reaching everything else?
+
+19.50 Security Boundaries
+Each major system should have an explicit boundary describing:
+
+permitted inbound traffic;
+
+permitted outbound traffic;
+
+trusted identities;
+
+authorized resources;
+
+permitted operations;
+
+monitoring requirements;
+
+containment mechanisms.
+
+19.51 Infrastructure Security and AI Society
+The AI Society must operate inside the same infrastructure security model as every other platform capability.
+
+AI does not receive a privileged network position merely because it is an AI system.
+
+AI Agent
+   ↓
+Identity
+   ↓
+Policy
+   ↓
+Authorized Tool
+   ↓
+Service Boundary
+   ↓
+Resource
+19.52 Infrastructure Security and Trust Engine
+The Trust Engine may contribute contextual risk information.
+
+However:
+
+The Trust Engine must never override mandatory infrastructure security boundaries.
+
+A high trust score cannot authorize access that policy explicitly forbids.
+
+19.53 Infrastructure Security and Staff Clearance
+Infrastructure access must follow the Staff Clearance Architecture.
+
+For example:
+
+Staff Member
+      ↓
+Role
+      ↓
+Clearance
+      ↓
+Infrastructure Permission
+      ↓
+Context
+      ↓
+Action
+      ↓
+Audit
+Being an employee does not imply infrastructure access.
+
+19.54 Infrastructure Security and Contractors
+Contractors must be treated as external identities with explicitly scoped access.
+
+Their access should be:
+
+limited;
+
+time-bound where appropriate;
+
+monitored;
+
+auditable;
+
+revocable.
+
+19.55 Infrastructure Security and External Providers
+External providers must access infrastructure only through explicitly authorized integration boundaries.
+
+This connects Commit 019 directly with Commit 018.
+
+19.56 Infrastructure Security at Global Scale
+The architecture must remain viable at:
+
+100M+ users
+
+10,000+ stores
+
+multiple countries
+
+millions of daily transactions
+
+large AI workloads
+
+Security architecture must therefore support automation, centralized policy and distributed enforcement.
+
+NIST's Zero Trust implementation guidance explicitly considers environments spanning on-premises infrastructure, multiple clouds, remote users and partners. 
+
+19.57 Global Infrastructure Control
+Essentials Mart should maintain centralized security policy while allowing regional infrastructure to operate according to local requirements.
+
+                 GLOBAL SECURITY POLICY
+                           │
+          ┌────────────────┼────────────────┐
+          ↓                ↓                ↓
+       Region A         Region B         Region C
+          │                │                │
+       Local Policy     Local Policy     Local Policy
+          │                │                │
+       Infrastructure   Infrastructure   Infrastructure
+19.58 Non-Negotiable Rules
+Rule 1
+Network location must never establish trust by itself.
+
+Rule 2
+Production must be isolated from lower-trust environments.
+
+Rule 3
+Infrastructure workloads must have identifiable identities.
+
+Rule 4
+Internal services must authenticate and authorize where required.
+
+Rule 5
+Communication must be explicitly permitted rather than implicitly trusted.
+
+Rule 6
+Sensitive infrastructure must have restricted administrative access.
+
+Rule 7
+Customer devices must never directly access internal store infrastructure.
+
+Rule 8
+Walk Mode must operate through controlled APIs rather than direct store-network access.
+
+Rule 9
+AI agents must not receive unrestricted infrastructure access.
+
+Rule 10
+Secrets must not be embedded directly into application source code.
+
+Rule 11
+Critical infrastructure changes must be auditable.
+
+Rule 12
+Infrastructure must be monitored for anomalous behaviour.
+
+Rule 13
+Critical infrastructure must have appropriate resilience and recovery mechanisms.
+
+Rule 14
+A compromised component must have a constrained blast radius.
+
+Rule 15
+Infrastructure security controls must integrate with detection and incident response.
+
+Rule 16
+Security boundaries must remain enforceable as the platform scales globally.
+
+19.59 Architectural Outcome
+Commit 019 establishes the Internal Infrastructure Security Boundary.
+
+The relationship between the previous commits is now:
+
+                         EDA-001 PART 3
+
+                         SECURITY
+                            │
+                     Zero Trust Model
+                            │
+             ┌──────────────┴──────────────┐
+             ↓                             ↓
+       External World                 Internal World
+             │                             │
+      Supply Chain 018              Infrastructure 019
+             │                             │
+      Suppliers                     Networks
+      Cloud                         Workloads
+      AI Providers                  Services
+      APIs                          Stores
+      WhatsApp                      Databases
+      Payment                       Infrastructure
+      Delivery                      Devices
+             │                             │
+             └──────────────┬──────────────┘
+                            ↓
+                     Identity + Policy
+                            ↓
+                    Controlled Access
+                            ↓
+                       Monitoring
+                            ↓
+                       Detection
+                            ↓
+                       Response
+The architectural objective is ultimately:
+
+No single compromised dependency, service, device, store, network, workload, AI agent or environment should provide unrestricted access to Essentials Mart.
+
+That is the core security outcome we're building toward.
+
