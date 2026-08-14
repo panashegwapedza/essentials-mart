@@ -29275,3 +29275,1065 @@ No single compromised dependency, service, device, store, network, workload, AI 
 
 That is the core security outcome we're building toward.
 
+Commit 020 — CI/CD & Deployment Security Architecture
+20. CI/CD & Deployment Security Architecture
+Purpose
+The CI/CD & Deployment Security Architecture defines how software, infrastructure configuration, AI components and other deployable artifacts are securely developed, tested, built, verified, approved, released and deployed into Essentials Mart environments.
+
+The deployment pipeline is considered a privileged security boundary.
+
+A compromise of the development pipeline could allow an attacker to bypass otherwise strong production controls by introducing malicious or unauthorized software into trusted production infrastructure.
+
+Therefore:
+
+The ability to deploy into production is itself a privileged capability requiring identity, authorization, verification, auditability and controlled trust.
+
+Architectural Principle
+The deployment pipeline must establish a verifiable chain:
+
+Source
+  ↓
+Change
+  ↓
+Review
+  ↓
+Validation
+  ↓
+Build
+  ↓
+Artifact
+  ↓
+Verification
+  ↓
+Approval
+  ↓
+Deployment
+  ↓
+Runtime Verification
+  ↓
+Monitoring
+No stage should implicitly trust the previous stage merely because it occurred inside Essentials Mart infrastructure.
+
+20.1 CI/CD Security Boundary
+The CI/CD system is treated as a distinct security domain.
+
+It includes:
+
+source repositories;
+
+pull requests;
+
+code review;
+
+build systems;
+
+test infrastructure;
+
+dependency resolution;
+
+artifact generation;
+
+artifact repositories;
+
+signing systems;
+
+deployment systems;
+
+deployment credentials;
+
+release approvals;
+
+deployment records.
+
+20.2 Source Control Security
+Source control is a critical security asset.
+
+Protection must include:
+
+authenticated access;
+
+least privilege;
+
+branch protection;
+
+protected production branches;
+
+review requirements;
+
+commit traceability;
+
+access logging;
+
+credential protection;
+
+repository configuration protection.
+
+Source code must not be treated as trustworthy merely because it exists inside the official repository.
+
+20.3 Developer Identity
+Every developer must use an identifiable account.
+
+Shared development credentials should be prohibited for security-sensitive activities.
+
+Developer access must follow:
+
+Developer
+   ↓
+Identity
+   ↓
+Role
+   ↓
+Permission
+   ↓
+Repository
+   ↓
+Action
+   ↓
+Audit
+20.4 Production Branch Protection
+Production-bound branches must have stronger controls than ordinary development branches.
+
+Where appropriate, the architecture should support:
+
+mandatory review;
+
+required automated checks;
+
+restricted direct pushes;
+
+protected branch settings;
+
+approval requirements;
+
+controlled merge mechanisms.
+
+20.5 Separation of Duties
+No single person should unnecessarily control the entire path from:
+
+Code
+ ↓
+Build
+ ↓
+Approval
+ ↓
+Production
+Where risk warrants it, responsibilities should be separated.
+
+For example:
+
+Developer
+    ↓
+Creates Change
+    ↓
+Reviewer
+    ↓
+Approves
+    ↓
+CI/CD System
+    ↓
+Builds
+    ↓
+Release Authority
+    ↓
+Deploys
+This reduces the impact of compromised or malicious accounts.
+
+20.6 Pull Request Security
+Changes entering protected branches should pass through controlled review mechanisms.
+
+Security-sensitive changes should receive additional scrutiny.
+
+Examples include changes involving:
+
+authentication;
+
+authorization;
+
+payments;
+
+secrets;
+
+infrastructure;
+
+AI permissions;
+
+database schemas;
+
+security controls;
+
+deployment configuration.
+
+20.7 Automated Security Validation
+The CI/CD pipeline should automatically perform appropriate security checks.
+
+Potential controls include:
+
+static analysis;
+
+dependency scanning;
+
+secret detection;
+
+vulnerability scanning;
+
+configuration validation;
+
+infrastructure security checks;
+
+container/image scanning;
+
+policy checks;
+
+automated tests.
+
+The exact tools will be determined later through ADRs.
+
+20.8 Dependency Security
+Dependencies must be evaluated before being incorporated into production software.
+
+This includes:
+
+application libraries;
+
+Flutter packages;
+
+backend dependencies;
+
+build dependencies;
+
+infrastructure modules;
+
+AI libraries;
+
+container dependencies.
+
+This connects directly to the Supply-Chain Security architecture established in Commit 018.
+
+20.9 Secret Detection
+The CI/CD pipeline should detect accidental exposure of secrets.
+
+Examples include:
+
+API keys;
+
+passwords;
+
+private keys;
+
+tokens;
+
+cloud credentials;
+
+payment credentials;
+
+AI provider credentials;
+
+WhatsApp credentials.
+
+A detected secret should trigger an appropriate security response rather than simply being ignored.
+
+20.10 Build Environment Security
+Build environments are privileged infrastructure.
+
+A compromised build environment could potentially modify software before it reaches production.
+
+Therefore build systems must have:
+
+controlled identities;
+
+isolated execution;
+
+restricted network access;
+
+controlled dependencies;
+
+protected credentials;
+
+reproducibility or verifiability where practical;
+
+build logging;
+
+integrity controls.
+
+SLSA specifically recognizes the build platform as a privileged part of the software supply chain and provides increasing levels of protection for build integrity. 
+
+20.11 Build Isolation
+Builds should be isolated from one another where practical.
+
+A malicious or compromised build should not automatically be able to:
+
+modify another build;
+
+access unrelated credentials;
+
+alter source repositories;
+
+access production;
+
+access unrelated artifacts.
+
+20.12 Build Credentials
+Build systems must receive only the credentials necessary for the build.
+
+Build credentials must not automatically include:
+
+production database access;
+
+unrestricted cloud administration;
+
+production deployment authority;
+
+unrelated service credentials.
+
+20.13 Artifact Generation
+Every production-bound build should generate identifiable artifacts.
+
+Examples include:
+
+application binaries;
+
+mobile packages;
+
+backend containers;
+
+infrastructure packages;
+
+configuration artifacts;
+
+AI deployment artifacts.
+
+Each artifact should be traceable to the build that produced it.
+
+20.14 Artifact Integrity
+Production systems must not blindly deploy arbitrary artifacts.
+
+Artifacts should be subject to integrity verification before deployment.
+
+Conceptually:
+
+Artifact
+   ↓
+Identity
+   ↓
+Integrity Check
+   ↓
+Provenance Check
+   ↓
+Policy Check
+   ↓
+Approved for Deployment
+SLSA's current provenance model is specifically designed to provide verifiable information about where, when and how an artifact was produced. 
+
+20.15 Build Provenance
+Production artifacts should have provenance describing their origin.
+
+The provenance should allow Essentials Mart to determine, where supported:
+
+what source produced the artifact;
+
+which revision was used;
+
+which builder produced it;
+
+when it was built;
+
+which inputs were involved;
+
+what build process produced it.
+
+This provides a traceable chain from source to deployed artifact.
+
+20.16 Artifact Verification
+Before deployment, the system should verify that the artifact meets expected security requirements.
+
+Verification should consider:
+
+artifact identity;
+
+cryptographic integrity;
+
+provenance;
+
+approved source;
+
+approved builder;
+
+vulnerability status;
+
+deployment policy.
+
+SLSA explicitly distinguishes provenance from verification: provenance is useful only when the consumer actually verifies it against expected conditions. 
+
+20.17 Artifact Repository Security
+Artifact repositories are security-sensitive systems.
+
+They must protect against:
+
+unauthorized uploads;
+
+artifact replacement;
+
+artifact deletion;
+
+tampering;
+
+unauthorized downloads;
+
+malicious artifact injection.
+
+20.18 Release Identity
+Every production release must have an identifiable release identity.
+
+A release should be traceable to:
+
+Source
+ ↓
+Commit
+ ↓
+Build
+ ↓
+Artifact
+ ↓
+Approval
+ ↓
+Deployment
+ ↓
+Runtime
+This creates an auditable chain of custody.
+
+20.19 Release Approval
+Production deployment must require appropriate authorization.
+
+The exact approval model may vary by risk.
+
+For example:
+
+Low-risk change
+→ Automated policy approval
+
+High-risk change
+→ Additional human approval
+
+Critical security change
+→ Enhanced authorization
+20.20 Deployment Identity
+The deployment system must have its own identity.
+
+It must not rely on a developer's personal credentials to deploy software.
+
+Conceptually:
+
+Developer
+   ↓
+Approved Change
+   ↓
+CI/CD
+   ↓
+Deployment Identity
+   ↓
+Production
+20.21 Deployment Credentials
+Deployment credentials must be:
+
+scoped;
+
+protected;
+
+auditable;
+
+revocable;
+
+separated from ordinary developer credentials.
+
+They should provide only the permissions required for deployment.
+
+20.22 Production Deployment Boundary
+The CI/CD system should reach production through a controlled deployment boundary.
+
+Conceptually:
+
+CI/CD
+  │
+  ↓
+Release Verification
+  │
+  ↓
+Deployment Authorization
+  │
+  ↓
+Production Deployment Boundary
+  │
+  ↓
+Production
+The build system should not have unrestricted administrative access to production.
+
+20.23 Deployment Policy Enforcement
+Production deployment should automatically enforce policy.
+
+Examples:
+
+Artifact approved?       → YES
+Source trusted?          → YES
+Build verified?          → YES
+Security checks passed?  → YES
+Required approval?       → YES
+Deployment allowed?      → YES
+If a mandatory condition fails:
+
+DEPLOYMENT BLOCKED
+20.24 Environment Promotion
+Software should progress through controlled environments.
+
+Development
+     ↓
+Testing
+     ↓
+Staging
+     ↓
+Production
+Promotion must not simply mean:
+
+"Copy whatever is currently running in development."
+
+The artifact promoted toward production should be identifiable and verifiable.
+
+20.25 Immutable Promotion
+Where practical, the same verified artifact should progress through environments rather than rebuilding different artifacts for each environment.
+
+Conceptually:
+
+Source
+  ↓
+Build Once
+  ↓
+Artifact A
+  ├── Testing
+  ├── Staging
+  └── Production
+This reduces the risk that the production artifact differs from the artifact that was tested.
+
+20.26 Deployment Rollback
+Deployments must support controlled rollback.
+
+If a release causes:
+
+security problems;
+
+application failure;
+
+data corruption;
+
+severe performance degradation;
+
+unexpected AI behaviour;
+
+the platform should be capable of restoring an approved previous state where technically feasible.
+
+20.27 Emergency Deployment
+Emergency changes require a defined emergency pathway.
+
+Emergency access must not become a permanent bypass around ordinary controls.
+
+An emergency deployment should still produce:
+
+identity;
+
+reason;
+
+authorization;
+
+timestamp;
+
+artifact;
+
+deployment record;
+
+post-event review.
+
+20.28 Database Migration Security
+Database schema changes must be treated as production changes.
+
+They should be:
+
+version controlled;
+
+reviewed;
+
+tested;
+
+traceable;
+
+reversible where feasible;
+
+subject to appropriate deployment controls.
+
+20.29 Infrastructure Deployment Security
+Infrastructure-as-code changes must pass through the same security principles.
+
+For example:
+
+Infrastructure Code
+       ↓
+Review
+       ↓
+Validation
+       ↓
+Security Checks
+       ↓
+Plan
+       ↓
+Approval
+       ↓
+Deployment
+       ↓
+Audit
+This connects directly to Commit 019's infrastructure architecture.
+
+20.30 Configuration Security
+Production configuration must be protected separately from ordinary source code.
+
+Configuration may include:
+
+feature flags;
+
+service endpoints;
+
+security policies;
+
+infrastructure settings;
+
+integration configuration;
+
+AI configuration.
+
+Sensitive configuration must be treated as protected data.
+
+20.31 Mobile Application Release Security
+The mobile application introduces additional release boundaries.
+
+The architecture must protect:
+
+application signing;
+
+release credentials;
+
+build artifacts;
+
+distribution channels;
+
+update mechanisms;
+
+version integrity.
+
+A compromised signing mechanism could undermine otherwise secure application code.
+
+20.32 AI Model Deployment Security
+AI models and model-related artifacts must also pass through controlled deployment processes.
+
+This includes:
+
+model artifacts;
+
+model configuration;
+
+system prompts where applicable;
+
+agent definitions;
+
+tool permissions;
+
+policy configuration;
+
+evaluation results.
+
+A model deployment must not automatically inherit unrestricted production authority.
+
+20.33 AI Agent Deployment
+AI agents should be deployed with explicit identities and permissions.
+
+Conceptually:
+
+Agent Definition
+      ↓
+Security Evaluation
+      ↓
+Permission Assignment
+      ↓
+Deployment
+      ↓
+Runtime Monitoring
+Changing an agent's capabilities should be treated as a security-relevant change.
+
+20.34 AI Tool Permission Changes
+Changes to the tools available to an AI agent should require appropriate review.
+
+For example:
+
+Agent
+ ├── Read Pantry       ✓
+ ├── Create List       ✓
+ ├── Place Order       ?
+ ├── Issue Refund      ✕
+ └── Modify Identity  ✕
+A new tool permission should not silently expand an agent's authority.
+
+20.35 Deployment Auditability
+Every production deployment should generate an audit record containing appropriate information such as:
+
+Who initiated it?
+Which identity performed it?
+What was deployed?
+Which source revision?
+Which artifact?
+Which builder?
+Which approvals?
+When?
+Where?
+Which environment?
+Result?
+Rollback?
+20.36 Deployment Monitoring
+After deployment, the system should monitor the resulting runtime.
+
+Monitoring should consider:
+
+error rates;
+
+performance;
+
+authentication anomalies;
+
+unexpected traffic;
+
+security events;
+
+resource behaviour;
+
+AI behaviour where applicable.
+
+A successful deployment is not necessarily a safe deployment.
+
+20.37 Post-Deployment Verification
+The platform should verify that the deployed system matches the expected release.
+
+Where appropriate:
+
+Expected Artifact
+       ↓
+Deployed Artifact
+       ↓
+Integrity Verification
+       ↓
+Runtime Verification
+Unexpected divergence should trigger investigation.
+
+20.38 Deployment Kill Switch
+Critical deployment mechanisms should have the ability to halt or disable further deployment activity.
+
+For example:
+
+Security Incident
+      ↓
+Deployment Freeze
+      ↓
+Investigation
+      ↓
+Containment
+      ↓
+Controlled Resume
+This becomes particularly important during a supply-chain or CI/CD compromise.
+
+20.39 Compromised Pipeline Response
+If the CI/CD pipeline is suspected of compromise:
+
+Detect
+  ↓
+Freeze Deployments
+  ↓
+Revoke Deployment Credentials
+  ↓
+Isolate Build Systems
+  ↓
+Preserve Evidence
+  ↓
+Validate Artifacts
+  ↓
+Determine Trusted State
+  ↓
+Recover
+Existing production systems must not automatically be assumed compromised merely because the pipeline was compromised; their integrity must be evaluated.
+
+20.40 Separation Between Build and Production
+The build system must not become an unrestricted administrator of the production environment.
+
+This is a key architectural principle:
+
+The ability to build software does not automatically imply the ability to administer production.
+
+20.41 CI/CD Supply-Chain Security
+The CI/CD system itself is part of the software supply chain.
+
+Its dependencies include:
+
+build tools;
+
+CI runners;
+
+plugins;
+
+package registries;
+
+container images;
+
+signing infrastructure;
+
+deployment tools.
+
+Therefore the CI/CD pipeline must be covered by the Supply-Chain Security architecture.
+
+20.42 Third-Party CI/CD Components
+Third-party actions, plugins, build tools and integrations must not automatically receive unrestricted pipeline privileges.
+
+Their permissions must be scoped according to need.
+
+20.43 Pipeline Least Privilege
+Every pipeline stage should receive only the permissions required for that stage.
+
+For example:
+
+Test Stage
+→ Test resources
+
+Build Stage
+→ Build resources
+
+Artifact Stage
+→ Artifact repository
+
+Deployment Stage
+→ Deployment boundary
+The test stage should not possess production deployment credentials.
+
+20.44 Pipeline Isolation
+Security-sensitive stages should be isolated where appropriate.
+
+A compromised dependency during testing should not automatically compromise:
+
+signing systems;
+
+production credentials;
+
+deployment systems.
+
+20.45 Release Signing
+Production artifacts should support cryptographic integrity mechanisms appropriate to the artifact and deployment environment.
+
+Signing keys must themselves be protected as high-value secrets.
+
+20.46 Signing Key Security
+Signing infrastructure should be isolated from ordinary development systems.
+
+A developer workstation compromise should not automatically expose production signing credentials.
+
+20.47 Reproducibility and Verification
+Where technically and economically practical, builds should be reproducible or otherwise independently verifiable.
+
+The objective is to increase confidence that:
+
+The artifact being deployed is actually the artifact produced from the approved source and build process.
+
+20.48 Security Gates
+The CI/CD pipeline should contain mandatory security gates.
+
+Conceptually:
+
+Source
+  ↓
+Code Review
+  ↓
+Tests
+  ↓
+Security Scan
+  ↓
+Dependency Check
+  ↓
+Artifact Verification
+  ↓
+Policy
+  ↓
+Approval
+  ↓
+Deploy
+A mandatory failed gate must prevent progression.
+
+20.49 Policy as Code
+Where practical, security and deployment policies should be machine-enforceable.
+
+This reduces dependence on manual interpretation.
+
+20.50 Deployment Logging
+Deployment logs must be protected against unauthorized modification and deletion.
+
+They form part of the enterprise security evidence architecture established earlier.
+
+20.51 Deployment and Incident Response
+CI/CD security must integrate with incident response.
+
+For example:
+
+Security Alert
+      ↓
+Deployment Investigation
+      ↓
+Release Identification
+      ↓
+Artifact Identification
+      ↓
+Affected Systems
+      ↓
+Containment
+This allows security teams to rapidly determine which release introduced a problem.
+
+20.52 Deployment and Rollback Evidence
+Rollback actions must be logged just like deployments.
+
+A rollback is itself a privileged production action.
+
+20.53 Global Deployment Architecture
+At global scale, deployments may occur across:
+
+countries;
+
+regions;
+
+stores;
+
+cloud environments;
+
+service clusters;
+
+AI infrastructure.
+
+The deployment architecture must therefore support controlled regional rollout.
+
+20.54 Progressive Deployment
+Where appropriate, releases may be progressively deployed:
+
+Release
+  ↓
+Internal Validation
+  ↓
+Limited Region / Cohort
+  ↓
+Monitoring
+  ↓
+Expanded Deployment
+  ↓
+Global Deployment
+This reduces blast radius when a release contains an unexpected defect.
+
+20.55 Deployment Freeze
+The architecture must support deployment freezes during:
+
+major incidents;
+
+active security investigations;
+
+infrastructure instability;
+
+critical dependency compromise;
+
+suspected CI/CD compromise.
+
+20.56 Security Ownership
+The organization must define ownership for:
+
+source security;
+
+build security;
+
+artifact security;
+
+deployment security;
+
+signing infrastructure;
+
+release authorization;
+
+emergency deployment.
+
+These responsibilities will be refined in the later Security Governance architecture.
+
+20.57 Non-Negotiable Rules
+Rule 1
+Production deployment is a privileged operation.
+
+Rule 2
+Build systems must not automatically possess unrestricted production access.
+
+Rule 3
+Production-bound artifacts must be traceable to their source and build process.
+
+Rule 4
+Artifacts must be verified before deployment.
+
+Rule 5
+Production deployment credentials must be separated from developer credentials.
+
+Rule 6
+Security gates must be capable of blocking unsafe releases.
+
+Rule 7
+Emergency deployment must remain auditable.
+
+Rule 8
+CI/CD infrastructure itself must be treated as a high-value security boundary.
+
+Rule 9
+Changes to AI agents, tools and permissions must be treated as security-relevant deployments.
+
+Rule 10
+Deployment activity must be auditable from source through runtime.
+
+Rule 11
+The platform must be capable of freezing deployments during a security incident.
+
+Rule 12
+The deployment architecture must minimize the blast radius of compromised build or deployment components.
+
+20.58 Architectural Outcome
+Commit 020 establishes the software delivery security boundary.
+
+The relationship is now:
+
+EDA-001 PART 3
+       │
+       ├── 018 Supply Chain Security
+       │
+       ├── 019 Infrastructure & Network Security
+       │
+       └── 020 CI/CD & Deployment Security
+                    │
+                    ↓
+              Source Control
+                    ↓
+                 Build
+                    ↓
+                Artifact
+                    ↓
+              Verification
+                    ↓
+                Approval
+                    ↓
+               Deployment
+                    ↓
+               Production
+                    ↓
+               Monitoring
+The fundamental security principle is:
+
+Nothing should enter production merely because it was successfully built. It must be identifiable, verifiable, authorized and traceable.
+
+This is also where the earlier concern you raised about replication, reverse engineering and protection of the system's intellectual property begins to connect technically with the architecture. The CI/CD boundary protects the trusted software delivery chain; the later architecture for application/IP protection will address the different problem of protecting what is exposed to users and clients.
+
+NIST's SSDF provides the broader secure-development foundation for this approach, while SLSA provides a useful model for artifact provenance and verification. 
