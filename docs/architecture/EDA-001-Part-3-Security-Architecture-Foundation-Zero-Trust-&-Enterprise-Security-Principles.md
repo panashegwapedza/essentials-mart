@@ -30337,3 +30337,1145 @@ Nothing should enter production merely because it was successfully built. It mus
 This is also where the earlier concern you raised about replication, reverse engineering and protection of the system's intellectual property begins to connect technically with the architecture. The CI/CD boundary protects the trusted software delivery chain; the later architecture for application/IP protection will address the different problem of protecting what is exposed to users and clients.
 
 NIST's SSDF provides the broader secure-development foundation for this approach, while SLSA provides a useful model for artifact provenance and verification. 
+
+Commit 021 — Security Governance Architecture
+21. Security Governance Architecture
+Purpose
+The Security Governance Architecture establishes the organisational structures, authorities, responsibilities, policies and decision mechanisms required to govern cybersecurity across Essentials Mart.
+
+Security governance ensures that the security architecture established throughout EDA-001 Part 3 is not merely documented but continuously owned, enforced, measured, reviewed and improved.
+
+The governance model must connect:
+
+Business Objectives
+        ↓
+Enterprise Risk
+        ↓
+Security Strategy
+        ↓
+Security Architecture
+        ↓
+Policies & Standards
+        ↓
+Controls
+        ↓
+Monitoring
+        ↓
+Evidence
+        ↓
+Risk Decisions
+        ↓
+Continuous Improvement
+Security governance must therefore operate as a continuous system rather than a one-time approval process.
+
+21.1 Governance Principles
+Essentials Mart security governance must follow:
+
+accountability;
+
+transparency;
+
+risk-based decision making;
+
+least privilege;
+
+separation of duties;
+
+evidence-based decisions;
+
+continuous monitoring;
+
+proportionality;
+
+architectural consistency;
+
+documented exceptions;
+
+continuous improvement.
+
+21.2 Security Accountability
+Cybersecurity responsibility ultimately belongs to organisational leadership.
+
+Security must not be treated exclusively as an IT responsibility.
+
+Business, engineering, product, operations, AI, privacy, legal, finance and other relevant functions must participate where their decisions create or modify security risk.
+
+21.3 Security Ownership
+Every significant security capability must have a defined owner.
+
+Examples include:
+
+Identity & Access;
+
+Trust Engine;
+
+AI Security;
+
+customer data;
+
+payment security;
+
+infrastructure;
+
+CI/CD;
+
+supplier security;
+
+Walk Mode;
+
+privacy;
+
+incident response;
+
+security monitoring.
+
+No critical security capability should exist without an accountable owner.
+
+21.4 Security Decision Rights
+The architecture must explicitly define who may:
+
+approve security controls;
+
+approve exceptions;
+
+accept residual risk;
+
+authorize production systems;
+
+approve privileged access;
+
+approve high-risk AI capabilities;
+
+authorize emergency actions;
+
+approve security architecture deviations.
+
+Authority must be based on responsibility and risk rather than organisational title alone.
+
+21.5 Separation of Duties
+Critical security decisions should not unnecessarily be controlled by a single individual.
+
+For high-risk activities:
+
+Requester
+   ↓
+Reviewer
+   ↓
+Approver
+   ↓
+Executor
+   ↓
+Auditor
+The exact separation will depend on risk and operational requirements.
+
+21.6 Security Risk Management
+Security risk must be continuously identified, assessed, prioritised, treated and monitored.
+
+Conceptually:
+
+Identify
+   ↓
+Assess
+   ↓
+Prioritise
+   ↓
+Treat
+   ↓
+Accept / Transfer / Mitigate / Avoid
+   ↓
+Monitor
+   ↓
+Reassess
+NIST's Risk Management Framework similarly treats risk management as a structured and continuous lifecycle rather than a point-in-time security assessment. 
+
+21.7 Enterprise Risk Integration
+Cybersecurity risks must connect to the broader Essentials Mart enterprise risk model.
+
+Security decisions should therefore consider:
+
+financial impact;
+
+customer impact;
+
+operational impact;
+
+regulatory impact;
+
+reputational impact;
+
+safety impact;
+
+strategic impact;
+
+availability impact;
+
+confidentiality impact;
+
+integrity impact.
+
+Cybersecurity risk must not be evaluated independently of business consequences.
+
+NIST's current enterprise-risk guidance explicitly addresses integrating cybersecurity risk information into enterprise risk management and risk profiles. 
+
+21.8 Security Risk Appetite
+Essentials Mart must define acceptable levels of cybersecurity risk.
+
+Risk appetite should vary according to the affected capability.
+
+For example:
+
+Customer payment data
+→ Very low tolerance
+
+Identity systems
+→ Very low tolerance
+
+AI experimentation
+→ Controlled tolerance
+
+Internal development tooling
+→ Higher tolerance where contained
+Risk appetite must not be interpreted as permission to ignore security weaknesses.
+
+21.9 Risk Tolerance
+Risk appetite establishes the broad organisational position.
+
+Risk tolerance establishes the acceptable boundary for a particular system, service or risk.
+
+A system exceeding its defined tolerance must trigger escalation or corrective action.
+
+21.10 Security Risk Register
+Essentials Mart should maintain a structured security risk register.
+
+Each material risk should contain appropriate information such as:
+
+risk identifier;
+
+affected asset;
+
+threat;
+
+vulnerability;
+
+likelihood;
+
+impact;
+
+risk rating;
+
+owner;
+
+mitigation;
+
+residual risk;
+
+treatment decision;
+
+target date;
+
+status;
+
+evidence.
+
+The register should become an active management mechanism rather than a static document.
+
+NIST's current risk-management publications explicitly describe structured risk registers and integration with enterprise risk profiles. 
+
+21.11 Risk Treatment
+Security risks may be treated through:
+
+mitigation;
+
+avoidance;
+
+transfer;
+
+acceptance.
+
+The chosen treatment must be documented.
+
+21.12 Risk Acceptance
+Residual risk may only be accepted by an appropriately authorised party.
+
+Risk acceptance must include:
+
+identified risk;
+
+potential impact;
+
+existing controls;
+
+residual risk;
+
+justification;
+
+accepting authority;
+
+expiration or review date.
+
+Risk acceptance must never become a permanent mechanism for bypassing security requirements.
+
+21.13 Temporary Security Exceptions
+Exceptions may be necessary when:
+
+a legacy system cannot immediately comply;
+
+a technical limitation exists;
+
+a business-critical requirement conflicts with a control;
+
+remediation requires significant migration;
+
+an emergency requires temporary deviation.
+
+Every exception must be:
+
+Requested
+   ↓
+Assessed
+   ↓
+Approved / Rejected
+   ↓
+Time-Bounded
+   ↓
+Monitored
+   ↓
+Reviewed
+   ↓
+Closed
+21.14 Exception Expiration
+Security exceptions must have expiration or mandatory review dates.
+
+An exception must not become permanent simply because nobody revisited it.
+
+21.15 Security Architecture Review
+Significant architectural changes must undergo security review.
+
+Examples include:
+
+new services;
+
+new data stores;
+
+new external integrations;
+
+new AI agents;
+
+new privileged capabilities;
+
+new payment functionality;
+
+new regions;
+
+new authentication mechanisms;
+
+new staff clearance models;
+
+major Walk Mode capabilities.
+
+21.16 Security Architecture Decision Records
+Security-sensitive architectural decisions must be documented through ADRs where appropriate.
+
+This ensures that the reasoning behind security decisions remains discoverable.
+
+The relationship becomes:
+
+EDA
+ ↓
+Architecture
+ ↓
+ADR
+ ↓
+Implementation
+ ↓
+Evidence
+21.17 Security Technical Debt
+Security weaknesses that cannot immediately be remediated must be explicitly tracked as security technical debt.
+
+Examples:
+
+outdated dependency;
+
+temporary authentication workaround;
+
+incomplete isolation;
+
+legacy API;
+
+temporary privileged access;
+
+unsupported encryption mechanism.
+
+Security technical debt must have an owner and remediation path.
+
+21.18 Architectural Drift
+The implemented system may gradually diverge from the approved architecture.
+
+Essentials Mart must therefore continuously identify:
+
+Approved Architecture
+        vs
+Actual Architecture
+Material deviations should trigger review.
+
+21.19 Configuration Drift
+Infrastructure and security configurations must be monitored for unauthorized or unexpected changes.
+
+Examples:
+
+firewall rules;
+
+IAM policies;
+
+cloud configuration;
+
+database access;
+
+network segmentation;
+
+security settings.
+
+21.20 Policy Governance
+Security policies must define mandatory organisational expectations.
+
+Policies should establish:
+
+scope;
+
+requirements;
+
+ownership;
+
+enforcement;
+
+exceptions;
+
+review frequency.
+
+Policies must be communicated to relevant personnel and systems.
+
+21.21 Standards
+Policies should be translated into technical and operational standards.
+
+For example:
+
+Security Policy
+      ↓
+Security Standard
+      ↓
+Technical Control
+      ↓
+Implementation
+      ↓
+Evidence
+This prevents policies from remaining vague statements of intent.
+
+21.22 Control Ownership
+Every mandatory security control should have an owner responsible for:
+
+implementation;
+
+operation;
+
+monitoring;
+
+evidence;
+
+remediation.
+
+21.23 Control Effectiveness
+A control being implemented does not necessarily mean it is effective.
+
+Controls should therefore be evaluated using evidence.
+
+For example:
+
+MFA enabled
+
+is not equivalent to:
+
+MFA is correctly enforced for all privileged access paths.
+
+21.24 Continuous Control Monitoring
+Where practical, security controls should be monitored continuously or automatically.
+
+Examples include:
+
+privileged accounts;
+
+exposed services;
+
+encryption status;
+
+vulnerable dependencies;
+
+security configuration;
+
+deployment controls;
+
+certificate expiration;
+
+anomalous access.
+
+NIST's recent guidance increasingly emphasizes machine-readable information and automated collection to support ongoing risk decisions rather than relying solely on static documentation. 
+
+21.25 Security Metrics
+Security governance should use meaningful metrics.
+
+Possible metrics include:
+
+unresolved critical vulnerabilities;
+
+mean time to detect;
+
+mean time to contain;
+
+mean time to remediate;
+
+privileged-account violations;
+
+policy exceptions;
+
+expired exceptions;
+
+security incidents;
+
+failed security controls;
+
+deployment policy violations;
+
+supplier security findings.
+
+Metrics must measure actual risk reduction rather than simply counting activity.
+
+21.26 Security KPIs and KRIs
+Essentials Mart should distinguish between:
+
+KPIs
+
+Measures of security performance.
+
+and:
+
+KRIs
+
+Indicators that security risk is increasing.
+
+Example:
+
+KPI
+→ Percentage of critical vulnerabilities remediated within SLA
+
+KRI
+→ Number of critical vulnerabilities exceeding SLA
+21.27 Security Reporting
+Security leadership should receive appropriate reporting on:
+
+material risks;
+
+incidents;
+
+unresolved vulnerabilities;
+
+security debt;
+
+exceptions;
+
+supplier risks;
+
+AI security risks;
+
+compliance;
+
+architecture deviations.
+
+Reporting should support decisions rather than simply provide statistics.
+
+21.28 Security Escalation
+Security issues must have defined escalation paths.
+
+For example:
+
+Issue
+ ↓
+System Owner
+ ↓
+Security Owner
+ ↓
+Security Leadership
+ ↓
+Executive Authority
+The escalation level should correspond to risk.
+
+21.29 Critical Security Decisions
+Critical security decisions must be documented.
+
+Examples include:
+
+acceptance of critical residual risk;
+
+disabling major security controls;
+
+emergency access;
+
+production security exceptions;
+
+major AI capability enablement;
+
+major data exposure;
+
+security architecture deviation.
+
+21.30 AI Security Governance
+AI introduces additional governance requirements.
+
+Governance must cover:
+
+AI agent ownership;
+
+AI identities;
+
+model approval;
+
+tool approval;
+
+permission approval;
+
+autonomy levels;
+
+human oversight;
+
+model changes;
+
+agent changes;
+
+AI incident response;
+
+AI kill switches.
+
+An AI agent must not acquire capabilities simply because a developer technically made them available.
+
+21.31 AI Agent Authority
+AI agents must have explicitly defined authority.
+
+For example:
+
+Agent
+ ↓
+Identity
+ ↓
+Purpose
+ ↓
+Tools
+ ↓
+Permissions
+ ↓
+Autonomy Level
+ ↓
+Approval Threshold
+21.32 High-Risk AI Actions
+Actions involving significant consequences should have stronger governance.
+
+Examples include:
+
+financial transactions;
+
+refunds;
+
+account changes;
+
+privileged operations;
+
+sensitive data access;
+
+security configuration;
+
+staff actions;
+
+supplier actions.
+
+The required human involvement should be determined by risk.
+
+21.33 Security Governance for External Dependencies
+Governance must cover all material third parties and external dependencies.
+
+This explicitly includes:
+
+suppliers;
+
+software libraries;
+
+cloud providers;
+
+AI models;
+
+AI providers;
+
+APIs;
+
+payment providers;
+
+WhatsApp;
+
+mapping providers;
+
+delivery providers;
+
+analytics services;
+
+infrastructure providers;
+
+development tools;
+
+contractors;
+
+managed services.
+
+This connects Commit 021 directly to the Supply-Chain Security architecture established earlier.
+
+21.34 Third-Party Risk Ownership
+Every material external dependency must have an internal owner.
+
+The existence of a supplier contract does not transfer all security responsibility to the supplier.
+
+21.35 Supplier Security Requirements
+Material suppliers should be evaluated according to risk.
+
+Evaluation may consider:
+
+security capability;
+
+data access;
+
+authentication;
+
+incident response;
+
+availability;
+
+compliance;
+
+dependency concentration;
+
+subcontractors;
+
+breach history;
+
+recovery capability.
+
+21.36 Dependency Criticality
+Not all dependencies require identical governance.
+
+A dependency should be classified according to factors such as:
+
+Data sensitivity
++
+Privilege
++
+Business criticality
++
+Availability dependency
++
+Replacement difficulty
++
+Concentration risk
+=
+Dependency Criticality
+Higher-criticality dependencies require stronger controls.
+
+21.37 Security Contracts
+Where appropriate, contracts with material providers should establish security requirements.
+
+These may include:
+
+security obligations;
+
+breach notification;
+
+data protection;
+
+access restrictions;
+
+audit rights;
+
+subcontractor requirements;
+
+termination obligations;
+
+data deletion;
+
+recovery expectations.
+
+21.38 Security Review of New Capabilities
+New features must consider security before implementation.
+
+A simplified process:
+
+Feature Proposal
+      ↓
+Security Impact Assessment
+      ↓
+Architecture Review
+      ↓
+Security Requirements
+      ↓
+Implementation
+      ↓
+Security Validation
+      ↓
+Release
+21.39 Security Requirements Traceability
+Material security requirements should be traceable from architecture to implementation.
+
+Security Requirement
+        ↓
+ADR / EDA
+        ↓
+Implementation
+        ↓
+Test
+        ↓
+Evidence
+21.40 Security Change Management
+Changes to security-sensitive systems must be controlled.
+
+Examples include changes to:
+
+IAM;
+
+Trust Engine;
+
+security policies;
+
+network boundaries;
+
+AI permissions;
+
+payment controls;
+
+fraud systems;
+
+production infrastructure.
+
+21.41 Emergency Security Changes
+Emergency security changes may bypass ordinary change procedures when necessary to protect the platform.
+
+However:
+
+Emergency does not mean unaudited.
+
+Emergency changes must still produce appropriate evidence and undergo retrospective review.
+
+21.42 Security Review Cadence
+Security architecture, controls, policies and risk should be reviewed periodically.
+
+The review cadence should depend on:
+
+system criticality;
+
+threat level;
+
+change frequency;
+
+regulatory requirements;
+
+incident history.
+
+21.43 Security Governance During Incidents
+During a security incident, governance must support rapid decision-making.
+
+Incident command must have authority to:
+
+isolate systems;
+
+revoke access;
+
+freeze deployments;
+
+disable integrations;
+
+suspend accounts;
+
+activate kill switches;
+
+preserve evidence.
+
+21.44 Post-Incident Governance
+Every significant security incident should produce lessons.
+
+The process should be:
+
+Incident
+ ↓
+Investigation
+ ↓
+Root Cause
+ ↓
+Lessons
+ ↓
+Architecture / Control Changes
+ ↓
+ADR where necessary
+ ↓
+Implementation
+ ↓
+Verification
+21.45 Security Governance and Evidence
+Security decisions must produce evidence appropriate to their significance.
+
+Evidence may include:
+
+approvals;
+
+risk assessments;
+
+audit logs;
+
+configuration records;
+
+test results;
+
+security assessments;
+
+incident records;
+
+exception records;
+
+deployment records.
+
+21.46 Evidence Integrity
+Security governance evidence must itself be protected.
+
+Evidence should not be casually alterable or deletable by the same parties whose actions it records.
+
+This directly extends the auditability architecture established in Commit 015.
+
+21.47 Governance Automation
+Where practical, governance should be automated.
+
+Examples:
+
+Expired Exception
+→ Automatic Alert
+
+Unauthorized Configuration
+→ Security Alert
+
+Missing Approval
+→ Deployment Block
+
+Critical Vulnerability
+→ Escalation
+
+Expired Certificate
+→ Alert
+
+Unapproved AI Tool
+→ Deployment Block
+Governance should increasingly become enforceable by the platform, not dependent solely on human memory.
+
+21.48 Policy as Code
+Where appropriate, governance requirements should be expressed as machine-enforceable policies.
+
+This enables:
+
+consistent enforcement;
+
+automated validation;
+
+reduced human error;
+
+continuous compliance;
+
+faster detection of drift.
+
+21.49 Security Governance at Global Scale
+At 100M+ users, 10,000+ stores and multiple countries, security governance must support decentralisation without losing central security standards.
+
+The architecture should therefore support:
+
+Global Security Principles
+        ↓
+Regional Requirements
+        ↓
+Business / Domain Requirements
+        ↓
+System Controls
+Local teams may adapt implementation where required, but must not silently weaken global security requirements.
+
+21.50 Regional and Regulatory Requirements
+Different countries may introduce different:
+
+privacy requirements;
+
+data-residency requirements;
+
+payment regulations;
+
+cybersecurity requirements;
+
+consumer protections;
+
+reporting obligations.
+
+Governance must allow regional requirements to be incorporated without fragmenting the core security architecture.
+
+21.51 Governance and Architectural Consistency
+Security governance must prevent individual teams from independently creating incompatible security models.
+
+For example:
+
+One service cannot invent its own identity model simply because implementing the enterprise identity model is inconvenient.
+
+Exceptions must be formally reviewed.
+
+21.52 Security Governance and Innovation
+Governance must not unnecessarily prevent innovation.
+
+The objective is:
+
+controlled innovation, not unrestricted innovation and not bureaucratic paralysis.
+
+Low-risk experimentation should be possible inside appropriately isolated environments.
+
+21.53 Security Sandboxes
+High-risk experimentation should occur in controlled environments.
+
+Examples include:
+
+AI experimentation;
+
+new integrations;
+
+untrusted libraries;
+
+experimental automation;
+
+new payment mechanisms.
+
+Sandboxing reduces the blast radius of experimentation.
+
+21.54 Security Governance Lifecycle
+The overall governance lifecycle becomes:
+
+Define
+  ↓
+Implement
+  ↓
+Measure
+  ↓
+Monitor
+  ↓
+Assess
+  ↓
+Decide
+  ↓
+Improve
+  ↓
+Redefine
+21.55 Non-Negotiable Rules
+Rule 1
+Every material security capability must have an accountable owner.
+
+Rule 2
+Material security risks must have identifiable owners and treatment decisions.
+
+Rule 3
+Residual risk may only be accepted by an appropriately authorised authority.
+
+Rule 4
+Security exceptions must be documented, justified, monitored and time-bounded.
+
+Rule 5
+Security architecture decisions must be documented where their consequences are material.
+
+Rule 6
+Security technical debt must be explicitly tracked.
+
+Rule 7
+Architectural and configuration drift must be detectable.
+
+Rule 8
+Third-party dependencies must have appropriate security ownership and oversight.
+
+Rule 9
+AI agents and AI capabilities must be governed according to their authority and risk.
+
+Rule 10
+Security governance must produce evidence.
+
+Rule 11
+Governance requirements should be automated wherever practical.
+
+Rule 12
+Emergency decisions remain auditable.
+
+Rule 13
+Security governance must integrate with enterprise risk management.
+
+Rule 14
+Governance must scale globally without fragmenting the security architecture.
+
+21.56 Architectural Outcome
+Commit 021 establishes the governance layer above the security architecture developed throughout Part 3.
+
+The resulting structure is now:
+
+EDA-001 PART 3 — SECURITY ARCHITECTURE
+│
+├── Security Philosophy
+│
+├── Trust Architecture
+│
+├── Identity & Access Security
+│
+├── Staff Clearance Architecture
+│
+├── Data Security
+│
+├── Application Security
+│
+├── API & Service Security
+│
+├── AI Security
+│
+├── Trust Engine Security
+│
+├── Reward Intelligence Security
+│
+├── Fraud & Abuse
+│
+├── Walk Mode Security
+│
+├── Privacy
+│
+├── Security Logging
+│
+├── Detection
+│
+├── Incident Response
+│
+├── 018 Supply-Chain Security
+│
+├── 019 Infrastructure & Network Security
+│
+├── 020 CI/CD & Deployment Security
+│
+└── 021 Security Governance
+          │
+          ├── Ownership
+          ├── Risk
+          ├── Exceptions
+          ├── Policies
+          ├── Architecture Review
+          ├── Technical Debt
+          ├── Drift
+          ├── Third-Party Governance
+          ├── AI Governance
+          ├── Evidence
+          └── Continuous Improvement
+The important architectural transition is:
+
+018–020 established how Essentials Mart protects its supply chain, infrastructure and software delivery. Commit 021 establishes who has the authority to make security decisions and how those decisions remain controlled over the lifetime of the platform.
+
+That gives us a much more complete security programme. NIST's current guidance supports this model of defined responsibilities, enterprise risk integration, documented plans and continuous monitoring rather than treating governance as a static compliance exercise. 
