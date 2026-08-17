@@ -26,16 +26,16 @@ ADR-003 establishes that events represent facts, commands request actions, and q
 | EIP-004 | Command Message | Represent an explicit request to perform an action | Proposed |
 | EIP-005 | Request-Reply | Support synchronous request/response interactions | Proposed |
 | EIP-006 | Message Router | Route messages between integration participants | Proposed |
-| EIP-007 | Content-Based Router | Route messages according to message content | Planned |
-| EIP-008 | Recipient List | Deliver one message to a dynamically determined set of recipients | Planned |
-| EIP-009 | Dead Letter Channel | Isolate messages that cannot be successfully processed | Planned |
-| EIP-010 | Retry and Redelivery | Recover from transient processing failures | Planned |
-| EIP-011 | Idempotent Consumer | Prevent duplicate delivery from producing duplicate effects | Planned |
-| EIP-012 | Message Filter | Prevent irrelevant messages from reaching consumers | Planned |
-| EIP-013 | Saga Orchestration | Coordinate long-running distributed business workflows | Planned |
-| EIP-014 | Transactional Outbox | Reliably publish integration messages with domain state changes | Planned |
-| EIP-015 | Correlation and Distributed Tracing | Maintain workflow identity across distributed processing | Planned |
-| EIP-016 | Human-in-the-Loop Routing | Escalate actions requiring human authority | Planned |
+| EIP-007 | Content-Based Router | Route messages according to message content | Proposed |
+| EIP-008 | Recipient List | Deliver one message to a dynamically determined set of recipients | Proposed |
+| EIP-009 | Dead Letter Channel | Isolate messages that cannot be successfully processed | Proposed |
+| EIP-010 | Retry and Redelivery | Recover from transient processing failures | Proposed |
+| EIP-011 | Idempotent Consumer | Prevent duplicate delivery from producing duplicate effects | Proposed |
+| EIP-012 | Message Filter | Prevent irrelevant messages from reaching consumers | Proposed |
+| EIP-013 | Saga Orchestration | Coordinate long-running distributed business workflows | Proposed |
+| EIP-014 | Transactional Outbox | Reliably publish integration messages with domain state changes | Proposed |
+| EIP-015 | Correlation and Distributed Tracing | Maintain workflow identity across distributed processing | Proposed |
+| EIP-016 | Human-in-the-Loop Routing | Escalate actions requiring human authority | Proposed |
 
 ## Governing Principles
 
@@ -75,6 +75,7 @@ Primary dependencies include:
 - ADR-012 — WhatsApp Integration Architecture
 - ADR-016 — Observability, Auditability & Trust
 - ADR-017 — Scalability & Multi-Store Architecture
+- ADR-018 — Deployment & Environment Strategy
 
 ## Naming and Message Conventions
 
