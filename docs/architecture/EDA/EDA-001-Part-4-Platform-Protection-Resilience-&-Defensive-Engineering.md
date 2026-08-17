@@ -688,3 +688,1046 @@ attack paths;
 impact;
 likelihood;
 defensive priorities.
+
+Commit 002 — Platform Threat & Attack Model
+Proposed path:
+
+docs/architecture/EDA-001/part-4/commits/002-platform-threat-attack-model.md
+
+# EDA-001 Part 4 — Commit 002
+---
+
+## 5.8 Reverse Engineers
+
+Actors attempting to:
+
+- inspect client applications;
+- extract application logic;
+- recover algorithms;
+- analyse binaries;
+- inspect APIs;
+- reconstruct workflows;
+- reproduce proprietary functionality.
+
+---
+
+## 5.9 AI Attackers
+
+Actors attempting to:
+
+- manipulate AI agents;
+- extract prompts;
+- extract model behaviour;
+- poison context;
+- poison data;
+- abuse tools;
+- escalate agent privileges;
+- impersonate agents;
+- cause excessive AI resource consumption.
+
+---
+
+## 5.10 High-Capability Attackers
+
+Where appropriate, the threat model shall consider attackers with:
+
+- significant technical expertise;
+- financial resources;
+- persistent access;
+- specialised tooling;
+- coordinated operations.
+
+The architecture shall not assume that every attacker possesses the same capability.
+
+---
+
+# 6. Trust Boundaries
+
+The following trust boundaries shall be explicitly modelled.
+
+```text
+Customer Device
+        │
+        ▼
+Public Network
+        │
+        ▼
+Edge / Gateway
+        │
+        ▼
+Application Services
+        │
+        ▼
+Domain Services
+        │
+        ▼
+Data Systems
+Additional boundaries include:
+
+Customer ↔ Essentials Mart
+
+Staff ↔ Staff Systems
+
+Supplier ↔ Supplier Interfaces
+
+Third Party ↔ Essentials Mart
+
+AI Agent ↔ AI Society
+
+AI Agent ↔ Tool
+
+AI Agent ↔ Data
+
+Service ↔ Service
+
+Store ↔ Central Platform
+
+Region ↔ Region
+
+Development ↔ Staging
+
+Staging ↔ Production
+Every trust boundary shall have explicit assumptions regarding:
+
+identity;
+
+authentication;
+
+authorisation;
+
+data validation;
+
+communication;
+
+monitoring;
+
+failure behaviour;
+
+containment.
+
+7. Attack Surface
+The Essentials Mart attack surface shall include all meaningful paths through which data, commands, identities or capabilities can enter or leave the platform.
+
+This includes:
+
+mobile applications;
+
+web applications;
+
+APIs;
+
+public endpoints;
+
+authentication endpoints;
+
+payment interfaces;
+
+WhatsApp interfaces;
+
+notification interfaces;
+
+third-party APIs;
+
+supplier interfaces;
+
+staff interfaces;
+
+administrative interfaces;
+
+AI tools;
+
+AI agent interfaces;
+
+file uploads;
+
+data imports;
+
+event interfaces;
+
+network services;
+
+cloud services;
+
+CI/CD systems;
+
+dependencies;
+
+customer devices.
+
+Attack-surface analysis shall also include the valuable data and protective mechanisms associated with those paths.
+
+8. External Attack Surface
+External attack surfaces include:
+
+internet-facing APIs;
+
+authentication endpoints;
+
+customer applications;
+
+public websites;
+
+WhatsApp interfaces;
+
+payment integrations;
+
+mapping integrations;
+
+delivery integrations;
+
+supplier interfaces;
+
+external APIs;
+
+public cloud endpoints.
+
+These surfaces shall receive heightened defensive attention.
+
+9. Internal Attack Surface
+Internal attack surfaces include:
+
+service-to-service communication;
+
+staff systems;
+
+administrative systems;
+
+databases;
+
+internal APIs;
+
+event infrastructure;
+
+AI tools;
+
+privileged systems;
+
+deployment infrastructure;
+
+monitoring systems;
+
+backup systems.
+
+Internal access shall not automatically be treated as trusted.
+
+10. Client Attack Surface
+Customer and staff devices shall be treated as potentially compromised environments.
+
+Potential attack paths include:
+
+modified applications;
+
+repackaged applications;
+
+rooted/jailbroken devices;
+
+malicious extensions;
+
+malware;
+
+spyware;
+
+credential theft;
+
+session theft;
+
+local data extraction;
+
+API manipulation;
+
+request replay;
+
+runtime instrumentation.
+
+The client shall therefore not be treated as authoritative for critical security or business decisions.
+
+11. API Attack Surface
+API threats shall include:
+
+unauthorised access;
+
+broken authorisation;
+
+enumeration;
+
+scraping;
+
+replay;
+
+request manipulation;
+
+parameter tampering;
+
+excessive requests;
+
+automated abuse;
+
+resource exhaustion;
+
+business-logic abuse;
+
+data extraction;
+
+credential abuse.
+
+API security shall therefore operate across:
+
+Identity
+ ↓
+Authentication
+ ↓
+Authorisation
+ ↓
+Validation
+ ↓
+Rate / Abuse Controls
+ ↓
+Business Rules
+ ↓
+Monitoring
+12. AI Attack Surface
+AI introduces additional attack paths.
+
+These include:
+
+user prompts;
+
+external content;
+
+retrieved data;
+
+agent memory;
+
+agent tools;
+
+tool outputs;
+
+inter-agent communication;
+
+model interfaces;
+
+AI APIs;
+
+system instructions;
+
+model configuration;
+
+agent permissions.
+
+Potential attacks include:
+
+prompt injection;
+
+context poisoning;
+
+malicious instructions;
+
+tool abuse;
+
+privilege escalation;
+
+agent impersonation;
+
+model extraction;
+
+excessive resource consumption;
+
+malicious agent interaction.
+
+13. Walk Mode Attack Surface
+Walk Mode introduces a specialised physical and digital attack surface.
+
+Potentially exposed information includes:
+
+store maps;
+
+navigation;
+
+product locations;
+
+live inventory;
+
+shopper location;
+
+device position;
+
+proximity information;
+
+real-time store events.
+
+Threats include:
+
+location manipulation;
+
+map manipulation;
+
+inventory inference;
+
+unauthorised proximity information;
+
+shopper tracking;
+
+device spoofing;
+
+navigation manipulation;
+
+real-time event abuse.
+
+A shopper must never be able to use Walk Mode to infer unauthorised information about another shopper.
+
+14. WhatsApp Attack Surface
+WhatsApp shall be treated as a communication channel rather than a source of truth.
+
+Threats include:
+
+account impersonation;
+
+message spoofing;
+
+social engineering;
+
+unauthorised commands;
+
+stolen accounts;
+
+malicious links;
+
+channel abuse;
+
+automated message abuse;
+
+authentication weaknesses.
+
+WhatsApp-originated actions shall pass through the same authorised backend controls as actions originating from the application.
+
+15. Supply-Chain Attack Surface
+The supply-chain attack surface includes:
+
+software libraries;
+
+SDKs;
+
+Flutter dependencies;
+
+cloud providers;
+
+AI models;
+
+AI providers;
+
+APIs;
+
+payment providers;
+
+WhatsApp;
+
+mapping providers;
+
+delivery providers;
+
+analytics providers;
+
+infrastructure providers;
+
+development tools;
+
+contractors;
+
+managed services;
+
+suppliers.
+
+A compromise of an external dependency shall not automatically result in unrestricted platform compromise.
+
+16. Attack Objectives
+Attackers may seek to:
+
+Gain Access
+steal credentials;
+
+compromise accounts;
+
+bypass authentication;
+
+escalate privileges.
+
+Steal Information
+customer data;
+
+household data;
+
+business intelligence;
+
+inventory;
+
+pricing;
+
+AI information;
+
+proprietary algorithms.
+
+Manipulate Information
+prices;
+
+inventory;
+
+rewards;
+
+Trust Engine signals;
+
+orders;
+
+household data;
+
+AI context.
+
+Disrupt Operations
+DDoS;
+
+ransomware;
+
+destructive attacks;
+
+service exhaustion;
+
+dependency disruption.
+
+Commit Fraud
+payment abuse;
+
+reward farming;
+
+referral abuse;
+
+return abuse;
+
+delivery abuse.
+
+Extract Intellectual Property
+reverse engineering;
+
+API probing;
+
+AI probing;
+
+model extraction;
+
+behavioural cloning;
+
+data scraping.
+
+17. Attack Path Model
+The platform shall model attacks as chains rather than isolated events.
+
+A generic attack path is:
+
+Reconnaissance
+      ↓
+Entry
+      ↓
+Initial Access
+      ↓
+Execution
+      ↓
+Privilege Escalation
+      ↓
+Persistence
+      ↓
+Discovery
+      ↓
+Lateral Movement
+      ↓
+Collection
+      ↓
+Exfiltration / Manipulation / Disruption
+Not every attack will follow every stage.
+
+The model shall identify where an attack can be:
+
+prevented;
+
+detected;
+
+slowed;
+
+contained;
+
+terminated.
+
+18. Attack Path Example — Compromised Customer Account
+Credential Theft
+      ↓
+Account Login
+      ↓
+Session Establishment
+      ↓
+Abnormal Behaviour
+      ↓
+Trust / Risk Evaluation
+      ↓
+Detection
+      ↓
+Additional Verification
+      ↓
+Capability Restriction
+      ↓
+Account Protection
+The attacker should not automatically gain access to:
+
+household data;
+
+payment operations;
+
+administrative functionality;
+
+other households;
+
+privileged APIs.
+
+19. Attack Path Example — Malicious Automation
+Automated Requests
+      ↓
+Endpoint Discovery
+      ↓
+High Request Velocity
+      ↓
+Behavioural Detection
+      ↓
+Rate / Quota Controls
+      ↓
+Progressive Friction
+      ↓
+Capability Restriction
+      ↓
+Containment
+The platform should distinguish legitimate automation from malicious automation where practical.
+
+20. Attack Path Example — Compromised Dependency
+Third-Party Compromise
+      ↓
+Malicious Component
+      ↓
+Execution / Data Access Attempt
+      ↓
+Service Boundary
+      ↓
+Least Privilege
+      ↓
+Monitoring
+      ↓
+Anomaly Detection
+      ↓
+Isolation
+      ↓
+Credential Revocation
+      ↓
+Recovery
+The architecture shall minimise the ability of a compromised dependency to propagate across the platform.
+
+21. Attack Path Example — AI Tool Abuse
+Malicious Input
+      ↓
+AI Agent
+      ↓
+Manipulated Context
+      ↓
+Tool Invocation Attempt
+      ↓
+Capability / Permission Check
+      ↓
+Risk Evaluation
+      ↓
+Human Approval or Denial
+      ↓
+Audit
+AI agents shall not be permitted to bypass ordinary backend authority.
+
+22. Threat Categories
+The threat model shall classify threats into the following major categories:
+
+Identity compromise
+
+Authentication attacks
+
+Authorisation attacks
+
+Credential attacks
+
+Account takeover
+
+Malware
+
+Spyware
+
+Ransomware
+
+Phishing
+
+Social engineering
+
+Bot abuse
+
+Automation abuse
+
+Scraping
+
+API abuse
+
+Network attacks
+
+Application exploitation
+
+Infrastructure compromise
+
+Cloud compromise
+
+Supply-chain compromise
+
+Insider threats
+
+Data theft
+
+Data manipulation
+
+Data destruction
+
+Privacy attacks
+
+Fraud
+
+Reward abuse
+
+Payment abuse
+
+Delivery abuse
+
+Inventory abuse
+
+AI manipulation
+
+AI resource abuse
+
+AI/model extraction
+
+IP extraction
+
+Reverse engineering
+
+Denial of service
+
+Distributed denial of service
+
+Privilege escalation
+
+Lateral movement
+
+Persistence
+
+Business-logic abuse.
+
+23. Threat Prioritisation
+Threats shall be prioritised according to factors including:
+
+likelihood;
+
+impact;
+
+exploitability;
+
+exposure;
+
+attacker capability;
+
+detectability;
+
+containment difficulty;
+
+recovery difficulty;
+
+potential blast radius;
+
+economic incentive;
+
+regulatory consequences;
+
+reputational consequences;
+
+IP consequences.
+
+A threat shall receive higher defensive priority where it combines:
+
+High Impact
++
+High Exposure
++
+High Exploitability
++
+Large Blast Radius
+24. Impact Categories
+Threat impact shall be evaluated across:
+
+Confidentiality
+Unauthorised disclosure of information.
+
+Integrity
+Unauthorised modification of information or decisions.
+
+Availability
+Loss or degradation of service.
+
+Financial
+Direct or indirect financial loss.
+
+Privacy
+Unauthorised exposure or misuse of personal information.
+
+Safety
+Potential physical or operational harm.
+
+Trust
+Loss of customer or partner confidence.
+
+Regulatory
+Potential legal or compliance consequences.
+
+Competitive
+Loss of proprietary advantage.
+
+Operational
+Disruption to stores, fulfilment, delivery or enterprise operations.
+
+25. Threat Response Categories
+Each significant threat shall eventually be assigned an appropriate response:
+
+eliminate;
+
+prevent;
+
+mitigate;
+
+detect;
+
+contain;
+
+transfer;
+
+accept;
+
+recover.
+
+Acceptance of a threat shall require appropriate risk authority.
+
+26. Defensive Traceability
+Every major threat shall be traceable through the defensive architecture.
+
+The intended relationship is:
+
+Threat
+  ↓
+Asset
+  ↓
+Attack Surface
+  ↓
+Attack Path
+  ↓
+Risk
+  ↓
+Preventive Control
+  ↓
+Detection
+  ↓
+Containment
+  ↓
+Recovery
+  ↓
+Evidence
+This creates a direct line of sight between threats and the controls developed in subsequent Part 4 commits.
+
+27. Threat Model Lifecycle
+The threat model shall be updated when:
+
+a new feature is introduced;
+
+a new API is introduced;
+
+a new integration is introduced;
+
+infrastructure changes;
+
+AI capabilities change;
+
+Walk Mode changes;
+
+WhatsApp capabilities change;
+
+a new dependency is introduced;
+
+a security incident occurs;
+
+a vulnerability is discovered;
+
+attacker behaviour changes;
+
+the business expands into a new country or region;
+
+a new store architecture is introduced.
+
+This reflects the principle that threat modelling must evolve with the system rather than remain static. 
+
+28. Threat Model Outputs
+The threat-modelling process shall produce:
+
+system decomposition;
+
+attack-surface map;
+
+asset inventory;
+
+actor inventory;
+
+trust-boundary map;
+
+threat catalogue;
+
+attack-path catalogue;
+
+prioritised threat register;
+
+defensive requirements;
+
+mitigation requirements;
+
+detection requirements;
+
+containment requirements;
+
+recovery requirements;
+
+validation scenarios.
+
+Where practical, structured threat-model representations may be maintained alongside human-readable documentation.
+
+29. Relationship With Part 3
+Part 3 establishes the security architecture and associated controls.
+
+Part 4 Commit 002 establishes the adversarial model against which those controls and subsequent defensive mechanisms are evaluated.
+
+Part 4 shall therefore not assume that the existence of a Part 3 control means the corresponding threat is eliminated.
+
+Instead, the threat model shall ask:
+
+Can the control be bypassed?
+
+What happens if it fails?
+
+Can it be manipulated?
+
+Can an attacker operate around it?
+
+Can an attacker exploit another path?
+
+Can compromise propagate?
+
+Can the attack be detected?
+
+Can the attack be contained?
+
+Can the system recover?
+
+30. Relationship With Commit 001
+Commit 001 established:
+
+assume breach;
+
+defence in depth;
+
+server-side authority;
+
+client untrustedness;
+
+IP isolation;
+
+active defence;
+
+progressive response;
+
+blast-radius reduction;
+
+AI defensive boundaries;
+
+continuous defensive improvement.
+
+Commit 002 converts those principles into a structured threat model.
+
+The subsequent Part 4 commits shall derive defensive architectures from this model.
+
+31. Success Criteria
+Commit 002 is successful when:
+
+the major Essentials Mart assets have been identified;
+
+major threat actors have been identified;
+
+external and internal attack surfaces have been mapped;
+
+major trust boundaries have been identified;
+
+customer, staff, supplier and third-party attack paths have been considered;
+
+AI attack surfaces have been considered;
+
+Walk Mode attack surfaces have been considered;
+
+WhatsApp attack surfaces have been considered;
+
+supply-chain attack surfaces have been considered;
+
+malware, spyware and ransomware threats have been considered;
+
+bot and automation threats have been considered;
+
+API and scraping threats have been considered;
+
+fraud and business-logic abuse have been considered;
+
+IP extraction and reverse engineering have been considered;
+
+attack objectives have been identified;
+
+representative attack paths have been defined;
+
+threats can be prioritised;
+
+threats can be traced to defensive controls;
+
+the model can evolve as Essentials Mart evolves.
+
+32. Next Commit
+The next commit shall establish the:
+
+Three-Tier IP Protection Architecture
+
+This will translate the IP-related threats identified in this model into a formal architecture covering:
+
+server-side IP isolation;
+
+client exposure boundaries;
+
+client hardening;
+
+WebAssembly where justified;
+
+obfuscation;
+
+anti-tampering;
+
+reverse-engineering resistance;
+
+dynamic protection;
+
+API exposure minimisation;
+
+trade-secret boundaries;
+
+legal/IP protection interfaces.
+
