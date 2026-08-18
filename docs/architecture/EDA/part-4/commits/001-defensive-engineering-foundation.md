@@ -4,535 +4,291 @@
 **Status:** Proposed  
 **Part:** EDA-001 Part 4 — Platform Protection, Resilience & Defensive Engineering  
 **Commit:** 001  
-**Date:** 2026-08-17  
+**Date:** 2026-08-18  
 **Decision Type:** Defensive Architecture Foundation  
-**Parent Architecture:** EDA-001
+**Parent Architecture:** EDA-001  
+**Predecessor:** EDA-001 Part 3 — Security Architecture
 
 ---
 
 ## 1. Purpose
 
-This commit establishes the defensive engineering foundation for Essentials Mart Part 4.
+This commit establishes the defensive-engineering foundation for Essentials Mart Part 4.
 
-Part 4 extends the security architecture established in EDA-001 Part 3 by addressing the additional problem of protecting the platform itself from exploitation, duplication, reverse engineering, automated abuse, malicious software, hostile infrastructure activity and evolving cyber threats.
+Part 3 defines the platform's security architecture. Part 4 extends that architecture by addressing what happens when security boundaries are attacked, bypassed, manipulated, degraded or defeated.
 
-The objective is not to claim that the platform can be made impossible to attack or reverse engineer.
+Part 4 therefore focuses on defensive hardening, attack resistance, abuse resistance, intellectual-property protection, cyber-threat defence, active detection, containment, recovery, resilience and adversarial verification.
 
-The objective is to make Essentials Mart:
-
-- difficult to compromise;
-- difficult to analyse and replicate;
-- difficult to abuse at scale;
-- resistant to common and advanced attack paths;
-- capable of detecting hostile activity;
-- capable of limiting attacker capability;
-- capable of containing compromise;
-- capable of recovering from failure or attack;
-- capable of continuously improving its defensive posture.
+Part 4 does not replace or duplicate Part 3's security architecture.
 
 ---
 
-## 2. Core Principle
+## 2. Assume-Breach Principle
 
-Essentials Mart shall operate under the assumption that attackers will eventually discover weaknesses.
+Essentials Mart shall assume that individual components, identities, devices, dependencies or services may eventually be compromised.
 
-Security therefore shall not depend on a single protective mechanism.
+Compromise of one component shall not automatically provide unrestricted access to unrelated services, customer or household data, payment-related systems, inventory systems, AI systems, staff systems, supplier systems, infrastructure, secrets or proprietary intelligence.
 
-The architecture shall combine:
+The platform shall minimise blast radius and compartmentalise authority.
+
+---
+
+## 3. Defence in Depth
+
+Critical assets shall be protected by multiple complementary controls.
 
 ```text
-Prevention
-    ↓
-Resistance
-    ↓
+Identity
+   ↓
+Authentication
+   ↓
+Authorisation
+   ↓
+Context Evaluation
+   ↓
+Abuse Controls
+   ↓
+Application Validation
+   ↓
+Business Validation
+   ↓
+Audit
+   ↓
 Detection
-    ↓
-Deception / Friction where appropriate
-    ↓
+   ↓
 Containment
-    ↓
-Recovery
-    ↓
-Learning
 ```
 
-A failed control must not automatically result in unrestricted compromise.
-
----
-
-## 3. Assume Breach
-
-The platform shall assume that:
-
-- credentials may be stolen;
-- customer devices may be compromised;
-- staff devices may be compromised;
-- APIs may be probed;
-- applications may be inspected;
-- dependencies may become compromised;
-- third parties may be breached;
-- AI agents may receive malicious input;
-- internal services may be compromised;
-- attackers may obtain partial access.
-
-The architecture shall therefore minimise the value and reach of any single compromise.
+Failure of one control must not automatically produce unrestricted compromise.
 
 ---
 
 ## 4. Server-Side Authority
 
-Critical business logic and security decisions shall remain authoritative on trusted backend infrastructure.
+The client is an untrusted execution environment. It may provide presentation, interaction and locally required computation, but it shall not be the ultimate authority for permissions, financial values, reward eligibility, Trust Engine decisions, inventory authority, order authority, privileged operations, security decisions or critical business rules.
 
-The client shall not be the final authority for:
+Authoritative validation shall occur on trusted backend systems.
 
-- pricing;
-- rewards;
-- Trust Engine decisions;
-- inventory authority;
-- payment decisions;
-- permissions;
-- order state;
-- fulfilment state;
-- fraud decisions;
-- AI permissions;
-- privileged actions;
-- proprietary algorithms.
-
-Client applications may request actions, but authoritative services shall validate and execute them.
+This is consistent with current OWASP guidance that client-side validation and authorization cannot be relied upon as security boundaries. citeturn1search0turn1search3
 
 ---
 
-## 5. Intellectual Property Isolation
+## 5. Intellectual Property Protection Principle
 
-High-value intellectual property shall be classified and isolated according to its sensitivity.
+High-value proprietary logic shall remain server-side wherever technically practical.
 
-The architecture shall prefer keeping highly valuable proprietary logic on trusted backend infrastructure where practical.
+Examples include proprietary algorithms, Trust Engine logic, Reward Intelligence logic, proprietary optimisation, sensitive business rules, AI orchestration, proprietary datasets, confidential scoring mechanisms, high-value decision logic and security-sensitive rules.
 
-Examples include:
-
-- recommendation algorithms;
-- pricing intelligence;
-- inventory optimisation;
-- demand forecasting;
-- Trust Engine logic;
-- Reward Intelligence logic;
-- fraud models;
-- proprietary ranking systems;
-- proprietary optimisation methods;
-- sensitive business rules;
-- proprietary datasets.
-
-Client-side exposure shall be minimised where the logic does not need to execute locally.
-
-The detailed three-tier IP protection architecture is established in Commit 003.
+Client-side hardening may increase attacker cost but shall never replace server-side authority.
 
 ---
 
-## 6. Client Untrustedness
+## 6. Client Resilience Principle
 
-Customer and staff applications shall be treated as potentially inspectable and modifiable environments.
+Where functionality must execute on the client, appropriate resilience mechanisms may be used, including code obfuscation, WebAssembly, binary hardening, anti-tampering, runtime integrity checks, application signing, platform integrity checks, anti-debugging, device binding and runtime protection.
 
-The architecture shall assume that a technically capable attacker can:
-
-- download client assets;
-- inspect JavaScript;
-- inspect network traffic;
-- instrument application behaviour;
-- modify client state;
-- replay requests;
-- analyse binaries;
-- reverse engineer client-side logic.
-
-Accordingly, client hardening shall raise attack cost but shall never be treated as a substitute for server-side authority.
+These controls are hardening measures, not absolute protection or confidentiality boundaries.
 
 ---
 
-## 7. Client Hardening
+## 7. Minimise Attacker Return on Investment
 
-Where client-side protection provides meaningful value, the platform may employ measures including:
+The architecture shall increase the cost of automated abuse, scraping, API enumeration, AI probing, model extraction, reverse engineering, credential attacks, account farming, reward farming, inventory manipulation, fraud and infrastructure compromise.
 
-- minification;
-- tree shaking;
-- source-map protection;
-- code obfuscation;
-- runtime integrity checks;
-- anti-tampering controls;
-- application integrity verification;
-- device integrity signals;
-- WebAssembly where technically justified;
-- binary hardening for applicable native components;
-- removal of unnecessary client-side secrets.
-
-These measures shall be selected according to risk and operational cost.
-
-No hardening mechanism shall be represented as making client-side code impossible to recover.
+Controls may include rate limiting, quotas, progressive friction, anomaly detection, capability restrictions, response minimisation, compartmentalisation and automated containment.
 
 ---
 
-## 8. API Exposure Control
+## 8. Active and Progressive Defence
 
-Public APIs shall expose the minimum capability necessary for legitimate clients and integrations.
-
-The platform shall apply:
-
-- authentication;
-- authorisation;
-- request validation;
-- schema validation;
-- rate limiting;
-- quotas;
-- abuse detection;
-- replay protection where appropriate;
-- monitoring;
-- anomaly detection;
-- capability restriction.
-
-Sensitive internal operations shall not be exposed directly merely because a client interface requires access to a business function.
-
----
-
-## 9. Bot and Automation Defence
-
-Essentials Mart shall explicitly defend against automated abuse.
-
-Threats include:
-
-- credential stuffing;
-- scraping;
-- account farming;
-- API enumeration;
-- automated purchasing;
-- reward farming;
-- referral abuse;
-- promotion abuse;
-- inventory probing;
-- denial-of-service automation;
-- malicious agent automation.
-
-Controls may include:
-
-- rate limits;
-- adaptive quotas;
-- request reputation;
-- behavioural analysis;
-- progressive friction;
-- challenge mechanisms where appropriate;
-- capability throttling;
-- temporary restrictions;
-- account protection;
-- IP/device/network reputation signals.
-
-Bot detection shall avoid unnecessarily blocking legitimate high-volume activity.
-
----
-
-## 10. Malware and Hostile Software Defence
-
-The architecture shall account for:
-
-- malware;
-- spyware;
-- ransomware;
-- malicious browser extensions;
-- compromised devices;
-- malicious dependencies;
-- compromised build tools;
-- malicious uploaded files;
-- supply-chain malware.
-
-Defence shall include appropriate combinations of:
-
-- endpoint integrity signals;
-- dependency scanning;
-- vulnerability management;
-- software composition analysis;
-- malware scanning;
-- sandboxing;
-- file validation;
-- isolation;
-- least privilege;
-- credential rotation;
-- monitoring;
-- containment.
-
-The platform shall not assume that an apparently legitimate component is permanently trustworthy.
-
----
-
-## 11. Active Defence
-
-Essentials Mart shall be capable of responding dynamically to suspicious behaviour.
-
-Responses may include:
+Essentials Mart shall continuously evaluate behaviour and respond proportionately to assessed risk.
 
 ```text
 Normal
   ↓
+Observe
+  ↓
 Suspicious
   ↓
-Restricted
+Increase Monitoring
   ↓
-Challenged
+Increase Friction
   ↓
-Contained
+Restrict Capability
   ↓
-Blocked
+Contain
+  ↓
+Block / Revoke
+  ↓
+Investigate
 ```
 
-The response shall be proportional to the assessed risk.
+The platform shall support responses including allow, monitor, warn, challenge, rate limit, delay, reduce capability, reauthenticate, require stronger authentication, require human approval, suspend, revoke credentials, isolate, terminate and block.
 
-Security controls should prefer reducing attacker capability before resorting to irreversible actions where operationally appropriate.
-
----
-
-## 12. Blast-Radius Reduction
-
-Every major system boundary shall be designed to limit the consequences of compromise.
-
-Examples include:
-
-- domain isolation;
-- service isolation;
-- database boundaries;
-- credential scoping;
-- short-lived credentials;
-- separate deployment environments;
-- restricted AI tools;
-- segmented infrastructure;
-- independent failure domains;
-- regional isolation where appropriate.
-
-The objective is:
-
-> compromise one component without compromising the enterprise.
+Responses shall be proportional to risk rather than relying exclusively on an ALLOW/BLOCK model.
 
 ---
 
-## 13. AI Defensive Boundary
+## 9. Blast-Radius Reduction
 
-AI agents shall be treated as capability-bearing entities rather than inherently trusted software components.
+Critical services shall be designed so compromise does not automatically propagate.
 
-Agents shall operate through:
-
-- explicit identities;
-- defined permissions;
-- authorised tools;
-- constrained data access;
-- monitored actions;
-- auditable decisions;
-- human approval thresholds where required;
-- containment mechanisms.
-
-An AI agent shall not gain authority merely because another agent instructed it to perform an action.
-
-The detailed AI security architecture remains governed by Part 3 and related ADRs.
+Controls may include service isolation, least privilege, scoped credentials, separate secrets, network segmentation, identity boundaries, household/tenant isolation, data-access boundaries, workload isolation, independent service permissions and transaction boundaries.
 
 ---
 
-## 14. Defensive Treatment of Walk Mode
+## 10. Security of Security Controls
 
-Walk Mode shall be treated as a high-value physical/digital interaction surface.
+Security mechanisms themselves are protected assets.
 
-The architecture shall protect:
+Attackers may attempt to manipulate rate limits, trust scores, fraud indicators, bot classifications, authentication decisions, security telemetry, reward eligibility, anomaly scores, detection thresholds and AI security controls.
 
-- location;
-- store maps;
-- live inventory;
-- shopper presence;
-- proximity signals;
-- device signals;
-- navigation state;
-- real-time events.
-
-Walk Mode shall not expose another shopper's private information merely because devices are physically close to one another.
-
-The three Walk Mode operating modes remain:
-
-- Manual;
-- AI Assisted;
-- Autopilot.
-
-Autopilot shall remain subject to the same security, authority and audit boundaries as other AI-assisted actions.
+Critical security decisions must therefore not depend on untrusted client-provided values.
 
 ---
 
-## 15. Defensive Treatment of WhatsApp
+## 11. AI Defensive Principle
 
-WhatsApp shall remain a communication and interaction channel, not a source of truth.
+The AI Society shall be treated as an active security boundary.
 
-Commands received through WhatsApp shall be processed through the same:
+Each agent shall operate within explicitly defined identity, capabilities, tools, data access, authority, context and approval requirements.
 
-- identity controls;
-- authorisation controls;
-- backend APIs;
-- action policies;
-- audit mechanisms;
-- rate limits;
-- fraud controls.
-
-A WhatsApp message shall never bypass backend security merely because it originated from a recognised communication channel.
+The architecture shall support agent isolation, tool restrictions, action approval thresholds, agent auditability, context protection, kill switches, containment and monitoring.
 
 ---
 
-## 16. Supply-Chain Defence
+## 12. Automation and Bot Defence Principle
 
-The defensive boundary shall include external dependencies such as:
+Essentials Mart shall assume attackers will automate interactions.
 
-- suppliers;
-- software libraries;
-- cloud providers;
-- AI models;
-- AI providers;
-- APIs;
-- payment providers;
-- WhatsApp;
-- mapping providers;
-- delivery providers;
-- analytics services;
-- infrastructure providers;
-- development tools;
-- contractors;
-- managed services.
+Defensive mechanisms may include bot detection, automation detection, rate limiting, quotas, request-velocity controls, session controls, identity-based limits, device-based limits, household-based limits, endpoint-specific limits, API/service limits, scraping detection and enumeration detection.
 
-Dependencies shall be evaluated according to their access, sensitivity, criticality and potential blast radius.
-
-A trusted supplier shall not be treated as permanently trusted.
+IP-based controls alone shall not be treated as sufficient.
 
 ---
 
-## 17. Development and Deployment Protection
+## 13. Data Exposure Minimisation
 
-Development, staging and production shall be separated according to risk.
+Client interfaces and APIs shall expose only information necessary for the requested operation.
 
-Sensitive production credentials shall not be embedded in source code or client applications.
-
-Build and deployment systems shall be treated as privileged infrastructure.
-
-The architecture shall protect:
-
-- source code;
-- build credentials;
-- deployment credentials;
-- signing keys;
-- package registries;
-- artefacts;
-- CI/CD pipelines;
-- production access.
-
-Compromise of a development environment shall not automatically provide production access.
+The platform should minimise unnecessary fields, sensitive metadata, internal identifiers, security-sensitive responses, debugging information, infrastructure details, model information and proprietary decision explanations.
 
 ---
 
-## 18. Security Through Layering
+## 14. Safe Failure
 
-No individual security mechanism shall be considered sufficient.
+Security-sensitive operations shall fail securely when required security validation is unavailable. Lower-risk functions may degrade gracefully where appropriate.
 
-The architecture shall combine:
+The architecture shall therefore distinguish between **Fail Securely** and **Fail Gracefully** according to the consequences of the operation.
+
+---
+
+## 15. Defensive Telemetry
+
+Security-relevant operations shall generate evidence sufficient for detection, investigation, attribution, containment, recovery and post-incident analysis.
+
+Telemetry should support:
 
 ```text
-Identity
-+
-Authorisation
-+
-Isolation
-+
-Validation
-+
-Rate / Abuse Controls
-+
+Who?
+What?
+When?
+Where?
+Which identity?
+Which device?
+Which service?
+Which authority?
+Which policy?
+What changed?
+What happened afterwards?
+```
+
+This builds upon the auditability architecture established in Part 3.
+
+---
+
+## 16. Defensive Lifecycle
+
+Major defensive controls shall follow:
+
+```text
+Threat Identification
+        ↓
+Risk Assessment
+        ↓
+Control Design
+        ↓
+Implementation
+        ↓
+Verification
+        ↓
 Monitoring
-+
-Detection
-+
-Containment
-+
-Recovery
+        ↓
+Attack Simulation
+        ↓
+Incident Learning
+        ↓
+Control Improvement
 ```
 
-This layered model shall apply across customers, staff, services, AI agents, devices and external integrations.
+Defensive engineering is therefore continuous rather than a one-time implementation.
 
 ---
 
-## 19. Defensive Observability
+## 17. Relationship With Part 3
 
-Security-relevant behaviour shall produce sufficient evidence to support:
+Part 3 establishes the security architecture. Part 4 establishes defensive engineering around that architecture.
 
-- detection;
-- investigation;
-- attribution;
-- containment;
-- recovery;
-- learning.
-
-This shall align with the auditability and observability architecture established elsewhere in EDA-001 and the ADR set.
+Part 4 shall reference Part 3 controls without redefining them. When a Part 4 commit addresses an existing Part 3 concern, it shall focus on hardening, attack resistance, detection, containment, recovery or verification.
 
 ---
 
-## 20. Continuous Defensive Improvement
+## 18. Architectural Principles Established
 
-The defensive architecture shall evolve as:
+**DE-001 — Assume Breach**  
+Individual components may eventually be compromised.
 
-- new threats emerge;
-- new attack techniques appear;
-- new features are introduced;
-- new integrations are added;
-- new countries are entered;
-- new AI capabilities are deployed;
-- incidents occur;
-- vulnerabilities are discovered;
-- attackers adapt.
+**DE-002 — Server Authority**  
+Critical authority remains on trusted backend systems.
 
-Security shall therefore be treated as a continuous engineering discipline.
+**DE-003 — Defence in Depth**  
+Critical assets receive multiple complementary protection layers.
 
----
+**DE-004 — Minimise Blast Radius**  
+Compromise of one component shall not automatically compromise unrelated components.
 
-## 21. Relationship With Part 3
+**DE-005 — Client Untrustedness**  
+Client-side code is never the final security authority.
 
-Part 3 defines the enterprise security architecture.
+**DE-006 — Resilience Over Illusion**  
+Obfuscation and anti-reversing controls increase attack cost but do not provide absolute protection.
 
-Part 4 builds upon that architecture by focusing on active protection, defensive engineering, resilience, IP protection, attack resistance and protection against replication and hostile activity.
+**DE-007 — Active Defence**  
+The platform detects and responds to abnormal behaviour.
 
-Part 4 does not replace Part 3.
+**DE-008 — Progressive Response**  
+Responses are proportionate to assessed risk.
 
-The two parts operate together:
+**DE-009 — Security Control Protection**  
+Security mechanisms themselves require protection.
 
-```text
-EDA-001 Part 3
-Security Architecture
-        ↓
-Identity / Trust / Access / Detection / Response
-        ↓
-EDA-001 Part 4
-Defensive Engineering
-        ↓
-Resistance / IP Protection / Anti-Tampering / Resilience
-```
+**DE-010 — Continuous Improvement**  
+Defensive controls evolve through testing, monitoring and lessons learned.
 
 ---
 
-## 22. Success Criteria
+## 19. Success Criteria
 
-The Defensive Engineering Foundation succeeds when:
-
-- critical authority remains server-side;
-- clients are treated as untrusted;
-- proprietary logic is appropriately isolated;
-- APIs expose controlled capabilities;
-- automated abuse can be detected and restricted;
-- malware and compromised components are considered;
-- AI capabilities are bounded;
-- Walk Mode has explicit defensive boundaries;
-- WhatsApp cannot bypass backend security;
-- third-party dependencies are treated as security boundaries;
-- compromise blast radius is limited;
-- development and production access are separated;
-- security evidence exists for significant defensive decisions;
-- the platform can continuously improve its defensive posture.
+Commit 001 succeeds when Part 4 has a distinct defensive-engineering purpose, does not recreate Part 3, establishes assume-breach and server-side authority, positions client hardening as resilience, establishes active/progressive defence and blast-radius reduction, recognises AI and automation as defensive concerns, and is governed by the Part 4 master index.
 
 ---
 
-## 23. Next Commit
+## 20. Next Commit
 
-Commit 002 establishes the **Platform Threat & Attack Model**, translating these defensive principles into a structured model of assets, threat actors, attack surfaces, trust boundaries, attack paths and attacker objectives.
+**Commit 002 — Platform Threat & Attack Model**
 
-Commit 003 establishes the **Three-Tier IP Protection Architecture** derived from those threats.
+Canonical path:
+
+`docs/architecture/EDA/part-4/commits/002-platform-threat-attack-model.md`
+
+The previously used path form `docs/architecture/EDA-001/part-4/commits/` is obsolete and shall not be used.
