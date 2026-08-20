@@ -36,6 +36,24 @@ ADR-003 establishes that events represent facts, commands request actions, and q
 | EIP-014 | Transactional Outbox | Reliably publish integration messages with domain state changes | Proposed |
 | EIP-015 | Correlation and Distributed Tracing | Maintain workflow identity across distributed processing | Proposed |
 | EIP-016 | Human-in-the-Loop Routing | Escalate actions requiring human authority | Proposed |
+| EIP-017 | External Partner Adapter / Gateway | Isolate provider-specific external integrations behind canonical Essentials Mart contracts | Proposed |
+
+## EIP-017 Integration Boundary
+
+EIP-017 is the reusable pattern for external partner integrations. It composes existing EIPs rather than replacing them.
+
+Typical composition includes:
+
+- EIP-004 for partner-originated commands.
+- EIP-005 for synchronous partner requests where appropriate.
+- EIP-006/EIP-007 for partner and capability routing.
+- EIP-009/EIP-010 for partner failure handling and transient recovery.
+- EIP-011 for duplicate partner messages and replay-safe processing.
+- EIP-013 for distributed partner commerce workflows.
+- EIP-014 for reliable state-change/message publication.
+- EIP-015 for end-to-end partner transaction correlation and tracing.
+
+Partner-specific APIs, authentication mechanisms, payloads and terminology remain behind the adapter boundary.
 
 ## Governing Principles
 
@@ -47,8 +65,10 @@ ADR-003 establishes that events represent facts, commands request actions, and q
 6. Consumers must tolerate duplicate delivery where the transport does not guarantee exactly-once processing.
 7. Failure handling must be explicit rather than hidden inside application code.
 8. Sensitive information must be minimised in messages and protected according to the security architecture.
-9. EIPs must remain consistent with the ADR tree and undergo forward-consistency review when architectural decisions change.
-10. Integration patterns should be used deliberately; not every interaction should be converted into asynchronous messaging.
+9. External partners must integrate through explicit boundaries and capability-scoped contracts.
+10. No individual external provider may become an architectural source of truth or unavoidable single point of failure.
+11. EIPs must remain consistent with the ADR tree and undergo forward-consistency review when architectural decisions change.
+12. Integration patterns should be used deliberately; not every interaction should be converted into asynchronous messaging.
 
 ## EIP Lifecycle
 
@@ -62,6 +82,7 @@ An EIP may remain Proposed while implementation decisions are still being valida
 
 Primary dependencies include:
 
+- EDA-002 — External Partner Commerce, Distribution & Financial Integration
 - ADR-001 — Enterprise Architecture Principles
 - ADR-002 — Domain-Driven Enterprise Architecture
 - ADR-003 — Event-Driven Architecture
@@ -76,6 +97,7 @@ Primary dependencies include:
 - ADR-016 — Observability, Auditability & Trust
 - ADR-017 — Scalability & Multi-Store Architecture
 - ADR-018 — Deployment & Environment Strategy
+- ADR-019 — External Partner Integration Architecture
 
 ## Naming and Message Conventions
 
