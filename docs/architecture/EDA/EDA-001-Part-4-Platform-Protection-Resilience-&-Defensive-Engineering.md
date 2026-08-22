@@ -10,9 +10,9 @@
 
 ## Current Commit Mapping Update
 
-Commit 020 — **Platform Resilience & Continuity** — is now complete.
+Commit 021 — **Adversarial Testing & Defensive Verification** — is now complete.
 
-It establishes the resilience and continuity boundary covering critical business functions, service criticality, recovery objectives, availability, fault-domain isolation, graceful degradation, failover, external dependency resilience, store and warehouse continuity, delivery continuity, AI degradation, event infrastructure resilience, data and backup recovery, regional resilience, manual fallback, reconciliation, financial continuity, recovery validation, resilience testing and operational continuity.
+It establishes the verification boundary covering continuous adversarial testing, security verification, application and API testing, business-logic abuse, bot and automation testing, identity and trust verification, AI and AI Society red teaming, intelligence-extraction testing, data and infrastructure testing, supply-chain verification, external dependency testing, payment and delivery testing, detection and containment exercises, incident-response validation, resilience exercises, regression testing, change-triggered verification, findings and remediation, provider-neutrality verification, test evidence and continuous adversarial learning.
 
 The authoritative Part 4 sequence now continues:
 
@@ -24,70 +24,64 @@ The authoritative Part 4 sequence now continues:
 - **018 — Automated Defence & Containment** ✓
 - **019 — Incident Response Architecture** ✓
 - **020 — Platform Resilience & Continuity** ✓
-- **021 — Adversarial Testing & Defensive Verification**
+- **021 — Adversarial Testing & Defensive Verification** ✓
 - **022 — IP & Legal Protection Strategy**
 - **023 — Global Defensive Scalability**
 - **024 — Defensive Governance**
 - **025 — Assurance, Traceability & Closure**
 
-Commit 020 does not replace Commit 019's incident-response architecture. Commit 019 establishes accountable response, investigation, eradication and incident management; Commit 020 establishes the platform's ability to continue essential operations, degrade safely and recover. Commit 021 will verify the combined defensive architecture through adversarial testing and controlled verification.
+Commit 021 does not replace the defensive controls established by earlier commits. It verifies them. Commit 021 therefore acts as the validation layer across the preventive, detective, containment, incident-response and resilience architecture established in Commit 001 through Commit 020.
 
-## 020 Resilience Boundary
+## 021 Verification Boundary
 
 ```text
-Disruption / Attack / Failure
-          ↓
-     Detect Impact
-          ↓
-   Absorb / Isolate
-          ↓
- Degraded Operation
-          ↓
-Critical Functions Continue
-          ↓
-       Recovery
-          ↓
-      Validation
-          ↓
-   Return to Normal
-          ↓
-       Improve
+Threat Model
+      ↓
+Defensive Controls
+      ↓
+Adversarial Testing
+      ↓
+Detection
+      ↓
+Containment
+      ↓
+Incident Response
+      ↓
+Recovery
+      ↓
+Verification
+      ↓
+Architecture Improvement
 ```
 
 ### Core Laws
 
-1. Resilience must be designed into the architecture.
-2. Critical business capabilities must have defined continuity and recovery requirements.
-3. Recovery objectives must reflect business criticality.
-4. Failure domains must be isolated where practicable.
-5. Essential functions should survive appropriate component failures.
-6. Degraded operation must be intentional and observable.
-7. Security controls must not be silently bypassed during degraded operation.
-8. Critical data must have recoverable protection.
-9. Backups must be tested through restoration.
-10. Recovery must validate security and data integrity.
-11. Recovery must follow dependency-aware sequencing.
-12. External dependencies must not create unnecessary universal failure points.
-13. Provider-neutral interfaces should support substitution where justified.
-14. AI failures must degrade safely without transferring authority.
-15. Regional failure must not automatically become global failure.
-16. Store and warehouse failures should remain appropriately isolated.
-17. Delivery resilience must account for actual available resources.
-18. Financial recovery must prevent duplicate or false transactions.
-19. Customer state must be protected during disruption.
-20. Manual fallback must be controlled and reconciled.
-21. Recovery must not blindly restore compromised state.
-22. Recovery access must be strongly protected.
-23. Recovery must be progressively validated where appropriate.
-24. Resilience must be tested rather than assumed.
-25. Resilience metrics must measure actual recovery capability.
-26. Observability must itself be resilient.
-27. Security and operational control planes require recovery capability.
-28. Human operational capability is part of resilience.
-29. Material recovery findings must improve the architecture.
-30. Resilience investment must be proportionate to business criticality.
-31. No recovery mechanism may silently undermine established governance, ownership or authorization boundaries.
+1. Security controls must be verified rather than assumed.
+2. Adversarial testing must be authorised and governed.
+3. Testing must be threat-informed.
+4. Testing must protect production and customer interests.
+5. Testing must include technical and business-logic attack paths.
+6. APIs must be tested as externally and internally exposed boundaries.
+7. AI must be tested as both a model and an integrated system.
+8. AI Society interactions must be adversarially tested.
+9. Intelligence extraction must be tested.
+10. Economic abuse must be tested.
+11. Identity and trust assumptions must be challenged.
+12. External dependencies must be tested for compromise and failure.
+13. Provider neutrality must be verified where claimed.
+14. Detection must be measured during adversarial exercises.
+15. Automated containment must be exercised.
+16. Incident-response procedures must be exercised.
+17. Resilience and recovery must be exercised.
+18. Material findings must have owners and remediation paths.
+19. Remediation must be independently verified where appropriate.
+20. Security regressions must produce durable tests where practical.
+21. Material architectural changes must trigger targeted verification.
+22. Test evidence must be protected.
+23. Findings and exceptions must have governed lifecycles.
+24. Adversarial testing must continuously improve the defensive architecture.
+25. Verification must measure defensive capability rather than merely test volume.
 
-**Current commit:** 020  
-**Next commit:** 021 — Adversarial Testing & Defensive Verification  
+**Current commit:** 021  
+**Next commit:** 022 — IP & Legal Protection Strategy  
 **Canonical Part 4 commit path:** `docs/architecture/EDA/part-4/commits/`
