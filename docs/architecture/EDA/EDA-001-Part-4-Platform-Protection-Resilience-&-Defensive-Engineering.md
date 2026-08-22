@@ -124,8 +124,11 @@ This is the **subject index**, not a mandatory numerical sequence for commit IDs
 | 012 | Data & Intelligence Protection | Protect source data, derived intelligence, provenance, integrity, AI/RAG data, memory, training assets, backups and controlled data movement | Commit 011; ADR-005/015/016; Part 3 data security |
 | 013 | Commerce & Economic Abuse Defence | Protect commerce, payments, discounts, rewards, subscriptions, wallets, inventory and other value-dispensing workflows from economic abuse | Commits 006–012; Part 3 fraud, abuse and commerce controls |
 | 014 | API & Service Boundary Defence | Deepen the defensive API boundary established by Commit 007, covering zero-trust service identity, object/property/function authorisation, resource controls, sensitive business flows, SSRF, webhooks, API inventory, external API consumption and API lifecycle security | Commit 007; Commits 009, 010, 013; Part 3 API/security architecture |
+| 015 | Trust Engine Defensive Architecture | Defend continuous trust assessment, trust signals, risk-based controls, trust provenance, adaptive access, AI-agent trust, partner trust, trust manipulation resistance and safe failure of the Trust Engine | Commits 006, 010, 012, 014; Part 3 Trust Engine / Identity & Access / Fraud architecture |
 
 **Important:** Commit 014 does not recreate Commit 007. Commit 007 established the defensive business-logic/API surface; Commit 014 hardens the API and service boundary as an explicit zero-trust runtime boundary and closes implementation-level API security gaps identified during the Part 4 progression.
+
+**Important:** Commit 015 does not make the Trust Engine the owner of identity, authorisation, fraud policy or punishment. It establishes the defensive engineering boundary around continuous trust assessment and the evidence used by authorised policy and control layers.
 
 ---
 
@@ -161,6 +164,26 @@ Protect the API/service runtime boundary itself
 
 Commit 014 therefore covers zero-trust service identity, object/property/function authorisation, credential and token lifecycle, request/schema validation, SSRF, resource consumption, sensitive business-flow protection, idempotency, concurrency, webhook security, external API consumption, API inventory, AI API authority, API observability, dependency isolation and API security testing.
 
+### Commit 015 — Trust Engine Defensive Architecture
+
+Commit 015 establishes the defensive boundary around the Trust Engine rather than redefining the Trust Engine's business architecture.
+
+The distinction is:
+
+```text
+Trust Engine Architecture
+        ↓
+Defines trust capability, ownership and decision responsibilities
+
+Commit 015
+Trust Engine Defensive Architecture
+        ↓
+Protects trust evidence, assessment integrity,
+adaptive controls and continuous evaluation
+```
+
+Trust remains contextual and evidence-based. A trust assessment is not automatically identity, authorisation, ownership, proof of wrongdoing or punishment. High-impact actions remain subject to the relevant policy and authority layer.
+
 ---
 
 ## 7. Forward Commit Sequence
@@ -169,7 +192,7 @@ The dependency-aware sequence is now:
 
 - **013 — Commerce & Economic Abuse Defence** ✓
 - **014 — API & Service Boundary Defence** ✓
-- **015 — Trust Engine Defensive Architecture**
+- **015 — Trust Engine Defensive Architecture** ✓
 - **016 — Platform Authenticity & Anti-Impersonation**
 - **017 — Defensive Monitoring & Detection**
 - **018 — Automated Defence & Containment**
@@ -221,6 +244,6 @@ EDA-001 Part 4 is complete only when all 25 subject domains are covered, every d
 ## 11. Status
 
 **Part 4 status:** In progress  
-**Current commit:** 014  
-**Next commit:** 015 — Trust Engine Defensive Architecture  
+**Current commit:** 015  
+**Next commit:** 016 — Platform Authenticity & Anti-Impersonation  
 **Canonical Part 4 commit path:** `docs/architecture/EDA/part-4/commits/`
