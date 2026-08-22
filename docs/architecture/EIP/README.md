@@ -9,7 +9,7 @@ EIPs describe **how integration is implemented**. They complement the architectu
 ## Relationship to Other Architecture Documentation
 
 - **ADR** — records why an architectural decision was made.
-- **EDA** — defines the event-driven architectural style adopted by Essentials Mart.
+- **EDA** — defines the enterprise architectural structure and event-driven style.
 - **EIP** — defines a reusable integration mechanism used to implement that architecture.
 - **API contracts** — define synchronous interfaces and capability boundaries.
 - **Event contracts** — define the structure and semantics of asynchronous messages.
@@ -37,23 +37,36 @@ ADR-003 establishes that events represent facts, commands request actions, and q
 | EIP-015 | Correlation and Distributed Tracing | Maintain workflow identity across distributed processing | Proposed |
 | EIP-016 | Human-in-the-Loop Routing | Escalate actions requiring human authority | Proposed |
 | EIP-017 | External Partner Adapter / Gateway | Isolate provider-specific external integrations behind canonical Essentials Mart contracts | Proposed |
+| EIP-018 | Resource-Aware Multimodal Delivery Orchestration | Convert delivery jobs into feasible resource- and transport-aware delivery plans | Proposed |
 
-## EIP-017 Integration Boundary
+## EIP-018 Integration Boundary
 
-EIP-017 is the reusable pattern for external partner integrations. It composes existing EIPs rather than replacing them.
+EIP-018 is the reusable pattern for resource-aware delivery orchestration. It composes existing routing, retry, idempotency, saga, tracing, human-escalation and external-partner patterns rather than replacing them.
 
-Typical composition includes:
+It supports delivery jobs originating from:
 
-- EIP-004 for partner-originated commands.
-- EIP-005 for synchronous partner requests where appropriate.
-- EIP-006/EIP-007 for partner and capability routing.
-- EIP-009/EIP-010 for partner failure handling and transient recovery.
-- EIP-011 for duplicate partner messages and replay-safe processing.
-- EIP-013 for distributed partner commerce workflows.
-- EIP-014 for reliable state-change/message publication.
-- EIP-015 for end-to-end partner transaction correlation and tracing.
+- ordinary checkout;
+- repeat purchase;
+- AI-assisted replenishment;
+- Essentials Subscriptions;
+- and authorised partner-originated commerce.
 
-Partner-specific APIs, authentication mechanisms, payloads and terminology remain behind the adapter boundary.
+It may evaluate:
+
+- warehouse readiness;
+- staff capacity;
+- vehicle availability and capacity;
+- driver availability;
+- delivery windows;
+- scheduled transport;
+- partner transport;
+- traffic;
+- transfer constraints;
+- cost;
+- reliability;
+- and ETA.
+
+Provider-specific mapping and transport APIs remain behind EIP-017 where they cross an external boundary.
 
 ## Governing Principles
 
@@ -69,6 +82,7 @@ Partner-specific APIs, authentication mechanisms, payloads and terminology remai
 10. No individual external provider may become an architectural source of truth or unavoidable single point of failure.
 11. EIPs must remain consistent with the ADR tree and undergo forward-consistency review when architectural decisions change.
 12. Integration patterns should be used deliberately; not every interaction should be converted into asynchronous messaging.
+13. New delivery capabilities must extend shared commerce and fulfilment infrastructure rather than create parallel delivery systems.
 
 ## EIP Lifecycle
 
@@ -82,34 +96,16 @@ An EIP may remain Proposed while implementation decisions are still being valida
 
 Primary dependencies include:
 
+- EDA-001 — Enterprise Data Architecture
 - EDA-002 — External Partner Commerce, Distribution & Financial Integration
-- ADR-001 — Enterprise Architecture Principles
-- ADR-002 — Domain-Driven Enterprise Architecture
+- EDA-003 — Household Subscription, Fulfilment & Multimodal Delivery Architecture
 - ADR-003 — Event-Driven Architecture
 - ADR-004 — API & Service Architecture
-- ADR-005 — Data Ownership & Database Boundaries
-- ADR-006 — Identity, Authentication & Authorisation
 - ADR-007 — AI Society Architecture
-- ADR-009 — AI Agent Governance & Permissions
+- ADR-008 — Intelligence Engine Architecture
 - ADR-010 — Human-in-the-Loop Architecture
-- ADR-011 — Notification & Communication Architecture
-- ADR-012 — WhatsApp Integration Architecture
+- ADR-014 — Walk Mode / Living Digital Supermarket Architecture
 - ADR-016 — Observability, Auditability & Trust
 - ADR-017 — Scalability & Multi-Store Architecture
-- ADR-018 — Deployment & Environment Strategy
 - ADR-019 — External Partner Integration Architecture
-
-## Naming and Message Conventions
-
-Message names should describe business meaning rather than implementation details.
-
-Examples:
-
-- `OrderCreated`
-- `InventoryAvailabilityChanged`
-- `OrderReadyForDelivery`
-- `CreateOrder`
-- `ReserveInventory`
-- `GetOrderStatus`
-
-Transport-specific names, broker-specific terminology, and implementation details belong in implementation documentation unless they have architectural significance.
+- ADR-020 — Essentials Subscription & Multimodal Delivery Optimisation Architecture

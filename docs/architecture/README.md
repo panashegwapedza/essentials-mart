@@ -1,9 +1,10 @@
-# Essentials Mart Architecture
+# Essentials Mart — Enterprise Architecture
 
 ## Enterprise Architecture
 
 - EDA-001 — Enterprise Data Architecture
 - EDA-002 — External Partner Commerce, Distribution & Financial Integration
+- EDA-003 — Household Subscription, Fulfilment & Multimodal Delivery Architecture
 
 ## Architecture Decision Records
 
@@ -26,10 +27,15 @@
 - ADR-017 — Scalability & Multi-Store Architecture
 - ADR-018 — Deployment & Environment Strategy
 - ADR-019 — External Partner Integration Architecture
+- ADR-020 — Essentials Subscription & Multimodal Delivery Optimisation Architecture
 
 ### ADR-019 Forward-Consistency Record
 
 - ADR-019 Forward-Consistency Check
+
+### ADR-020 Forward-Consistency Record
+
+- ADR-020 Forward-Consistency Check
 
 ### ADR Amendment Records — External Partner Integration
 
@@ -60,6 +66,7 @@
 - EIP-015 — Correlation and Distributed Tracing
 - EIP-016 — Human-in-the-Loop Routing
 - EIP-017 — External Partner Adapter / Gateway
+- EIP-018 — Resource-Aware Multimodal Delivery Orchestration
 
 ## User Experience Architecture
 
@@ -79,3 +86,5 @@ All new architecture documents must:
 4. Preserve source-of-truth ownership within the responsible domain.
 5. Keep implementation-specific details out of architectural documents unless they have architectural significance.
 6. Record external integrations through explicit boundaries rather than hard-coding third-party providers into core domain architecture.
+7. Preserve existing customer and platform capabilities when introducing extensions.
+8. Avoid creating parallel infrastructure where a shared governed capability already exists.

@@ -8,6 +8,7 @@
   - Part 3 — Security Architecture
   - Part 4 — Defensive Engineering & Platform Protection
 - EDA-002 — External Partner Commerce, Distribution & Financial Integration
+- EDA-003 — Household Subscription, Fulfilment & Multimodal Delivery Architecture
 
 ## EDA-002
 
@@ -20,6 +21,18 @@ Primary companion documents:
 - EIP-017 — External Partner Adapter / Gateway
 - ADR-019 — External Partner Integration Architecture
 - ADR-019 Forward-Consistency Check
+
+## EDA-003
+
+EDA-003 defines the extension architecture for customer-configurable recurring household replenishment and the shared fulfilment and multimodal delivery capability used by both recurring and ordinary demand.
+
+Primary companion documents:
+
+- ADR-020 — Essentials Subscription & Multimodal Delivery Optimisation Architecture
+- ADR-020 Forward-Consistency Check
+- EIP-018 — Resource-Aware Multimodal Delivery Orchestration
+
+EDA-003 explicitly does not supersede manual shopping, normal checkout, repeat purchase, AI Shopping Mode, Walk Mode, existing fulfilment or existing delivery services.
 
 ## Governance
 
