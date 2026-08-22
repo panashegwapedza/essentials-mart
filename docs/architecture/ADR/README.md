@@ -32,6 +32,7 @@
 ## ADR-020 Supporting Records
 
 - ADR-020 Forward-Consistency Check
+- ADR-020 Forward-Consistency Closure Record
 
 ## External Partner Integration Amendments
 
@@ -65,6 +66,12 @@ ADR-019 establishes the decision to use a partner-neutral external integration b
 
 ADR-020 establishes the decision to extend existing commerce and delivery capabilities with customer-configurable subscriptions and a shared, resource-aware multimodal delivery optimisation layer. EIP-018 defines the reusable integration pattern that operationalises delivery-job orchestration, resource evaluation, multimodal transport selection and route/dispatch optimisation, while EDA-003 defines the enterprise capability and boundaries.
 
+## ADR-020 Closure
+
+The ADR-020 forward-consistency review is closed. The closure record confirms that the identified direct and secondary impacts have been represented through controlled amendments and that the new subscription and multimodal delivery capabilities extend shared commerce, fulfilment and delivery infrastructure rather than creating parallel systems.
+
+Future material changes to subscription behaviour, transport capabilities, routing constraints, partner contracts or customer delivery guarantees require a new architectural impact review.
+
 ## Governance
 
 Every ADR must identify:
@@ -76,5 +83,6 @@ Every ADR must identify:
 5. Direct and secondary impacts.
 6. Required amendments to affected architecture records.
 7. Forward-consistency requirements.
+8. Closure status for material architectural change sets.
 
 ADR amendments must not silently rewrite historical decisions. They must preserve traceability between the parent decision and the architectural change that caused the amendment.
