@@ -10,9 +10,9 @@
 
 ## Current Commit Mapping Update
 
-Commit 017 — **Defensive Monitoring & Detection** — is now complete.
+Commit 018 — **Automated Defence & Containment** — is now complete.
 
-It establishes the platform-wide monitoring and detection boundary covering telemetry, correlation, anomaly detection, security-control monitoring, threat hunting, AI and commerce detection, detection integrity, blind-spot visibility, detection testing and the explicit separation between detection, automated containment and incident response.
+It establishes the governed automated enforcement boundary covering proportional containment, blast-radius control, reversible restrictions, quarantine, suspension, credential/session revocation, service and infrastructure isolation, AI containment, partner containment, emergency controls, action traceability, containment verification and re-evaluation.
 
 The authoritative Part 4 sequence now continues:
 
@@ -21,7 +21,7 @@ The authoritative Part 4 sequence now continues:
 - **015 — Trust Engine Defensive Architecture** ✓
 - **016 — Platform Authenticity & Anti-Impersonation** ✓
 - **017 — Defensive Monitoring & Detection** ✓
-- **018 — Automated Defence & Containment**
+- **018 — Automated Defence & Containment** ✓
 - **019 — Incident Response Architecture**
 - **020 — Platform Resilience & Continuity**
 - **021 — Adversarial Testing & Defensive Verification**
@@ -30,7 +30,60 @@ The authoritative Part 4 sequence now continues:
 - **024 — Defensive Governance**
 - **025 — Assurance, Traceability & Closure**
 
-Commit 017 does not replace Commit 006's runtime threat detection. Commit 006 established active runtime threat detection, bot defence and adaptive abuse control; Commit 017 establishes the broader platform-wide defensive monitoring, telemetry, correlation, detection engineering and detection-assurance architecture that supplies evidence to Trust, Investigation, Containment and Incident Response layers.
+Commit 018 does not replace Commit 017's monitoring and detection architecture. Commit 017 establishes the evidence and detection layer; Commit 018 establishes the governed defensive action layer after detection. Commit 018 also does not replace incident response or continuity, which remain the responsibilities of Commits 019 and 020.
 
-**Current commit:** 017  
-**Next commit:** 018 — Automated Defence & Containment
+## 018 Defensive Boundary
+
+```text
+Security Signal
+      ↓
+Detection
+      ↓
+Risk / Confidence
+      ↓
+Policy / Authority
+      ↓
+Automated Defensive Action
+      ↓
+Containment
+      ↓
+Verification
+      ↓
+Reassessment
+   ┌──┴───────────────┐
+   ▼                  ▼
+Release            Escalate
+                      ↓
+               Incident Response
+```
+
+### Core Laws
+
+1. Detection does not automatically authorise containment.
+2. Automated defence operates under explicit policy.
+3. Actions must be proportional to risk.
+4. Actions should be reversible where possible.
+5. High-impact irreversible actions require stronger authority.
+6. Containment must preserve material evidence.
+7. Scope must be limited to the necessary blast radius.
+8. Automated defence must not become an uncontrolled authority layer.
+9. Trust signals do not independently authorise enforcement.
+10. AI agents cannot override their own containment.
+11. Defensive automation must itself be protected against attack.
+12. Automated actions must be attributable and observable.
+13. Containment success must be verified.
+14. Temporary restrictions should expire or be re-evaluated.
+15. Automated defence must avoid recursive action loops.
+16. Defensive controls must not become an easy target for denial-of-service or customer-harm attacks.
+17. Financially consequential containment requires economic safeguards.
+18. Dependency-aware containment must minimise collateral outages.
+19. Emergency controls require elevated authority.
+20. Recovery remains distinct from automated containment.
+21. Privacy requirements remain applicable during security response.
+22. Partner integrations must be isolatable without unnecessary coupling.
+23. Platform-wide kill switches are exceptional controls, not routine mechanisms.
+24. Automated defence must be continuously tested.
+
+**Current commit:** 018  
+**Next commit:** 019 — Incident Response Architecture  
+**Canonical Part 4 commit path:** `docs/architecture/EDA/part-4/commits/`
