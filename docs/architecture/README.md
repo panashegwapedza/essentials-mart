@@ -36,6 +36,7 @@
 ### ADR-020 Forward-Consistency Record
 
 - ADR-020 Forward-Consistency Check
+- ADR-020 Forward-Consistency Closure Record
 
 ### ADR Amendment Records — External Partner Integration
 
@@ -46,6 +47,18 @@
 - ADR-016 Amendment 001 — External Partner Observability
 - ADR-017 Amendment 001 — Partner Scalability
 - ADR-018 Amendment 001 — Partner Deployment
+
+### ADR-020 Subscription & Multimodal Delivery Amendments
+
+- ADR-004 Amendment 002 — Subscription & Multimodal Delivery Orchestration
+- ADR-005 Amendment 002 — Subscription & Delivery Data Boundaries
+- ADR-007 Amendment 001 — Subscription & Delivery AI Participation
+- ADR-008 Amendment 001 — Resource-Aware Delivery Intelligence
+- ADR-010 Amendment 001 — Subscription & Delivery Human Control
+- ADR-014 Amendment 001 — Walk Mode Shared Delivery Pipeline
+- ADR-016 Amendment 001 — Subscription & Delivery Observability
+- ADR-017 Amendment 001 — Subscription & Multimodal Delivery Scalability
+- ADR-019 Amendment 001 — Scheduled Transport & Delivery Capabilities
 
 ## Enterprise Integration Patterns
 
@@ -88,3 +101,4 @@ All new architecture documents must:
 6. Record external integrations through explicit boundaries rather than hard-coding third-party providers into core domain architecture.
 7. Preserve existing customer and platform capabilities when introducing extensions.
 8. Avoid creating parallel infrastructure where a shared governed capability already exists.
+9. Close material architectural change sets with an explicit consistency determination before implementation architecture begins.
