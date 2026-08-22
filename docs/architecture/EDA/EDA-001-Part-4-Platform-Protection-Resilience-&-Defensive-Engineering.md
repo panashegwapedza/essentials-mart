@@ -1,20 +1,20 @@
 # EDA-001 Part 4 — Platform Protection, Resilience & Defensive Engineering
 
-**Status:** Proposed  
+**Status:** Proposed / Architecturally Complete  
 **Part:** EDA-001 Part 4  
 **Parent Architecture:** EDA-001  
-**Purpose:** Master index and scope baseline  
+**Purpose:** Master index, scope baseline and closure record  
 **Canonical commit directory:** `docs/architecture/EDA/part-4/commits/`
 
 ---
 
 ## Current Commit Mapping Update
 
-Commit 024 — **Defensive Governance** — is now complete.
+Commit 025 — **Assurance, Traceability & Closure** — is now complete.
 
-It establishes the governance, accountability, authority, policy, exception, oversight and continuous-improvement framework governing the defensive architecture of Essentials Mart.
+It establishes the assurance, evidence, traceability, assessment, risk, verification and continuous-improvement framework that closes the EDA-001 Part 4 defensive architecture as an architectural baseline.
 
-The authoritative Part 4 sequence now continues:
+The authoritative Part 4 sequence is now complete:
 
 - **013 — Commerce & Economic Abuse Defence** ✓
 - **014 — API & Service Boundary Defence** ✓
@@ -28,66 +28,125 @@ The authoritative Part 4 sequence now continues:
 - **022 — IP & Legal Protection Strategy** ✓
 - **023 — Global Defensive Scalability** ✓
 - **024 — Defensive Governance** ✓
-- **025 — Assurance, Traceability & Closure**
+- **025 — Assurance, Traceability & Closure** ✓
 
-Commit 024 does not replace earlier defensive controls. It establishes the governance layer through which those controls remain owned, authorised, measurable, reviewable, auditable and accountable.
+Commit 025 does not declare Essentials Mart permanently secure. It establishes the assurance system through which the Part 4 architecture remains measurable, testable, traceable, governable and continuously improvable.
 
-## 024 Defensive Governance Boundary
+## 025 Assurance & Closure Boundary
 
 ```text
-Enterprise Risk
+Threat / Requirement
       ↓
-Defensive Governance
+Architecture
       ↓
-Policies / Authority / Ownership
+Defensive Control
       ↓
-Technical Controls
+Implementation
       ↓
-Detection / Defence / Response / Recovery
+Testing
       ↓
 Evidence
       ↓
 Assurance
       ↓
-Risk Review
+Risk Decision
+      ↓
+Continuous Monitoring
       ↓
 Architecture Improvement
       ↺
 ```
 
-### Core Laws
+### Core Closure Laws
 
-1. Every material defensive control must have an owner.
-2. Ownership and operational responsibility must be distinguishable.
-3. Technical capability does not automatically grant business authority.
-4. Material defensive actions require defined authority.
-5. High-impact controls should use separation of duties where practical.
-6. Defensive policies must align with enterprise architecture.
-7. Risk appetite must inform defensive thresholds.
-8. Material risk acceptance must be explicit.
-9. Exceptions must be bounded and expire or be reviewed.
-10. Emergency authority must remain auditable.
-11. Material architecture changes require impact assessment.
-12. Forward-consistency checking remains mandatory.
-13. Automated defence must remain governed.
-14. AI must not redefine its own authority.
-15. Detection rules require ownership and review.
-16. Incident roles and escalation paths must be defined.
-17. Resilience requires accountable ownership and tested recovery.
-18. Adversarial testing must be authorised and controlled.
-19. Third-party risk must be governed.
-20. External AI providers must remain bounded by explicit authority and contracts.
-21. Security evidence must be protected and traceable.
-22. Governance metrics must measure meaningful outcomes.
-23. Customer-impacting controls must include proportionality and recovery mechanisms.
-24. Security controls must respect privacy obligations.
-25. Geographic expansion requires jurisdiction-aware governance.
-26. Defensive debt must be visible and owned.
-27. Architectural drift must be detected and reviewed.
-28. Supply-chain risk forms part of defensive governance.
-29. Governance itself must be periodically evaluated.
-30. Governance must improve the actual security posture rather than merely increase documentation.
+1. A control must be demonstrable, not merely declared.
+2. Material controls must have accountable owners.
+3. Security requirements must remain traceable to implementation and evidence.
+4. Evidence must be protected from unauthorised alteration.
+5. Critical controls require proportionate assurance.
+6. Independent assurance must be used where appropriate.
+7. Automated assurance should be used where practical.
+8. Material changes require security reassessment.
+9. Security regressions must be detected.
+10. Adversarial findings must enter the remediation lifecycle.
+11. Findings require ownership and disposition.
+12. Exceptions must be explicit and governed.
+13. Risk acceptance must be attributable.
+14. Residual risk must remain visible.
+15. AI systems require AI-specific assurance.
+16. Automated defence must itself be tested for harmful behaviour.
+17. Recovery must be tested rather than assumed.
+18. Third-party security cannot be treated as an uncontrolled external assumption.
+19. Privacy must be included in security assurance.
+20. Governance must be demonstrable.
+21. Architectural drift is a security concern.
+22. Security debt must be visible.
+23. Security reporting must represent uncertainty honestly.
+24. Part 4 closure means architectural completeness, not permanent security.
+25. Future architecture must preserve or explicitly amend Part 4 guarantees through controlled governance.
+26. Assurance must continue for the lifetime of the platform.
 
-**Current commit:** 024  
-**Next commit:** 025 — Assurance, Traceability & Closure  
+## Part 4 Closure Statement
+
+EDA-001 Part 4 is now **architecturally complete as a defensive baseline**.
+
+The completed architecture establishes:
+
+**prevention → detection → containment → response → recovery → verification → governance → continuous improvement.**
+
+Closure therefore means that the defensive architecture has a defined and governed method for:
+
+- protecting the platform;
+- detecting threats and abnormal behaviour;
+- containing harmful activity;
+- responding to incidents;
+- maintaining and recovering operations;
+- testing the architecture adversarially;
+- protecting intellectual property;
+- scaling defensive controls globally;
+- governing security authority and risk;
+- proving control effectiveness;
+- maintaining traceability;
+- and continuously improving the security posture.
+
+The architecture remains operationally alive after closure.
+
+## Future Architecture Requirement
+
+Any future architecture, EDA amendment, ADR, EIP, major integration or material implementation change must perform a forward-consistency review against EDA-001 Part 4.
+
+A future change must not silently weaken an established Part 4 guarantee.
+
+Where a conflict exists, the affected architecture must be explicitly amended through the established governance process.
+
+## Canonical Part 4 Assurance Loop
+
+```text
+Change / Threat / Finding
+          ↓
+Risk Assessment
+          ↓
+Architecture Review
+          ↓
+Control Change
+          ↓
+Implementation
+          ↓
+Adversarial / Security Testing
+          ↓
+Deployment
+          ↓
+Monitoring
+          ↓
+Assurance
+          ↓
+Lessons Learned
+          ↓
+Architecture Update
+          ↺
+```
+
+**Current commit:** 025 — Assurance, Traceability & Closure ✓  
+**Part 4 status:** Architecturally Complete  
+**Next:** Future amendments governed through controlled architecture change  
 **Canonical Part 4 commit path:** `docs/architecture/EDA/part-4/commits/`
