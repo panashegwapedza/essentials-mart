@@ -1,0 +1,52 @@
+name: Toolchain Foundation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-foundation:
+    name: Repository foundation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify canonical directories
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(apps services packages infrastructure database events docs scripts tests)
+          for path in "${required[@]}"; do
+            test -d "$path" || { echo "Missing required directory: $path"; exit 1; }
+          done
+
+      - name: Verify editor configuration
+        shell: bash
+        run: test -f .editorconfig
+
+      - name: Verify engineering baseline
+        shell: bash
+        run: test -f docs/engineering/TOOLCHAIN-BASELINE-001.md
+
+  secret-hygiene:
+    name: Secret hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check for obvious committed secret files
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f \( -name '.env' -o -name '.env.*' \) -not -path './.git/*' | grep -q .; then
+            echo 'Environment files must not be committed.'
+            exit 1
+          fi
