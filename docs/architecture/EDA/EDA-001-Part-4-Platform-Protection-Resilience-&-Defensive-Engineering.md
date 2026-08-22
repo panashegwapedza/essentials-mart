@@ -10,9 +10,9 @@
 
 ## Current Commit Mapping Update
 
-Commit 021 — **Adversarial Testing & Defensive Verification** — is now complete.
+Commit 022 — **IP & Legal Protection Strategy** — is now complete.
 
-It establishes the verification boundary covering continuous adversarial testing, security verification, application and API testing, business-logic abuse, bot and automation testing, identity and trust verification, AI and AI Society red teaming, intelligence-extraction testing, data and infrastructure testing, supply-chain verification, external dependency testing, payment and delivery testing, detection and containment exercises, incident-response validation, resilience exercises, regression testing, change-triggered verification, findings and remediation, provider-neutrality verification, test evidence and continuous adversarial learning.
+It establishes the intellectual-property protection boundary covering IP inventory, classification, server-side isolation, client hardening, copyright, patent strategy, trade secrets, confidentiality measures, employee and contractor ownership, supplier and partner IP, open-source governance, AI IP, intelligence as IP, brand and design protection, prior-art and freedom-to-operate review, public-disclosure controls, repository and artifact protection, IP extraction detection, evidence and attribution, anti-replication strategy, jurisdictional considerations and legal review gates.
 
 The authoritative Part 4 sequence now continues:
 
@@ -25,63 +25,60 @@ The authoritative Part 4 sequence now continues:
 - **019 — Incident Response Architecture** ✓
 - **020 — Platform Resilience & Continuity** ✓
 - **021 — Adversarial Testing & Defensive Verification** ✓
-- **022 — IP & Legal Protection Strategy**
+- **022 — IP & Legal Protection Strategy** ✓
 - **023 — Global Defensive Scalability**
 - **024 — Defensive Governance**
 - **025 — Assurance, Traceability & Closure**
 
-Commit 021 does not replace the defensive controls established by earlier commits. It verifies them. Commit 021 therefore acts as the validation layer across the preventive, detective, containment, incident-response and resilience architecture established in Commit 001 through Commit 020.
+Commit 022 does not replace the technical protection established by earlier commits. It provides the ownership, confidentiality, legal, attribution and enforcement layer for the assets those controls protect.
 
-## 021 Verification Boundary
+## 022 IP Protection Boundary
 
 ```text
-Threat Model
-      ↓
-Defensive Controls
-      ↓
-Adversarial Testing
-      ↓
-Detection
-      ↓
-Containment
-      ↓
-Incident Response
-      ↓
-Recovery
-      ↓
-Verification
-      ↓
-Architecture Improvement
+Asset Identification
+       ↓
+Classification
+       ↓
+Technical Isolation
+       ↓
+Access Control
+       ↓
+Confidentiality / Contractual Controls
+       ↓
+IP Registration Where Appropriate
+       ↓
+Monitoring / Detection
+       ↓
+Evidence / Attribution
+       ↓
+Enforcement / Recovery
 ```
 
 ### Core Laws
 
-1. Security controls must be verified rather than assumed.
-2. Adversarial testing must be authorised and governed.
-3. Testing must be threat-informed.
-4. Testing must protect production and customer interests.
-5. Testing must include technical and business-logic attack paths.
-6. APIs must be tested as externally and internally exposed boundaries.
-7. AI must be tested as both a model and an integrated system.
-8. AI Society interactions must be adversarially tested.
-9. Intelligence extraction must be tested.
-10. Economic abuse must be tested.
-11. Identity and trust assumptions must be challenged.
-12. External dependencies must be tested for compromise and failure.
-13. Provider neutrality must be verified where claimed.
-14. Detection must be measured during adversarial exercises.
-15. Automated containment must be exercised.
-16. Incident-response procedures must be exercised.
-17. Resilience and recovery must be exercised.
-18. Material findings must have owners and remediation paths.
-19. Remediation must be independently verified where appropriate.
-20. Security regressions must produce durable tests where practical.
-21. Material architectural changes must trigger targeted verification.
-22. Test evidence must be protected.
-23. Findings and exceptions must have governed lifecycles.
-24. Adversarial testing must continuously improve the defensive architecture.
-25. Verification must measure defensive capability rather than merely test volume.
+1. Material IP must be identified and owned.
+2. IP classification must reflect commercial importance and exposure.
+3. Proprietary logic should remain server-side where practical.
+4. Client hardening must not be treated as absolute confidentiality.
+5. WebAssembly must not be treated as an unbreakable IP boundary.
+6. Copyright, patent, trademark, design and trade-secret protections must be considered separately.
+7. Patentability must be evaluated before material public disclosure.
+8. Trade secrets require actual confidentiality measures.
+9. Access to strategic IP must follow least privilege and need to know.
+10. Employee and contractor IP ownership must be contractually addressed.
+11. Supplier and partner IP rights must be explicit.
+12. Open-source licences must be governed.
+13. AI-related IP must be explicitly classified.
+14. Proprietary intelligence must receive appropriate technical and legal protection.
+15. Source repositories and build systems are strategic IP stores.
+16. IP extraction attempts must be observable where technically feasible.
+17. Material suspected misuse must preserve appropriate evidence.
+18. Anti-replication controls must increase cost and attribution rather than claim impossibility.
+19. Legal protection must complement, not replace, cybersecurity.
+20. Jurisdiction-specific requirements must be respected.
+21. Material IP decisions require qualified legal review where appropriate.
+22. IP protection must be continuously reviewed as the platform evolves.
 
-**Current commit:** 021  
-**Next commit:** 022 — IP & Legal Protection Strategy  
+**Current commit:** 022  
+**Next commit:** 023 — Global Defensive Scalability  
 **Canonical Part 4 commit path:** `docs/architecture/EDA/part-4/commits/`
