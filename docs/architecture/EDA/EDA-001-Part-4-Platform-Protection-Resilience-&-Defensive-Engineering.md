@@ -10,9 +10,9 @@
 
 ## Current Commit Mapping Update
 
-Commit 018 — **Automated Defence & Containment** — is now complete.
+Commit 019 — **Incident Response Architecture** — is now complete.
 
-It establishes the governed automated enforcement boundary covering proportional containment, blast-radius control, reversible restrictions, quarantine, suspension, credential/session revocation, service and infrastructure isolation, AI containment, partner containment, emergency controls, action traceability, containment verification and re-evaluation.
+It establishes the accountable incident-management boundary covering incident intake, triage, declaration, command, investigation, evidence preservation, containment coordination, eradication, recovery gates, customer protection, financial incidents, AI incidents, third-party and supply-chain incidents, communications, closure, residual risk, lessons learned, metrics and exercises.
 
 The authoritative Part 4 sequence now continues:
 
@@ -22,7 +22,7 @@ The authoritative Part 4 sequence now continues:
 - **016 — Platform Authenticity & Anti-Impersonation** ✓
 - **017 — Defensive Monitoring & Detection** ✓
 - **018 — Automated Defence & Containment** ✓
-- **019 — Incident Response Architecture**
+- **019 — Incident Response Architecture** ✓
 - **020 — Platform Resilience & Continuity**
 - **021 — Adversarial Testing & Defensive Verification**
 - **022 — IP & Legal Protection Strategy**
@@ -30,60 +30,63 @@ The authoritative Part 4 sequence now continues:
 - **024 — Defensive Governance**
 - **025 — Assurance, Traceability & Closure**
 
-Commit 018 does not replace Commit 017's monitoring and detection architecture. Commit 017 establishes the evidence and detection layer; Commit 018 establishes the governed defensive action layer after detection. Commit 018 also does not replace incident response or continuity, which remain the responsibilities of Commits 019 and 020.
+Commit 019 does not replace Commit 017's monitoring and detection architecture or Commit 018's automated containment architecture. Commit 017 establishes the evidence and detection layer; Commit 018 establishes governed automated defensive action; Commit 019 establishes accountable incident coordination, investigation, eradication and response management. Commit 020 remains responsible for resilience and continuity.
 
-## 018 Defensive Boundary
+## 019 Incident Response Boundary
 
 ```text
-Security Signal
+Signal / Report
       ↓
 Detection
       ↓
-Risk / Confidence
+Triage
       ↓
-Policy / Authority
+Incident Assessment
       ↓
-Automated Defensive Action
+Incident Declaration
       ↓
-Containment
+Investigation
       ↓
-Verification
+Containment Coordination
       ↓
-Reassessment
-   ┌──┴───────────────┐
-   ▼                  ▼
-Release            Escalate
-                      ↓
-               Incident Response
+Eradication
+      ↓
+Recovery
+      ↓
+Validation
+      ↓
+Closure
+      ↓
+Lessons Learned
+      ↓
+Architecture / Controls Improved
 ```
 
 ### Core Laws
 
-1. Detection does not automatically authorise containment.
-2. Automated defence operates under explicit policy.
-3. Actions must be proportional to risk.
-4. Actions should be reversible where possible.
-5. High-impact irreversible actions require stronger authority.
-6. Containment must preserve material evidence.
-7. Scope must be limited to the necessary blast radius.
-8. Automated defence must not become an uncontrolled authority layer.
-9. Trust signals do not independently authorise enforcement.
-10. AI agents cannot override their own containment.
-11. Defensive automation must itself be protected against attack.
-12. Automated actions must be attributable and observable.
-13. Containment success must be verified.
-14. Temporary restrictions should expire or be re-evaluated.
-15. Automated defence must avoid recursive action loops.
-16. Defensive controls must not become an easy target for denial-of-service or customer-harm attacks.
-17. Financially consequential containment requires economic safeguards.
-18. Dependency-aware containment must minimise collateral outages.
-19. Emergency controls require elevated authority.
-20. Recovery remains distinct from automated containment.
-21. Privacy requirements remain applicable during security response.
-22. Partner integrations must be isolatable without unnecessary coupling.
-23. Platform-wide kill switches are exceptional controls, not routine mechanisms.
-24. Automated defence must be continuously tested.
+1. Detection does not automatically constitute incident declaration.
+2. Incident declaration establishes accountable response authority.
+3. Incident command does not transfer domain ownership.
+4. Investigation must preserve material evidence.
+5. Containment and incident response are related but distinct capabilities.
+6. Automated containment remains governed by Commit 018.
+7. Eradication must address persistence and root cause where practicable.
+8. Recovery requires validation.
+9. Material incidents require traceable decisions.
+10. Customer protection is a primary response objective.
+11. Financial incidents require economic safeguards.
+12. AI incidents require AI-specific containment and investigation controls.
+13. Third-party incidents require dependency-impact assessment.
+14. Supply-chain incidents require provenance and artifact validation.
+15. Incident communications require authorised handling.
+16. Incident closure requires explicit criteria.
+17. Residual risk must not disappear merely because an incident is closed.
+18. Lessons learned must feed architecture and controls.
+19. Incident-response metrics must support improvement.
+20. Incident-response exercises must test the architecture under realistic conditions.
+21. Privacy and data-governance requirements remain applicable during response.
+22. Recovery remains distinct from response and is governed further by Commit 020.
 
-**Current commit:** 018  
-**Next commit:** 019 — Incident Response Architecture  
+**Current commit:** 019  
+**Next commit:** 020 — Platform Resilience & Continuity  
 **Canonical Part 4 commit path:** `docs/architecture/EDA/part-4/commits/`
