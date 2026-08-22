@@ -138,6 +138,9 @@ This is the **subject index**, not a mandatory numerical sequence for commit IDs
 | 004 | Software Supply-Chain Security Architecture | Defend the software/technology supply chain against compromise, tampering and dependency abuse | Part 3 Supply-Chain Security; Commit 002 |
 | 005 | Client Application Hardening & Anti-Tampering | Increase resistance to client inspection, modification, instrumentation and repackaging | Commit 003; ADR-013/015 |
 | 006 | Runtime Threat Detection, Bot Defence & Adaptive Abuse Control | Detect and constrain hostile runtime behaviour, automation, scraping, account abuse, API abuse and resource exhaustion | Part 3 monitoring/abuse controls; Commits 002–005 |
+| 007 | Business Logic & API Protection | Defend high-value business workflows and API surfaces against manipulation, enumeration, abuse and automated exploitation | Commit 006; Part 3 API/security architecture |
+| 008 | Cyber Threat Defence & Application Attack Resistance | Defend application surfaces against hostile payloads, exploit attempts, malicious content and compromised clients | Commits 006–007 |
+| 009 | Infrastructure & Network Defence | Harden network, workload, infrastructure, egress, administrative, operational and recovery boundaries; constrain lateral movement and infrastructure compromise | Commits 004, 006, 008; Part 3 infrastructure security |
 
 The current commits deliberately address subjects in dependency order rather than pretending that the subject index is itself a commit-number sequence.
 
@@ -184,8 +187,6 @@ Commit 005 operationalises the client-resilience side of Commit 003.
 
 It does not treat obfuscation, WebAssembly or anti-debugging as a confidentiality or authorisation boundary. Critical authority remains server-side.
 
-This is consistent with the security principle that client-side controls can be bypassed and server-side enforcement remains authoritative. citeturn1search0turn1search3
-
 ### Commit 006 — Runtime Defence
 
 Commit 006 is the runtime defensive layer.
@@ -206,7 +207,46 @@ It must not recreate Part 3's monitoring architecture. It focuses on using runti
 - Walk Mode abuse;
 - WhatsApp abuse.
 
-The next commit is therefore **Commit 007 — Business Logic & API Protection**, not a duplicate Part 3 data-security document.
+### Commit 007 — Business Logic & API Protection
+
+Commit 007 establishes defensive protection around high-value business workflows and API surfaces. It complements Commit 006's runtime detection and Commit 008's application attack resistance.
+
+It must not redefine the underlying API architecture or business-domain ownership established elsewhere.
+
+### Commit 008 — Cyber Threat Defence
+
+Commit 008 establishes application-layer resistance to hostile payloads, exploit attempts, malicious uploads, SSRF, injection, unsafe external responses and AI-related application attack paths.
+
+It provides the immediate application-layer boundary above Commit 009's infrastructure and network defence.
+
+### Commit 009 — Infrastructure & Network Defence
+
+Commit 009 moves the defensive boundary below the application layer into infrastructure, network, workload and service-connectivity protection.
+
+It addresses:
+
+- segmentation;
+- east-west and north-south defence;
+- egress control;
+- DNS defence;
+- administrative isolation;
+- workload isolation;
+- infrastructure hardening;
+- secrets and service credentials;
+- service-to-service protection;
+- database and broker exposure;
+- DDoS and resource exhaustion;
+- failure isolation;
+- third-party connectivity;
+- store and warehouse networks;
+- deployment infrastructure;
+- backup protection;
+- infrastructure telemetry;
+- compromise containment;
+- safe degradation;
+- and infrastructure recovery.
+
+It does not replace Part 3 infrastructure security architecture. It makes that architecture harder to defeat and more recoverable under attack.
 
 ---
 
@@ -214,9 +254,6 @@ The next commit is therefore **Commit 007 — Business Logic & API Protection**,
 
 The next dependency-aware sequence is:
 
-- **007 — Business Logic & API Protection**
-- **008 — Cyber Threat Defence**
-- **009 — Infrastructure & Network Defence**
 - **010 — AI Defensive Architecture**
 - **011 — AI Intelligence & Distillation Defence**
 - **012 — Data & Intelligence Protection**
@@ -305,6 +342,6 @@ EDA-001 Part 4 is complete only when:
 ## 11. Status
 
 **Part 4 status:** In progress  
-**Current commit:** 006  
-**Next commit:** 007 — Business Logic & API Protection  
+**Current commit:** 009  
+**Next commit:** 010 — AI Defensive Architecture  
 **Canonical Part 4 commit path:** `docs/architecture/EDA/part-4/commits/`
