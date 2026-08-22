@@ -1,0 +1,37 @@
+name: Workspace Foundation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  workspace-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate canonical workspace structure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_dirs=(
+            apps
+            services
+            packages
+            infrastructure
+            database
+            events
+            docs
+            scripts
+            tests
+          )
+
+          for dir in "${required_dirs[@]}"; do
+            test -d "$dir" || { echo "Missing required directory: $dir"; exit 1; }
+          done
+
+          test -d .github || { echo "Missing .github directory"; exit 1; }
+          echo "Workspace foundation structure is valid."
