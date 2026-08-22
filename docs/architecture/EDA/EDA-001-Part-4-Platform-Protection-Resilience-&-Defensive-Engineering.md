@@ -10,9 +10,9 @@
 
 ## Current Commit Mapping Update
 
-Commit 022 — **IP & Legal Protection Strategy** — is now complete.
+Commit 023 — **Global Defensive Scalability** — is now complete.
 
-It establishes the intellectual-property protection boundary covering IP inventory, classification, server-side isolation, client hardening, copyright, patent strategy, trade secrets, confidentiality measures, employee and contractor ownership, supplier and partner IP, open-source governance, AI IP, intelligence as IP, brand and design protection, prior-art and freedom-to-operate review, public-disclosure controls, repository and artifact protection, IP extraction detection, evidence and attribution, anti-replication strategy, jurisdictional considerations and legal review gates.
+It establishes how Essentials Mart's defensive architecture scales with users, stores, regions, countries, providers, AI workloads and infrastructure without weakening security guarantees or creating unnecessary global single points of failure.
 
 The authoritative Part 4 sequence now continues:
 
@@ -26,59 +26,53 @@ The authoritative Part 4 sequence now continues:
 - **020 — Platform Resilience & Continuity** ✓
 - **021 — Adversarial Testing & Defensive Verification** ✓
 - **022 — IP & Legal Protection Strategy** ✓
-- **023 — Global Defensive Scalability**
+- **023 — Global Defensive Scalability** ✓
 - **024 — Defensive Governance**
 - **025 — Assurance, Traceability & Closure**
 
-Commit 022 does not replace the technical protection established by earlier commits. It provides the ownership, confidentiality, legal, attribution and enforcement layer for the assets those controls protect.
+Commit 023 does not replace earlier defensive controls. It establishes the scale boundary within which those controls must continue to operate effectively.
 
-## 022 IP Protection Boundary
+## 023 Global Defensive Scalability Boundary
 
 ```text
-Asset Identification
-       ↓
-Classification
-       ↓
-Technical Isolation
-       ↓
-Access Control
-       ↓
-Confidentiality / Contractual Controls
-       ↓
-IP Registration Where Appropriate
-       ↓
-Monitoring / Detection
-       ↓
-Evidence / Attribution
-       ↓
-Enforcement / Recovery
+Business Growth
+      ↓
+Users / Stores / Regions / Countries
+      ↓
+Infrastructure / Services / AI / Partners
+      ↓
+Scaled Security Controls
+      ↓
+Identity / Isolation / Monitoring / Containment
+      ↓
+Regional & Global Resilience
+      ↓
+Verified Security at Scale
 ```
 
 ### Core Laws
 
-1. Material IP must be identified and owned.
-2. IP classification must reflect commercial importance and exposure.
-3. Proprietary logic should remain server-side where practical.
-4. Client hardening must not be treated as absolute confidentiality.
-5. WebAssembly must not be treated as an unbreakable IP boundary.
-6. Copyright, patent, trademark, design and trade-secret protections must be considered separately.
-7. Patentability must be evaluated before material public disclosure.
-8. Trade secrets require actual confidentiality measures.
-9. Access to strategic IP must follow least privilege and need to know.
-10. Employee and contractor IP ownership must be contractually addressed.
-11. Supplier and partner IP rights must be explicit.
-12. Open-source licences must be governed.
-13. AI-related IP must be explicitly classified.
-14. Proprietary intelligence must receive appropriate technical and legal protection.
-15. Source repositories and build systems are strategic IP stores.
-16. IP extraction attempts must be observable where technically feasible.
-17. Material suspected misuse must preserve appropriate evidence.
-18. Anti-replication controls must increase cost and attribution rather than claim impossibility.
-19. Legal protection must complement, not replace, cybersecurity.
-20. Jurisdiction-specific requirements must be respected.
-21. Material IP decisions require qualified legal review where appropriate.
-22. IP protection must be continuously reviewed as the platform evolves.
+1. Security must scale with the enterprise.
+2. Scaling must not weaken fundamental security guarantees.
+3. Identity remains a primary security boundary across locations.
+4. Regionalisation must support containment rather than create uncontrolled fragmentation.
+5. Multi-region operation must not create automatic global trust.
+6. Multi-cloud operation must preserve equivalent security requirements.
+7. Tenant isolation must survive scale.
+8. Autoscaling must preserve security controls.
+9. Temporary resources must receive temporary governed identities.
+10. Monitoring must scale without creating blind spots.
+11. Telemetry loss must be observable.
+12. AI security controls must scale with agent and model growth.
+13. Provider substitution must not bypass security controls.
+14. Security automation must remain bounded and auditable.
+15. Global containment must support proportional scope.
+16. Recovery at scale must include security validation.
+17. Security capacity must be planned as part of platform capacity.
+18. Major scaling changes require security regression analysis.
+19. Regional and global security operations must respect privacy and data-residency requirements.
+20. Scale must never become an excuse for implicit trust.
 
-**Current commit:** 022  
-**Next commit:** 023 — Global Defensive Scalability  
+**Current commit:** 023  
+**Next commit:** 024 — Defensive Governance  
 **Canonical Part 4 commit path:** `docs/architecture/EDA/part-4/commits/`
