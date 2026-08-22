@@ -1,0 +1,14 @@
+{
+  "name": "@essentials-mart/commerce-api",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Commerce vertical slice for Essentials Mart.",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/test/**/*.test.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
