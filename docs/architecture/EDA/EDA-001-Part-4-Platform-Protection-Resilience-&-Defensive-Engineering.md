@@ -10,9 +10,9 @@
 
 ## Current Commit Mapping Update
 
-Commit 023 — **Global Defensive Scalability** — is now complete.
+Commit 024 — **Defensive Governance** — is now complete.
 
-It establishes how Essentials Mart's defensive architecture scales with users, stores, regions, countries, providers, AI workloads and infrastructure without weakening security guarantees or creating unnecessary global single points of failure.
+It establishes the governance, accountability, authority, policy, exception, oversight and continuous-improvement framework governing the defensive architecture of Essentials Mart.
 
 The authoritative Part 4 sequence now continues:
 
@@ -27,52 +27,67 @@ The authoritative Part 4 sequence now continues:
 - **021 — Adversarial Testing & Defensive Verification** ✓
 - **022 — IP & Legal Protection Strategy** ✓
 - **023 — Global Defensive Scalability** ✓
-- **024 — Defensive Governance**
+- **024 — Defensive Governance** ✓
 - **025 — Assurance, Traceability & Closure**
 
-Commit 023 does not replace earlier defensive controls. It establishes the scale boundary within which those controls must continue to operate effectively.
+Commit 024 does not replace earlier defensive controls. It establishes the governance layer through which those controls remain owned, authorised, measurable, reviewable, auditable and accountable.
 
-## 023 Global Defensive Scalability Boundary
+## 024 Defensive Governance Boundary
 
 ```text
-Business Growth
+Enterprise Risk
       ↓
-Users / Stores / Regions / Countries
+Defensive Governance
       ↓
-Infrastructure / Services / AI / Partners
+Policies / Authority / Ownership
       ↓
-Scaled Security Controls
+Technical Controls
       ↓
-Identity / Isolation / Monitoring / Containment
+Detection / Defence / Response / Recovery
       ↓
-Regional & Global Resilience
+Evidence
       ↓
-Verified Security at Scale
+Assurance
+      ↓
+Risk Review
+      ↓
+Architecture Improvement
+      ↺
 ```
 
 ### Core Laws
 
-1. Security must scale with the enterprise.
-2. Scaling must not weaken fundamental security guarantees.
-3. Identity remains a primary security boundary across locations.
-4. Regionalisation must support containment rather than create uncontrolled fragmentation.
-5. Multi-region operation must not create automatic global trust.
-6. Multi-cloud operation must preserve equivalent security requirements.
-7. Tenant isolation must survive scale.
-8. Autoscaling must preserve security controls.
-9. Temporary resources must receive temporary governed identities.
-10. Monitoring must scale without creating blind spots.
-11. Telemetry loss must be observable.
-12. AI security controls must scale with agent and model growth.
-13. Provider substitution must not bypass security controls.
-14. Security automation must remain bounded and auditable.
-15. Global containment must support proportional scope.
-16. Recovery at scale must include security validation.
-17. Security capacity must be planned as part of platform capacity.
-18. Major scaling changes require security regression analysis.
-19. Regional and global security operations must respect privacy and data-residency requirements.
-20. Scale must never become an excuse for implicit trust.
+1. Every material defensive control must have an owner.
+2. Ownership and operational responsibility must be distinguishable.
+3. Technical capability does not automatically grant business authority.
+4. Material defensive actions require defined authority.
+5. High-impact controls should use separation of duties where practical.
+6. Defensive policies must align with enterprise architecture.
+7. Risk appetite must inform defensive thresholds.
+8. Material risk acceptance must be explicit.
+9. Exceptions must be bounded and expire or be reviewed.
+10. Emergency authority must remain auditable.
+11. Material architecture changes require impact assessment.
+12. Forward-consistency checking remains mandatory.
+13. Automated defence must remain governed.
+14. AI must not redefine its own authority.
+15. Detection rules require ownership and review.
+16. Incident roles and escalation paths must be defined.
+17. Resilience requires accountable ownership and tested recovery.
+18. Adversarial testing must be authorised and controlled.
+19. Third-party risk must be governed.
+20. External AI providers must remain bounded by explicit authority and contracts.
+21. Security evidence must be protected and traceable.
+22. Governance metrics must measure meaningful outcomes.
+23. Customer-impacting controls must include proportionality and recovery mechanisms.
+24. Security controls must respect privacy obligations.
+25. Geographic expansion requires jurisdiction-aware governance.
+26. Defensive debt must be visible and owned.
+27. Architectural drift must be detected and reviewed.
+28. Supply-chain risk forms part of defensive governance.
+29. Governance itself must be periodically evaluated.
+30. Governance must improve the actual security posture rather than merely increase documentation.
 
-**Current commit:** 023  
-**Next commit:** 024 — Defensive Governance  
+**Current commit:** 024  
+**Next commit:** 025 — Assurance, Traceability & Closure  
 **Canonical Part 4 commit path:** `docs/architecture/EDA/part-4/commits/`
