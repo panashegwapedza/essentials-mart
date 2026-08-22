@@ -45,6 +45,20 @@ These amendment records preserve the history of existing decisions while recordi
 - ADR-017 Amendment 001 — Partner Scalability
 - ADR-018 Amendment 001 — Partner Deployment
 
+## ADR-020 Subscription & Multimodal Delivery Amendments
+
+These amendment records preserve the history of existing decisions while recording the controlled architectural impact of ADR-020:
+
+- ADR-004 Amendment 002 — Subscription & Multimodal Delivery Orchestration
+- ADR-005 Amendment 002 — Subscription & Delivery Data Boundaries
+- ADR-007 Amendment 001 — Subscription & Delivery AI Participation
+- ADR-008 Amendment 001 — Resource-Aware Delivery Intelligence
+- ADR-010 Amendment 001 — Subscription & Delivery Human Control
+- ADR-014 Amendment 001 — Walk Mode Shared Delivery Pipeline
+- ADR-016 Amendment 001 — Subscription & Delivery Observability
+- ADR-017 Amendment 001 — Subscription & Multimodal Delivery Scalability
+- ADR-019 Amendment 001 — Scheduled Transport & Delivery Capabilities
+
 ## Architectural Relationship
 
 ADR-019 establishes the decision to use a partner-neutral external integration boundary. EIP-017 defines the reusable integration pattern that implements that boundary, while EDA-002 defines the enterprise capability and data/integration scope.
