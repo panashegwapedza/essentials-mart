@@ -50,8 +50,6 @@ is **not canonical** and shall not be used for new Part 4 documents.
 
 Individual commit numbers are chronological commit identifiers. They are **not required to equal the domain number/order** in the Part 4 subject index. Commit order may be dependency-driven.
 
-This prevents an architectural subject that must be addressed early from being forced into an artificial numerical order.
-
 ---
 
 ## 3. Part 3 / Part 4 Boundary
@@ -70,27 +68,7 @@ Part 4 answers:
 
 > **How does the platform resist, detect, contain and recover when those boundaries are attacked or bypassed?**
 
-Part 4 therefore focuses on:
-
-- hardening;
-- attack resistance;
-- adversarial modelling;
-- IP isolation and replication resistance;
-- client resilience;
-- business-logic abuse resistance;
-- bot and automation defence;
-- cyber-threat defence;
-- infrastructure resilience;
-- defensive supply-chain measures;
-- AI defensive engineering;
-- intelligence protection;
-- economic abuse resistance;
-- containment;
-- recovery;
-- adversarial verification;
-- defensive assurance.
-
-A Part 4 document may reference a Part 3 control, but it must explain the **defensive/resilience problem being solved**, rather than reproduce the Part 3 control definition.
+Part 4 therefore focuses on hardening, attack resistance, adversarial modelling, IP isolation, client resilience, business-logic abuse resistance, bot and automation defence, cyber-threat defence, infrastructure resilience, defensive supply-chain measures, AI defensive engineering, intelligence protection, economic abuse resistance, containment, recovery, adversarial verification and defensive assurance.
 
 ---
 
@@ -141,8 +119,9 @@ This is the **subject index**, not a mandatory numerical sequence for commit IDs
 | 007 | Business Logic & API Protection | Defend high-value business workflows and API surfaces against manipulation, enumeration, abuse and automated exploitation | Commit 006; Part 3 API/security architecture |
 | 008 | Cyber Threat Defence & Application Attack Resistance | Defend application surfaces against hostile payloads, exploit attempts, malicious content and compromised clients | Commits 006–007 |
 | 009 | Infrastructure & Network Defence | Harden network, workload, infrastructure, egress, administrative, operational and recovery boundaries; constrain lateral movement and infrastructure compromise | Commits 004, 006, 008; Part 3 infrastructure security |
-
-The current commits deliberately address subjects in dependency order rather than pretending that the subject index is itself a commit-number sequence.
+| 010 | AI Defensive Architecture | Defend AI Society agents, models, tools, prompts, memory, agent communication and AI authority against runtime attacks and unsafe behaviour | Commits 006–009; ADR-007/008/009 |
+| 011 | AI Intelligence & Distillation Defence | Protect proprietary intelligence, learned behaviour, model surfaces and intelligence engines against extraction, harvesting, distillation and functional replication | Commit 010; ADR-015; EDA-012 |
+| 012 | Data & Intelligence Protection | Protect source data, derived intelligence, provenance, integrity, AI/RAG data, memory, training assets, backups and controlled data movement | Commit 011; ADR-005/015/016; Part 3 data security |
 
 ---
 
@@ -154,99 +133,51 @@ Commit 003 is the Part 4 defensive expansion of the anti-replication principles 
 
 It does not replace ADR-015.
 
-ADR-015 remains the architectural decision; Commit 003 addresses defensive implementation strategy and resilience against replication/reverse engineering.
-
 The three tiers are:
 
 - Tier 1 — IP Isolation
 - Tier 2 — Client Hardening
 - Tier 3 — Legal Protection
 
-Within Tier 1/2, implementation classifications may be described as server-only, client-hardened or ordinary client code. These classifications must not be confused with the three protection tiers.
-
 ### Commit 004 — Supply Chain
 
 Part 3 establishes the supply-chain security boundary and governance.
 
-Commit 004 addresses the defensive engineering side:
-
-- compromise resistance;
-- dependency integrity;
-- provenance;
-- verification;
-- isolation;
-- containment;
-- revocation;
-- recovery.
-
-It must not duplicate Part 3's supply-chain governance definition.
+Commit 004 addresses the defensive engineering side: compromise resistance, dependency integrity, provenance, verification, isolation, containment, revocation and recovery.
 
 ### Commit 005 — Client Hardening
 
-Commit 005 operationalises the client-resilience side of Commit 003.
-
-It does not treat obfuscation, WebAssembly or anti-debugging as a confidentiality or authorisation boundary. Critical authority remains server-side.
+Commit 005 operationalises the client-resilience side of Commit 003. It does not treat obfuscation, WebAssembly or anti-debugging as a confidentiality or authorisation boundary. Critical authority remains server-side.
 
 ### Commit 006 — Runtime Defence
 
-Commit 006 is the runtime defensive layer.
-
-It must not recreate Part 3's monitoring architecture. It focuses on using runtime signals to actively resist and contain hostile behaviour, including:
-
-- bots;
-- scraping;
-- credential attacks;
-- account takeover;
-- API abuse;
-- business-logic abuse;
-- fraud automation;
-- AI resource abuse;
-- DDoS/resource exhaustion;
-- compromised clients;
-- event/notification abuse;
-- Walk Mode abuse;
-- WhatsApp abuse.
+Commit 006 is the runtime defensive layer for bots, scraping, credential attacks, account takeover, API abuse, business-logic abuse, fraud automation, AI resource abuse, DDoS/resource exhaustion, compromised clients, event/notification abuse, Walk Mode abuse and WhatsApp abuse.
 
 ### Commit 007 — Business Logic & API Protection
 
 Commit 007 establishes defensive protection around high-value business workflows and API surfaces. It complements Commit 006's runtime detection and Commit 008's application attack resistance.
 
-It must not redefine the underlying API architecture or business-domain ownership established elsewhere.
-
 ### Commit 008 — Cyber Threat Defence
 
 Commit 008 establishes application-layer resistance to hostile payloads, exploit attempts, malicious uploads, SSRF, injection, unsafe external responses and AI-related application attack paths.
 
-It provides the immediate application-layer boundary above Commit 009's infrastructure and network defence.
-
 ### Commit 009 — Infrastructure & Network Defence
 
-Commit 009 moves the defensive boundary below the application layer into infrastructure, network, workload and service-connectivity protection.
+Commit 009 moves the defensive boundary below the application layer into infrastructure, network, workload and service-connectivity protection. It addresses segmentation, egress control, administrative isolation, workload isolation, infrastructure hardening, service credentials, database/broker exposure, DDoS/resource exhaustion, failure isolation, third-party connectivity, store/warehouse networks, deployment infrastructure, backup protection, telemetry, containment, safe degradation and recovery.
 
-It addresses:
+### Commit 010 — AI Defensive Architecture
 
-- segmentation;
-- east-west and north-south defence;
-- egress control;
-- DNS defence;
-- administrative isolation;
-- workload isolation;
-- infrastructure hardening;
-- secrets and service credentials;
-- service-to-service protection;
-- database and broker exposure;
-- DDoS and resource exhaustion;
-- failure isolation;
-- third-party connectivity;
-- store and warehouse networks;
-- deployment infrastructure;
-- backup protection;
-- infrastructure telemetry;
-- compromise containment;
-- safe degradation;
-- and infrastructure recovery.
+Commit 010 establishes the defensive runtime boundary for the AI Society and Intelligence Engines. It addresses agent identity, model/provider boundaries, prompt and tool security, prompt injection, excessive agency, memory, RAG, AI communications, kill/quarantine controls, AI-specific monitoring and adversarial testing.
 
-It does not replace Part 3 infrastructure security architecture. It makes that architecture harder to defeat and more recoverable under attack.
+### Commit 011 — AI Intelligence & Distillation Defence
+
+Commit 011 protects the intelligence advantage rather than the AI runtime itself. It addresses model/API extraction, behavioural harvesting, distillation, functional replication, query-based intelligence theft, intelligence-surface minimisation, proprietary engine protection, extraction detection and adaptive restriction.
+
+### Commit 012 — Data & Intelligence Protection
+
+Commit 012 protects the data foundation and intelligence lifecycle on which Commit 011 depends. It addresses classification, minimisation, encryption, integrity, provenance, poisoning, analytics integrity, AI data boundaries, RAG/vector stores, memory, training/evaluation data, secrets, backups, exfiltration, privileged access, multi-tenant isolation, privacy, regional boundaries, competitive intelligence and data reconstruction/recovery.
+
+Commit 012 complements Commit 011 rather than duplicating it.
 
 ---
 
@@ -254,9 +185,6 @@ It does not replace Part 3 infrastructure security architecture. It makes that a
 
 The next dependency-aware sequence is:
 
-- **010 — AI Defensive Architecture**
-- **011 — AI Intelligence & Distillation Defence**
-- **012 — Data & Intelligence Protection**
 - **013 — Commerce & Economic Abuse Defence**
 - **014 — Trust Engine Defensive Architecture**
 - **015 — Platform Authenticity & Anti-Impersonation**
@@ -270,9 +198,7 @@ The next dependency-aware sequence is:
 - **023 — Defensive Governance**
 - **024 — Assurance, Traceability & Closure**
 
-Supply-chain defence and client resilience have already been brought forward as Commits 004 and 005 because they are dependency-critical. Their subjects will not be recreated later as duplicate commits.
-
-The final closure pass will verify that all 25 subject domains are covered exactly once as primary subjects, while cross-cutting dependencies may legitimately appear in multiple commits.
+Supply-chain defence and client resilience were brought forward as Commits 004 and 005 because they are dependency-critical. Their subjects will not be recreated later as duplicate commits.
 
 ---
 
@@ -292,7 +218,10 @@ Part 4 shall reference, but not duplicate, the relevant Part 3 architecture for:
 - supply chain;
 - infrastructure;
 - incident response;
-- security governance.
+- security governance;
+- data ownership;
+- privacy;
+- event governance.
 
 A Part 4 commit may implement defensive controls around these systems without redefining their underlying architectural ownership.
 
@@ -319,29 +248,13 @@ No new commit shall knowingly create a contradiction with an earlier Part 4 comm
 
 ## 10. Closure Requirement
 
-EDA-001 Part 4 is complete only when:
-
-- all 25 subject domains are covered;
-- every domain has a clear primary owner document;
-- Part 3 and Part 4 boundaries are explicit;
-- no commit exists solely as an accidental duplicate of another commit;
-- cross-cutting controls have clear ownership;
-- all external dependencies are addressed where relevant;
-- IP protection, reverse-engineering resistance and anti-replication strategy are covered;
-- malware and cyber-threat defence are covered;
-- bot detection, rate limiting and abuse controls are covered;
-- AI-specific defensive controls are covered;
-- infrastructure and network defence are covered;
-- incident response and resilience are covered;
-- adversarial verification is covered;
-- governance and assurance are covered;
-- forward-consistency checks pass.
+EDA-001 Part 4 is complete only when all 25 subject domains are covered, every domain has a clear primary owner document, Part 3 and Part 4 boundaries are explicit, no commit exists solely as an accidental duplicate, cross-cutting controls have clear ownership, external dependencies are addressed where relevant, IP protection and anti-replication are covered, malware and cyber-threat defence are covered, bot/rate-limit/abuse controls are covered, AI-specific defensive controls are covered, infrastructure/network defence is covered, incident response and resilience are covered, adversarial verification is covered, governance and assurance are covered, and forward-consistency checks pass.
 
 ---
 
 ## 11. Status
 
 **Part 4 status:** In progress  
-**Current commit:** 009  
-**Next commit:** 010 — AI Defensive Architecture  
+**Current commit:** 012  
+**Next commit:** 013 — Commerce & Economic Abuse Defence  
 **Canonical Part 4 commit path:** `docs/architecture/EDA/part-4/commits/`
