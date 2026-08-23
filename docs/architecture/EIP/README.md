@@ -38,6 +38,16 @@ ADR-003 establishes that events represent facts, commands request actions, and q
 | EIP-016 | Human-in-the-Loop Routing | Escalate actions requiring human authority | Proposed |
 | EIP-017 | External Partner Adapter / Gateway | Isolate provider-specific external integrations behind canonical Essentials Mart contracts | Proposed |
 | EIP-018 | Resource-Aware Multimodal Delivery Orchestration | Convert delivery jobs into feasible resource- and transport-aware delivery plans | Proposed |
+| EIP-019 | Architecture-to-Implementation Traceability & Build Baseline | Connect architecture decisions to implementation, verification and evidence | Proposed |
+| EIP-020 | Enterprise Domain & Bounded Context Implementation Map | Map enterprise domains and bounded contexts to implementation ownership | Proposed |
+| EIP-021 | Backend Service & API Implementation Architecture | Define backend capability, service and API implementation boundaries | Proposed |
+| EIP-022 | Enterprise Data Implementation Architecture | Define implementation boundaries for authoritative data ownership and access | Proposed |
+| EIP-023 | Event Infrastructure Implementation Architecture | Define the implementation architecture for governed event transport and processing | Proposed |
+| EIP-024 | AI Society Runtime Implementation Architecture | Define the implementation architecture for coordinated AI agents and intelligence | Proposed |
+| EIP-025 | Flutter Client Implementation Architecture | Define the implementation architecture for the Flutter client | Proposed |
+| EIP-026 | Infrastructure & Deployment Implementation Architecture | Define implementation boundaries for infrastructure, environments and deployment | Proposed |
+| EIP-027 | Engineering Repository & Workspace Architecture | Define the repository and engineering workspace boundaries | Proposed |
+| EIP-028 | Observability, Auditability & Trust Implementation Architecture | Translate ADR-016 into implementation patterns for telemetry, accountability and trust | Proposed |
 
 ## EIP-018 Integration Boundary
 
@@ -68,6 +78,40 @@ It may evaluate:
 
 Provider-specific mapping and transport APIs remain behind EIP-017 where they cross an external boundary.
 
+## EIP-019–EIP-028 Implementation Architecture Layer
+
+EIP-019 through EIP-028 form the current implementation-architecture layer of the EIP corpus.
+
+They establish the controlled progression from architectural intent to implementation:
+
+```text
+EDA / ADR
+   ↓
+EIP-019 Traceability
+   ↓
+EIP-020 Domain Map
+   ↓
+EIP-021 Backend / API
+   ↓
+EIP-022 Data
+   ↓
+EIP-023 Event Infrastructure
+   ↓
+EIP-024 AI Runtime
+   ↓
+EIP-025 Flutter Client
+   ↓
+EIP-026 Infrastructure / Deployment
+   ↓
+EIP-027 Repository / Workspace
+   ↓
+EIP-028 Observability / Audit / Trust
+   ↓
+Code / Configuration / Tests / Evidence
+```
+
+These EIPs do not replace the governing EDA or ADR decisions. They translate those decisions into implementation boundaries and reusable implementation architecture.
+
 ## Governing Principles
 
 1. Domain ownership remains authoritative. EIPs must not create shared-state ownership outside the responsible domain.
@@ -83,6 +127,9 @@ Provider-specific mapping and transport APIs remain behind EIP-017 where they cr
 11. EIPs must remain consistent with the ADR tree and undergo forward-consistency review when architectural decisions change.
 12. Integration patterns should be used deliberately; not every interaction should be converted into asynchronous messaging.
 13. New delivery capabilities must extend shared commerce and fulfilment infrastructure rather than create parallel delivery systems.
+14. Implementation EIPs must not silently redefine the architecture they implement.
+15. Material implementation controls must remain traceable through EIP-019.
+16. Observability, auditability and trust controls must remain distinct but interconnected concerns.
 
 ## EIP Lifecycle
 
@@ -99,12 +146,15 @@ Primary dependencies include:
 - EDA-001 — Enterprise Data Architecture
 - EDA-002 — External Partner Commerce, Distribution & Financial Integration
 - EDA-003 — Household Subscription, Fulfilment & Multimodal Delivery Architecture
+- EDA-001 Part 4 — Defensive Architecture Baseline
 - ADR-003 — Event-Driven Architecture
 - ADR-004 — API & Service Architecture
 - ADR-007 — AI Society Architecture
 - ADR-008 — Intelligence Engine Architecture
 - ADR-010 — Human-in-the-Loop Architecture
+- ADR-013 — Flutter Client Architecture
 - ADR-014 — Walk Mode / Living Digital Supermarket Architecture
+- ADR-015 — Security & Anti-Replication Architecture
 - ADR-016 — Observability, Auditability & Trust
 - ADR-017 — Scalability & Multi-Store Architecture
 - ADR-019 — External Partner Integration Architecture
