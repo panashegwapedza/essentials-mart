@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test dist/test/commerce.test.js"
+    "test": "npm run build && node --test dist/test/*.test.js dist/test/**/*.test.js",
+    "dev": "npm run build && AUTH_MODE=development ALLOW_DEV_AUTH=true node dist/src/index.js"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
