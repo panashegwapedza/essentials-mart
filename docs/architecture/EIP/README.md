@@ -50,6 +50,7 @@ ADR-003 establishes that events represent facts, commands request actions, and q
 | EIP-028 | Observability, Auditability & Trust Implementation Architecture | Translate ADR-016 into implementation patterns for telemetry, accountability and trust | Proposed |
 | EIP-029 | API & Contract Engineering | Define engineering patterns for governed API, event, data, integration, AI-tool and client contracts | Proposed |
 | EIP-030 | Testing & Verification Architecture | Define implementation architecture for testing, verification, assurance and evidence | Proposed |
+| EIP-031 | Release & Change Management Architecture | Govern how verified changes are promoted into controlled operational states | Proposed |
 
 ## EIP-018 Integration Boundary
 
@@ -80,11 +81,11 @@ It may evaluate:
 
 Provider-specific mapping and transport APIs remain behind EIP-017 where they cross an external boundary.
 
-## EIP-019–EIP-030 Implementation Architecture Layer
+## EIP-019–EIP-031 Implementation Architecture Layer
 
-EIP-019 through EIP-030 form the current implementation-architecture layer of the EIP corpus.
+EIP-019 through EIP-031 form the current implementation-architecture layer of the EIP corpus.
 
-They establish the controlled progression from architectural intent to implementation and verification:
+They establish the controlled progression from architectural intent to implementation, verification and release:
 
 ```text
 EDA / ADR
@@ -113,10 +114,12 @@ EIP-029 API / Contract Engineering
    ↓
 EIP-030 Testing / Verification
    ↓
+EIP-031 Release / Change Management
+   ↓
 Code / Configuration / Tests / Evidence / Release
 ```
 
-These EIPs do not replace the governing EDA or ADR decisions. They translate those decisions into implementation boundaries, reusable implementation architecture and verification evidence.
+These EIPs do not replace the governing EDA or ADR decisions. They translate those decisions into implementation boundaries, reusable implementation architecture, verification evidence and controlled release practices.
 
 ## Governing Principles
 
@@ -137,6 +140,7 @@ These EIPs do not replace the governing EDA or ADR decisions. They translate tho
 15. Material implementation controls must remain traceable through EIP-019.
 16. Observability, auditability and trust controls must remain distinct but interconnected concerns.
 17. Material architectural claims must have proportionate verification evidence through EIP-030.
+18. Material verified changes must pass through governed release and change management through EIP-031.
 
 ## EIP Lifecycle
 
