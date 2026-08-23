@@ -55,17 +55,21 @@ Entity Lifecycles
         ↓
 Event Ownership Matrix
         ↓
+Phase 2 Consistency Review / Freeze
+        ↓
 Database Blueprint
 ```
 
-## Initial deliverables
+## Authoritative Phase 2 corpus
 
-- `ENTERPRISE-ENTITY-CATALOG.md`
-- `AGGREGATE-BOUNDARIES.md`
-- `IDENTITY-AND-ID-STRATEGY.md`
-- `DOMAIN-RELATIONSHIPS.md`
-- `ENTITY-LIFECYCLES.md`
-- `EVENT-OWNERSHIP-MATRIX.md`
+- `ENTITY-CATALOGUE.md` — authoritative enterprise entity vocabulary, ownership and identity references.
+- `RELATIONSHIPS-AGGREGATE-MAP.md` — aggregate boundaries, relationships and consistency expectations.
+- `IDS-001-ids-and-identity-strategy.md` — enterprise identifier strategy.
+- `OWNERSHIP-DATA-BOUNDARIES.md` — data ownership and boundary rules.
+- `ENTITY-LIFECYCLES.md` — lifecycle states and transitions.
+- `EVENT-OWNERSHIP-MATRIX.md` — authoritative event ownership and integration semantics.
+- `commerce/COMMERCE-ENTITY-VALUE-OBJECT-MODEL.md` — detailed Commerce entity/value-object model.
+- `PHASE-2-CONSISTENCY-REVIEW.md` — Phase 2 gate and freeze decision.
 
 ## Phase 2 rules
 
