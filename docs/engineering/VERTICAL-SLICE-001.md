@@ -10,17 +10,22 @@ Establish the first executable Essentials Mart vertical slice without creating d
 
 ## Current implementation
 
-The first increment provides:
+The current increment provides:
 
 - an authenticated-principal boundary represented by `AuthenticatedPrincipal`;
+- explicit development authentication that fails closed unless deliberately enabled;
 - customer ownership of baskets;
 - product availability validation;
 - authoritative product-price validation at checkout;
 - basket total calculation using minor currency units;
 - order creation from a validated basket;
 - immutable order input through cloned basket lines;
-- domain-level failure handling;
-- automated tests for the core commerce invariants.
+- an HTTP API boundary over the Commerce application service;
+- consistent HTTP error responses and request validation;
+- request-size and malformed-input hardening;
+- order ownership and enumeration resistance;
+- explicit checkout transaction and persistence seams;
+- automated domain and HTTP tests for the core commerce invariants and hardening behaviour.
 
 ## Deliberate non-goals
 
@@ -30,13 +35,12 @@ This increment does not yet implement:
 - persistent customer, product, basket or order storage;
 - payment processing;
 - event publication;
-- external APIs;
 - inventory reservation;
 - fulfilment;
 - notifications;
 - Flutter UI.
 
-Those capabilities will be integrated at their governed boundaries rather than embedded prematurely in the first domain increment.
+Those capabilities will be integrated at their governed boundaries rather than embedded prematurely in the first vertical increment.
 
 ## Invariants
 
@@ -47,6 +51,9 @@ Those capabilities will be integrated at their governed boundaries rather than e
 5. Basket prices must match the current product price at checkout.
 6. A basket cannot contain mixed currencies.
 7. The resulting order records the validated total and line snapshot.
+8. Client-supplied checkout totals are never authoritative.
+9. Order ownership failures do not disclose whether another customer's order exists.
+10. Development authentication cannot be enabled implicitly.
 
 ## Traceability
 
@@ -56,12 +63,13 @@ Those capabilities will be integrated at their governed boundaries rather than e
 - EIP-022 — Enterprise Data Implementation Architecture
 - EIP-027 — Engineering Repository & Workspace Architecture
 - PLATFORM-FOUNDATION-001 — Platform Foundation
+- `docs/engineering/api/commerce-api-v0.1.md` — HTTP contract for this development slice
 
 ## Exit criteria for this increment
 
 - core commerce invariants are represented in executable code;
-- tests cover the invariants;
+- tests cover the invariants and HTTP hardening behaviour;
 - CI builds and runs the commerce test suite;
 - no secrets or production credentials are required;
 - persistence and integration boundaries remain explicit;
-- the next increment can add persistence without rewriting the domain rules.
+- the next increment can add production persistence and authentication without rewriting the domain rules.
