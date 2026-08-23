@@ -20,8 +20,15 @@ export class InMemoryProductRepository implements ProductRepository {
     return product ? structuredClone(product) : null;
   }
 
-  static defaultSeed(): Product[] {
-    const currency = process.env.DEV_FIXTURE_CURRENCY ?? DEV_FIXTURE_CURRENCY;
+  /**
+   * Takes currency as an explicit parameter rather than reading
+   * process.env internally — keeps this class free of implicit global
+   * state, so tests can construct different fixture sets without mutating
+   * and restoring process.env (which risks cross-test/parallel-worker
+   * contamination). The composition root (src/index.ts) is responsible
+   * for reading any environment override and passing it in explicitly.
+   */
+  static defaultSeed(currency: string = DEV_FIXTURE_CURRENCY): Product[] {
     return [
       { id: "bread", name: "Bread [DEV FIXTURE]", price: { amountMinor: 250, currency }, available: true },
       { id: "milk", name: "Milk [DEV FIXTURE]", price: { amountMinor: 300, currency }, available: true },

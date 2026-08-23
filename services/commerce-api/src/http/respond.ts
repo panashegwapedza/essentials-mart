@@ -1,9 +1,8 @@
 import type { ServerResponse } from "node:http";
-import { CommerceError } from "../commerce.js";
+import { CommerceError, type CommerceErrorCode } from "../commerce.js";
 
 export type ApiErrorBody = { error: { code: string; message: string } };
-
-const STATUS_BY_CODE: Record<string, number> = {
+const STATUS_BY_CODE: Record<CommerceErrorCode | "UNAUTHENTICATED" | "VALIDATION_ERROR" | "METHOD_NOT_ALLOWED" | "UNSUPPORTED_MEDIA_TYPE" | "PAYLOAD_TOO_LARGE" | "INVALID_PATH_PARAMETER" | "INTERNAL", number> = {
   BASKET_EMPTY: 400,
   INVALID_QUANTITY: 400,
   VALIDATION_ERROR: 400,
@@ -29,21 +28,21 @@ export function sendJson(res: ServerResponse, status: number, body: unknown): vo
   res.end(JSON.stringify(body));
 }
 
-export function sendError(res: ServerResponse, code: string, message: string, status = STATUS_BY_CODE[code] ?? 500): void {
-  sendJson(res, status, { error: { code, message } });
+export function sendError(res: ServerResponse, code: string, message: string, status?: number): void {
+  const resolvedStatus = status ?? STATUS_BY_CODE[code as keyof typeof STATUS_BY_CODE] ?? 500;
+  sendJson(res, resolvedStatus, { error: { code, message } });
 }
 
+/**
+ * Maps a thrown error to an API response by reading the domain error's own
+ * `code` field directly — never by matching on `err.message` text. Message
+ * wording is free to change in commerce.ts without risk of silently
+ * breaking HTTP status mapping.
+ */
 export function sendErrorFromException(res: ServerResponse, err: unknown): void {
   if (err instanceof CommerceError) {
-    const message = err.message;
-    if (message === "Basket must contain at least one item") return sendError(res, "BASKET_EMPTY", message);
-    if (message === "Quantity must be a positive integer") return sendError(res, "INVALID_QUANTITY", message);
-    if (message === "Basket contains mixed currencies") return sendError(res, "MIXED_CURRENCY", message);
-    if (message.startsWith("Basket price is stale:")) return sendError(res, "STALE_PRICE", message, 409);
-    if (message.startsWith("Product unavailable:")) return sendError(res, "PRODUCT_UNAVAILABLE", message, 409);
-    if (message.startsWith("Product not found:") || message.startsWith("Order not found:")) return sendError(res, "NOT_FOUND", message, 404);
-    if (message.startsWith("Basket has no line for product:")) return sendError(res, "LINE_NOT_FOUND", message, 404);
-    return sendError(res, "COMMERCE_ERROR", message, 400);
+    sendError(res, err.code, err.message);
+    return;
   }
 
   console.error(err);

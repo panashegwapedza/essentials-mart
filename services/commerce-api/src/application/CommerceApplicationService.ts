@@ -20,7 +20,7 @@ export class CommerceApplicationService {
 
   async getProduct(id: string): Promise<Product> {
     const product = await this.products.getById(id);
-    if (!product) throw new CommerceError(`Product not found: ${id}`);
+    if (!product) throw new CommerceError(`Product not found: ${id}`, "NOT_FOUND");
     return product;
   }
 
@@ -34,11 +34,11 @@ export class CommerceApplicationService {
 
   async addItem(principal: AuthenticatedPrincipal, productId: string, quantity: number): Promise<Basket> {
     if (!Number.isInteger(quantity) || quantity <= 0) {
-      throw new CommerceError("Quantity must be a positive integer");
+      throw new CommerceError("Quantity must be a positive integer", "INVALID_QUANTITY");
     }
     const product = await this.products.getById(productId);
-    if (!product) throw new CommerceError(`Product not found: ${productId}`);
-    if (!product.available) throw new CommerceError(`Product unavailable: ${productId}`);
+    if (!product) throw new CommerceError(`Product not found: ${productId}`, "NOT_FOUND");
+    if (!product.available) throw new CommerceError(`Product unavailable: ${productId}`, "PRODUCT_UNAVAILABLE");
 
     const basket = await this.getOrCreateBasket(principal);
     const lines = structuredClone(basket.lines);
@@ -55,7 +55,7 @@ export class CommerceApplicationService {
     const basket = await this.getOrCreateBasket(principal);
     const lines = basket.lines.filter((line) => line.productId !== productId);
     if (lines.length === basket.lines.length) {
-      throw new CommerceError(`Basket has no line for product: ${productId}`);
+      throw new CommerceError(`Basket has no line for product: ${productId}`, "LINE_NOT_FOUND");
     }
     const updated = { ...basket, lines };
     await this.baskets.save(updated);
@@ -79,7 +79,7 @@ export class CommerceApplicationService {
 
   async getOwnedOrder(principal: AuthenticatedPrincipal, orderId: string): Promise<Order> {
     const order = await this.orders.getOwnedById(principal.customerId, orderId);
-    if (!order) throw new CommerceError(`Order not found: ${orderId}`);
+    if (!order) throw new CommerceError(`Order not found: ${orderId}`, "NOT_FOUND");
     return order;
   }
 }
