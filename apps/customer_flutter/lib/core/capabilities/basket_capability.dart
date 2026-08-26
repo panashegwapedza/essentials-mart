@@ -16,6 +16,9 @@ class BasketCapability extends ChangeNotifier {
   bool loading = false;
   String? errorMessage;
 
+  int get itemCount =>
+      basket?.lines.fold<int>(0, (sum, line) => sum + line.quantity) ?? 0;
+
   Future<void> load() async {
     loading = true;
     errorMessage = null;
