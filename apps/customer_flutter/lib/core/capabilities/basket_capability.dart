@@ -10,7 +10,7 @@ import '../../features/commerce/data/commerce_repository.dart';
 class BasketCapability extends ChangeNotifier {
   BasketCapability(this._repository);
 
-  final CommerceRepository _repository;
+  final BasketRepository _repository;
 
   Basket? basket;
   bool loading = false;
