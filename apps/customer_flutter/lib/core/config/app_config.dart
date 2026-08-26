@@ -8,6 +8,6 @@ class AppConfig {
       'ESSENTIALS_MART_API_URL',
       defaultValue: 'http://127.0.0.1:3000',
     );
-    return AppConfig(apiBaseUrl: configured);
+    return const AppConfig(apiBaseUrl: configured);
   }
 }

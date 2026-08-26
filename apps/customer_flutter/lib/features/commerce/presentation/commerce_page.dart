@@ -13,14 +13,22 @@ class CommercePage extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
-        final basketCount = controller.basket?.lines.fold<int>(0, (sum, line) => sum + line.quantity) ?? 0;
+        final basketCount =
+            controller.basket?.lines.fold<int>(
+              0,
+              (sum, line) => sum + line.quantity,
+            ) ??
+            0;
+
         return Scaffold(
           appBar: AppBar(
             title: const Text('Essentials Mart'),
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 16),
-                child: Center(child: Text('Basket: $basketCount')),
+                child: Center(
+                  child: Text('Basket: $basketCount'),
+                ),
               ),
             ],
           ),
@@ -35,25 +43,62 @@ class CommercePage extends StatelessWidget {
 
   Widget _body(BuildContext context) {
     if (controller.loading && controller.products.isEmpty) {
-      return const ListView(children: [SizedBox(height: 300), Center(child: CircularProgressIndicator())]);
+      return ListView(
+        children: const [
+          SizedBox(height: 300),
+          Center(
+            child: CircularProgressIndicator(),
+          ),
+        ],
+      );
     }
-    if (controller.errorMessage != null && controller.products.isEmpty) {
-      return ListView(children: [
-        const SizedBox(height: 220),
-        Center(child: Text(controller.errorMessage!)),
-        Center(child: TextButton(onPressed: controller.load, child: const Text('Retry'))),
-      ]);
+
+    if (controller.errorMessage != null &&
+        controller.products.isEmpty) {
+      return ListView(
+        children: [
+          const SizedBox(height: 220),
+          Center(
+            child: Text(controller.errorMessage!),
+          ),
+          Center(
+            child: TextButton(
+              onPressed: controller.load,
+              child: const Text('Retry'),
+            ),
+          ),
+        ],
+      );
     }
+
     if (controller.products.isEmpty) {
-      return const ListView(children: [SizedBox(height: 220), Center(child: Text('No products available.'))]);
+      return ListView(
+        children: const [
+          SizedBox(height: 220),
+          Center(
+            child: Text('No products available.'),
+          ),
+        ],
+      );
     }
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         if (controller.errorMessage != null)
-          Card(child: Padding(padding: const EdgeInsets.all(12), child: Text(controller.errorMessage!))),
-        const Text('Products', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(controller.errorMessage!),
+            ),
+          ),
+        const Text(
+          'Products',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         ...controller.products.map(_productTile),
       ],
@@ -64,9 +109,14 @@ class CommercePage extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(product.name),
-        subtitle: Text('${product.amountMinor / 100} ${product.currency}'),
+        subtitle: Text(
+          '${product.amountMinor / 100} ${product.currency}',
+        ),
         trailing: product.available
-            ? FilledButton(onPressed: () => controller.add(product), child: const Text('Add'))
+            ? FilledButton(
+                onPressed: () => controller.add(product),
+                child: const Text('Add'),
+              )
             : const Text('Unavailable'),
       ),
     );

@@ -10,7 +10,7 @@ import 'features/commerce/presentation/commerce_page.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final config = AppConfig.fromEnvironment();
-  final session = const DevelopmentSessionProvider();
+  const session = DevelopmentSessionProvider();
   final api = ApiClient(baseUrl: config.apiBaseUrl, session: session);
   final repository = CommerceRepository(api);
   final controller = CommerceController(repository);
