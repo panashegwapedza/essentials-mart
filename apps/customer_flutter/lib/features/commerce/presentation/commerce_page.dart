@@ -11,14 +11,9 @@ class CommercePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: controller,
+      animation: Listenable.merge([controller, controller.basketCapability]),
       builder: (context, _) {
-        final basketCount =
-            controller.basket?.lines.fold<int>(
-              0,
-              (sum, line) => sum + line.quantity,
-            ) ??
-            0;
+        final basketCount = controller.basketCapability.itemCount;
 
         return Scaffold(
           appBar: AppBar(
@@ -53,8 +48,7 @@ class CommercePage extends StatelessWidget {
       );
     }
 
-    if (controller.errorMessage != null &&
-        controller.products.isEmpty) {
+    if (controller.errorMessage != null && controller.products.isEmpty) {
       return ListView(
         children: [
           const SizedBox(height: 220),
