@@ -8,7 +8,7 @@ import 'package:essentials_mart_customer/features/commerce/data/commerce_reposit
 void main() {
   test('exposes the clean ApiException message', () async {
     const message = 'Unable to load basket';
-    const capability = BasketCapability(_ThrowingBasketRepository(
+    final capability = BasketCapability(_ThrowingBasketRepository(
       ApiException(
         code: 'BASKET_LOAD_FAILED',
         message: message,
