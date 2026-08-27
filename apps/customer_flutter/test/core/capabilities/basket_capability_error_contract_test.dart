@@ -8,8 +8,8 @@ import 'package:essentials_mart_customer/features/commerce/data/commerce_reposit
 void main() {
   test('exposes the clean ApiException message', () async {
     const message = 'Unable to load basket';
-    final capability = BasketCapability(_ThrowingBasketRepository(
-      const ApiException(
+    const capability = BasketCapability(_ThrowingBasketRepository(
+      ApiException(
         code: 'BASKET_LOAD_FAILED',
         message: message,
         statusCode: 503,
