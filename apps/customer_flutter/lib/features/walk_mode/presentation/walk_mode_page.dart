@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/walk_mode_models.dart';
 import 'walk_mode_controller.dart';
 
 class WalkModePage extends StatelessWidget {
@@ -12,6 +13,7 @@ class WalkModePage extends StatelessWidget {
     return AnimatedBuilder(
       animation: Listenable.merge([controller, controller.basketCapability]),
       builder: (context, _) {
+        final storeMap = controller.storeMap;
         return Scaffold(
           appBar: AppBar(
             title: const Text('Walk Mode'),
@@ -29,14 +31,11 @@ class WalkModePage extends StatelessWidget {
             children: [
               const Text(
                 'Living Digital Supermarket',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               const Text(
-                'Walk Mode is connected to your shared basket. Spatial navigation and product-location intelligence will be added on this boundary.',
+                'Browse the store spatially to discover products that search may never surface.',
               ),
               const SizedBox(height: 24),
               DropdownButtonFormField<WalkModeType>(
@@ -54,6 +53,50 @@ class WalkModePage extends StatelessWidget {
                   if (mode != null) controller.setMode(mode);
                 },
               ),
+              const SizedBox(height: 16),
+              if (storeMap == null)
+                const Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      'Store spatial data is not loaded yet. Walk Mode will consume the authoritative store layout when available.',
+                    ),
+                  ),
+                )
+              else ...[
+                Text(
+                  'Store ${storeMap.storeId} · layout ${storeMap.layoutVersion}',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 12),
+                ...storeMap.aisles.map(
+                  (aisle) => Card(
+                    child: ListTile(
+                      title: Text(aisle.name),
+                      subtitle: Text('${aisle.products.length} products'),
+                      trailing: const Icon(Icons.chevron_right),
+                      selected: controller.currentAisleId == aisle.id,
+                      onTap: () => controller.enterAisle(aisle.id),
+                    ),
+                  ),
+                ),
+                if (controller.currentAisle != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    controller.currentAisle!.name,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  ...controller.currentAisle!.products.map(
+                    (placement) => _ProductDiscoveryCard(
+                      placement: placement,
+                      onAdd: placement.product.available
+                          ? () => controller.addToBasket(placement.product.id)
+                          : null,
+                    ),
+                  ),
+                ],
+              ],
               const SizedBox(height: 16),
               Text(
                 'Current destination: ${controller.currentDestination ?? 'Not selected'}',
@@ -79,5 +122,35 @@ class WalkModePage extends StatelessWidget {
       case WalkModeType.autopilot:
         return 'Autopilot';
     }
+  }
+}
+
+class _ProductDiscoveryCard extends StatelessWidget {
+  const _ProductDiscoveryCard({required this.placement, this.onAdd});
+
+  final WalkModeProductPlacement placement;
+  final VoidCallback? onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    final product = placement.product;
+    return Card(
+      child: ListTile(
+        title: Text(product.name),
+        subtitle: Text(
+          '${product.currency} ${(product.amountMinor / 100).toStringAsFixed(2)} · '
+          '${product.available ? 'Available' : 'Unavailable'}\n'
+          '3D: ${placement.model3dUri}\nAR: ${placement.arAssetUri}',
+        ),
+        isThreeLine: true,
+        trailing: onAdd == null
+            ? const Icon(Icons.remove_shopping_cart_outlined)
+            : IconButton(
+                tooltip: 'Add to basket',
+                onPressed: onAdd,
+                icon: const Icon(Icons.add_shopping_cart),
+              ),
+      ),
+    );
   }
 }
