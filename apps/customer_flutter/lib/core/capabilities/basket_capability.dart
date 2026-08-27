@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../features/commerce/data/commerce_models.dart';
 import '../../features/commerce/data/commerce_repository.dart';
+import '../errors/api_exception.dart';
 
 /// Shared, server-authoritative basket capability.
 ///
@@ -25,8 +26,8 @@ class BasketCapability extends ChangeNotifier {
     notifyListeners();
     try {
       basket = await _repository.getBasket();
-    } catch (error) {
-      errorMessage = error.toString();
+    } on ApiException catch (error) {
+      errorMessage = error.message;
       rethrow;
     } finally {
       loading = false;
@@ -39,8 +40,8 @@ class BasketCapability extends ChangeNotifier {
     notifyListeners();
     try {
       basket = await _repository.addToBasket(productId, quantity);
-    } catch (error) {
-      errorMessage = error.toString();
+    } on ApiException catch (error) {
+      errorMessage = error.message;
       notifyListeners();
       rethrow;
     }
@@ -52,8 +53,8 @@ class BasketCapability extends ChangeNotifier {
     notifyListeners();
     try {
       basket = await _repository.removeFromBasket(productId);
-    } catch (error) {
-      errorMessage = error.toString();
+    } on ApiException catch (error) {
+      errorMessage = error.message;
       notifyListeners();
       rethrow;
     }
