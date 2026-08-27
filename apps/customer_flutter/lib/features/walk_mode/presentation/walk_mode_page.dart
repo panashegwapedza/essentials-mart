@@ -134,13 +134,16 @@ class _ProductDiscoveryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = placement.product;
+    final asset = placement.asset;
     return Card(
       child: ListTile(
         title: Text(product.name),
         subtitle: Text(
           '${product.currency} ${(product.amountMinor / 100).toStringAsFixed(2)} · '
           '${product.available ? 'Available' : 'Unavailable'}\n'
-          '3D: ${placement.model3dUri}\nAR: ${placement.arAssetUri}',
+          'Asset: ${asset.assetId} · fidelity: ${asset.fidelity.name}\n'
+          '3D: ${asset.model3dUri ?? 'Not available'}\n'
+          'AR: ${asset.arAssetUri ?? 'Not available'}',
         ),
         isThreeLine: true,
         trailing: onAdd == null
