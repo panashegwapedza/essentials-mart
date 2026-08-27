@@ -11,8 +11,7 @@ enum WalkModeType { manual, aiAssisted, autopilot }
 /// This controller owns Walk Mode context and authority while the shared
 /// BasketCapability remains the single owner of basket state.
 class WalkModeController extends ChangeNotifier {
-  WalkModeController(this.basketCapability, {WalkModeStoreMap? storeMap})
-      : storeMap = storeMap;
+  WalkModeController(this.basketCapability, {this.storeMap});
 
   final BasketCapability basketCapability;
   final WalkModeStoreMap? storeMap;
