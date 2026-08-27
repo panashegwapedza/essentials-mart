@@ -4,10 +4,22 @@ import 'package:essentials_mart_customer/core/capabilities/basket_capability.dar
 import 'package:essentials_mart_customer/features/commerce/data/commerce_models.dart';
 import 'package:essentials_mart_customer/features/commerce/data/commerce_repository.dart';
 import 'package:essentials_mart_customer/features/walk_mode/data/walk_mode_models.dart';
+import 'package:essentials_mart_customer/features/walk_mode/data/walk_mode_product_asset.dart';
 import 'package:essentials_mart_customer/features/walk_mode/presentation/walk_mode_controller.dart';
 
 void main() {
-  test('Walk Mode enters an authoritative store aisle', () {
+  test('Walk Mode enters an authoritative store aisle with a validated asset', () {
+    const asset = WalkModeProductAsset(
+      assetId: 'asset-cotton-wool-v1',
+      productId: 'cotton-wool',
+      version: '1',
+      fidelity: WalkModeAssetFidelity.high,
+      model3dUri: 'asset://cotton-wool.glb',
+      arAssetUri: 'asset://cotton-wool-ar',
+    );
+
+    expect(const WalkModeProductAssetValidator().validate(asset), isNull);
+
     final controller = WalkModeController(
       BasketCapability(_FakeBasketRepository()),
       storeMap: const WalkModeStoreMap(
@@ -27,8 +39,7 @@ void main() {
                   available: true,
                 ),
                 position: WalkModeSpatialPosition(x: 1, y: 2),
-                model3dUri: 'asset://cotton-wool.glb',
-                arAssetUri: 'asset://cotton-wool-ar',
+                asset: asset,
               ),
             ],
           ),
@@ -38,10 +49,12 @@ void main() {
 
     controller.enterAisle('household');
 
+    final placement = controller.currentAisle?.products.single;
     expect(controller.currentAisle?.id, 'household');
-    expect(controller.currentAisle?.products.single.product.name, 'Cotton Wool');
-    expect(controller.currentAisle?.products.single.model3dUri, contains('.glb'));
-    expect(controller.currentAisle?.products.single.arAssetUri, isNotEmpty);
+    expect(placement?.product.name, 'Cotton Wool');
+    expect(placement?.asset.productId, placement?.product.id);
+    expect(placement?.asset.has3d, isTrue);
+    expect(placement?.asset.hasAr, isTrue);
   });
 }
 
