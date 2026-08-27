@@ -1,4 +1,5 @@
 import '../../commerce/data/commerce_models.dart';
+import 'walk_mode_product_asset.dart';
 
 /// A store-specific spatial representation consumed by Walk Mode.
 ///
@@ -28,24 +29,18 @@ class WalkModeAisle {
   final List<WalkModeProductPlacement> products;
 }
 
-/// Connects an authoritative product identity to its store-specific location
-/// and required visual assets.
+/// Connects authoritative product identity to its store-specific location
+/// and its validated visual representation.
 class WalkModeProductPlacement {
   const WalkModeProductPlacement({
     required this.product,
     required this.position,
-    required this.model3dUri,
-    required this.arAssetUri,
+    required this.asset,
   });
 
   final Product product;
   final WalkModeSpatialPosition position;
-
-  /// URI for the product's faithful 3D representation.
-  final String model3dUri;
-
-  /// URI for the product's AR-ready representation.
-  final String arAssetUri;
+  final WalkModeProductAsset asset;
 }
 
 class WalkModeSpatialPosition {
