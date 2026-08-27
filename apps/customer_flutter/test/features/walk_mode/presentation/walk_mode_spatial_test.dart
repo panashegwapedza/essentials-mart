@@ -10,7 +10,7 @@ void main() {
   test('Walk Mode enters an authoritative store aisle', () {
     final controller = WalkModeController(
       BasketCapability(_FakeBasketRepository()),
-      storeMap: WalkModeStoreMap(
+      storeMap: const WalkModeStoreMap(
         storeId: 'store-1',
         layoutVersion: 'layout-1',
         aisles: [
@@ -19,14 +19,14 @@ void main() {
             name: 'Household',
             products: [
               WalkModeProductPlacement(
-                product: const Product(
+                product: Product(
                   id: 'cotton-wool',
                   name: 'Cotton Wool',
                   amountMinor: 250,
                   currency: 'USD',
                   available: true,
                 ),
-                position: const WalkModeSpatialPosition(x: 1, y: 2),
+                position: WalkModeSpatialPosition(x: 1, y: 2),
                 model3dUri: 'asset://cotton-wool.glb',
                 arAssetUri: 'asset://cotton-wool-ar',
               ),
