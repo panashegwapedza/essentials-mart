@@ -78,6 +78,38 @@ class WalkModePage extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
+                if (currentAisle != null) ...[
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.route_outlined),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Shopping journey',
+                                  style: Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ),
+                              Text(
+                                '${controller.currentAisleIndex! + 1}/${storeMap.aisles.length}',
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          LinearProgressIndicator(value: controller.journeyProgress),
+                          const SizedBox(height: 8),
+                          Text(controller.journeyStatus),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 ...storeMap.aisles.map(
                   (aisle) => Card(
                     child: ListTile(
