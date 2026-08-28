@@ -81,6 +81,22 @@ class WalkModeController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Applies a customer movement intent to the current spatial position.
+  ///
+  /// Movement is deliberately a controller concern; presentation widgets
+  /// emit intent while this boundary owns the resulting Walk Mode state.
+  void moveBy({double dx = 0, double dy = 0, double dz = 0}) {
+    final position = currentPosition;
+    if (position == null) return;
+    setSpatialPosition(
+      WalkModeSpatialPosition(
+        x: position.x + dx,
+        y: position.y + dy,
+        z: position.z + dz,
+      ),
+    );
+  }
+
   void clearAisle() {
     if (currentAisleId == null && currentPosition == null) return;
     currentAisleId = null;
