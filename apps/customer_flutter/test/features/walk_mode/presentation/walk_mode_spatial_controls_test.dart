@@ -20,15 +20,23 @@ void main() {
     );
 
     await tester.tap(find.byTooltip('Move forward'));
-    expect(movedTo, const WalkModeSpatialPosition(x: 1, y: 3, z: 3));
+    expect(movedTo?.x, 1);
+    expect(movedTo?.y, 3);
+    expect(movedTo?.z, 3);
 
     await tester.tap(find.byTooltip('Move left'));
-    expect(movedTo, const WalkModeSpatialPosition(x: 0, y: 2, z: 3));
+    expect(movedTo?.x, 0);
+    expect(movedTo?.y, 2);
+    expect(movedTo?.z, 3);
 
     await tester.tap(find.byTooltip('Move backward'));
-    expect(movedTo, const WalkModeSpatialPosition(x: 1, y: 1, z: 3));
+    expect(movedTo?.x, 1);
+    expect(movedTo?.y, 1);
+    expect(movedTo?.z, 3);
 
     await tester.tap(find.byTooltip('Move right'));
-    expect(movedTo, const WalkModeSpatialPosition(x: 2, y: 2, z: 3));
+    expect(movedTo?.x, 2);
+    expect(movedTo?.y, 2);
+    expect(movedTo?.z, 3);
   });
 }
