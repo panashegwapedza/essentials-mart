@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { devAuthHeaders, startTestServer } from "./testServer.js";
+import { startTestServer } from "./testServer.js";
 
 async function close(server: import("node:http").Server) {
   await new Promise<void>((resolve) => server.close(() => resolve()));
