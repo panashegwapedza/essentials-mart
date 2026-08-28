@@ -80,6 +80,72 @@ void main() {
     );
   });
 
+  test('Walk Mode records products encountered across movement', () {
+    final controller = WalkModeController(
+      BasketCapability(_FakeBasketRepository()),
+      storeMap: WalkModeStoreMap(
+        storeId: 'store-1',
+        layoutVersion: 'layout-1',
+        aisles: [
+          WalkModeAisle(
+            id: 'household',
+            name: 'Household',
+            products: [
+              _placement('cotton-wool', 0, 0),
+              _placement('methylated-spirit', 3, 0),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    controller.enterAisle('household');
+    controller.setSpatialPosition(
+      const WalkModeSpatialPosition(x: 0, y: 0),
+    );
+    expect(controller.encounteredProductIds, contains('cotton-wool'));
+    expect(controller.encounteredProductIds, isNot(contains('methylated-spirit')));
+
+    controller.moveBy(dx: 3);
+
+    expect(controller.encounteredProductIds, containsAll([
+      'cotton-wool',
+      'methylated-spirit',
+    ]));
+  });
+
+  test('changing aisles starts a fresh encounter context', () {
+    final controller = WalkModeController(
+      BasketCapability(_FakeBasketRepository()),
+      storeMap: WalkModeStoreMap(
+        storeId: 'store-1',
+        layoutVersion: 'layout-1',
+        aisles: [
+          WalkModeAisle(
+            id: 'one',
+            name: 'One',
+            products: [_placement('bread', 0, 0)],
+          ),
+          WalkModeAisle(
+            id: 'two',
+            name: 'Two',
+            products: [_placement('milk', 0, 0)],
+          ),
+        ],
+      ),
+    );
+
+    controller.enterAisle('one');
+    controller.setSpatialPosition(
+      const WalkModeSpatialPosition(x: 0, y: 0),
+    );
+    expect(controller.encounteredProductIds, contains('bread'));
+
+    controller.enterAisle('two');
+
+    expect(controller.encounteredProductIds, isEmpty);
+  });
+
   test('Walk Mode defaults to Manual and can change authority', () {
     final capability = BasketCapability(_FakeBasketRepository());
     final controller = WalkModeController(capability);
