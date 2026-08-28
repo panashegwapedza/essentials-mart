@@ -26,8 +26,10 @@ class WalkModeController extends ChangeNotifier {
   String? currentDestination;
   String? currentAisleId;
   WalkModeSpatialPosition? currentPosition;
+  final Set<String> _encounteredProductIds = <String>{};
 
   int get basketItemCount => basketCapability.itemCount;
+  Set<String> get encounteredProductIds => Set.unmodifiable(_encounteredProductIds);
 
   WalkModeAisle? get currentAisle {
     final id = currentAisleId;
@@ -53,6 +55,7 @@ class WalkModeController extends ChangeNotifier {
     storeMap = value;
     currentAisleId = null;
     currentPosition = null;
+    _encounteredProductIds.clear();
     notifyListeners();
   }
 
@@ -72,12 +75,14 @@ class WalkModeController extends ChangeNotifier {
     if (currentAisleId == aisleId) return;
     currentAisleId = aisleId;
     currentPosition = null;
+    _encounteredProductIds.clear();
     notifyListeners();
   }
 
   void setSpatialPosition(WalkModeSpatialPosition position) {
     if (currentPosition == position) return;
     currentPosition = position;
+    _recordCurrentEncounters();
     notifyListeners();
   }
 
@@ -97,10 +102,17 @@ class WalkModeController extends ChangeNotifier {
     );
   }
 
+  void _recordCurrentEncounters() {
+    for (final placement in visibleProducts) {
+      _encounteredProductIds.add(placement.product.id);
+    }
+  }
+
   void clearAisle() {
     if (currentAisleId == null && currentPosition == null) return;
     currentAisleId = null;
     currentPosition = null;
+    _encounteredProductIds.clear();
     notifyListeners();
   }
 
