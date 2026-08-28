@@ -4,6 +4,7 @@ import 'core/api/api_client.dart';
 import 'core/auth/session.dart';
 import 'core/capabilities/basket_capability.dart';
 import 'core/config/app_config.dart';
+import 'features/commerce/data/commerce_models.dart';
 import 'features/commerce/data/commerce_repository.dart';
 import 'features/commerce/presentation/commerce_controller.dart';
 import 'features/commerce/presentation/commerce_page.dart';
