@@ -40,7 +40,7 @@ void main() {
       ],
     });
     final capability = BasketCapability(
-      _FakeBasketRepository(initial, updatedBasket: updated),
+      _FakeBasketRepository(initial, updated),
     );
     final controller = WalkModeController(capability);
 
