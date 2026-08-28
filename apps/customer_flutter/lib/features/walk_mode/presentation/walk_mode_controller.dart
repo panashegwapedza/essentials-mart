@@ -41,6 +41,36 @@ class WalkModeController extends ChangeNotifier {
     return null;
   }
 
+  int? get currentAisleIndex {
+    final id = currentAisleId;
+    final aisles = storeMap?.aisles;
+    if (id == null || aisles == null) return null;
+    final index = aisles.indexWhere((aisle) => aisle.id == id);
+    return index < 0 ? null : index;
+  }
+
+  WalkModeAisle? get nextAisle {
+    final index = currentAisleIndex;
+    final aisles = storeMap?.aisles;
+    if (index == null || aisles == null || index + 1 >= aisles.length) return null;
+    return aisles[index + 1];
+  }
+
+  double get journeyProgress {
+    final aisles = storeMap?.aisles;
+    final index = currentAisleIndex;
+    if (aisles == null || aisles.isEmpty || index == null) return 0;
+    return ((index + 1) / aisles.length).clamp(0.0, 1.0);
+  }
+
+  String get journeyStatus {
+    final aisle = currentAisle;
+    final next = nextAisle;
+    if (aisle == null) return 'Choose an aisle to begin your journey.';
+    if (next == null) return '${aisle.name} · final aisle';
+    return '${aisle.name} · next: ${next.name}';
+  }
+
   List<WalkModeProductPlacement> get visibleProducts {
     final aisle = currentAisle;
     final position = currentPosition;
