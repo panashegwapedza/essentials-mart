@@ -92,7 +92,7 @@ void main() {
             name: 'Household',
             products: [
               _placement('cotton-wool', 0, 0),
-              _placement('methylated-spirit', 3, 0),
+              _placement('methylated-spirit', 3.1, 0),
             ],
           ),
         ],
@@ -106,7 +106,7 @@ void main() {
     expect(controller.encounteredProductIds, contains('cotton-wool'));
     expect(controller.encounteredProductIds, isNot(contains('methylated-spirit')));
 
-    controller.moveBy(dx: 3);
+    controller.moveBy(dx: 3.1);
 
     expect(controller.encounteredProductIds, containsAll([
       'cotton-wool',
