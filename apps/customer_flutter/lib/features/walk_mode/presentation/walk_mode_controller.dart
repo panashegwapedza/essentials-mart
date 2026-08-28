@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/capabilities/basket_capability.dart';
 import '../data/walk_mode_models.dart';
+import '../data/walk_mode_spatial_discovery.dart';
 
 /// The three Walk Mode interaction authorities defined by ADR-014.
 enum WalkModeType { manual, aiAssisted, autopilot }
@@ -11,14 +12,20 @@ enum WalkModeType { manual, aiAssisted, autopilot }
 /// This controller owns Walk Mode context and authority while the shared
 /// BasketCapability remains the single owner of basket state.
 class WalkModeController extends ChangeNotifier {
-  WalkModeController(this.basketCapability, {this.storeMap});
+  WalkModeController(
+    this.basketCapability, {
+    this.storeMap,
+    WalkModeSpatialDiscovery? spatialDiscovery,
+  }) : _spatialDiscovery = spatialDiscovery ?? const WalkModeSpatialDiscovery();
 
   final BasketCapability basketCapability;
   final WalkModeStoreMap? storeMap;
+  final WalkModeSpatialDiscovery _spatialDiscovery;
 
   WalkModeType mode = WalkModeType.manual;
   String? currentDestination;
   String? currentAisleId;
+  WalkModeSpatialPosition? currentPosition;
 
   int get basketItemCount => basketCapability.itemCount;
 
@@ -29,6 +36,16 @@ class WalkModeController extends ChangeNotifier {
       if (aisle.id == id) return aisle;
     }
     return null;
+  }
+
+  List<WalkModeProductPlacement> get visibleProducts {
+    final aisle = currentAisle;
+    final position = currentPosition;
+    if (aisle == null || position == null) return const [];
+    return _spatialDiscovery.discover(
+      aisle: aisle,
+      customerPosition: position,
+    );
   }
 
   void setMode(WalkModeType value) {
@@ -49,9 +66,16 @@ class WalkModeController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setSpatialPosition(WalkModeSpatialPosition position) {
+    if (currentPosition == position) return;
+    currentPosition = position;
+    notifyListeners();
+  }
+
   void clearAisle() {
-    if (currentAisleId == null) return;
+    if (currentAisleId == null && currentPosition == null) return;
     currentAisleId = null;
+    currentPosition = null;
     notifyListeners();
   }
 
