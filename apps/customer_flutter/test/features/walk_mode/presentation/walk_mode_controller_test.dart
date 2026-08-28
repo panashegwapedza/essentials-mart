@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:essentials_mart_customer/core/capabilities/basket_capability.dart';
 import 'package:essentials_mart_customer/features/commerce/data/commerce_models.dart';
 import 'package:essentials_mart_customer/features/commerce/data/commerce_repository.dart';
+import 'package:essentials_mart_customer/features/walk_mode/data/walk_mode_models.dart';
+import 'package:essentials_mart_customer/features/walk_mode/data/walk_mode_product_asset.dart';
 import 'package:essentials_mart_customer/features/walk_mode/presentation/walk_mode_controller.dart';
 
 void main() {
@@ -47,6 +49,37 @@ void main() {
     expect(controller.basketItemCount, 1);
   });
 
+  test('Walk Mode exposes only products within the current spatial context', () {
+    final controller = WalkModeController(
+      BasketCapability(_FakeBasketRepository()),
+      storeMap: WalkModeStoreMap(
+        storeId: 'store-1',
+        layoutVersion: 'layout-1',
+        aisles: [
+          WalkModeAisle(
+            id: 'household',
+            name: 'Household',
+            products: [
+              _placement('cotton-wool', 1, 0),
+              _placement('methylated-spirit', 2, 0),
+              _placement('far-item', 5, 0),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    controller.enterAisle('household');
+    controller.setSpatialPosition(
+      const WalkModeSpatialPosition(x: 0, y: 0),
+    );
+
+    expect(
+      controller.visibleProducts.map((placement) => placement.product.id),
+      ['cotton-wool', 'methylated-spirit'],
+    );
+  });
+
   test('Walk Mode defaults to Manual and can change authority', () {
     final capability = BasketCapability(_FakeBasketRepository(
       Basket.fromJson({'id': 'basket-1', 'lines': []}),
@@ -61,8 +94,31 @@ void main() {
   });
 }
 
+WalkModeProductPlacement _placement(String id, double x, double y) {
+  return WalkModeProductPlacement(
+    product: Product(
+      id: id,
+      name: id,
+      amountMinor: 100,
+      currency: 'TEST',
+      available: true,
+    ),
+    position: WalkModeSpatialPosition(x: x, y: y),
+    asset: WalkModeProductAsset(
+      assetId: 'asset-$id',
+      productId: id,
+      version: '1',
+      fidelity: WalkModeAssetFidelity.imageFallback,
+    ),
+  );
+}
+
 class _FakeBasketRepository implements BasketRepository {
   _FakeBasketRepository(this.basket, {this.updatedBasket});
+
+  _FakeBasketRepository()
+      : basket = const Basket(id: 'basket-1', lines: []),
+        updatedBasket = null;
 
   Basket basket;
   final Basket? updatedBasket;
