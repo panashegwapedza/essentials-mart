@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/walk_mode_models.dart';
 import 'walk_mode_controller.dart';
+import 'walk_mode_spatial_view.dart';
 
 class WalkModePage extends StatelessWidget {
   const WalkModePage({super.key, required this.controller});
@@ -14,6 +15,8 @@ class WalkModePage extends StatelessWidget {
       animation: Listenable.merge([controller, controller.basketCapability]),
       builder: (context, _) {
         final storeMap = controller.storeMap;
+        final currentAisle = controller.currentAisle;
+        final currentPosition = controller.currentPosition;
         return Scaffold(
           appBar: AppBar(
             title: const Text('Walk Mode'),
@@ -80,20 +83,33 @@ class WalkModePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (controller.currentAisle != null) ...[
+                if (currentAisle != null && currentPosition != null) ...[
+                  const SizedBox(height: 16),
+                  WalkModeSpatialView(
+                    aisle: currentAisle,
+                    customerPosition: currentPosition,
+                    visibleProducts: controller.visibleProducts,
+                    onProductTap: (placement) {
+                      if (placement.product.available) {
+                        controller.addToBasket(placement.product.id);
+                      }
+                    },
+                  ),
+                ],
+                if (currentAisle != null) ...[
                   const SizedBox(height: 16),
                   Text(
-                    controller.currentAisle!.name,
+                    currentAisle.name,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    controller.currentPosition == null
+                    currentPosition == null
                         ? 'Spatial position: not set'
                         : 'Spatial position: '
-                            '${controller.currentPosition!.x.toStringAsFixed(1)}, '
-                            '${controller.currentPosition!.y.toStringAsFixed(1)}, '
-                            '${controller.currentPosition!.z.toStringAsFixed(1)}',
+                            '${currentPosition.x.toStringAsFixed(1)}, '
+                            '${currentPosition.y.toStringAsFixed(1)}, '
+                            '${currentPosition.z.toStringAsFixed(1)}',
                   ),
                   const SizedBox(height: 8),
                   Wrap(
@@ -106,15 +122,14 @@ class WalkModePage extends StatelessWidget {
                         child: const Text('Start aisle'),
                       ),
                       OutlinedButton(
-                        onPressed: controller.currentPosition == null
+                        onPressed: currentPosition == null
                             ? null
                             : () {
-                                final position = controller.currentPosition!;
                                 controller.setSpatialPosition(
                                   WalkModeSpatialPosition(
-                                    x: position.x + 1,
-                                    y: position.y,
-                                    z: position.z,
+                                    x: currentPosition.x + 1,
+                                    y: currentPosition.y,
+                                    z: currentPosition.z,
                                   ),
                                 );
                               },
