@@ -5,6 +5,7 @@ import type { CommerceApplicationService } from "../application/CommerceApplicat
 import { readJsonBody, MalformedBodyError, RequestTooLargeError } from "./readJsonBody.js";
 import { sendError, sendErrorFromException, sendJson } from "./respond.js";
 import { toBasketDto, toOrderDto, toProductDto } from "./dto.js";
+import { applyCors } from "./cors.js";
 
 export type CreateServerDeps = {
   commerce: CommerceApplicationService;
@@ -34,6 +35,17 @@ const match = (pattern: RegExp, path: string): string[] | null => {
 
 export function createServer({ commerce, auth }: CreateServerDeps) {
   return createHttpServer(async (req: IncomingMessage, res: ServerResponse) => {
+    const corsAllowed = applyCors(req, res);
+    if ((req.method ?? "GET") === "OPTIONS") {
+      if (corsAllowed) {
+        res.statusCode = 204;
+        res.end();
+      } else {
+        sendError(res, "FORBIDDEN", "CORS origin is not allowed.", 403);
+      }
+      return;
+    }
+
     try {
       await route(req, res, commerce, auth);
     } catch (err) {
