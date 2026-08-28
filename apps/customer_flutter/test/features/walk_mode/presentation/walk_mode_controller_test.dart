@@ -52,7 +52,7 @@ void main() {
   test('Walk Mode exposes only products within the current spatial context', () {
     final controller = WalkModeController(
       BasketCapability(_FakeBasketRepository()),
-      storeMap: WalkModeStoreMap(
+      storeMap: const WalkModeStoreMap(
         storeId: 'store-1',
         layoutVersion: 'layout-1',
         aisles: [
@@ -83,7 +83,7 @@ void main() {
   test('Walk Mode records products encountered across movement', () {
     final controller = WalkModeController(
       BasketCapability(_FakeBasketRepository()),
-      storeMap: WalkModeStoreMap(
+      storeMap: const WalkModeStoreMap(
         storeId: 'store-1',
         layoutVersion: 'layout-1',
         aisles: [
@@ -117,7 +117,7 @@ void main() {
   test('changing aisles starts a fresh encounter context', () {
     final controller = WalkModeController(
       BasketCapability(_FakeBasketRepository()),
-      storeMap: WalkModeStoreMap(
+      storeMap: const WalkModeStoreMap(
         storeId: 'store-1',
         layoutVersion: 'layout-1',
         aisles: [
@@ -149,7 +149,7 @@ void main() {
   test('Walk Mode exposes the next aisle and journey progress', () {
     final controller = WalkModeController(
       BasketCapability(_FakeBasketRepository()),
-      storeMap: WalkModeStoreMap(
+      storeMap: const WalkModeStoreMap(
         storeId: 'store-1',
         layoutVersion: 'layout-1',
         aisles: [
