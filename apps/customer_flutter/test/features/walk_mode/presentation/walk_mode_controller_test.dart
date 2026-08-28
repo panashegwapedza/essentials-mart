@@ -81,9 +81,7 @@ void main() {
   });
 
   test('Walk Mode defaults to Manual and can change authority', () {
-    final capability = BasketCapability(_FakeBasketRepository(
-      Basket.fromJson({'id': 'basket-1', 'lines': []}),
-    ));
+    final capability = BasketCapability(_FakeBasketRepository());
     final controller = WalkModeController(capability);
 
     expect(controller.mode, WalkModeType.manual);
@@ -114,11 +112,10 @@ WalkModeProductPlacement _placement(String id, double x, double y) {
 }
 
 class _FakeBasketRepository implements BasketRepository {
-  _FakeBasketRepository(this.basket, {this.updatedBasket});
-
-  _FakeBasketRepository()
-      : basket = const Basket(id: 'basket-1', lines: []),
-        updatedBasket = null;
+  _FakeBasketRepository([
+    this.basket = const Basket(id: 'basket-1', lines: []),
+    this.updatedBasket,
+  ]);
 
   Basket basket;
   final Basket? updatedBasket;
