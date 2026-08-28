@@ -19,6 +19,11 @@ class CommercePage extends StatelessWidget {
           appBar: AppBar(
             title: const Text('Essentials Mart'),
             actions: [
+              IconButton(
+                tooltip: 'Walk Mode',
+                onPressed: () => Navigator.of(context).pushNamed('/walk-mode'),
+                icon: const Icon(Icons.directions_walk),
+              ),
               Padding(
                 padding: const EdgeInsets.only(right: 16),
                 child: Center(
