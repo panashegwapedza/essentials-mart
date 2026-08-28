@@ -7,6 +7,8 @@ import 'core/config/app_config.dart';
 import 'features/commerce/data/commerce_repository.dart';
 import 'features/commerce/presentation/commerce_controller.dart';
 import 'features/commerce/presentation/commerce_page.dart';
+import 'features/walk_mode/data/walk_mode_models.dart';
+import 'features/walk_mode/data/walk_mode_product_asset.dart';
 import 'features/walk_mode/presentation/walk_mode_controller.dart';
 import 'features/walk_mode/presentation/walk_mode_page.dart';
 
@@ -26,7 +28,58 @@ void main() {
       walkModeController: walkModeController,
     ),
   );
-  commerceController.load();
+  commerceController.load().then((_) {
+    walkModeController.setStoreMap(_buildDevelopmentStoreMap(commerceController.products));
+  });
+}
+
+WalkModeStoreMap _buildDevelopmentStoreMap(List<Product> products) {
+  const aisleDefinitions = [
+    ('fresh', 'Fresh & Chilled'),
+    ('pantry', 'Pantry'),
+    ('household', 'Household & Personal Care'),
+  ];
+
+  final placements = products.asMap().entries.map((entry) {
+    final index = entry.key;
+    final product = entry.value;
+    final aisle = aisleDefinitions[index % aisleDefinitions.length];
+    return (
+      aisleId: aisle.$1,
+      placement: WalkModeProductPlacement(
+        product: product,
+        position: WalkModeSpatialPosition(
+          x: (index % 3) * 2.0,
+          y: (index ~/ 3) * 1.5,
+        ),
+        asset: WalkModeProductAsset(
+          assetId: 'dev-${product.id}',
+          productId: product.id,
+          version: 'development-1',
+          fidelity: WalkModeAssetFidelity.unavailable,
+        ),
+      ),
+    );
+  });
+
+  final grouped = <String, List<WalkModeProductPlacement>>{};
+  for (final item in placements) {
+    grouped.putIfAbsent(item.aisleId, () => []).add(item.placement);
+  }
+
+  return WalkModeStoreMap(
+    storeId: 'development-store',
+    layoutVersion: 'development-1',
+    aisles: aisleDefinitions
+        .map(
+          (definition) => WalkModeAisle(
+            id: definition.$1,
+            name: definition.$2,
+            products: List.unmodifiable(grouped[definition.$1] ?? const []),
+          ),
+        )
+        .toList(growable: false),
+  );
 }
 
 class EssentialsMartApp extends StatelessWidget {
