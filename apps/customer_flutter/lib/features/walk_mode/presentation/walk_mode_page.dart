@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/walk_mode_models.dart';
 import 'walk_mode_controller.dart';
+import 'walk_mode_spatial_controls.dart';
 import 'walk_mode_spatial_view.dart';
 
 class WalkModePage extends StatelessWidget {
@@ -95,6 +96,20 @@ class WalkModePage extends StatelessWidget {
                       }
                     },
                   ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Walk the aisle',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Move through the spatial environment to encounter products naturally.',
+                  ),
+                  const SizedBox(height: 8),
+                  WalkModeSpatialControls(
+                    position: currentPosition,
+                    onMove: controller.setSpatialPosition,
+                  ),
                 ],
                 if (currentAisle != null) ...[
                   const SizedBox(height: 16),
@@ -112,30 +127,11 @@ class WalkModePage extends StatelessWidget {
                             '${currentPosition.z.toStringAsFixed(1)}',
                   ),
                   const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () => controller.setSpatialPosition(
-                          const WalkModeSpatialPosition(x: 0, y: 0),
-                        ),
-                        child: const Text('Start aisle'),
-                      ),
-                      OutlinedButton(
-                        onPressed: currentPosition == null
-                            ? null
-                            : () {
-                                controller.setSpatialPosition(
-                                  WalkModeSpatialPosition(
-                                    x: currentPosition.x + 1,
-                                    y: currentPosition.y,
-                                    z: currentPosition.z,
-                                  ),
-                                );
-                              },
-                        child: const Text('Move forward'),
-                      ),
-                    ],
+                  OutlinedButton(
+                    onPressed: () => controller.setSpatialPosition(
+                      const WalkModeSpatialPosition(x: 0, y: 0),
+                    ),
+                    child: const Text('Start aisle'),
                   ),
                   const SizedBox(height: 8),
                   Text(
