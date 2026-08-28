@@ -146,6 +146,38 @@ void main() {
     expect(controller.encounteredProductIds, isEmpty);
   });
 
+  test('Walk Mode exposes the next aisle and journey progress', () {
+    final controller = WalkModeController(
+      BasketCapability(_FakeBasketRepository()),
+      storeMap: WalkModeStoreMap(
+        storeId: 'store-1',
+        layoutVersion: 'layout-1',
+        aisles: [
+          WalkModeAisle(id: 'fresh', name: 'Fresh', products: const []),
+          WalkModeAisle(id: 'pantry', name: 'Pantry', products: const []),
+          WalkModeAisle(id: 'household', name: 'Household', products: const []),
+        ],
+      ),
+    );
+
+    expect(controller.journeyProgress, 0);
+    expect(controller.nextAisle, isNull);
+
+    controller.enterAisle('fresh');
+
+    expect(controller.currentAisleIndex, 0);
+    expect(controller.journeyProgress, closeTo(1 / 3, 0.0001));
+    expect(controller.nextAisle?.id, 'pantry');
+    expect(controller.journeyStatus, 'Fresh · next: Pantry');
+
+    controller.enterAisle('household');
+
+    expect(controller.currentAisleIndex, 2);
+    expect(controller.journeyProgress, 1);
+    expect(controller.nextAisle, isNull);
+    expect(controller.journeyStatus, 'Household · final aisle');
+  });
+
   test('Walk Mode defaults to Manual and can change authority', () {
     final capability = BasketCapability(_FakeBasketRepository());
     final controller = WalkModeController(capability);
