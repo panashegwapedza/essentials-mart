@@ -19,7 +19,7 @@ class WalkModeController extends ChangeNotifier {
   }) : _spatialDiscovery = spatialDiscovery ?? const WalkModeSpatialDiscovery();
 
   final BasketCapability basketCapability;
-  final WalkModeStoreMap? storeMap;
+  WalkModeStoreMap? storeMap;
   final WalkModeSpatialDiscovery _spatialDiscovery;
 
   WalkModeType mode = WalkModeType.manual;
@@ -31,8 +31,9 @@ class WalkModeController extends ChangeNotifier {
 
   WalkModeAisle? get currentAisle {
     final id = currentAisleId;
-    if (id == null || storeMap == null) return null;
-    for (final aisle in storeMap!.aisles) {
+    final map = storeMap;
+    if (id == null || map == null) return null;
+    for (final aisle in map.aisles) {
       if (aisle.id == id) return aisle;
     }
     return null;
@@ -46,6 +47,13 @@ class WalkModeController extends ChangeNotifier {
       aisle: aisle,
       customerPosition: position,
     );
+  }
+
+  void setStoreMap(WalkModeStoreMap value) {
+    storeMap = value;
+    currentAisleId = null;
+    currentPosition = null;
+    notifyListeners();
   }
 
   void setMode(WalkModeType value) {
@@ -63,6 +71,7 @@ class WalkModeController extends ChangeNotifier {
   void enterAisle(String aisleId) {
     if (currentAisleId == aisleId) return;
     currentAisleId = aisleId;
+    currentPosition = null;
     notifyListeners();
   }
 
