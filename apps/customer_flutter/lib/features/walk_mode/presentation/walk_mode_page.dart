@@ -18,6 +18,11 @@ class WalkModePage extends StatelessWidget {
         final storeMap = controller.storeMap;
         final currentAisle = controller.currentAisle;
         final currentPosition = controller.currentPosition;
+        final encounteredProducts = currentAisle == null
+            ? const <WalkModeProductPlacement>[]
+            : currentAisle.products
+                .where((placement) => controller.encounteredProductIds.contains(placement.product.id))
+                .toList(growable: false);
         return Scaffold(
           appBar: AppBar(
             title: const Text('Walk Mode'),
@@ -146,6 +151,53 @@ class WalkModePage extends StatelessWidget {
                           : null,
                     ),
                   ),
+                  if (encounteredProducts.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.visibility_outlined),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Products encountered',
+                                  style: Theme.of(context).textTheme.titleMedium,
+                                ),
+                                const Spacer(),
+                                Text('${encounteredProducts.length}'),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'These products have entered your spatial context during this aisle journey.',
+                            ),
+                            const SizedBox(height: 12),
+                            ...encounteredProducts.map(
+                              (placement) => ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.shopping_bag_outlined),
+                                title: Text(placement.product.name),
+                                subtitle: Text(
+                                  placement.product.available ? 'Available' : 'Unavailable',
+                                ),
+                                trailing: placement.product.available
+                                    ? IconButton(
+                                        tooltip: 'Add encountered product to basket',
+                                        onPressed: () => controller.addToBasket(placement.product.id),
+                                        icon: const Icon(Icons.add_shopping_cart),
+                                      )
+                                    : const Icon(Icons.remove_shopping_cart_outlined),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ],
               const SizedBox(height: 16),
