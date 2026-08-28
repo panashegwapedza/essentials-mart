@@ -87,7 +87,47 @@ class WalkModePage extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
-                  ...controller.currentAisle!.products.map(
+                  Text(
+                    controller.currentPosition == null
+                        ? 'Spatial position: not set'
+                        : 'Spatial position: '
+                            '${controller.currentPosition!.x.toStringAsFixed(1)}, '
+                            '${controller.currentPosition!.y.toStringAsFixed(1)}, '
+                            '${controller.currentPosition!.z.toStringAsFixed(1)}',
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => controller.setSpatialPosition(
+                          const WalkModeSpatialPosition(x: 0, y: 0),
+                        ),
+                        child: const Text('Start aisle'),
+                      ),
+                      OutlinedButton(
+                        onPressed: controller.currentPosition == null
+                            ? null
+                            : () {
+                                final position = controller.currentPosition!;
+                                controller.setSpatialPosition(
+                                  WalkModeSpatialPosition(
+                                    x: position.x + 1,
+                                    y: position.y,
+                                    z: position.z,
+                                  ),
+                                );
+                              },
+                        child: const Text('Move forward'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${controller.visibleProducts.length} products in current spatial context',
+                  ),
+                  const SizedBox(height: 8),
+                  ...controller.visibleProducts.map(
                     (placement) => _ProductDiscoveryCard(
                       placement: placement,
                       onAdd: placement.product.available
