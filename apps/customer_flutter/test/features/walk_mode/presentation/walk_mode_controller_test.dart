@@ -152,10 +152,10 @@ void main() {
       storeMap: WalkModeStoreMap(
         storeId: 'store-1',
         layoutVersion: 'layout-1',
-        aisles: [
-          WalkModeAisle(id: 'fresh', name: 'Fresh', products: const []),
-          WalkModeAisle(id: 'pantry', name: 'Pantry', products: const []),
-          WalkModeAisle(id: 'household', name: 'Household', products: const []),
+        aisles: const [
+          WalkModeAisle(id: 'fresh', name: 'Fresh', products: []),
+          WalkModeAisle(id: 'pantry', name: 'Pantry', products: []),
+          WalkModeAisle(id: 'household', name: 'Household', products: []),
         ],
       ),
     );
