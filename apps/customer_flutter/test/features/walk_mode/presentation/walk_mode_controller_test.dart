@@ -153,9 +153,9 @@ void main() {
         storeId: 'store-1',
         layoutVersion: 'layout-1',
         aisles: [
-          const WalkModeAisle(id: 'fresh', name: 'Fresh', products: []),
-          const WalkModeAisle(id: 'pantry', name: 'Pantry', products: []),
-          const WalkModeAisle(id: 'household', name: 'Household', products: []),
+          WalkModeAisle(id: 'fresh', name: 'Fresh', products: const []),
+          WalkModeAisle(id: 'pantry', name: 'Pantry', products: const []),
+          WalkModeAisle(id: 'household', name: 'Household', products: const []),
         ],
       ),
     );
