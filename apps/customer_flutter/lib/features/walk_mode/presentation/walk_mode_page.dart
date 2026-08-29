@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets/shared_basket_sheet.dart';
 import '../data/walk_mode_models.dart';
 import 'walk_mode_controller.dart';
 import 'walk_mode_spatial_controls.dart';
@@ -27,6 +28,18 @@ class WalkModePage extends StatelessWidget {
           appBar: AppBar(
             title: const Text('Walk Mode'),
             actions: [
+              IconButton(
+                tooltip: 'Shared basket',
+                onPressed: () => SharedBasketSheet.show(
+                  context,
+                  capability: controller.basketCapability,
+                ),
+                icon: Badge(
+                  isLabelVisible: controller.basketItemCount > 0,
+                  label: Text('${controller.basketItemCount}'),
+                  child: const Icon(Icons.shopping_basket_outlined),
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.only(right: 16),
                 child: Center(
