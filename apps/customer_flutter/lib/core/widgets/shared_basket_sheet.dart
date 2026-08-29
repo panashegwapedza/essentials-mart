@@ -75,9 +75,9 @@ class SharedBasketSheet extends StatelessWidget {
                     child: Center(child: Text('Your basket is empty.')),
                   )
                 else ...[
-                  Flexible(
+                  SizedBox(
+                    height: 360,
                     child: ListView.separated(
-                      shrinkWrap: true,
                       itemCount: lines.length,
                       separatorBuilder: (_, __) => const Divider(height: 1),
                       itemBuilder: (context, index) {
