@@ -149,10 +149,10 @@ void main() {
   test('Walk Mode exposes the next aisle and journey progress', () {
     final controller = WalkModeController(
       BasketCapability(_FakeBasketRepository()),
-      storeMap: WalkModeStoreMap(
+      storeMap: const WalkModeStoreMap(
         storeId: 'store-1',
         layoutVersion: 'layout-1',
-        aisles: const [
+        aisles: [
           WalkModeAisle(id: 'fresh', name: 'Fresh', products: []),
           WalkModeAisle(id: 'pantry', name: 'Pantry', products: []),
           WalkModeAisle(id: 'household', name: 'Household', products: []),
