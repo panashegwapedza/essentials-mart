@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets/shared_basket_sheet.dart';
 import '../data/commerce_models.dart';
 import 'commerce_controller.dart';
 
@@ -23,6 +24,18 @@ class CommercePage extends StatelessWidget {
                 tooltip: 'Walk Mode',
                 onPressed: () => Navigator.of(context).pushNamed('/walk-mode'),
                 icon: const Icon(Icons.directions_walk),
+              ),
+              IconButton(
+                tooltip: 'Shared basket',
+                onPressed: () => SharedBasketSheet.show(
+                  context,
+                  capability: controller.basketCapability,
+                ),
+                icon: Badge(
+                  isLabelVisible: basketCount > 0,
+                  label: Text('$basketCount'),
+                  child: const Icon(Icons.shopping_basket_outlined),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 16),
