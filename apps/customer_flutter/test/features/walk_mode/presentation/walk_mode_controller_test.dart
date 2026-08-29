@@ -50,6 +50,9 @@ void main() {
   });
 
   test('Walk Mode exposes only products within the current spatial context', () {
+    final cottonWool = _placement('cotton-wool', 1, 0);
+    final methylatedSpirit = _placement('methylated-spirit', 2, 0);
+    final farItem = _placement('far-item', 5, 0);
     final controller = WalkModeController(
       BasketCapability(_FakeBasketRepository()),
       storeMap: WalkModeStoreMap(
@@ -59,11 +62,7 @@ void main() {
           WalkModeAisle(
             id: 'household',
             name: 'Household',
-            products: [
-              _placement('cotton-wool', 1, 0),
-              _placement('methylated-spirit', 2, 0),
-              _placement('far-item', 5, 0),
-            ],
+            products: [cottonWool, methylatedSpirit, farItem],
           ),
         ],
       ),
@@ -81,6 +80,8 @@ void main() {
   });
 
   test('Walk Mode records products encountered across movement', () {
+    final cottonWool = _placement('cotton-wool', 0, 0);
+    final methylatedSpirit = _placement('methylated-spirit', 3.1, 0);
     final controller = WalkModeController(
       BasketCapability(_FakeBasketRepository()),
       storeMap: WalkModeStoreMap(
@@ -90,10 +91,7 @@ void main() {
           WalkModeAisle(
             id: 'household',
             name: 'Household',
-            products: [
-              _placement('cotton-wool', 0, 0),
-              _placement('methylated-spirit', 3.1, 0),
-            ],
+            products: [cottonWool, methylatedSpirit],
           ),
         ],
       ),
@@ -115,6 +113,8 @@ void main() {
   });
 
   test('changing aisles starts a fresh encounter context', () {
+    final bread = _placement('bread', 0, 0);
+    final milk = _placement('milk', 0, 0);
     final controller = WalkModeController(
       BasketCapability(_FakeBasketRepository()),
       storeMap: WalkModeStoreMap(
@@ -124,12 +124,12 @@ void main() {
           WalkModeAisle(
             id: 'one',
             name: 'One',
-            products: [_placement('bread', 0, 0)],
+            products: [bread],
           ),
           WalkModeAisle(
             id: 'two',
             name: 'Two',
-            products: [_placement('milk', 0, 0)],
+            products: [milk],
           ),
         ],
       ),
