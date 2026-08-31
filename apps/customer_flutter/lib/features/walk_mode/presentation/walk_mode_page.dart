@@ -6,13 +6,36 @@ import 'walk_mode_controller.dart';
 import 'walk_mode_spatial_controls.dart';
 import 'walk_mode_spatial_view.dart';
 
-class WalkModePage extends StatelessWidget {
+/// Walk Mode is a bounded session/process, not ordinary screen navigation
+/// (see docs/architecture/flutter/4.3-state-dependency-injection-feature-composition.md
+/// §15). Entering this page begins a Walk Mode session; leaving it must end
+/// the current aisle-level spatial sub-session (aisle + position) rather
+/// than leaving stale spatial state sitting in the shared controller for
+/// the next time Walk Mode is entered.
+class WalkModePage extends StatefulWidget {
   const WalkModePage({super.key, required this.controller});
 
   final WalkModeController controller;
 
   @override
+  State<WalkModePage> createState() => _WalkModePageState();
+}
+
+class _WalkModePageState extends State<WalkModePage> {
+  @override
+  void dispose() {
+    // Ends the aisle-level spatial sub-session on exit from Walk Mode.
+    // Without this, currentAisleId/currentPosition persist in the
+    // controller indefinitely (it outlives this page), so re-entering
+    // Walk Mode later would silently resume mid-aisle rather than
+    // presenting a clean session start.
+    widget.controller.clearAisle();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final controller = widget.controller;
     return AnimatedBuilder(
       animation: Listenable.merge([controller, controller.basketCapability]),
       builder: (context, _) {
