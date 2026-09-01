@@ -54,14 +54,16 @@ class _WalkModePageState extends State<WalkModePage> {
       final position = controller.currentPosition;
       if (aisle == null || position == null || controller.isPaused) return;
 
-      // Autopilot is a delegated movement mode: it advances the customer
-      // through the spatial experience while basket decisions remain explicit.
-      controller.moveBy(dx: 0.45);
+      // Autopilot owns movement only. Basket decisions remain explicit.
+      // Positive Y is forward travel through the aisle in the spatial contract.
+      controller.moveBy(dy: 0.45);
 
       final next = controller.nextAisle;
-      if (next != null && controller.currentPosition!.x >= 3.8) {
+      if (next != null && controller.currentPosition!.y >= 6.0) {
         controller.enterAisle(next.id);
-        controller.setSpatialPosition(const WalkModeSpatialPosition(x: 0, y: 0));
+        controller.setSpatialPosition(
+          const WalkModeSpatialPosition(x: 0, y: 0),
+        );
       }
     });
   }
@@ -85,7 +87,9 @@ class _WalkModePageState extends State<WalkModePage> {
           : 'Nearby: $names. Explore the aisle and discover what you want.';
     }
     final next = controller.nextAisle;
-    if (next != null) return 'Nothing nearby yet. The next useful area is ${next.name}.';
+    if (next != null) {
+      return 'Nothing nearby yet. The next useful area is ${next.name}.';
+    }
     return 'You are exploring ${controller.currentAisle?.name ?? 'the store'}.';
   }
 
@@ -129,7 +133,10 @@ class _WalkModePageState extends State<WalkModePage> {
                         const Expanded(
                           child: Text(
                             'Living Digital Supermarket',
-                            style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                         Chip(label: Text('Store ${storeMap.storeId}')),
@@ -157,7 +164,9 @@ class _WalkModePageState extends State<WalkModePage> {
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               const SizedBox(height: 6),
-                              const Text('Choose a real store area. This is an entry point, not the Walk Mode itself.'),
+                              const Text(
+                                'Choose a real store area. This is an entry point, not the Walk Mode itself.',
+                              ),
                               const SizedBox(height: 14),
                               Wrap(
                                 spacing: 8,
@@ -165,7 +174,10 @@ class _WalkModePageState extends State<WalkModePage> {
                                 children: storeMap.aisles
                                     .map(
                                       (item) => ActionChip(
-                                        avatar: const Icon(Icons.category_outlined, size: 18),
+                                        avatar: const Icon(
+                                          Icons.category_outlined,
+                                          size: 18,
+                                        ),
                                         label: Text(item.name),
                                         onPressed: () => _beginAisle(item.id),
                                       ),
@@ -185,7 +197,9 @@ class _WalkModePageState extends State<WalkModePage> {
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ),
-                          Text('${(controller.journeyProgress * 100).round()}% journey'),
+                          Text(
+                            '${(controller.journeyProgress * 100).round()}% journey',
+                          ),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -244,7 +258,9 @@ class _WalkModePageState extends State<WalkModePage> {
                           (placement) => _ProductCard(
                             placement: placement,
                             onAdd: placement.product.available
-                                ? () => controller.addToBasket(placement.product.id)
+                                ? () => controller.addToBasket(
+                                      placement.product.id,
+                                    )
                                 : null,
                           ),
                         ),
