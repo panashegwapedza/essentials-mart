@@ -297,7 +297,6 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
   @override
   void dispose() {
     threeJs.dispose();
-    three.loading.clear();
     super.dispose();
   }
 }
