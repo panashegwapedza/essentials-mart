@@ -50,13 +50,9 @@ class _WalkModePageState extends State<WalkModePage> {
   void _startAutopilot() {
     if (_autopilotTimer != null) return;
     _autopilotTimer = Timer.periodic(const Duration(milliseconds: 650), (_) {
-      final aisle = controller.currentAisle;
-      final position = controller.currentPosition;
-      if (aisle == null || position == null || controller.isPaused) return;
+      if (controller.currentPosition == null || controller.isPaused) return;
 
-      // Autopilot owns movement only. Basket decisions remain explicit.
-      // Positive Y is forward travel through the aisle in the spatial contract.
-      controller.moveBy(dy: 0.45);
+      controller.moveBy(dy: 0.32);
 
       final next = controller.nextAisle;
       if (next != null && controller.currentPosition!.y >= 6.0) {
@@ -82,15 +78,15 @@ class _WalkModePageState extends State<WalkModePage> {
     final visible = controller.visibleProducts;
     if (visible.isNotEmpty) {
       final names = visible.take(2).map((p) => p.product.name).join(' and ');
-      return controller.mode == WalkModeType.aiAssisted
-          ? 'I can see $names nearby. You decide what comes into the basket.'
-          : 'Nearby: $names. Explore the aisle and discover what you want.';
+      if (controller.mode == WalkModeType.aiAssisted) {
+        return 'I found $names in your current context. I can point things out; you decide what enters the basket.';
+      }
+      if (controller.mode == WalkModeType.autopilot) {
+        return 'I am taking you through the store. You remain in control of every basket decision.';
+      }
+      return '$names are in view. Keep walking to discover more products around you.';
     }
-    final next = controller.nextAisle;
-    if (next != null) {
-      return 'Nothing nearby yet. The next useful area is ${next.name}.';
-    }
-    return 'You are exploring ${controller.currentAisle?.name ?? 'the store'}.';
+    return 'Keep exploring. Walk Mode surfaces products because you are moving through the store, not because you searched for them.';
   }
 
   @override
@@ -103,8 +99,19 @@ class _WalkModePageState extends State<WalkModePage> {
         final position = controller.currentPosition;
 
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
-            title: const Text('Walk Mode'),
+            titleSpacing: 16,
+            title: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Walk Mode'),
+                Text(
+                  'Living Digital Supermarket',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                ),
+              ],
+            ),
             actions: [
               Badge(
                 isLabelVisible: controller.basketItemCount > 0,
@@ -122,166 +129,197 @@ class _WalkModePageState extends State<WalkModePage> {
             ],
           ),
           body: storeMap == null
-              ? const Center(
-                  child: Text('Store spatial data is not loaded yet.'),
-                )
-              : ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
-                  children: [
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            'Living Digital Supermarket',
-                            style: TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        Chip(label: Text('Store ${storeMap.storeId}')),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      'Walk the digital store to make products visible that search may never surface. The AI can assist, but you retain the decision.',
-                    ),
-                    const SizedBox(height: 16),
-                    _ModeSelector(
-                      value: controller.mode,
-                      onChanged: controller.setMode,
-                    ),
-                    const SizedBox(height: 16),
-                    if (aisle == null) ...[
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(18),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Where do you want to start?',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 6),
-                              const Text(
-                                'Choose a real store area. This is an entry point, not the Walk Mode itself.',
-                              ),
-                              const SizedBox(height: 14),
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: storeMap.aisles
-                                    .map(
-                                      (item) => ActionChip(
-                                        avatar: const Icon(
-                                          Icons.category_outlined,
-                                          size: 18,
-                                        ),
-                                        label: Text(item.name),
-                                        onPressed: () => _beginAisle(item.id),
-                                      ),
-                                    )
-                                    .toList(growable: false),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ] else if (position != null) ...[
-                      Row(
+              ? const Center(child: Text('Store spatial data is not loaded yet.'))
+              : aisle == null || position == null
+                  ? _AisleEntry(
+                      aisles: storeMap.aisles,
+                      onSelect: _beginAisle,
+                    )
+                  : SafeArea(
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: Text(
-                              '${aisle.name}  ·  ${controller.currentAisleIndex! + 1}/${storeMap.aisles.length}',
-                              style: Theme.of(context).textTheme.titleMedium,
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        aisle.name,
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '${controller.currentAisleIndex! + 1} of ${storeMap.aisles.length} · ${(controller.journeyProgress * 100).round()}% journey',
+                                        style: Theme.of(context).textTheme.bodySmall,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                _ModeSelector(
+                                  value: controller.mode,
+                                  onChanged: controller.setMode,
+                                ),
+                              ],
                             ),
                           ),
-                          Text(
-                            '${(controller.journeyProgress * 100).round()}% journey',
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: LinearProgressIndicator(
+                              value: controller.journeyProgress,
+                              minHeight: 3,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              padding: const EdgeInsets.fromLTRB(12, 0, 12, 18),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 540,
+                                    child: WalkModeSpatialView(
+                                      aisle: aisle,
+                                      customerPosition: position,
+                                      visibleProducts: controller.visibleProducts,
+                                      headingDegrees: controller.headingDegrees,
+                                      onLook: controller.rotateView,
+                                      onProductTap: (placement) {
+                                        if (placement.product.available) {
+                                          controller.addToBasket(placement.product.id);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Card(
+                                    margin: EdgeInsets.zero,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            controller.mode == WalkModeType.aiAssisted
+                                                ? Icons.auto_awesome
+                                                : controller.mode == WalkModeType.autopilot
+                                                    ? Icons.navigation_rounded
+                                                    : Icons.explore_rounded,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(child: Text(_assistantMessage())),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  WalkModeSpatialControls(
+                                    position: position,
+                                    isPaused: controller.isPaused,
+                                    onMove: controller.setSpatialPosition,
+                                    onLook: controller.rotateView,
+                                    onPause: controller.togglePause,
+                                    onRecenter: controller.recenterView,
+                                    onInteract: controller.visibleProducts.isEmpty
+                                        ? null
+                                        : () => controller.addToBasket(
+                                              controller.visibleProducts.first.product.id,
+                                            ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: OutlinedButton.icon(
+                                          onPressed: controller.nextAisle == null
+                                              ? null
+                                              : () => _beginAisle(controller.nextAisle!.id),
+                                          icon: const Icon(Icons.arrow_forward_rounded),
+                                          label: Text(
+                                            controller.nextAisle == null
+                                                ? 'End of journey'
+                                                : 'Next: ${controller.nextAisle!.name}',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      LinearProgressIndicator(value: controller.journeyProgress),
-                      const SizedBox(height: 12),
-                      WalkModeSpatialView(
-                        aisle: aisle,
-                        customerPosition: position,
-                        visibleProducts: controller.visibleProducts,
-                        headingDegrees: controller.headingDegrees,
-                        onLook: controller.rotateView,
-                        onProductTap: (placement) {
-                          if (placement.product.available) {
-                            controller.addToBasket(placement.product.id);
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      Card(
-                        child: ListTile(
-                          leading: Icon(
-                            controller.mode == WalkModeType.aiAssisted
-                                ? Icons.auto_awesome
-                                : Icons.assistant_outlined,
-                          ),
-                          title: Text(
-                            controller.mode == WalkModeType.autopilot
-                                ? 'Autopilot is moving you through the route'
-                                : 'Walk Mode assistant',
-                          ),
-                          subtitle: Text(_assistantMessage()),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      WalkModeSpatialControls(
-                        position: position,
-                        isPaused: controller.isPaused,
-                        onMove: controller.setSpatialPosition,
-                        onLook: controller.rotateView,
-                        onPause: controller.togglePause,
-                        onRecenter: controller.recenterView,
-                        onInteract: controller.visibleProducts.isEmpty
-                            ? null
-                            : () => controller.addToBasket(
-                                  controller.visibleProducts.first.product.id,
-                                ),
-                      ),
-                      const SizedBox(height: 16),
-                      if (controller.visibleProducts.isNotEmpty) ...[
-                        Text(
-                          'Products in your current context',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        ...controller.visibleProducts.map(
-                          (placement) => _ProductCard(
-                            placement: placement,
-                            onAdd: placement.product.available
-                                ? () => controller.addToBasket(
-                                      placement.product.id,
-                                    )
-                                : null,
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 8),
-                      TextButton.icon(
-                        onPressed: controller.nextAisle == null
-                            ? null
-                            : () => _beginAisle(controller.nextAisle!.id),
-                        icon: const Icon(Icons.arrow_forward_rounded),
-                        label: Text(
-                          controller.nextAisle == null
-                              ? 'Final aisle'
-                              : 'Continue to ${controller.nextAisle!.name}',
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                    ),
         );
       },
+    );
+  }
+}
+
+class _AisleEntry extends StatelessWidget {
+  const _AisleEntry({required this.aisles, required this.onSelect});
+
+  final List<WalkModeAisle> aisles;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 620),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.storefront_rounded, size: 42),
+                  const SizedBox(height: 18),
+                  Text(
+                    'Step inside',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Walk Mode turns the supermarket into a place you can explore. Move through an area and let products become visible naturally.',
+                  ),
+                  const SizedBox(height: 22),
+                  Text(
+                    'Choose where to enter',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 10),
+                  ...aisles.map(
+                    (aisle) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.tonalIcon(
+                          onPressed: () => onSelect(aisle.id),
+                          icon: const Icon(Icons.arrow_forward_rounded),
+                          label: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(aisle.name),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -294,54 +332,30 @@ class _ModeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SegmentedButton<WalkModeType>(
-      segments: const [
-        ButtonSegment(
-          value: WalkModeType.manual,
-          icon: Icon(Icons.pan_tool_outlined),
-          label: Text('Manual'),
-        ),
-        ButtonSegment(
-          value: WalkModeType.aiAssisted,
-          icon: Icon(Icons.auto_awesome),
-          label: Text('AI Assisted'),
-        ),
-        ButtonSegment(
-          value: WalkModeType.autopilot,
-          icon: Icon(Icons.navigation_rounded),
-          label: Text('Autopilot'),
-        ),
+    return PopupMenuButton<WalkModeType>(
+      tooltip: 'Walk Mode control mode',
+      onSelected: onChanged,
+      itemBuilder: (context) => const [
+        PopupMenuItem(value: WalkModeType.manual, child: Text('Manual')),
+        PopupMenuItem(value: WalkModeType.aiAssisted, child: Text('AI Assisted')),
+        PopupMenuItem(value: WalkModeType.autopilot, child: Text('Autopilot')),
       ],
-      selected: {value},
-      onSelectionChanged: (selection) => onChanged(selection.first),
-    );
-  }
-}
-
-class _ProductCard extends StatelessWidget {
-  const _ProductCard({required this.placement, this.onAdd});
-
-  final WalkModeProductPlacement placement;
-  final VoidCallback? onAdd;
-
-  @override
-  Widget build(BuildContext context) {
-    final product = placement.product;
-    return Card(
-      child: ListTile(
-        leading: const Icon(Icons.inventory_2_outlined),
-        title: Text(product.name),
-        subtitle: Text(
-          '${product.currency} ${(product.amountMinor / 100).toStringAsFixed(2)} · '
-          '${product.available ? 'Available' : 'Unavailable'}',
+      child: Chip(
+        avatar: Icon(
+          value == WalkModeType.manual
+              ? Icons.pan_tool_outlined
+              : value == WalkModeType.aiAssisted
+                  ? Icons.auto_awesome
+                  : Icons.navigation_rounded,
+          size: 17,
         ),
-        trailing: onAdd == null
-            ? const Icon(Icons.remove_shopping_cart_outlined)
-            : IconButton(
-                tooltip: 'Add to basket',
-                onPressed: onAdd,
-                icon: const Icon(Icons.add_shopping_cart),
-              ),
+        label: Text(
+          value == WalkModeType.manual
+              ? 'Manual'
+              : value == WalkModeType.aiAssisted
+                  ? 'AI Assisted'
+                  : 'Autopilot',
+        ),
       ),
     );
   }
