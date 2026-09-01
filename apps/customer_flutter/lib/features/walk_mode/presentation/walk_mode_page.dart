@@ -51,10 +51,16 @@ class _WalkModePageState extends State<WalkModePage> {
     if (_autopilotTimer != null) return;
     _autopilotTimer = Timer.periodic(const Duration(milliseconds: 650), (_) {
       final aisle = controller.currentAisle;
-      if (aisle == null || controller.currentPosition == null || controller.isPaused) return;
-      controller.moveBy(dy: 0.45);
-      if (controller.nextAisle != null && controller.currentPosition!.x >= 3.8) {
-        controller.enterAisle(controller.nextAisle!.id);
+      final position = controller.currentPosition;
+      if (aisle == null || position == null || controller.isPaused) return;
+
+      // Autopilot is a delegated movement mode: it advances the customer
+      // through the spatial experience while basket decisions remain explicit.
+      controller.moveBy(dx: 0.45);
+
+      final next = controller.nextAisle;
+      if (next != null && controller.currentPosition!.x >= 3.8) {
+        controller.enterAisle(next.id);
         controller.setSpatialPosition(const WalkModeSpatialPosition(x: 0, y: 0));
       }
     });
@@ -159,7 +165,7 @@ class _WalkModePageState extends State<WalkModePage> {
                                 children: storeMap.aisles
                                     .map(
                                       (item) => ActionChip(
-                                        avatar: const Icon(Icons.shelves_outlined, size: 18),
+                                        avatar: const Icon(Icons.category_outlined, size: 18),
                                         label: Text(item.name),
                                         onPressed: () => _beginAisle(item.id),
                                       ),
