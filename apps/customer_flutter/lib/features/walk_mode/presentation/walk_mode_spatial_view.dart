@@ -61,9 +61,10 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
   }
 
   Future<void> _setup() async {
+    final height = threeJs.height == 0 ? 1.0 : threeJs.height;
     threeJs.camera = three.PerspectiveCamera(
       62,
-      threeJs.width / math.max(1, threeJs.height),
+      threeJs.width / height,
       0.1,
       200,
     );
@@ -86,12 +87,7 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
     });
   }
 
-  three.Mesh _box(
-    double width,
-    double height,
-    double depth,
-    int color,
-  ) {
+  three.Mesh _box(double width, double height, double depth, int color) {
     final geometry = three.BoxGeometry(width, height, depth);
     final material = three.MeshPhongMaterial.fromMap({
       'color': color,
@@ -116,11 +112,15 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
 
       for (var row = 0; row < 4; row++) {
         final shelf = _box(5.4, 0.12, 0.55, 0xff7d8580);
-        shelf.position.setValues(side * 4.35, 0.65 + row * 1.05, -2 - row * 6.0);
+        shelf.position.setValues(
+          side * 4.35,
+          0.65 + row * 1.05,
+          -2 - row * 6.0,
+        );
         threeJs.scene.add(shelf);
       }
 
-      final uprights = [-2.0, -8.0, -14.0, -20.0, -26.0];
+      const uprights = [-2.0, -8.0, -14.0, -20.0, -26.0];
       for (final z in uprights) {
         final post = _box(0.14, 4.3, 0.16, 0xff606762);
         post.position.setValues(side * 1.8, 2.15, z);
@@ -128,7 +128,6 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
       }
     }
 
-    // A strong aisle marker gives the user a sense of place immediately.
     final sign = _box(5.0, 0.7, 0.16, 0xff276749);
     sign.position.setValues(0, 4.15, -3.2);
     threeJs.scene.add(sign);
@@ -150,8 +149,6 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
       product.userData['productId'] = placement.product.id;
       threeJs.scene.add(product);
 
-      // A small cap above the product makes stocked shelves read as products
-      // rather than anonymous geometry even before real 3D product assets exist.
       final cap = _box(0.68, 0.06, 0.44, 0xfff5f5f5);
       cap.position.setValues(x, 1.37 + row * 1.05, z);
       threeJs.scene.add(cap);
@@ -283,7 +280,10 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
               children: [
                 const Icon(Icons.explore_outlined, size: 18),
                 const SizedBox(width: 6),
-                Text('Position ${widget.customerPosition.x.toStringAsFixed(1)}, ${widget.customerPosition.y.toStringAsFixed(1)}'),
+                Text(
+                  'Position ${widget.customerPosition.x.toStringAsFixed(1)}, '
+                  '${widget.customerPosition.y.toStringAsFixed(1)}',
+                ),
                 const Spacer(),
                 Text('Heading ${widget.headingDegrees.toStringAsFixed(0)}°'),
               ],
@@ -322,7 +322,10 @@ class _ControlHint extends StatelessWidget {
             onPressed: onLook == null ? null : () => onLook!(-12),
             icon: const Icon(Icons.keyboard_double_arrow_left, color: Colors.white),
           ),
-          const Text('LOOK', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+          const Text(
+            'LOOK',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          ),
           IconButton(
             tooltip: 'Look right',
             onPressed: onLook == null ? null : () => onLook!(12),
