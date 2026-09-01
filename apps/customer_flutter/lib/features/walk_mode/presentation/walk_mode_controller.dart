@@ -26,6 +26,8 @@ class WalkModeController extends ChangeNotifier {
   String? currentDestination;
   String? currentAisleId;
   WalkModeSpatialPosition? currentPosition;
+  double headingDegrees = 0;
+  bool isPaused = false;
   final Set<String> _encounteredProductIds = <String>{};
 
   int get basketItemCount => basketCapability.itemCount;
@@ -85,6 +87,8 @@ class WalkModeController extends ChangeNotifier {
     storeMap = value;
     currentAisleId = null;
     currentPosition = null;
+    headingDegrees = 0;
+    isPaused = false;
     _encounteredProductIds.clear();
     notifyListeners();
   }
@@ -105,6 +109,8 @@ class WalkModeController extends ChangeNotifier {
     if (currentAisleId == aisleId) return;
     currentAisleId = aisleId;
     currentPosition = null;
+    headingDegrees = 0;
+    isPaused = false;
     _encounteredProductIds.clear();
     notifyListeners();
   }
@@ -117,10 +123,8 @@ class WalkModeController extends ChangeNotifier {
   }
 
   /// Applies a customer movement intent to the current spatial position.
-  ///
-  /// Movement is deliberately a controller concern; presentation widgets
-  /// emit intent while this boundary owns the resulting Walk Mode state.
   void moveBy({double dx = 0, double dy = 0, double dz = 0}) {
+    if (isPaused) return;
     final position = currentPosition;
     if (position == null) return;
     setSpatialPosition(
@@ -130,6 +134,23 @@ class WalkModeController extends ChangeNotifier {
         z: position.z + dz,
       ),
     );
+  }
+
+  void rotateView(double deltaDegrees) {
+    if (isPaused) return;
+    headingDegrees = (headingDegrees + deltaDegrees) % 360;
+    if (headingDegrees < 0) headingDegrees += 360;
+    notifyListeners();
+  }
+
+  void togglePause() {
+    isPaused = !isPaused;
+    notifyListeners();
+  }
+
+  void recenterView() {
+    headingDegrees = 0;
+    notifyListeners();
   }
 
   void _recordCurrentEncounters() {
@@ -142,6 +163,8 @@ class WalkModeController extends ChangeNotifier {
     if (currentAisleId == null && currentPosition == null) return;
     currentAisleId = null;
     currentPosition = null;
+    headingDegrees = 0;
+    isPaused = false;
     _encounteredProductIds.clear();
     notifyListeners();
   }
