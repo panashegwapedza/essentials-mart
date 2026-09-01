@@ -6,9 +6,9 @@ import '../data/walk_mode_models.dart';
 
 /// Immersive Walk Mode viewport.
 ///
-/// This is deliberately a perspective/first-person presentation rather than
-/// a top-down 2D map. The spatial contract remains renderer-neutral so a true
-/// 3D/AR renderer can replace this presentation without changing product,
+/// This is a perspective/first-person presentation rather than a top-down
+/// map. The spatial contract remains renderer-neutral so a true 3D/AR
+/// renderer can replace this presentation without changing product,
 /// location, discovery or basket boundaries.
 class WalkModeSpatialView extends StatelessWidget {
   const WalkModeSpatialView({
@@ -55,9 +55,6 @@ class WalkModeSpatialView extends StatelessWidget {
             height: 430,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTapDown: onProductTap == null
-                  ? null
-                  : (details) => _selectProduct(details.localPosition, const Size(1, 1)),
               onHorizontalDragUpdate: onLook == null
                   ? null
                   : (details) => onLook!(details.delta.dx * 0.25),
@@ -101,11 +98,6 @@ class WalkModeSpatialView extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void _selectProduct(Offset localPosition, Size _) {
-    // Product selection is implemented by the hit layer below. This method
-    // exists only to keep the gesture boundary explicit in the viewport.
   }
 }
 
@@ -205,14 +197,14 @@ class _PerspectiveAislePainter extends CustomPainter {
       ..close();
     canvas.drawPath(aislePath, aisleGlow);
 
-    _drawShelf(canvas, size, horizon, projector, -1, shelf, shelfEdge);
-    _drawShelf(canvas, size, horizon, projector, 1, shelf, shelfEdge);
+    _drawShelf(canvas, size, horizon, -1, shelf, shelfEdge);
+    _drawShelf(canvas, size, horizon, 1, shelf, shelfEdge);
 
     for (final placement in aisle.products) {
       final point = projector.project(placement.position, customerPosition);
       if (point == null) continue;
       final depth = projector.depth(placement.position, customerPosition);
-      final radius = (14 / depth).clamp(4.0, 12.0);
+      final radius = (14 / depth).clamp(4.0, 12.0).toDouble();
       canvas.drawCircle(point, radius, productPaint);
     }
 
@@ -234,7 +226,6 @@ class _PerspectiveAislePainter extends CustomPainter {
     Canvas canvas,
     Size size,
     double horizon,
-    _PerspectiveProjector projector,
     int side,
     Paint shelf,
     Paint edge,
@@ -259,11 +250,7 @@ class _PerspectiveAislePainter extends CustomPainter {
       final t = i / 5;
       final yNear = topNear + (bottomNear - topNear) * t;
       final yFar = topFar + (bottomFar - topFar) * t;
-      canvas.drawLine(
-        Offset(nearX, yNear),
-        Offset(farX, yFar),
-        edge,
-      );
+      canvas.drawLine(Offset(nearX, yNear), Offset(farX, yFar), edge);
     }
   }
 
@@ -279,7 +266,11 @@ class _PerspectiveAislePainter extends CustomPainter {
     final text = TextPainter(
       text: const TextSpan(
         text: '  LOOK AROUND  ·  DISCOVER',
-        style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
