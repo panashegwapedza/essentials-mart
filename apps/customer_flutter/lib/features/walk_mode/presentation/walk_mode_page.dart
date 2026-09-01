@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/shared_basket_sheet.dart';
@@ -6,12 +8,7 @@ import 'walk_mode_controller.dart';
 import 'walk_mode_spatial_controls.dart';
 import 'walk_mode_spatial_view.dart';
 
-/// Walk Mode is a bounded session/process, not ordinary screen navigation
-/// (see docs/architecture/flutter/4.3-state-dependency-injection-feature-composition.md
-/// §15). Entering this page begins a Walk Mode session; leaving it must end
-/// the current aisle-level spatial sub-session (aisle + position) rather
-/// than leaving stale spatial state sitting in the shared controller for
-/// the next time Walk Mode is entered.
+/// Walk Mode is a bounded shopping session, not a map screen.
 class WalkModePage extends StatefulWidget {
   const WalkModePage({super.key, required this.controller});
 
@@ -22,282 +19,285 @@ class WalkModePage extends StatefulWidget {
 }
 
 class _WalkModePageState extends State<WalkModePage> {
+  Timer? _autopilotTimer;
+
+  WalkModeController get controller => widget.controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(_syncAutopilot);
+  }
+
   @override
   void dispose() {
-    // Ends the aisle-level spatial sub-session on exit from Walk Mode.
-    // Without this, currentAisleId/currentPosition persist in the
-    // controller indefinitely (it outlives this page), so re-entering
-    // Walk Mode later would silently resume mid-aisle rather than
-    // presenting a clean session start.
-    widget.controller.clearAisle();
+    _stopAutopilot();
+    controller.removeListener(_syncAutopilot);
+    controller.clearAisle();
     super.dispose();
+  }
+
+  void _syncAutopilot() {
+    if (controller.mode == WalkModeType.autopilot &&
+        controller.currentPosition != null &&
+        !controller.isPaused) {
+      _startAutopilot();
+    } else {
+      _stopAutopilot();
+    }
+  }
+
+  void _startAutopilot() {
+    if (_autopilotTimer != null) return;
+    _autopilotTimer = Timer.periodic(const Duration(milliseconds: 650), (_) {
+      final aisle = controller.currentAisle;
+      if (aisle == null || controller.currentPosition == null || controller.isPaused) return;
+      controller.moveBy(dy: 0.45);
+      if (controller.nextAisle != null && controller.currentPosition!.x >= 3.8) {
+        controller.enterAisle(controller.nextAisle!.id);
+        controller.setSpatialPosition(const WalkModeSpatialPosition(x: 0, y: 0));
+      }
+    });
+  }
+
+  void _stopAutopilot() {
+    _autopilotTimer?.cancel();
+    _autopilotTimer = null;
+  }
+
+  void _beginAisle(String aisleId) {
+    controller.enterAisle(aisleId);
+    controller.setSpatialPosition(const WalkModeSpatialPosition(x: 0, y: 0));
+  }
+
+  String _assistantMessage() {
+    final visible = controller.visibleProducts;
+    if (visible.isNotEmpty) {
+      final names = visible.take(2).map((p) => p.product.name).join(' and ');
+      return controller.mode == WalkModeType.aiAssisted
+          ? 'I can see $names nearby. You decide what comes into the basket.'
+          : 'Nearby: $names. Explore the aisle and discover what you want.';
+    }
+    final next = controller.nextAisle;
+    if (next != null) return 'Nothing nearby yet. The next useful area is ${next.name}.';
+    return 'You are exploring ${controller.currentAisle?.name ?? 'the store'}.';
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = widget.controller;
     return AnimatedBuilder(
       animation: Listenable.merge([controller, controller.basketCapability]),
       builder: (context, _) {
         final storeMap = controller.storeMap;
-        final currentAisle = controller.currentAisle;
-        final currentPosition = controller.currentPosition;
-        final encounteredProducts = currentAisle == null
-            ? const <WalkModeProductPlacement>[]
-            : currentAisle.products
-                .where((placement) => controller.encounteredProductIds.contains(placement.product.id))
-                .toList(growable: false);
+        final aisle = controller.currentAisle;
+        final position = controller.currentPosition;
+
         return Scaffold(
           appBar: AppBar(
             title: const Text('Walk Mode'),
             actions: [
-              IconButton(
-                tooltip: 'Shared basket',
-                onPressed: () => SharedBasketSheet.show(
-                  context,
-                  capability: controller.basketCapability,
-                ),
-                icon: Badge(
-                  isLabelVisible: controller.basketItemCount > 0,
-                  label: Text('${controller.basketItemCount}'),
-                  child: const Icon(Icons.shopping_basket_outlined),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Center(
-                  child: Text('Basket: ${controller.basketItemCount}'),
+              Badge(
+                isLabelVisible: controller.basketItemCount > 0,
+                label: Text('${controller.basketItemCount}'),
+                child: IconButton(
+                  tooltip: 'Shared basket',
+                  onPressed: () => SharedBasketSheet.show(
+                    context,
+                    capability: controller.basketCapability,
+                  ),
+                  icon: const Icon(Icons.shopping_basket_outlined),
                 ),
               ),
+              const SizedBox(width: 8),
             ],
           ),
-          body: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              const Text(
-                'Living Digital Supermarket',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Browse the store spatially to discover products that search may never surface.',
-              ),
-              const SizedBox(height: 24),
-              DropdownButtonFormField<WalkModeType>(
-                initialValue: controller.mode,
-                decoration: const InputDecoration(labelText: 'Walk Mode type'),
-                items: WalkModeType.values
-                    .map(
-                      (mode) => DropdownMenuItem(
-                        value: mode,
-                        child: Text(_modeLabel(mode)),
-                      ),
-                    )
-                    .toList(growable: false),
-                onChanged: (mode) {
-                  if (mode != null) controller.setMode(mode);
-                },
-              ),
-              const SizedBox(height: 16),
-              if (storeMap == null)
-                const Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      'Store spatial data is not loaded yet. Walk Mode will consume the authoritative store layout when available.',
-                    ),
-                  ),
+          body: storeMap == null
+              ? const Center(
+                  child: Text('Store spatial data is not loaded yet.'),
                 )
-              else ...[
-                Text(
-                  'Store ${storeMap.storeId} · layout ${storeMap.layoutVersion}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 12),
-                if (currentAisle != null) ...[
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+              : ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+                  children: [
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Living Digital Supermarket',
+                            style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        Chip(label: Text('Store ${storeMap.storeId}')),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Walk the digital store to make products visible that search may never surface. The AI can assist, but you retain the decision.',
+                    ),
+                    const SizedBox(height: 16),
+                    _ModeSelector(
+                      value: controller.mode,
+                      onChanged: controller.setMode,
+                    ),
+                    const SizedBox(height: 16),
+                    if (aisle == null) ...[
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(18),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(Icons.route_outlined),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Shopping journey',
-                                  style: Theme.of(context).textTheme.titleMedium,
-                                ),
-                              ),
                               Text(
-                                '${controller.currentAisleIndex! + 1}/${storeMap.aisles.length}',
+                                'Where do you want to start?',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: 6),
+                              const Text('Choose a real store area. This is an entry point, not the Walk Mode itself.'),
+                              const SizedBox(height: 14),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: storeMap.aisles
+                                    .map(
+                                      (item) => ActionChip(
+                                        avatar: const Icon(Icons.shelves_outlined, size: 18),
+                                        label: Text(item.name),
+                                        onPressed: () => _beginAisle(item.id),
+                                      ),
+                                    )
+                                    .toList(growable: false),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          LinearProgressIndicator(value: controller.journeyProgress),
-                          const SizedBox(height: 8),
-                          Text(controller.journeyStatus),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-                ...storeMap.aisles.map(
-                  (aisle) => Card(
-                    child: ListTile(
-                      title: Text(aisle.name),
-                      subtitle: Text('${aisle.products.length} products'),
-                      trailing: const Icon(Icons.chevron_right),
-                      selected: controller.currentAisleId == aisle.id,
-                      onTap: () => controller.enterAisle(aisle.id),
-                    ),
-                  ),
-                ),
-                if (currentAisle != null && currentPosition != null) ...[
-                  const SizedBox(height: 16),
-                  WalkModeSpatialView(
-                    aisle: currentAisle,
-                    customerPosition: currentPosition,
-                    visibleProducts: controller.visibleProducts,
-                    onProductTap: (placement) {
-                      if (placement.product.available) {
-                        controller.addToBasket(placement.product.id);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Walk the aisle',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Move through the spatial environment to encounter products naturally.',
-                  ),
-                  const SizedBox(height: 8),
-                  WalkModeSpatialControls(
-                    position: currentPosition,
-                    onMove: controller.setSpatialPosition,
-                  ),
-                ],
-                if (currentAisle != null) ...[
-                  const SizedBox(height: 16),
-                  Text(
-                    currentAisle.name,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    currentPosition == null
-                        ? 'Spatial position: not set'
-                        : 'Spatial position: '
-                            '${currentPosition.x.toStringAsFixed(1)}, '
-                            '${currentPosition.y.toStringAsFixed(1)}, '
-                            '${currentPosition.z.toStringAsFixed(1)}',
-                  ),
-                  const SizedBox(height: 8),
-                  OutlinedButton(
-                    onPressed: () => controller.setSpatialPosition(
-                      const WalkModeSpatialPosition(x: 0, y: 0),
-                    ),
-                    child: const Text('Start aisle'),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${controller.visibleProducts.length} products in current spatial context',
-                  ),
-                  const SizedBox(height: 8),
-                  ...controller.visibleProducts.map(
-                    (placement) => _ProductDiscoveryCard(
-                      placement: placement,
-                      onAdd: placement.product.available
-                          ? () => controller.addToBasket(placement.product.id)
-                          : null,
-                    ),
-                  ),
-                  if (encounteredProducts.isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.visibility_outlined),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Products encountered',
-                                  style: Theme.of(context).textTheme.titleMedium,
-                                ),
-                                const Spacer(),
-                                Text('${encounteredProducts.length}'),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'These products have entered your spatial context during this aisle journey.',
-                            ),
-                            const SizedBox(height: 12),
-                            ...encounteredProducts.map(
-                              (placement) => ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                leading: const Icon(Icons.shopping_bag_outlined),
-                                title: Text(placement.product.name),
-                                subtitle: Text(
-                                  placement.product.available ? 'Available' : 'Unavailable',
-                                ),
-                                trailing: placement.product.available
-                                    ? IconButton(
-                                        tooltip: 'Add encountered product to basket',
-                                        onPressed: () => controller.addToBasket(placement.product.id),
-                                        icon: const Icon(Icons.add_shopping_cart),
-                                      )
-                                    : const Icon(Icons.remove_shopping_cart_outlined),
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                    ),
+                    ] else if (position != null) ...[
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '${aisle.name}  ·  ${controller.currentAisleIndex! + 1}/${storeMap.aisles.length}',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                          Text('${(controller.journeyProgress * 100).round()}% journey'),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      LinearProgressIndicator(value: controller.journeyProgress),
+                      const SizedBox(height: 12),
+                      WalkModeSpatialView(
+                        aisle: aisle,
+                        customerPosition: position,
+                        visibleProducts: controller.visibleProducts,
+                        headingDegrees: controller.headingDegrees,
+                        onLook: controller.rotateView,
+                        onProductTap: (placement) {
+                          if (placement.product.available) {
+                            controller.addToBasket(placement.product.id);
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      Card(
+                        child: ListTile(
+                          leading: Icon(
+                            controller.mode == WalkModeType.aiAssisted
+                                ? Icons.auto_awesome
+                                : Icons.assistant_outlined,
+                          ),
+                          title: Text(
+                            controller.mode == WalkModeType.autopilot
+                                ? 'Autopilot is moving you through the route'
+                                : 'Walk Mode assistant',
+                          ),
+                          subtitle: Text(_assistantMessage()),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      WalkModeSpatialControls(
+                        position: position,
+                        isPaused: controller.isPaused,
+                        onMove: controller.setSpatialPosition,
+                        onLook: controller.rotateView,
+                        onPause: controller.togglePause,
+                        onRecenter: controller.recenterView,
+                        onInteract: controller.visibleProducts.isEmpty
+                            ? null
+                            : () => controller.addToBasket(
+                                  controller.visibleProducts.first.product.id,
+                                ),
+                      ),
+                      const SizedBox(height: 16),
+                      if (controller.visibleProducts.isNotEmpty) ...[
+                        Text(
+                          'Products in your current context',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        ...controller.visibleProducts.map(
+                          (placement) => _ProductCard(
+                            placement: placement,
+                            onAdd: placement.product.available
+                                ? () => controller.addToBasket(placement.product.id)
+                                : null,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 8),
+                      TextButton.icon(
+                        onPressed: controller.nextAisle == null
+                            ? null
+                            : () => _beginAisle(controller.nextAisle!.id),
+                        icon: const Icon(Icons.arrow_forward_rounded),
+                        label: Text(
+                          controller.nextAisle == null
+                              ? 'Final aisle'
+                              : 'Continue to ${controller.nextAisle!.name}',
+                        ),
+                      ),
+                    ],
                   ],
-                ],
-              ],
-              const SizedBox(height: 16),
-              Text(
-                'Current destination: ${controller.currentDestination ?? 'Not selected'}',
-              ),
-              const SizedBox(height: 8),
-              OutlinedButton(
-                onPressed: () => controller.setDestination('Store entrance'),
-                child: const Text('Set destination'),
-              ),
-            ],
-          ),
+                ),
         );
       },
     );
   }
+}
 
-  static String _modeLabel(WalkModeType mode) {
-    switch (mode) {
-      case WalkModeType.manual:
-        return 'Manual';
-      case WalkModeType.aiAssisted:
-        return 'AI Assisted';
-      case WalkModeType.autopilot:
-        return 'Autopilot';
-    }
+class _ModeSelector extends StatelessWidget {
+  const _ModeSelector({required this.value, required this.onChanged});
+
+  final WalkModeType value;
+  final ValueChanged<WalkModeType> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedButton<WalkModeType>(
+      segments: const [
+        ButtonSegment(
+          value: WalkModeType.manual,
+          icon: Icon(Icons.pan_tool_outlined),
+          label: Text('Manual'),
+        ),
+        ButtonSegment(
+          value: WalkModeType.aiAssisted,
+          icon: Icon(Icons.auto_awesome),
+          label: Text('AI Assisted'),
+        ),
+        ButtonSegment(
+          value: WalkModeType.autopilot,
+          icon: Icon(Icons.navigation_rounded),
+          label: Text('Autopilot'),
+        ),
+      ],
+      selected: {value},
+      onSelectionChanged: (selection) => onChanged(selection.first),
+    );
   }
 }
 
-class _ProductDiscoveryCard extends StatelessWidget {
-  const _ProductDiscoveryCard({required this.placement, this.onAdd});
+class _ProductCard extends StatelessWidget {
+  const _ProductCard({required this.placement, this.onAdd});
 
   final WalkModeProductPlacement placement;
   final VoidCallback? onAdd;
@@ -305,18 +305,14 @@ class _ProductDiscoveryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = placement.product;
-    final asset = placement.asset;
     return Card(
       child: ListTile(
+        leading: const Icon(Icons.inventory_2_outlined),
         title: Text(product.name),
         subtitle: Text(
           '${product.currency} ${(product.amountMinor / 100).toStringAsFixed(2)} · '
-          '${product.available ? 'Available' : 'Unavailable'}\n'
-          'Asset: ${asset.assetId} · fidelity: ${asset.fidelity.name}\n'
-          '3D: ${asset.model3dUri ?? 'Not available'}\n'
-          'AR: ${asset.arAssetUri ?? 'Not available'}',
+          '${product.available ? 'Available' : 'Unavailable'}',
         ),
-        isThreeLine: true,
         trailing: onAdd == null
             ? const Icon(Icons.remove_shopping_cart_outlined)
             : IconButton(
