@@ -202,76 +202,100 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
           ),
           SizedBox(
             height: 500,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                threeJs.build(),
-                if (!_ready)
-                  const ColoredBox(
-                    color: Color(0xffdfe9e3),
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                Positioned(
-                  top: 14,
-                  left: 14,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.55),
-                      borderRadius: BorderRadius.circular(20),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragUpdate: widget.onLook == null
+                  ? null
+                  : (details) => widget.onLook!(details.delta.dx * 0.25),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  threeJs.build(),
+                  if (!_ready)
+                    const ColoredBox(
+                      color: Color(0xffdfe9e3),
+                      child: Center(child: CircularProgressIndicator()),
                     ),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                      child: Text(
-                        'LIVING DIGITAL SUPERMARKET  ·  3D',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.4,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 14,
-                  top: 14,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.55),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                      child: Text(
-                        'LOOK ${widget.headingDegrees.round()}°',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Center(
-                  child: IgnorePointer(
-                    child: Container(
-                      width: 18,
-                      height: 18,
+                  Positioned(
+                    top: 14,
+                    left: 14,
+                    child: DecoratedBox(
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white70),
+                        color: Colors.black.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                        child: Text(
+                          'LIVING DIGITAL SUPERMARKET  ·  3D',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: 14,
-                  bottom: 14,
-                  child: _ControlHint(onLook: widget.onLook),
-                ),
-              ],
+                  Positioned(
+                    right: 14,
+                    top: 14,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                        child: Text(
+                          'LOOK ${widget.headingDegrees.round()}°',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: IgnorePointer(
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white70),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (widget.visibleProducts.isNotEmpty)
+                    Positioned(
+                      right: 14,
+                      bottom: 14,
+                      left: 14,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: widget.visibleProducts.take(4).map((placement) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: ActionChip(
+                                avatar: const Icon(Icons.visibility_outlined, size: 17),
+                                label: Text(placement.product.name),
+                                onPressed: widget.onProductTap == null
+                                    ? null
+                                    : () => widget.onProductTap!(placement),
+                              ),
+                            );
+                          }).toList(growable: false),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
           Padding(
@@ -298,40 +322,5 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
   void dispose() {
     threeJs.dispose();
     super.dispose();
-  }
-}
-
-class _ControlHint extends StatelessWidget {
-  const _ControlHint({this.onLook});
-
-  final ValueChanged<double>? onLook;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            tooltip: 'Look left',
-            onPressed: onLook == null ? null : () => onLook!(-12),
-            icon: const Icon(Icons.keyboard_double_arrow_left, color: Colors.white),
-          ),
-          const Text(
-            'LOOK',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-          ),
-          IconButton(
-            tooltip: 'Look right',
-            onPressed: onLook == null ? null : () => onLook!(12),
-            icon: const Icon(Icons.keyboard_double_arrow_right, color: Colors.white),
-          ),
-        ],
-      ),
-    );
   }
 }
