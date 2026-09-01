@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.2.2
+  three_js: ^0.3.0
 
 dev_dependencies:
   flutter_test:
