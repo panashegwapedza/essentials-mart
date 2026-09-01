@@ -1,225 +1,364 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../data/walk_mode_models.dart';
 
-/// A renderer-neutral model presented as a simple 2D store/aisle view.
+/// Immersive Walk Mode viewport.
 ///
-/// This is intentionally not a fake 3D/AR renderer. It makes the spatial
-/// contract visible to the customer while leaving richer renderers free to
-/// consume the same positions later.
+/// This is deliberately a perspective/first-person presentation rather than
+/// a top-down 2D map. The spatial contract remains renderer-neutral so a true
+/// 3D/AR renderer can replace this presentation without changing product,
+/// location, discovery or basket boundaries.
 class WalkModeSpatialView extends StatelessWidget {
   const WalkModeSpatialView({
     super.key,
     required this.aisle,
     required this.customerPosition,
     required this.visibleProducts,
+    this.headingDegrees = 0,
     this.onProductTap,
+    this.onLook,
   });
 
   final WalkModeAisle aisle;
   final WalkModeSpatialPosition customerPosition;
   final List<WalkModeProductPlacement> visibleProducts;
+  final double headingDegrees;
   final ValueChanged<WalkModeProductPlacement>? onProductTap;
+  final ValueChanged<double>? onLook;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(aisle.name, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 4),
-            const Text('Spatial view · products become visible as you move'),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 280,
-              width: double.infinity,
-              child: CustomPaint(
-                painter: _WalkModeSpatialPainter(
-                  aisle: aisle,
-                  customerPosition: customerPosition,
-                  visibleProducts: visibleProducts,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+            child: Row(
+              children: [
+                const Icon(Icons.view_in_ar_outlined),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    aisle.name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
-                child: _SpatialTapLayer(
-                  aisle: aisle,
-                  customerPosition: customerPosition,
-                  visibleProducts: visibleProducts,
-                  onProductTap: onProductTap,
-                ),
+                Text('${visibleProducts.length} in view'),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 430,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapDown: onProductTap == null
+                  ? null
+                  : (details) => _selectProduct(details.localPosition, const Size(1, 1)),
+              onHorizontalDragUpdate: onLook == null
+                  ? null
+                  : (details) => onLook!(details.delta.dx * 0.25),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final size = constraints.biggest;
+                  return CustomPaint(
+                    painter: _PerspectiveAislePainter(
+                      aisle: aisle,
+                      customerPosition: customerPosition,
+                      visibleProducts: visibleProducts,
+                      headingDegrees: headingDegrees,
+                    ),
+                    child: _ProductHitLayer(
+                      size: size,
+                      visibleProducts: visibleProducts,
+                      customerPosition: customerPosition,
+                      headingDegrees: headingDegrees,
+                      onProductTap: onProductTap,
+                    ),
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 12,
-              runSpacing: 4,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+            child: Row(
               children: [
-                const _LegendItem(label: 'You', icon: Icons.person_pin_circle),
-                const _LegendItem(label: 'Shelf', icon: Icons.shelves),
-                _LegendItem(
-                  label: '${visibleProducts.length} visible',
-                  icon: Icons.visibility,
+                const Icon(Icons.explore_outlined, size: 18),
+                const SizedBox(width: 6),
+                Text('Heading ${headingDegrees.toStringAsFixed(0)}°'),
+                const Spacer(),
+                Text(
+                  'Position ${customerPosition.x.toStringAsFixed(1)}, '
+                  '${customerPosition.y.toStringAsFixed(1)}',
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+
+  void _selectProduct(Offset localPosition, Size _) {
+    // Product selection is implemented by the hit layer below. This method
+    // exists only to keep the gesture boundary explicit in the viewport.
+  }
 }
 
-class _SpatialTapLayer extends StatelessWidget {
-  const _SpatialTapLayer({
-    required this.aisle,
-    required this.customerPosition,
+class _ProductHitLayer extends StatelessWidget {
+  const _ProductHitLayer({
+    required this.size,
     required this.visibleProducts,
+    required this.customerPosition,
+    required this.headingDegrees,
     this.onProductTap,
   });
 
-  final WalkModeAisle aisle;
-  final WalkModeSpatialPosition customerPosition;
+  final Size size;
   final List<WalkModeProductPlacement> visibleProducts;
+  final WalkModeSpatialPosition customerPosition;
+  final double headingDegrees;
   final ValueChanged<WalkModeProductPlacement>? onProductTap;
 
   @override
   Widget build(BuildContext context) {
     if (onProductTap == null) return const SizedBox.expand();
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final transform = _SpatialTransform(constraints.biggest);
-        return Stack(
-          children: visibleProducts.map((placement) {
-            final point = transform.toOffset(placement.position);
-            return Positioned(
-              left: point.dx - 20,
-              top: point.dy - 20,
-              width: 40,
-              height: 40,
-              child: Semantics(
-                button: true,
-                label: 'Discover ${placement.product.name}',
-                child: GestureDetector(
-                  onTap: () => onProductTap!(placement),
-                  child: const Icon(Icons.touch_app_outlined, size: 28),
+    final projector = _PerspectiveProjector(size, headingDegrees);
+    return Stack(
+      children: visibleProducts.map((placement) {
+        final point = projector.project(placement.position, customerPosition);
+        if (point == null) return const SizedBox.shrink();
+        return Positioned(
+          left: point.dx - 30,
+          top: point.dy - 30,
+          width: 60,
+          height: 60,
+          child: Semantics(
+            button: true,
+            label: 'Discover ${placement.product.name}',
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () => onProductTap!(placement),
+                child: Tooltip(
+                  message: placement.product.name,
+                  child: const Icon(Icons.add_circle_outline, size: 30),
                 ),
               ),
-            );
-          }).toList(growable: false),
+            ),
+          ),
         );
-      },
+      }).toList(growable: false),
     );
   }
 }
 
-class _WalkModeSpatialPainter extends CustomPainter {
-  const _WalkModeSpatialPainter({
+class _PerspectiveAislePainter extends CustomPainter {
+  const _PerspectiveAislePainter({
     required this.aisle,
     required this.customerPosition,
     required this.visibleProducts,
+    required this.headingDegrees,
   });
 
   final WalkModeAisle aisle;
   final WalkModeSpatialPosition customerPosition;
   final List<WalkModeProductPlacement> visibleProducts;
+  final double headingDegrees;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final transform = _SpatialTransform(size);
-    final border = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-    final shelf = Paint()
-      ..style = PaintingStyle.fill
-      ..color = Colors.brown.withValues(alpha: 0.16);
-    final visible = Paint()
-      ..style = PaintingStyle.fill
-      ..color = Colors.green;
-    final customer = Paint()
-      ..style = PaintingStyle.fill
-      ..color = Colors.blue;
+    final projector = _PerspectiveProjector(size, headingDegrees);
+    final horizon = size.height * 0.34;
+    final vanishing = Offset(size.width / 2, horizon);
 
-    final floor = RRect.fromRectAndRadius(
-      Rect.fromLTWH(8, 8, size.width - 16, size.height - 16),
-      const Radius.circular(16),
-    );
-    canvas.drawRRect(floor, border);
+    final sky = Paint()..color = const Color(0xffeef3ef);
+    final floor = Paint()..color = const Color(0xffd9ddd9);
+    final shelf = Paint()..color = const Color(0xff8c918d);
+    final shelfEdge = Paint()
+      ..color = const Color(0xff5f6461)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    final aisleGlow = Paint()..color = const Color(0xfff7faf7);
+    final productPaint = Paint()..color = const Color(0xff2e7d32);
+
+    canvas.drawRect(Offset.zero & size, sky);
+
+    final floorPath = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(size.width, size.height)
+      ..lineTo(size.width * 0.63, horizon)
+      ..lineTo(size.width * 0.37, horizon)
+      ..close();
+    canvas.drawPath(floorPath, floor);
+
+    final aislePath = Path()
+      ..moveTo(size.width * 0.25, size.height)
+      ..lineTo(size.width * 0.75, size.height)
+      ..lineTo(size.width * 0.57, horizon)
+      ..lineTo(size.width * 0.43, horizon)
+      ..close();
+    canvas.drawPath(aislePath, aisleGlow);
+
+    _drawShelf(canvas, size, horizon, projector, -1, shelf, shelfEdge);
+    _drawShelf(canvas, size, horizon, projector, 1, shelf, shelfEdge);
 
     for (final placement in aisle.products) {
-      final point = transform.toOffset(placement.position);
-      final shelfRect = Rect.fromCenter(
-        center: point,
-        width: 48,
-        height: 28,
-      );
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(shelfRect, const Radius.circular(6)),
-        shelf,
-      );
+      final point = projector.project(placement.position, customerPosition);
+      if (point == null) continue;
+      final depth = projector.depth(placement.position, customerPosition);
+      final radius = (14 / depth).clamp(4.0, 12.0);
+      canvas.drawCircle(point, radius, productPaint);
     }
 
-    for (final placement in visibleProducts) {
-      final point = transform.toOffset(placement.position);
-      canvas.drawCircle(point, 7, visible);
+    final route = projector.routeToNearest(visibleProducts, customerPosition);
+    if (route != null) {
+      final routePaint = Paint()
+        ..color = const Color(0xff2e7d32).withValues(alpha: 0.45)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3;
+      final path = Path()..moveTo(size.width / 2, size.height * 0.91);
+      path.lineTo(route.dx, route.dy);
+      canvas.drawPath(path, routePaint);
     }
 
-    final customerPoint = transform.toOffset(customerPosition);
-    canvas.drawCircle(customerPoint, 11, customer);
-    canvas.drawCircle(customerPoint, 16, border);
+    _drawHud(canvas, size, vanishing);
+  }
 
-    final textPainter = TextPainter(
+  void _drawShelf(
+    Canvas canvas,
+    Size size,
+    double horizon,
+    _PerspectiveProjector projector,
+    int side,
+    Paint shelf,
+    Paint edge,
+  ) {
+    final nearX = side < 0 ? size.width * 0.04 : size.width * 0.96;
+    final farX = side < 0 ? size.width * 0.37 : size.width * 0.63;
+    final topNear = size.height * 0.42;
+    final bottomNear = size.height * 0.91;
+    final topFar = horizon + 12;
+    final bottomFar = horizon + 70;
+
+    final path = Path()
+      ..moveTo(nearX, topNear)
+      ..lineTo(nearX, bottomNear)
+      ..lineTo(farX, bottomFar)
+      ..lineTo(farX, topFar)
+      ..close();
+    canvas.drawPath(path, shelf);
+    canvas.drawPath(path, edge);
+
+    for (var i = 1; i < 5; i++) {
+      final t = i / 5;
+      final yNear = topNear + (bottomNear - topNear) * t;
+      final yFar = topFar + (bottomFar - topFar) * t;
+      canvas.drawLine(
+        Offset(nearX, yNear),
+        Offset(farX, yFar),
+        edge,
+      );
+    }
+  }
+
+  void _drawHud(Canvas canvas, Size size, Offset vanishing) {
+    final hud = Paint()..color = Colors.black.withValues(alpha: 0.42);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(14, 14, 190, 44),
+        const Radius.circular(22),
+      ),
+      hud,
+    );
+    final text = TextPainter(
       text: const TextSpan(
-        text: 'Spatial context',
-        style: TextStyle(fontSize: 12),
+        text: '  LOOK AROUND  ·  DISCOVER',
+        style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    textPainter.paint(canvas, const Offset(16, 16));
+    text.paint(canvas, const Offset(25, 29));
+
+    final reticle = Paint()
+      ..color = Colors.white.withValues(alpha: 0.8)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    canvas.drawCircle(vanishing, 8, reticle);
+    canvas.drawLine(
+      Offset(vanishing.dx - 14, vanishing.dy),
+      Offset(vanishing.dx + 14, vanishing.dy),
+      reticle,
+    );
+    canvas.drawLine(
+      Offset(vanishing.dx, vanishing.dy - 14),
+      Offset(vanishing.dx, vanishing.dy + 14),
+      reticle,
+    );
   }
 
   @override
-  bool shouldRepaint(covariant _WalkModeSpatialPainter oldDelegate) {
+  bool shouldRepaint(covariant _PerspectiveAislePainter oldDelegate) {
     return oldDelegate.aisle != aisle ||
         oldDelegate.customerPosition != customerPosition ||
-        oldDelegate.visibleProducts != visibleProducts;
+        oldDelegate.visibleProducts != visibleProducts ||
+        oldDelegate.headingDegrees != headingDegrees;
   }
 }
 
-class _SpatialTransform {
-  const _SpatialTransform(this.size);
+class _PerspectiveProjector {
+  const _PerspectiveProjector(this.size, this.headingDegrees);
 
   final Size size;
+  final double headingDegrees;
 
-  Offset toOffset(WalkModeSpatialPosition position) {
-    const padding = 28.0;
-    const worldScale = 38.0;
-    final maxX = size.width - padding;
-    final maxY = size.height - padding;
-    return Offset(
-      (padding + position.x * worldScale).clamp(padding, maxX),
-      (size.height - padding - position.y * worldScale).clamp(padding, maxY),
-    );
+  double depth(WalkModeSpatialPosition point, WalkModeSpatialPosition camera) {
+    final dx = point.x - camera.x;
+    final dy = point.y - camera.y;
+    final angle = -headingDegrees * math.pi / 180;
+    final forward = dx * math.sin(angle) + dy * math.cos(angle);
+    return math.max(0.45, forward + 1.6);
   }
-}
 
-class _LegendItem extends StatelessWidget {
-  const _LegendItem({required this.label, required this.icon});
+  Offset? project(
+    WalkModeSpatialPosition point,
+    WalkModeSpatialPosition camera,
+  ) {
+    final dx = point.x - camera.x;
+    final dy = point.y - camera.y;
+    final angle = -headingDegrees * math.pi / 180;
+    final forward = dx * math.sin(angle) + dy * math.cos(angle);
+    final lateral = dx * math.cos(angle) - dy * math.sin(angle);
+    if (forward < -0.7 || forward > 12) return null;
 
-  final String label;
-  final IconData icon;
+    final d = math.max(0.55, forward + 1.7);
+    final scale = 155 / d;
+    final x = size.width / 2 + lateral * scale;
+    final y = size.height * 0.34 + 175 / d;
+    if (x < -60 || x > size.width + 60 || y < -60 || y > size.height + 60) {
+      return null;
+    }
+    return Offset(x, y);
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 16),
-        const SizedBox(width: 4),
-        Text(label),
-      ],
-    );
+  Offset? routeToNearest(
+    List<WalkModeProductPlacement> products,
+    WalkModeSpatialPosition camera,
+  ) {
+    Offset? best;
+    var bestDepth = double.infinity;
+    for (final placement in products) {
+      final d = depth(placement.position, camera);
+      if (d < bestDepth) {
+        bestDepth = d;
+        best = project(placement.position, camera);
+      }
+    }
+    return best;
   }
 }
