@@ -13,6 +13,7 @@ void main() {
         home: Scaffold(
           body: WalkModeSpatialControls(
             position: const WalkModeSpatialPosition(x: 1, y: 2, z: 3),
+            mode: WalkModeType.manual,
             onMove: (position) => movedTo = position,
           ),
         ),
