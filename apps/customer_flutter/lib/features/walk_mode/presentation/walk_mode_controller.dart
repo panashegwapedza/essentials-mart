@@ -77,10 +77,7 @@ class WalkModeController extends ChangeNotifier {
     final aisle = currentAisle;
     final position = currentPosition;
     if (aisle == null || position == null) return const [];
-    return _spatialDiscovery.discover(
-      aisle: aisle,
-      customerPosition: position,
-    );
+    return _spatialDiscovery.discover(aisle: aisle, customerPosition: position);
   }
 
   void setStoreMap(WalkModeStoreMap value) {
@@ -117,7 +114,18 @@ class WalkModeController extends ChangeNotifier {
 
   void setSpatialPosition(WalkModeSpatialPosition position) {
     if (currentPosition == position) return;
-    currentPosition = position;
+
+    // The client may express movement freely, but it cannot leave the
+    // bounded spatial session. These are client-side safety bounds only;
+    // authoritative store geometry remains a backend concern (ADR-014 §6).
+    final bounded = WalkModeSpatialPosition(
+      x: position.x.clamp(-2.0, 4.0).toDouble(),
+      y: position.y.clamp(0.0, 6.0).toDouble(),
+      z: position.z,
+    );
+
+    if (currentPosition == bounded) return;
+    currentPosition = bounded;
     _recordCurrentEncounters();
     notifyListeners();
   }
