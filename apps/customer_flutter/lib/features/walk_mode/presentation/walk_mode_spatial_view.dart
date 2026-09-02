@@ -7,11 +7,10 @@ import '../data/walk_mode_models.dart';
 
 /// First-person Living Digital Supermarket viewport.
 ///
-/// Unlike the previous aisle-only prototype, this renderer builds the whole
-/// store around the shopper: entrance, checkout bank, perimeter departments,
-/// back-of-house and a regular gondola aisle grid. The camera is simply placed
-/// inside the selected aisle so Walk Mode still feels like walking through a
-/// real supermarket rather than navigating an abstract 2D map.
+/// The renderer builds the whole store around the shopper: entrance, checkout
+/// bank, perimeter departments, back-of-house and a regular gondola aisle grid.
+/// The camera is placed inside the selected aisle, so the shopper experiences a
+/// real supermarket rather than an abstract aisle canvas.
 class WalkModeSpatialView extends StatefulWidget {
   const WalkModeSpatialView({
     super.key,
@@ -57,10 +56,15 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
   void didUpdateWidget(covariant WalkModeSpatialView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!_ready) return;
+
+    if (oldWidget.aisle.id != widget.aisle.id) {
+      _removeProductMeshes();
+      _buildProducts();
+    }
+
     if (oldWidget.customerPosition != widget.customerPosition ||
         oldWidget.headingDegrees != widget.headingDegrees ||
-        oldWidget.aisle.id != widget.aisle.id ||
-        oldWidget.storeMap.layoutVersion != widget.storeMap.layoutVersion) {
+        oldWidget.aisle.id != widget.aisle.id) {
       _syncCamera();
     }
   }
@@ -198,8 +202,7 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
   }
 
   void _buildGondolaAisles() {
-    for (var index = 0; index < widget.storeMap.aisles.length; index++) {
-      final aisle = widget.storeMap.aisles[index];
+    for (final aisle in widget.storeMap.aisles) {
       final x = aisle.x;
       final z = aisle.z;
       final length = aisle.length;
@@ -226,43 +229,50 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
       final sign = _box(2.2, 0.08, 0.38, 0xfff4f6f3, shininess: 24);
       sign.position.setValues(x, 4.55, z + length / 2 - 0.45);
       threeJs.scene.add(sign);
+    }
+  }
 
-      if (index < widget.storeMap.aisles.length - 1) {
-        final aisleFloor = _box(2.0, 0.02, length - 0.25, 0xffd9dedb);
-        aisleFloor.position.setValues(x, 0.01, z);
-        threeJs.scene.add(aisleFloor);
-      }
+  void _removeProductMeshes() {
+    final removable = <three.Object3D>[];
+    for (final child in threeJs.scene.children) {
+      if (child.userData['walkProduct'] == true) removable.add(child);
+    }
+    for (final child in removable) {
+      threeJs.scene.remove(child);
     }
   }
 
   void _buildProducts() {
-    for (var index = 0; index < widget.aisle.products.length; index++) {
-      final placement = widget.aisle.products[index];
-      final p = placement.position;
-      final side = index.isEven ? -1.0 : 1.0;
-      final shelfX = widget.aisle.x + side * 1.32;
-      final z = widget.aisle.z + 10.4 - p.y * 3.75 + p.z;
-      final shelfLevel = index % 5;
-      final xOffset = (p.x - 1.5) * 0.18;
-      final highlighted = widget.visibleProducts.any(
-        (candidate) => candidate.product.id == placement.product.id,
-      );
+    for (final aisle in widget.storeMap.aisles) {
+      for (var index = 0; index < aisle.products.length; index++) {
+        final placement = aisle.products[index];
+        final p = placement.position;
+        final side = index.isEven ? -1.0 : 1.0;
+        final shelfX = aisle.x + side * 1.32;
+        final z = aisle.z + 10.4 - p.y * 3.75 + p.z;
+        final shelfLevel = index % 5;
+        final xOffset = (p.x - 1.5) * 0.18;
+        final highlighted = aisle.id == widget.aisle.id &&
+            widget.visibleProducts.any((candidate) => candidate.product.id == placement.product.id);
 
-      final product = _box(
-        highlighted ? 0.66 : 0.5,
-        highlighted ? 0.72 : 0.58,
-        highlighted ? 0.42 : 0.34,
-        highlighted ? 0xff1e9b55 : _productColor(index),
-        shininess: highlighted ? 36 : 10,
-      );
-      product.position.setValues(shelfX + xOffset, 0.82 + shelfLevel * 0.72, z);
-      product.userData['productId'] = placement.product.id;
-      threeJs.scene.add(product);
+        final product = _box(
+          highlighted ? 0.66 : 0.5,
+          highlighted ? 0.72 : 0.58,
+          highlighted ? 0.42 : 0.34,
+          highlighted ? 0xff1e9b55 : _productColor(index),
+          shininess: highlighted ? 36 : 10,
+        );
+        product.position.setValues(shelfX + xOffset, 0.82 + shelfLevel * 0.72, z);
+        product.userData['productId'] = placement.product.id;
+        product.userData['walkProduct'] = true;
+        threeJs.scene.add(product);
 
-      if (highlighted) {
-        final marker = _box(0.86, 0.045, 0.045, 0xffd9ffe7, shininess: 50);
-        marker.position.setValues(shelfX + xOffset, 0.49 + shelfLevel * 0.72, z - side * 0.28);
-        threeJs.scene.add(marker);
+        if (highlighted) {
+          final marker = _box(0.86, 0.045, 0.045, 0xffd9ffe7, shininess: 50);
+          marker.position.setValues(shelfX + xOffset, 0.49 + shelfLevel * 0.72, z - side * 0.28);
+          marker.userData['walkProduct'] = true;
+          threeJs.scene.add(marker);
+        }
       }
     }
   }
