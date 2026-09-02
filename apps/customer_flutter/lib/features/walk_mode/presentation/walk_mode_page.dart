@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
@@ -160,11 +161,7 @@ class _WalkModePageState extends State<WalkModePage> {
                               padding: const EdgeInsets.fromLTRB(12, 0, 12, 18),
                               child: Column(
                                 children: [
-                                  _StoreLayoutCard(
-                                    storeMap: storeMap,
-                                    currentAisleId: aisle.id,
-                                    currentPosition: position,
-                                  ),
+                                  _StoreLayoutCard(storeMap: storeMap, currentAisleId: aisle.id, currentPosition: position),
                                   const SizedBox(height: 10),
                                   SizedBox(
                                     height: 540,
@@ -323,11 +320,7 @@ class _StoreLayoutCard extends StatelessWidget {
               height: 205,
               width: double.infinity,
               child: CustomPaint(
-                painter: _StoreLayoutPainter(
-                  storeMap: storeMap,
-                  currentAisleId: currentAisleId,
-                  currentPosition: currentPosition,
-                ),
+                painter: _StoreLayoutPainter(storeMap: storeMap, currentAisleId: currentAisleId, currentPosition: currentPosition),
               ),
             ),
             const SizedBox(height: 5),
@@ -357,8 +350,7 @@ class _StoreLayoutPainter extends CustomPainter {
       return Rect.fromLTWH(topLeft.dx, topLeft.dy, w * scale, d * scale);
     }
 
-    final shell = Paint()..color = const Color(0xffeef2ef);
-    canvas.drawRect(rect(0, 0, storeMap.storeWidth, storeMap.storeDepth), shell);
+    canvas.drawRect(rect(0, 0, storeMap.storeWidth, storeMap.storeDepth), Paint()..color = const Color(0xffeef2ef));
 
     final aislePaint = Paint()..color = const Color(0xff737b75);
     final currentPaint = Paint()..color = const Color(0xff1e9b55);
@@ -371,12 +363,20 @@ class _StoreLayoutPainter extends CustomPainter {
     }
 
     for (final section in storeMap.sections) {
-      final paint = Paint()..color = _sectionColor(section.kind);
-      canvas.drawRRect(RRect.fromRectAndRadius(rect(section.x, section.z, section.width, section.depth), const Radius.circular(4)), paint);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect(section.x, section.z, section.width, section.depth), const Radius.circular(4)),
+        Paint()..color = _sectionColor(section.kind),
+      );
     }
 
     if (currentAisleId != null && currentPosition != null) {
-      final aisle = storeMap.aisles.where((item) => item.id == currentAisleId).firstOrNull;
+      WalkModeAisle? aisle;
+      for (final candidate in storeMap.aisles) {
+        if (candidate.id == currentAisleId) {
+          aisle = candidate;
+          break;
+        }
+      }
       if (aisle != null) {
         final shopperZ = aisle.z + 10.4 - currentPosition!.y * 3.75;
         final shopperX = aisle.x + (currentPosition!.x - 2.0) * .55;
