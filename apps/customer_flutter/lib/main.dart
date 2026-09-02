@@ -34,11 +34,115 @@ void main() {
   });
 }
 
+/// Development fixture for the real supermarket-shaped Walk Mode contract.
+///
+/// This is intentionally a store layout, not a list of three abstract zones:
+/// perimeter departments, a checkout/entrance bank, back-of-house space and
+/// parallel gondola aisles are represented separately. When the Store/Layout
+/// backend is introduced, it should populate this same contract.
 WalkModeStoreMap _buildDevelopmentStoreMap(List<Product> products) {
   const aisleDefinitions = [
-    ('fresh', 'Fresh & Chilled'),
-    ('pantry', 'Pantry'),
-    ('household', 'Household & Personal Care'),
+    ('a01', 'Breakfast & Cereals', -10.5),
+    ('a02', 'Tea, Coffee & Spreads', -7.5),
+    ('a03', 'Rice, Pasta & Grains', -4.5),
+    ('a04', 'Canned & Cooking', -1.5),
+    ('a05', 'Snacks & Biscuits', 1.5),
+    ('a06', 'Beverages', 4.5),
+    ('a07', 'Household Cleaning', 7.5),
+    ('a08', 'Personal Care & Family', 10.5),
+  ];
+
+  const sections = <WalkModeStoreSection>[
+    WalkModeStoreSection(
+      id: 'entrance',
+      name: 'Main Entrance',
+      kind: WalkModeStoreSectionKind.entrance,
+      x: 0,
+      z: 19.5,
+      width: 10,
+      depth: 3,
+    ),
+    WalkModeStoreSection(
+      id: 'checkout',
+      name: 'Checkout',
+      kind: WalkModeStoreSectionKind.checkout,
+      x: 0,
+      z: 15.5,
+      width: 28,
+      depth: 3.5,
+    ),
+    WalkModeStoreSection(
+      id: 'customer-service',
+      name: 'Customer Service',
+      kind: WalkModeStoreSectionKind.service,
+      x: -14.0,
+      z: 15.5,
+      width: 4,
+      depth: 3.5,
+    ),
+    WalkModeStoreSection(
+      id: 'produce',
+      name: 'Fresh Produce',
+      kind: WalkModeStoreSectionKind.produce,
+      x: -13.5,
+      z: 8.5,
+      width: 6,
+      depth: 8,
+    ),
+    WalkModeStoreSection(
+      id: 'bakery',
+      name: 'Bakery',
+      kind: WalkModeStoreSectionKind.bakery,
+      x: 13.5,
+      z: 8.5,
+      width: 6,
+      depth: 8,
+    ),
+    WalkModeStoreSection(
+      id: 'deli',
+      name: 'Deli & Ready Meals',
+      kind: WalkModeStoreSectionKind.deli,
+      x: -13.5,
+      z: -1.5,
+      width: 6,
+      depth: 6,
+    ),
+    WalkModeStoreSection(
+      id: 'meat',
+      name: 'Fresh Meat',
+      kind: WalkModeStoreSectionKind.meat,
+      x: 13.5,
+      z: -1.5,
+      width: 6,
+      depth: 6,
+    ),
+    WalkModeStoreSection(
+      id: 'dairy',
+      name: 'Dairy & Chilled',
+      kind: WalkModeStoreSectionKind.dairy,
+      x: -13.5,
+      z: -10.0,
+      width: 6,
+      depth: 6,
+    ),
+    WalkModeStoreSection(
+      id: 'frozen',
+      name: 'Frozen Foods',
+      kind: WalkModeStoreSectionKind.frozen,
+      x: 13.5,
+      z: -10.0,
+      width: 6,
+      depth: 6,
+    ),
+    WalkModeStoreSection(
+      id: 'backroom',
+      name: 'Receiving & Back Stock',
+      kind: WalkModeStoreSectionKind.other,
+      x: 0,
+      z: -19.0,
+      width: 28,
+      depth: 3,
+    ),
   ];
 
   final placements = products.asMap().entries.map((entry) {
@@ -50,13 +154,13 @@ WalkModeStoreMap _buildDevelopmentStoreMap(List<Product> products) {
       placement: WalkModeProductPlacement(
         product: product,
         position: WalkModeSpatialPosition(
-          x: (index % 3) * 2.0,
-          y: (index ~/ 3) * 1.5,
+          x: (index % 4).toDouble(),
+          y: ((index ~/ 4) % 6).toDouble(),
         ),
         asset: WalkModeProductAsset(
           assetId: 'dev-${product.id}',
           productId: product.id,
-          version: 'development-1',
+          version: 'development-2',
           fidelity: WalkModeAssetFidelity.unavailable,
         ),
       ),
@@ -70,12 +174,18 @@ WalkModeStoreMap _buildDevelopmentStoreMap(List<Product> products) {
 
   return WalkModeStoreMap(
     storeId: 'development-store',
-    layoutVersion: 'development-1',
+    layoutVersion: 'development-2',
+    sections: sections,
+    storeWidth: 34,
+    storeDepth: 42,
     aisles: aisleDefinitions
         .map(
           (definition) => WalkModeAisle(
             id: definition.$1,
             name: definition.$2,
+            x: definition.$3,
+            z: -1.5,
+            length: 25,
             products: List.unmodifiable(grouped[definition.$1] ?? const []),
           ),
         )
