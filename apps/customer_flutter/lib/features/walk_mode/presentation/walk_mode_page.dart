@@ -57,9 +57,7 @@ class _WalkModePageState extends State<WalkModePage> {
       final next = controller.nextAisle;
       if (next != null && controller.currentPosition!.y >= 6.0) {
         controller.enterAisle(next.id);
-        controller.setSpatialPosition(
-          const WalkModeSpatialPosition(x: 0, y: 0),
-        );
+        controller.setSpatialPosition(const WalkModeSpatialPosition(x: 0, y: 0));
       }
     });
   }
@@ -106,10 +104,7 @@ class _WalkModePageState extends State<WalkModePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Walk Mode'),
-                Text(
-                  'Living Digital Supermarket',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-                ),
+                Text('Living Digital Supermarket', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
               ],
             ),
             actions: [
@@ -118,10 +113,7 @@ class _WalkModePageState extends State<WalkModePage> {
                 label: Text('${controller.basketItemCount}'),
                 child: IconButton(
                   tooltip: 'Shared basket',
-                  onPressed: () => SharedBasketSheet.show(
-                    context,
-                    capability: controller.basketCapability,
-                  ),
+                  onPressed: () => SharedBasketSheet.show(context, capability: controller.basketCapability),
                   icon: const Icon(Icons.shopping_basket_outlined),
                 ),
               ),
@@ -131,10 +123,7 @@ class _WalkModePageState extends State<WalkModePage> {
           body: storeMap == null
               ? const Center(child: Text('Store spatial data is not loaded yet.'))
               : aisle == null || position == null
-                  ? _AisleEntry(
-                      aisles: storeMap.aisles,
-                      onSelect: _beginAisle,
-                    )
+                  ? _AisleEntry(aisles: storeMap.aisles, onSelect: _beginAisle)
                   : SafeArea(
                       child: Column(
                         children: [
@@ -148,9 +137,7 @@ class _WalkModePageState extends State<WalkModePage> {
                                     children: [
                                       Text(
                                         aisle.name,
-                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                              fontWeight: FontWeight.w800,
-                                            ),
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
@@ -160,19 +147,13 @@ class _WalkModePageState extends State<WalkModePage> {
                                     ],
                                   ),
                                 ),
-                                _ModeSelector(
-                                  value: controller.mode,
-                                  onChanged: controller.setMode,
-                                ),
+                                _ModeSelector(value: controller.mode, onChanged: controller.setMode),
                               ],
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: LinearProgressIndicator(
-                              value: controller.journeyProgress,
-                              minHeight: 3,
-                            ),
+                            child: LinearProgressIndicator(value: controller.journeyProgress, minHeight: 3),
                           ),
                           const SizedBox(height: 10),
                           Expanded(
@@ -218,16 +199,16 @@ class _WalkModePageState extends State<WalkModePage> {
                                   const SizedBox(height: 10),
                                   WalkModeSpatialControls(
                                     position: position,
+                                    mode: controller.mode,
                                     isPaused: controller.isPaused,
                                     onMove: controller.setSpatialPosition,
                                     onLook: controller.rotateView,
                                     onPause: controller.togglePause,
                                     onRecenter: controller.recenterView,
+                                    onTakeControl: () => controller.setMode(WalkModeType.manual),
                                     onInteract: controller.visibleProducts.isEmpty
                                         ? null
-                                        : () => controller.addToBasket(
-                                              controller.visibleProducts.first.product.id,
-                                            ),
+                                        : () => controller.addToBasket(controller.visibleProducts.first.product.id),
                                   ),
                                   const SizedBox(height: 8),
                                   Row(
@@ -237,11 +218,11 @@ class _WalkModePageState extends State<WalkModePage> {
                                           onPressed: controller.nextAisle == null
                                               ? null
                                               : () => _beginAisle(controller.nextAisle!.id),
-                                          icon: const Icon(Icons.arrow_forward_rounded),
+                                          icon: const Icon(Icons.storefront_rounded),
                                           label: Text(
                                             controller.nextAisle == null
-                                                ? 'End of journey'
-                                                : 'Next: ${controller.nextAisle!.name}',
+                                                ? 'Journey complete'
+                                                : 'Explore next area · ${controller.nextAisle!.name}',
                                           ),
                                         ),
                                       ),
@@ -282,21 +263,11 @@ class _AisleEntry extends StatelessWidget {
                 children: [
                   const Icon(Icons.storefront_rounded, size: 42),
                   const SizedBox(height: 18),
-                  Text(
-                    'Step inside',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
-                  ),
+                  Text('Step inside', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Walk Mode turns the supermarket into a place you can explore. Move through an area and let products become visible naturally.',
-                  ),
+                  const Text('Walk Mode turns the supermarket into a place you can explore. Move through an area and let products become visible naturally.'),
                   const SizedBox(height: 22),
-                  Text(
-                    'Choose where to enter',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  Text('Choose where to enter', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 10),
                   ...aisles.map(
                     (aisle) => Padding(
@@ -305,11 +276,8 @@ class _AisleEntry extends StatelessWidget {
                         width: double.infinity,
                         child: FilledButton.tonalIcon(
                           onPressed: () => onSelect(aisle.id),
-                          icon: const Icon(Icons.arrow_forward_rounded),
-                          label: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(aisle.name),
-                          ),
+                          icon: const Icon(Icons.login_rounded),
+                          label: Align(alignment: Alignment.centerLeft, child: Text(aisle.name)),
                         ),
                       ),
                     ),
