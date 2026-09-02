@@ -119,8 +119,6 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
       threeJs.scene.add(wall);
     }
 
-    // Main customer circulation loop. The open strips at the front/back make
-    // the central gondola grid read like a real supermarket rather than a maze.
     final frontLoop = _box(30, 0.025, 2.6, 0xffd6ddd8);
     frontLoop.position.setValues(0, 0.015, 12.7);
     threeJs.scene.add(frontLoop);
@@ -164,8 +162,15 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
     }
   }
 
+  WalkModeStoreSection? _section(WalkModeStoreSectionKind kind) {
+    for (final section in widget.storeMap.sections) {
+      if (section.kind == kind) return section;
+    }
+    return null;
+  }
+
   void _buildCheckoutAndEntrance() {
-    final checkout = widget.storeMap.sections.where((s) => s.kind == WalkModeStoreSectionKind.checkout).firstOrNull;
+    final checkout = _section(WalkModeStoreSectionKind.checkout);
     if (checkout != null) {
       final counter = _box(checkout.width, 1.15, 1.1, 0xff515a55, shininess: 18);
       counter.position.setValues(checkout.x, 0.58, checkout.z);
@@ -182,7 +187,7 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
       }
     }
 
-    final entrance = widget.storeMap.sections.where((s) => s.kind == WalkModeStoreSectionKind.entrance).firstOrNull;
+    final entrance = _section(WalkModeStoreSectionKind.entrance);
     if (entrance != null) {
       for (final x in [-entrance.width / 2 + 1.0, entrance.width / 2 - 1.0]) {
         final gate = _box(0.22, 2.1, 0.32, 0xff216b45, shininess: 22);
@@ -212,8 +217,6 @@ class _WalkModeSpatialViewState extends State<WalkModeSpatialView> {
         }
       }
 
-      // Endcaps are standard supermarket fixtures and visually join each
-      // gondola to the cross-aisle rather than leaving isolated rectangles.
       for (final end in [-1.0, 1.0]) {
         final endcap = _box(2.55, 2.25, 0.62, 0xff747d77, shininess: 10);
         endcap.position.setValues(x, 1.12, z + end * (length / 2));
