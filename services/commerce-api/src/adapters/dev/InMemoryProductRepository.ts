@@ -1,7 +1,7 @@
 import type { Product, ProductId } from "../../domain.js";
 import type { ProductRepository } from "../../ports/ProductRepository.js";
 
-export const DEV_FIXTURE_CURRENCY = "ZWG";
+export const DEV_FIXTURE_CURRENCY = "ZiG";
 
 /** Development/test fixture data only; not a production catalogue or currency decision. */
 export class InMemoryProductRepository implements ProductRepository {
