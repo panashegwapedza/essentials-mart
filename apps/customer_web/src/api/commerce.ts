@@ -34,6 +34,7 @@ export type Order = {
  */
 export interface CommerceClient {
   listProducts(): Promise<Product[]>;
+  getProduct(productId: string): Promise<Product>;
   getBasket(): Promise<Basket>;
   addBasketItem(productId: string, quantity: number): Promise<Basket>;
   removeBasketItem(productId: string): Promise<Basket>;
@@ -73,12 +74,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
-const fromProductDto = (product: {
+type ProductDto = {
   id: string;
   name: string;
   price: { amountMinor: number; currency: string };
   available: boolean;
-}): Product => ({
+};
+
+const fromProductDto = (product: ProductDto): Product => ({
   id: product.id,
   name: product.name,
   category: categoryFor(product.id),
@@ -128,8 +131,11 @@ const fromOrderDto = (order: {
 
 export const commerceClient: CommerceClient = {
   async listProducts() {
-    const response = await request<{ products: Array<Parameters<typeof fromProductDto>[0]> }>('/products');
+    const response = await request<{ products: ProductDto[] }>('/products');
     return response.products.map(fromProductDto);
+  },
+  async getProduct(productId) {
+    return fromProductDto(await request<ProductDto>(`/products/${encodeURIComponent(productId)}`));
   },
   async getBasket() {
     return fromBasketDto(await request<Parameters<typeof fromBasketDto>[0]>('/basket'));
@@ -158,6 +164,12 @@ export const developmentCommerceClient: CommerceClient = {
       { id: 'milk', name: 'Milk [DEV FIXTURE]', category: 'Dairy', price: 3, currency: 'ZWG', available: true },
       { id: 'eggs', name: 'Eggs (dozen) [DEV FIXTURE]', category: 'Dairy', price: 4.5, currency: 'ZWG', available: true },
     ];
+  },
+  async getProduct(productId) {
+    const product = await this.listProducts();
+    const match = product.find((candidate) => candidate.id === productId);
+    if (!match) throw new Error(`Product not found: ${productId}`);
+    return match;
   },
   async getBasket() {
     return { id: 'local-basket', items: [] };
