@@ -1,63 +1,107 @@
+export type Money = { amountMinor: number; currency: string };
+
 export type Product = {
   id: string;
   name: string;
-  category: string;
-  price: number;
+  price: Money;
   available: boolean;
+  category: string;
 };
 
 export type BasketItem = {
   productId: string;
   quantity: number;
+  unitPrice: Money;
 };
 
 export type Basket = {
+  id: string;
   items: BasketItem[];
 };
 
-/**
- * Governed commerce boundary.
- * The first browser slice uses a local adapter until the API contract is
- * connected to the Commerce API. Enterprise-authoritative state stays behind
- * this boundary.
- */
+export type Order = {
+  id: string;
+  lines: BasketItem[];
+  total: Money;
+  status: 'placed';
+};
+
 export interface CommerceClient {
   listProducts(): Promise<Product[]>;
   getBasket(): Promise<Basket>;
   addBasketItem(productId: string, quantity: number): Promise<Basket>;
+  removeBasketItem(productId: string): Promise<Basket>;
+  checkout(): Promise<Order>;
 }
 
-const products: Product[] = [
-  { id: 'rice-5kg', name: 'Rice 5kg', category: 'Staples', price: 8.99, available: true },
-  { id: 'milk-2l', name: 'Fresh Milk 2L', category: 'Dairy', price: 2.49, available: true },
-  { id: 'bread-white', name: 'White Bread', category: 'Bakery', price: 1.69, available: true },
-  { id: 'eggs-12', name: 'Eggs 12 Pack', category: 'Dairy', price: 3.99, available: true },
-  { id: 'washing-powder', name: 'Washing Powder 2kg', category: 'Household', price: 6.49, available: true },
-  { id: 'cooking-oil-2l', name: 'Cooking Oil 2L', category: 'Pantry', price: 5.79, available: true },
-];
+const API_BASE = import.meta.env.VITE_COMMERCE_API_BASE ?? '/api';
+const CUSTOMER_ID = import.meta.env.VITE_DEV_CUSTOMER_ID ?? 'web-demo-customer';
 
-let basket: Basket = { items: [] };
+const categoryFor = (product: { id: string; name: string }): string => {
+  const value = `${product.id} ${product.name}`.toLowerCase();
+  if (value.includes('milk') || value.includes('egg')) return 'Dairy';
+  if (value.includes('bread')) return 'Bakery';
+  if (value.includes('rice') || value.includes('oil')) return 'Pantry';
+  if (value.includes('wash') || value.includes('powder')) return 'Household';
+  return 'Essentials';
+};
 
-export const developmentCommerceClient: CommerceClient = {
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers: {
+      Accept: 'application/json',
+      'x-dev-customer-id': CUSTOMER_ID,
+      ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+      ...init?.headers,
+    },
+  });
+
+  const payload = (await response.json().catch(() => null)) as
+    | T
+    | { error?: { message?: string; code?: string } }
+    | null;
+
+  if (!response.ok) {
+    const message =
+      payload && typeof payload === 'object' && 'error' in payload
+        ? payload.error?.message
+        : undefined;
+    throw new Error(message || `Commerce request failed (${response.status})`);
+  }
+
+  return payload as T;
+}
+
+export const commerceClient: CommerceClient = {
   async listProducts() {
-    return products;
+    const result = await request<{ products: Array<Omit<Product, 'category'>> }>('/products');
+    return result.products.map((product) => ({ ...product, category: categoryFor(product) }));
   },
+
   async getBasket() {
-    return basket;
+    const result = await request<{ id: string; lines: BasketItem[] }>('/basket');
+    return { id: result.id, items: result.lines };
   },
+
   async addBasketItem(productId, quantity) {
-    const existing = basket.items.find((item) => item.productId === productId);
-    if (existing) {
-      basket = {
-        items: basket.items.map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: item.quantity + quantity }
-            : item,
-        ),
-      };
-    } else {
-      basket = { items: [...basket.items, { productId, quantity }] };
-    }
-    return basket;
+    const result = await request<{ id: string; lines: BasketItem[] }>('/basket/items', {
+      method: 'POST',
+      body: JSON.stringify({ productId, quantity }),
+    });
+    return { id: result.id, items: result.lines };
+  },
+
+  async removeBasketItem(productId) {
+    const result = await request<{ id: string; lines: BasketItem[] }>(
+      `/basket/items/${encodeURIComponent(productId)}`,
+      { method: 'DELETE' },
+    );
+    return { id: result.id, items: result.lines };
+  },
+
+  async checkout() {
+    const result = await request<Order>('/checkout', { method: 'POST' });
+    return result;
   },
 };
