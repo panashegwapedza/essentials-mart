@@ -3,61 +3,172 @@ export type Product = {
   name: string;
   category: string;
   price: number;
+  currency: string;
   available: boolean;
 };
 
 export type BasketItem = {
   productId: string;
   quantity: number;
+  unitPrice: number;
+  currency: string;
 };
 
 export type Basket = {
+  id: string;
+  items: BasketItem[];
+};
+
+export type Order = {
+  id: string;
+  status: string;
+  total: number;
+  currency: string;
   items: BasketItem[];
 };
 
 /**
  * Governed commerce boundary.
- * The first browser slice uses a local adapter until the API contract is
- * connected to the Commerce API. Enterprise-authoritative state stays behind
- * this boundary.
+ * Browser state is only a projection of Commerce. The Commerce API is the
+ * authority for catalogue, basket mutations and checkout decisions.
  */
 export interface CommerceClient {
   listProducts(): Promise<Product[]>;
   getBasket(): Promise<Basket>;
   addBasketItem(productId: string, quantity: number): Promise<Basket>;
+  removeBasketItem(productId: string): Promise<Basket>;
+  checkout(): Promise<Order>;
 }
 
-const products: Product[] = [
-  { id: 'rice-5kg', name: 'Rice 5kg', category: 'Staples', price: 8.99, available: true },
-  { id: 'milk-2l', name: 'Fresh Milk 2L', category: 'Dairy', price: 2.49, available: true },
-  { id: 'bread-white', name: 'White Bread', category: 'Bakery', price: 1.69, available: true },
-  { id: 'eggs-12', name: 'Eggs 12 Pack', category: 'Dairy', price: 3.99, available: true },
-  { id: 'washing-powder', name: 'Washing Powder 2kg', category: 'Household', price: 6.49, available: true },
-  { id: 'cooking-oil-2l', name: 'Cooking Oil 2L', category: 'Pantry', price: 5.79, available: true },
-];
+const API_BASE_URL = import.meta.env.VITE_COMMERCE_API_URL ?? 'http://localhost:3000';
+const CUSTOMER_ID = import.meta.env.VITE_DEV_CUSTOMER_ID ?? 'web-demo-customer';
 
-let basket: Basket = { items: [] };
+const categoryFor = (id: string): string => {
+  const categories: Record<string, string> = {
+    bread: 'Bakery',
+    milk: 'Dairy',
+    eggs: 'Dairy',
+    'discontinued-item': 'Household',
+  };
+  return categories[id] ?? 'Essentials';
+};
 
-export const developmentCommerceClient: CommerceClient = {
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...init,
+    headers: {
+      ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+      'x-dev-customer-id': CUSTOMER_ID,
+      ...init?.headers,
+    },
+  });
+
+  const body = (await response.json()) as T | { error?: { message?: string } };
+  if (!response.ok) {
+    const message = typeof body === 'object' && body && 'error' in body
+      ? body.error?.message
+      : undefined;
+    throw new Error(message ?? `Commerce request failed (${response.status}).`);
+  }
+  return body as T;
+}
+
+const fromProductDto = (product: {
+  id: string;
+  name: string;
+  price: { amountMinor: number; currency: string };
+  available: boolean;
+}): Product => ({
+  id: product.id,
+  name: product.name,
+  category: categoryFor(product.id),
+  price: product.price.amountMinor / 100,
+  currency: product.price.currency,
+  available: product.available,
+});
+
+const fromBasketDto = (basket: {
+  id: string;
+  lines: Array<{
+    productId: string;
+    quantity: number;
+    unitPrice: { amountMinor: number; currency: string };
+  }>;
+}): Basket => ({
+  id: basket.id,
+  items: basket.lines.map((line) => ({
+    productId: line.productId,
+    quantity: line.quantity,
+    unitPrice: line.unitPrice.amountMinor / 100,
+    currency: line.unitPrice.currency,
+  })),
+});
+
+const fromOrderDto = (order: {
+  id: string;
+  status: string;
+  total: { amountMinor: number; currency: string };
+  lines: Array<{
+    productId: string;
+    quantity: number;
+    unitPrice: { amountMinor: number; currency: string };
+  }>;
+}): Order => ({
+  id: order.id,
+  status: order.status,
+  total: order.total.amountMinor / 100,
+  currency: order.total.currency,
+  items: order.lines.map((line) => ({
+    productId: line.productId,
+    quantity: line.quantity,
+    unitPrice: line.unitPrice.amountMinor / 100,
+    currency: line.unitPrice.currency,
+  })),
+});
+
+export const commerceClient: CommerceClient = {
   async listProducts() {
-    return products;
+    const response = await request<{ products: Array<Parameters<typeof fromProductDto>[0]> }>('/products');
+    return response.products.map(fromProductDto);
   },
   async getBasket() {
-    return basket;
+    return fromBasketDto(await request<Parameters<typeof fromBasketDto>[0]>('/basket'));
   },
   async addBasketItem(productId, quantity) {
-    const existing = basket.items.find((item) => item.productId === productId);
-    if (existing) {
-      basket = {
-        items: basket.items.map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: item.quantity + quantity }
-            : item,
-        ),
-      };
-    } else {
-      basket = { items: [...basket.items, { productId, quantity }] };
-    }
-    return basket;
+    return fromBasketDto(await request<Parameters<typeof fromBasketDto>[0]>('/basket/items', {
+      method: 'POST',
+      body: JSON.stringify({ productId, quantity }),
+    }));
+  },
+  async removeBasketItem(productId) {
+    return fromBasketDto(await request<Parameters<typeof fromBasketDto>[0]>(`/basket/items/${encodeURIComponent(productId)}`, {
+      method: 'DELETE',
+    }));
+  },
+  async checkout() {
+    return fromOrderDto(await request<Parameters<typeof fromOrderDto>[0]>('/checkout', { method: 'POST' }));
+  },
+};
+
+/** Local-only adapter retained as a deterministic fallback for UI work. */
+export const developmentCommerceClient: CommerceClient = {
+  async listProducts() {
+    return [
+      { id: 'bread', name: 'Bread [DEV FIXTURE]', category: 'Bakery', price: 2.5, currency: 'ZWG', available: true },
+      { id: 'milk', name: 'Milk [DEV FIXTURE]', category: 'Dairy', price: 3, currency: 'ZWG', available: true },
+      { id: 'eggs', name: 'Eggs (dozen) [DEV FIXTURE]', category: 'Dairy', price: 4.5, currency: 'ZWG', available: true },
+    ];
+  },
+  async getBasket() {
+    return { id: 'local-basket', items: [] };
+  },
+  async addBasketItem() {
+    return { id: 'local-basket', items: [] };
+  },
+  async removeBasketItem() {
+    return { id: 'local-basket', items: [] };
+  },
+  async checkout() {
+    throw new Error('Local adapter does not support checkout.');
   },
 };
