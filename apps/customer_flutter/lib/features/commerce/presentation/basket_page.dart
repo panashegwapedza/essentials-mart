@@ -29,21 +29,29 @@ class BasketPage extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   children: [
                     ...lines.map(
-                      (line) => Card(
-                        child: ListTile(
-                          title: Text('Product ${line.productId}'),
-                          subtitle: Text(
-                            '${line.quantity} × ${(line.amountMinor / 100).toStringAsFixed(2)} $currency',
+                      (line) {
+                        final product = controller.products.where(
+                          (item) => item.id == line.productId,
+                        );
+                        final name = product.isEmpty
+                            ? 'Product ${line.productId}'
+                            : product.first.name;
+                        return Card(
+                          child: ListTile(
+                            title: Text(name),
+                            subtitle: Text(
+                              '${line.quantity} × ${(line.amountMinor / 100).toStringAsFixed(2)} $currency',
+                            ),
+                            trailing: IconButton(
+                              tooltip: 'Remove item',
+                              onPressed: controller.loading
+                                  ? null
+                                  : () => controller.remove(line.productId),
+                              icon: const Icon(Icons.delete_outline),
+                            ),
                           ),
-                          trailing: IconButton(
-                            tooltip: 'Remove one line',
-                            onPressed: controller.loading
-                                ? null
-                                : () => controller.remove(line.productId),
-                            icon: const Icon(Icons.delete_outline),
-                          ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 12),
                     Card(
