@@ -11,6 +11,8 @@ export default function App() {
   const [busyProduct, setBusyProduct] = useState<string | null>(null);
   const [checkingOut, setCheckingOut] = useState(false);
   const [basketOpen, setBasketOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [productLoading, setProductLoading] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,6 +73,19 @@ export default function App() {
       setError(err instanceof Error ? err.message : 'We could not add that item.');
     } finally {
       setBusyProduct(null);
+    }
+  }
+
+  async function openProduct(product: Product) {
+    setSelectedProduct(product);
+    setProductLoading(true);
+    setError(null);
+    try {
+      setSelectedProduct(await commerceClient.getProduct(product.id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'We could not load that product.');
+    } finally {
+      setProductLoading(false);
     }
   }
 
@@ -187,29 +202,54 @@ export default function App() {
             <div className="product-grid">
               {visibleProducts.map((product) => (
                 <article className="product-card" key={product.id}>
-                  <div className="product-image" aria-hidden="true">
+                  <button className="product-image product-image-button" type="button" onClick={() => void openProduct(product)} aria-label={`View ${product.name}`}>
                     <span>{product.name.charAt(0)}</span>
-                  </div>
+                  </button>
                   <div className="product-meta">
                     <span className="product-category">{product.category}</span>
                     <h3>{product.name}</h3>
                     <div className="product-footer">
                       <strong>{product.currency} {product.price.toFixed(2)}</strong>
-                      <button
-                        type="button"
-                        onClick={() => void addProduct(product)}
-                        disabled={!product.available || busyProduct === product.id}
-                      >
-                        {busyProduct === product.id ? 'Adding…' : product.available ? 'Add' : 'Unavailable'}
-                      </button>
+                      <div className="product-actions">
+                        <button className="secondary-button" type="button" onClick={() => void openProduct(product)}>View</button>
+                        <button
+                          type="button"
+                          onClick={() => void addProduct(product)}
+                          disabled={!product.available || busyProduct === product.id}
+                        >
+                          {busyProduct === product.id ? 'Adding…' : product.available ? 'Add' : 'Unavailable'}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </article>
               ))}
+              {visibleProducts.length === 0 && <div className="state-card empty-results">No essentials match that search.</div>}
             </div>
           )}
         </section>
       </main>
+
+      {selectedProduct && (
+        <div className="product-backdrop" role="presentation" onClick={() => setSelectedProduct(null)}>
+          <section className="product-detail" role="dialog" aria-modal="true" aria-labelledby="product-detail-heading" onClick={(event) => event.stopPropagation()}>
+            <button className="detail-close" type="button" onClick={() => setSelectedProduct(null)} aria-label="Close product details">×</button>
+            <div className="detail-image" aria-hidden="true"><span>{selectedProduct.name.charAt(0)}</span></div>
+            <div className="detail-content">
+              <p className="eyebrow">{selectedProduct.category}</p>
+              <h2 id="product-detail-heading">{selectedProduct.name}</h2>
+              <strong className="detail-price">{selectedProduct.currency} {selectedProduct.price.toFixed(2)}</strong>
+              <p className="detail-copy">Current catalogue information is confirmed through Commerce before this product is added to your basket.</p>
+              <p className={selectedProduct.available ? 'availability available' : 'availability unavailable'}>
+                {productLoading ? 'Refreshing availability…' : selectedProduct.available ? 'Available now' : 'Currently unavailable'}
+              </p>
+              <button className="detail-add" type="button" onClick={() => { void addProduct(selectedProduct); setSelectedProduct(null); }} disabled={!selectedProduct.available || productLoading || busyProduct === selectedProduct.id}>
+                {busyProduct === selectedProduct.id ? 'Adding…' : 'Add to basket'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
 
       {basketOpen && (
         <>
