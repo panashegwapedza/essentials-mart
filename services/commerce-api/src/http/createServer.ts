@@ -13,6 +13,7 @@ export type CreateServerDeps = {
 
 class InvalidPathParameterError extends Error {}
 const JSON_CONTENT_TYPE = "application/json";
+const DEV_CORS_ORIGIN = process.env.CORS_ORIGIN ?? "http://localhost:5173";
 
 const hasJsonContentType = (req: IncomingMessage): boolean => {
   const raw = req.headers["content-type"];
@@ -34,6 +35,17 @@ const match = (pattern: RegExp, path: string): string[] | null => {
 
 export function createServer({ commerce, auth }: CreateServerDeps) {
   return createHttpServer(async (req: IncomingMessage, res: ServerResponse) => {
+    res.setHeader("Access-Control-Allow-Origin", DEV_CORS_ORIGIN);
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-dev-customer-id");
+    res.setHeader("Vary", "Origin");
+
+    if (req.method === "OPTIONS") {
+      res.statusCode = 204;
+      res.end();
+      return;
+    }
+
     try {
       await route(req, res, commerce, auth);
     } catch (err) {
@@ -120,7 +132,7 @@ async function route(
 
 function methodNotAllowed(res: ServerResponse, allowed: string[]): void {
   res.setHeader("Allow", allowed.join(", "));
-  sendError(res, "METHOD_NOT_ALLOWED", `Method not allowed. Allowed methods: ${allowed.join(", ")}.`, 405);
+  sendError(res, "METHOD_NOT_ALLOWED", `Method not allowed. Allowed methods: ${allowed.join(", ")}`, 405);
 }
 
 async function handleAddItem(
