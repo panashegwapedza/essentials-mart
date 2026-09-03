@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/commerce_models.dart';
+import 'basket_page.dart';
 import 'commerce_controller.dart';
 
 class CommercePage extends StatelessWidget {
@@ -25,9 +26,15 @@ class CommercePage extends StatelessWidget {
             title: const Text('Essentials Mart'),
             actions: [
               Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Center(
-                  child: Text('Basket: $basketCount'),
+                padding: const EdgeInsets.only(right: 8),
+                child: TextButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => BasketPage(controller: controller),
+                    ),
+                  ),
+                  icon: const Icon(Icons.shopping_basket_outlined),
+                  label: Text('Basket ($basketCount)'),
                 ),
               ),
             ],
@@ -46,21 +53,16 @@ class CommercePage extends StatelessWidget {
       return ListView(
         children: const [
           SizedBox(height: 300),
-          Center(
-            child: CircularProgressIndicator(),
-          ),
+          Center(child: CircularProgressIndicator()),
         ],
       );
     }
 
-    if (controller.errorMessage != null &&
-        controller.products.isEmpty) {
+    if (controller.errorMessage != null && controller.products.isEmpty) {
       return ListView(
         children: [
           const SizedBox(height: 220),
-          Center(
-            child: Text(controller.errorMessage!),
-          ),
+          Center(child: Text(controller.errorMessage!)),
           Center(
             child: TextButton(
               onPressed: controller.load,
@@ -75,9 +77,7 @@ class CommercePage extends StatelessWidget {
       return ListView(
         children: const [
           SizedBox(height: 220),
-          Center(
-            child: Text('No products available.'),
-          ),
+          Center(child: Text('No products available.')),
         ],
       );
     }
@@ -94,10 +94,7 @@ class CommercePage extends StatelessWidget {
           ),
         const Text(
           'Products',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         ...controller.products.map(_productTile),
@@ -110,11 +107,11 @@ class CommercePage extends StatelessWidget {
       child: ListTile(
         title: Text(product.name),
         subtitle: Text(
-          '${product.amountMinor / 100} ${product.currency}',
+          '${(product.amountMinor / 100).toStringAsFixed(2)} ${product.currency}',
         ),
         trailing: product.available
             ? FilledButton(
-                onPressed: () => controller.add(product),
+                onPressed: controller.loading ? null : () => controller.add(product),
                 child: const Text('Add'),
               )
             : const Text('Unavailable'),
