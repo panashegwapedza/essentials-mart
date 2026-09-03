@@ -1,7 +1,7 @@
 # WEB-VERTICAL-SLICE-001 — Customer Web Commerce Foundation
 
-**Status:** Build Started
-**Date:** 2026-09-02
+**Status:** Product Detail Slice Implemented
+**Date:** 2026-09-03
 **Governing ADR:** ADR-021
 **Governing EIP:** EIP-034
 **Traceability:** EIP-019
@@ -12,25 +12,23 @@ Establish the first customer-facing web implementation slice for Essentials Mart
 
 ## 2. Scope
 
-The slice establishes:
+The implemented slice establishes:
 
 - React + TypeScript + Vite application bootstrap;
 - customer web application shell;
 - catalogue presentation;
 - product discovery interaction;
-- basket presentation;
+- authoritative product-detail retrieval;
+- basket presentation and commands;
+- checkout interaction against Commerce;
 - typed CommerceClient boundary;
 - responsive presentation;
 - baseline accessibility behaviour;
 - explicit separation between UI state and enterprise authority.
 
-## 3. Current Development Adapter
+## 3. Current Runtime Path
 
-The initial browser shell uses a local development CommerceClient adapter so the interaction architecture can be exercised before the governed Commerce API is connected.
-
-This adapter is explicitly non-authoritative and must not be treated as production commerce persistence.
-
-## 4. Target Runtime Path
+The browser now uses the governed Commerce API for catalogue, product detail, basket and checkout operations.
 
 ```text
 Customer Web UI
@@ -48,6 +46,16 @@ Commerce Domain
 Authoritative Data
 ```
 
+The local development adapter remains available as a deterministic non-authoritative fallback for UI work, but is not the active runtime client.
+
+## 4. Product Detail Slice
+
+Product discovery now supports an explicit Product Detail surface.
+
+The card provides a lightweight discovery projection. Opening Product Detail calls `GET /products/:productId` through `CommerceClient.getProduct()` so the detail surface is refreshed from Commerce before the user adds the item.
+
+The browser does not calculate or override authoritative price or availability.
+
 ## 5. Verification
 
 Before this slice is considered complete:
@@ -56,7 +64,7 @@ Before this slice is considered complete:
 - production web build must pass;
 - client tests must pass;
 - the development shell must render in a browser;
-- API integration must replace the development adapter;
+- API integration must remain behind the typed client boundary;
 - contract tests must verify the browser/API boundary;
 - accessibility checks must cover material customer interactions.
 
