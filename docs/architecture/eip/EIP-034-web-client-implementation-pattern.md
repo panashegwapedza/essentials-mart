@@ -41,10 +41,14 @@ Catalogue
     ↓
 Product Discovery
     ↓
+Product Detail
+    ↓
 Basket
+    ↓
+Checkout
 ```
 
-Checkout and order processing remain subsequent slices because their contracts and transactional boundaries must be implemented deliberately.
+Product Detail is resolved through the typed CommerceClient against the authoritative Commerce API. The catalogue card is only a discovery projection; the detail surface refreshes the product before presenting the add-to-basket decision.
 
 ## 4. Client Responsibilities
 
@@ -69,6 +73,8 @@ UI components must not construct arbitrary backend requests.
 
 The API client must make endpoint and DTO boundaries explicit so backend changes can be detected by tests and review.
 
+The customer web client now consumes the existing `GET /products/:productId` Commerce endpoint through `CommerceClient.getProduct()`.
+
 ## 6. Basket Rule
 
 Basket contents and authoritative basket mutations remain owned by the Commerce capability.
@@ -84,6 +90,8 @@ No secret, privileged backend credential or proprietary authoritative decision a
 ## 8. Accessibility
 
 The implementation must use semantic HTML, keyboard-accessible controls, visible focus and appropriate labels.
+
+Product detail is presented as an explicit dialog with an accessible name, close action and keyboard-focusable controls.
 
 ## 9. Verification
 
