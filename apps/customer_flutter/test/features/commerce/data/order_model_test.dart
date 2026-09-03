@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../lib/features/commerce/data/order_model.dart';
+import '../../../../lib/features/commerce/data/order_model.dart';
 
 void main() {
   test('parses an order response', () {
