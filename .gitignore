@@ -1,3 +1,13 @@
-
 .DS_Store
 **/.DS_Store
+
+# JavaScript / TypeScript build output
+**/node_modules/
+**/dist/
+**/.vite/
+**/*.tsbuildinfo
+
+# Flutter generated files
+**/.dart_tool/
+**/build/
+**/.metadata
