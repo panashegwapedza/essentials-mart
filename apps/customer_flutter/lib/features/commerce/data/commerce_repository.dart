@@ -1,5 +1,6 @@
 import '../../../core/api/api_client.dart';
 import 'commerce_models.dart';
+import 'order_model.dart';
 
 class CommerceRepository {
   const CommerceRepository(this._api);
@@ -30,5 +31,10 @@ class CommerceRepository {
     final encodedId = Uri.encodeComponent(productId);
     final body = await _api.delete('/basket/items/$encodedId', authenticated: true);
     return Basket.fromJson(body as Map<String, dynamic>);
+  }
+
+  Future<Order> checkout() async {
+    final body = await _api.post('/checkout', authenticated: true);
+    return Order.fromJson(body as Map<String, dynamic>);
   }
 }
