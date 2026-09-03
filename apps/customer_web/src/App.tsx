@@ -1,27 +1,44 @@
 import { useEffect, useMemo, useState } from 'react';
-import { developmentCommerceClient, type Basket, type Product } from './api/commerce';
+import { commerceClient, type Basket, type Order, type Product } from './api/commerce';
 import './styles.css';
 
 export default function App() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [basket, setBasket] = useState<Basket>({ items: [] });
+  const [basket, setBasket] = useState<Basket>({ id: '', items: [] });
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
   const [loading, setLoading] = useState(true);
+  const [busyProduct, setBusyProduct] = useState<string | null>(null);
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [basketOpen, setBasketOpen] = useState(false);
+  const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  async function loadShop() {
+    setLoading(true);
+    setError(null);
+    try {
+      const [catalogue, currentBasket] = await Promise.all([
+        commerceClient.listProducts(),
+        commerceClient.getBasket(),
+      ]);
+      setProducts(catalogue);
+      setBasket(currentBasket);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'We could not load the shop. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    void Promise.all([
-      developmentCommerceClient.listProducts(),
-      developmentCommerceClient.getBasket(),
-    ])
-      .then(([catalogue, currentBasket]) => {
-        setProducts(catalogue);
-        setBasket(currentBasket);
-      })
-      .catch(() => setError('We could not load the shop. Please try again.'))
-      .finally(() => setLoading(false));
+    void loadShop();
   }, []);
+
+  const productById = useMemo(
+    () => new Map(products.map((product) => [product.id, product])),
+    [products],
+  );
 
   const categories = useMemo(
     () => ['All', ...Array.from(new Set(products.map((product) => product.category)))],
@@ -41,11 +58,48 @@ export default function App() {
   }, [category, products, query]);
 
   const basketCount = basket.items.reduce((total, item) => total + item.quantity, 0);
+  const basketTotal = basket.items.reduce((total, item) => total + item.unitPrice * item.quantity, 0);
+  const currency = basket.items[0]?.currency ?? products[0]?.currency ?? 'ZWG';
 
   async function addProduct(product: Product) {
     if (!product.available) return;
-    const nextBasket = await developmentCommerceClient.addBasketItem(product.id, 1);
-    setBasket(nextBasket);
+    setBusyProduct(product.id);
+    setError(null);
+    try {
+      setBasket(await commerceClient.addBasketItem(product.id, 1));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'We could not add that item.');
+    } finally {
+      setBusyProduct(null);
+    }
+  }
+
+  async function removeProduct(productId: string) {
+    setBusyProduct(productId);
+    setError(null);
+    try {
+      setBasket(await commerceClient.removeBasketItem(productId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'We could not remove that item.');
+    } finally {
+      setBusyProduct(null);
+    }
+  }
+
+  async function checkout() {
+    if (basketCount === 0) return;
+    setCheckingOut(true);
+    setError(null);
+    try {
+      const placedOrder = await commerceClient.checkout();
+      setOrder(placedOrder);
+      setBasket(await commerceClient.getBasket());
+      setBasketOpen(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Checkout could not be completed.');
+    } finally {
+      setCheckingOut(false);
+    }
   }
 
   return (
@@ -56,8 +110,14 @@ export default function App() {
           <span>Essentials Mart</span>
         </div>
         <div className="topbar-actions">
-          <button className="quiet-button">Account</button>
-          <button className="basket-button" aria-label={`Basket, ${basketCount} items`}>
+          <button className="quiet-button" type="button">Account</button>
+          <button
+            className="basket-button"
+            type="button"
+            aria-label={`Basket, ${basketCount} items`}
+            aria-expanded={basketOpen}
+            onClick={() => setBasketOpen((open) => !open)}
+          >
             Basket <span>{basketCount}</span>
           </button>
         </div>
@@ -73,12 +133,23 @@ export default function App() {
               services will grow from the same trusted platform.
             </p>
           </div>
-          <div className="hero-card">
+          <button className="hero-card hero-card-button" type="button" onClick={() => setBasketOpen(true)}>
             <span>Basket</span>
             <strong>{basketCount} items</strong>
-            <small>Ready when you are.</small>
-          </div>
+            <small>{basketCount > 0 ? `${currency} ${basketTotal.toFixed(2)}` : 'Ready when you are.'}</small>
+          </button>
         </section>
+
+        {order && (
+          <section className="success-card" role="status">
+            <div>
+              <p className="eyebrow">ORDER PLACED</p>
+              <strong>Thanks — your order is confirmed.</strong>
+              <span>Order {order.id.slice(0, 8)} · {order.currency} {order.total.toFixed(2)}</span>
+            </div>
+            <button type="button" onClick={() => setOrder(null)}>Dismiss</button>
+          </section>
+        )}
 
         <section className="shop-section" aria-labelledby="shop-heading">
           <div className="section-heading">
@@ -100,6 +171,7 @@ export default function App() {
             {categories.map((item) => (
               <button
                 key={item}
+                type="button"
                 className={category === item ? 'category active' : 'category'}
                 onClick={() => setCategory(item)}
               >
@@ -122,9 +194,13 @@ export default function App() {
                     <span className="product-category">{product.category}</span>
                     <h3>{product.name}</h3>
                     <div className="product-footer">
-                      <strong>${product.price.toFixed(2)}</strong>
-                      <button onClick={() => void addProduct(product)} disabled={!product.available}>
-                        {product.available ? 'Add' : 'Unavailable'}
+                      <strong>{product.currency} {product.price.toFixed(2)}</strong>
+                      <button
+                        type="button"
+                        onClick={() => void addProduct(product)}
+                        disabled={!product.available || busyProduct === product.id}
+                      >
+                        {busyProduct === product.id ? 'Adding…' : product.available ? 'Add' : 'Unavailable'}
                       </button>
                     </div>
                   </div>
@@ -134,6 +210,55 @@ export default function App() {
           )}
         </section>
       </main>
+
+      {basketOpen && (
+        <>
+          <button className="basket-backdrop" type="button" aria-label="Close basket" onClick={() => setBasketOpen(false)} />
+          <aside className="basket-drawer" aria-label="Shopping basket">
+            <div className="drawer-header">
+              <div>
+                <p className="eyebrow">YOUR BASKET</p>
+                <h2>{basketCount} items</h2>
+              </div>
+              <button className="drawer-close" type="button" onClick={() => setBasketOpen(false)} aria-label="Close basket">×</button>
+            </div>
+
+            {basket.items.length === 0 ? (
+              <div className="empty-basket">Your basket is empty. Add something from the shop.</div>
+            ) : (
+              <div className="basket-lines">
+                {basket.items.map((item) => {
+                  const product = productById.get(item.productId);
+                  return (
+                    <div className="basket-line" key={item.productId}>
+                      <div>
+                        <strong>{product?.name ?? item.productId}</strong>
+                        <span>{item.quantity} × {item.currency} {item.unitPrice.toFixed(2)}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="remove-button"
+                        onClick={() => void removeProduct(item.productId)}
+                        disabled={busyProduct === item.productId}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="basket-summary">
+              <span>Total</span>
+              <strong>{currency} {basketTotal.toFixed(2)}</strong>
+            </div>
+            <button className="checkout-button" type="button" disabled={basketCount === 0 || checkingOut} onClick={() => void checkout()}>
+              {checkingOut ? 'Placing order…' : 'Checkout'}
+            </button>
+          </aside>
+        </>
+      )}
 
       <footer>
         <span>Essentials Mart</span>
