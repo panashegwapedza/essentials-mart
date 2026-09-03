@@ -6,7 +6,7 @@ test("fixtures are explicitly labelled and use an explicit test currency", async
   const products = await new InMemoryProductRepository().list();
   assert.ok(products.length > 0);
   assert.ok(products.every((product) => product.name.includes("[DEV FIXTURE]")));
-  assert.equal(DEV_FIXTURE_CURRENCY, "ZWG");
+  assert.equal(DEV_FIXTURE_CURRENCY, "ZiG");
   assert.ok(products.every((product) => product.price.currency === DEV_FIXTURE_CURRENCY));
 });
 
