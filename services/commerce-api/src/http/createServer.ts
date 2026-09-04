@@ -2,12 +2,14 @@ import { createServer as createHttpServer, type IncomingMessage, type ServerResp
 import type { AuthenticatedPrincipal } from "../domain.js";
 import type { AuthProvider } from "../ports/AuthProvider.js";
 import type { CommerceApplicationService } from "../application/CommerceApplicationService.js";
+import type { BuckPayApplicationService } from "../application/BuckPayApplicationService.js";
 import { readJsonBody, MalformedBodyError, RequestTooLargeError } from "./readJsonBody.js";
 import { sendError, sendErrorFromException, sendJson } from "./respond.js";
-import { toBasketDto, toOrderDto, toProductDto } from "./dto.js";
+import { toBasketDto, toOrderDto, toProductDto, toBuckPayAccountDto, toBuckPayTransactionDto } from "./dto.js";
 
 export type CreateServerDeps = {
   commerce: CommerceApplicationService;
+  buckPay: BuckPayApplicationService;
   auth: AuthProvider;
 };
 
@@ -33,7 +35,7 @@ const match = (pattern: RegExp, path: string): string[] | null => {
   return m ? m.slice(1) : null;
 };
 
-export function createServer({ commerce, auth }: CreateServerDeps) {
+export function createServer({ commerce, buckPay, auth }: CreateServerDeps) {
   return createHttpServer(async (req: IncomingMessage, res: ServerResponse) => {
     res.setHeader("Access-Control-Allow-Origin", DEV_CORS_ORIGIN);
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
@@ -47,7 +49,7 @@ export function createServer({ commerce, auth }: CreateServerDeps) {
     }
 
     try {
-      await route(req, res, commerce, auth);
+      await route(req, res, commerce, buckPay, auth);
     } catch (err) {
       if (err instanceof InvalidPathParameterError) {
         sendError(res, "INVALID_PATH_PARAMETER", err.message, 400);
@@ -62,6 +64,7 @@ async function route(
   req: IncomingMessage,
   res: ServerResponse,
   commerce: CommerceApplicationService,
+  buckPay: BuckPayApplicationService,
   auth: AuthProvider,
 ): Promise<void> {
   let path: string;
@@ -89,13 +92,27 @@ async function route(
     path === "/basket/items" ||
     /^\/basket\/items\/[^/]+$/.test(path) ||
     path === "/checkout" ||
-    /^\/orders\/[^/]+$/.test(path);
+    /^\/orders\/[^/]+$/.test(path) ||
+    path === "/buckpay" ||
+    path === "/buckpay/transactions";
 
   if (protectedRoute) {
     const principal = auth.resolvePrincipal(req.headers);
     if (!principal) {
       sendError(res, "UNAUTHENTICATED", "No authenticated principal could be resolved for this request.", 401);
       return;
+    }
+
+    if (path === "/buckpay") {
+      if (method !== "GET") return methodNotAllowed(res, ["GET"]);
+      return sendJson(res, 200, toBuckPayAccountDto(await buckPay.getAccount(principal)));
+    }
+
+    if (path === "/buckpay/transactions") {
+      if (method !== "GET") return methodNotAllowed(res, ["GET"]);
+      return sendJson(res, 200, {
+        transactions: (await buckPay.getTransactions(principal)).map(toBuckPayTransactionDto),
+      });
     }
 
     if (path === "/basket") {
