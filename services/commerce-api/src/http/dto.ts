@@ -1,12 +1,5 @@
 import type { Basket, Order, Product } from "../domain.js";
-
-/**
- * Explicit response DTOs. Deliberately NOT a raw structuredClone of the
- * domain object — the API contract must not automatically inherit whatever
- * fields the domain type happens to grow later (e.g. an internal cost
- * price or supplier ID added to Product in future). Every field returned
- * to a client is named here explicitly.
- */
+import type { BuckPayAccount, BuckPayTransaction } from "../buckpay.js";
 
 export function toProductDto(product: Product) {
   return {
@@ -38,5 +31,23 @@ export function toOrderDto(order: Order) {
     })),
     total: { amountMinor: order.total.amountMinor, currency: order.total.currency },
     status: order.status,
+  };
+}
+
+export function toBuckPayAccountDto(account: BuckPayAccount) {
+  return {
+    customerId: account.customerId,
+    balance: { amountMinor: account.balance.amountMinor, currency: account.balance.currency },
+    status: account.status,
+  };
+}
+
+export function toBuckPayTransactionDto(transaction: BuckPayTransaction) {
+  return {
+    id: transaction.id,
+    type: transaction.type,
+    amount: { amountMinor: transaction.amount.amountMinor, currency: transaction.amount.currency },
+    reference: transaction.reference,
+    createdAt: transaction.createdAt,
   };
 }
