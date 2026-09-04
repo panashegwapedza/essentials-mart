@@ -3,8 +3,10 @@ import { InMemoryProductRepository } from "../../src/adapters/dev/InMemoryProduc
 import { InMemoryBasketRepository } from "../../src/adapters/dev/InMemoryBasketRepository.js";
 import { InMemoryOrderRepository } from "../../src/adapters/dev/InMemoryOrderRepository.js";
 import { InMemoryCheckoutTransaction } from "../../src/adapters/dev/InMemoryCheckoutTransaction.js";
+import { InMemoryBuckPayRepository } from "../../src/buckpay.js";
 import { DevHeaderAuthProvider } from "../../src/adapters/dev/DevHeaderAuthProvider.js";
 import { CommerceApplicationService } from "../../src/application/CommerceApplicationService.js";
+import { BuckPayApplicationService } from "../../src/application/BuckPayApplicationService.js";
 import { createServer } from "../../src/http/createServer.js";
 import type { Product } from "../../src/domain.js";
 
@@ -17,7 +19,8 @@ export async function startTestServer(productSeed?: Product[]) {
     new InMemoryOrderRepository(),
     new InMemoryCheckoutTransaction(),
   );
-  const server = createServer({ commerce, auth: new DevHeaderAuthProvider() });
+  const buckPay = new BuckPayApplicationService(new InMemoryBuckPayRepository());
+  const server = createServer({ commerce, buckPay, auth: new DevHeaderAuthProvider() });
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   const address = server.address() as AddressInfo;
   return { server, baseUrl: `http://127.0.0.1:${address.port}` };
