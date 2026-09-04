@@ -44,7 +44,7 @@ export const DISPLAY_RATES_FROM_ZIG: Record<SupportedCurrency, number> = {
 
 export function formatMoney(amount: number, currency: SupportedCurrency): string {
   const meta = SUPPORTED_CURRENCIES.find((item) => item.code === currency);
-  return `${meta?.symbol ?? currency} ${amount.toFixed(2)}`;
+  return `${meta?.symbol ?? currency}${amount.toFixed(2)}`;
 }
 
 export function convertDisplayAmount(amount: number, fromCurrency: string, toCurrency: SupportedCurrency): number {
