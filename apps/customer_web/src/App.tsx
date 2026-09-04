@@ -139,7 +139,7 @@ export default function App() {
           </button>
         </section>
 
-        {order && <section className="success-card" role="status"><div><p className="eyebrow">ORDER PLACED</p><strong>Thanks — your order is confirmed.</strong><span>Order {order.id.slice(0, 8)} · {order.currency} {order.total.toFixed(2)}</span></div><button type="button" onClick={() => setOrder(null)}>Dismiss</button></section>}
+        {order && <section className="success-card" role="status"><div><p className="eyebrow">ORDER PLACED</p><strong>Thanks — your order is confirmed.</strong><span>Order {order.id.slice(0, 8)} · {formatMoney(order.total, order.currency as SupportedCurrency)}</span></div><button type="button" onClick={() => setOrder(null)}>Dismiss</button></section>}
 
         <section className="shop-section" aria-labelledby="shop-heading">
           <div className="section-heading">
