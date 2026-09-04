@@ -24,6 +24,7 @@
 | ADR-018 | Deployment & Environment Strategy | Proposed |
 | ADR-019 | External Partner Integration Architecture | Proposed |
 | ADR-020 | Essentials Subscription & Multimodal Delivery Optimisation Architecture | Proposed |
+| ADR-021 | BuckPay Value Account Architecture | Proposed |
 
 ## ADR-019 Supporting Records
 
@@ -33,6 +34,10 @@
 
 - ADR-020 Forward-Consistency Check
 - ADR-020 Forward-Consistency Closure Record
+
+## ADR-021 BuckPay Supporting Records
+
+- EIP-034 — BuckPay Value Ledger & Redemption
 
 ## External Partner Integration Amendments
 
@@ -65,6 +70,8 @@ These amendment records preserve the history of existing decisions while recordi
 ADR-019 establishes the decision to use a partner-neutral external integration boundary. EIP-017 defines the reusable integration pattern that implements that boundary, while EDA-002 defines the enterprise capability and data/integration scope.
 
 ADR-020 establishes the decision to extend existing commerce and delivery capabilities with customer-configurable subscriptions and a shared, resource-aware multimodal delivery optimisation layer. EIP-018 defines the reusable integration pattern that operationalises delivery-job orchestration, resource evaluation, multimodal transport selection and route/dispatch optimisation, while EDA-003 defines the enterprise capability and boundaries.
+
+ADR-021 establishes BuckPay as a dedicated governed value-account capability. EIP-034 defines the reusable implementation pattern for its ledger, idempotency and redemption boundary. Financial-provider operations remain behind ADR-019 and EIP-017.
 
 ## ADR-020 Closure
 
