@@ -35,11 +35,7 @@ export const SUPPORTED_CURRENCIES: Array<{ code: SupportedCurrency; label: strin
   { code: 'ZAR', label: 'ZAR', symbol: 'R' },
 ];
 
-/**
- * Development display rates only. Production conversion must come from the
- * governed pricing/currency service rather than browser constants.
- * Base currency: ZiG.
- */
+/** Development display rates only. Production conversion must come from the governed pricing/currency service. */
 export const DISPLAY_RATES_FROM_ZIG: Record<SupportedCurrency, number> = {
   ZiG: 1,
   USD: 0.0275,
@@ -68,7 +64,9 @@ export interface CommerceClient {
   checkout(): Promise<Order>;
 }
 
-const API_BASE_URL = import.meta.env.VITE_COMMERCE_API_URL ?? 'http://localhost:3000';
+// Browser requests use the Vite same-origin proxy in development. This avoids
+// CORS/auth-header differences between localhost:5173 and localhost:3000.
+const API_BASE_URL = import.meta.env.VITE_COMMERCE_API_URL ?? '/api';
 const CUSTOMER_ID = import.meta.env.VITE_DEV_CUSTOMER_ID ?? 'web-demo-customer';
 
 const categoryFor = (id: string): string => {
@@ -77,6 +75,9 @@ const categoryFor = (id: string): string => {
     milk: 'Dairy',
     eggs: 'Dairy',
     'discontinued-item': 'Household',
+    rice: 'Pantry',
+    soap: 'Household',
+    toothpaste: 'Personal Care',
   };
   return categories[id] ?? 'Essentials';
 };
@@ -85,16 +86,24 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
+      Accept: 'application/json',
       ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
       'x-dev-customer-id': CUSTOMER_ID,
       ...init?.headers,
     },
   });
 
-  const body = (await response.json()) as T | { error?: { message?: string } };
+  const text = await response.text();
+  let body: unknown = null;
+  try {
+    body = text ? JSON.parse(text) : null;
+  } catch {
+    body = null;
+  }
+
   if (!response.ok) {
-    const message = typeof body === 'object' && body && 'error' in body ? body.error?.message : undefined;
-    throw new Error(message ?? `Commerce request failed (${response.status}).`);
+    const errorBody = body as { error?: { message?: string } } | null;
+    throw new Error(errorBody?.error?.message ?? `Commerce request failed (${response.status}).`);
   }
   return body as T;
 }
@@ -170,20 +179,11 @@ export const developmentCommerceClient: CommerceClient = {
 
 export const commerceClient: CommerceClient = {
   async listProducts() {
-    try {
-      const response = await request<{ products: ProductDto[] }>('/products');
-      const products = response.products.map(fromProductDto);
-      return products.length > 0 ? products : developmentCommerceClient.listProducts();
-    } catch {
-      return developmentCommerceClient.listProducts();
-    }
+    const response = await request<{ products: ProductDto[] }>('/products');
+    return response.products.map(fromProductDto);
   },
   async getProduct(productId) {
-    try {
-      return fromProductDto(await request<ProductDto>(`/products/${encodeURIComponent(productId)}`));
-    } catch {
-      return developmentCommerceClient.getProduct(productId);
-    }
+    return fromProductDto(await request<ProductDto>(`/products/${encodeURIComponent(productId)}`));
   },
   async getBasket() {
     return fromBasketDto(await request<BasketDto>('/basket'));
