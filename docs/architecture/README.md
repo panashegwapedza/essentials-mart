@@ -28,6 +28,7 @@
 - ADR-018 — Deployment & Environment Strategy
 - ADR-019 — External Partner Integration Architecture
 - ADR-020 — Essentials Subscription & Multimodal Delivery Optimisation Architecture
+- ADR-021 — BuckPay Value Account Architecture
 
 ### ADR-019 Forward-Consistency Record
 
@@ -37,16 +38,6 @@
 
 - ADR-020 Forward-Consistency Check
 - ADR-020 Forward-Consistency Closure Record
-
-### ADR Amendment Records — External Partner Integration
-
-- ADR-004 Amendment 001 — External Partner Integration
-- ADR-005 Amendment 001 — External Partner Data Boundaries
-- ADR-006 Amendment 001 — External Partner Identity
-- ADR-015 Amendment 001 — External Partner Security
-- ADR-016 Amendment 001 — External Partner Observability
-- ADR-017 Amendment 001 — Partner Scalability
-- ADR-018 Amendment 001 — Partner Deployment
 
 ### ADR-020 Subscription & Multimodal Delivery Amendments
 
@@ -80,6 +71,7 @@
 - EIP-016 — Human-in-the-Loop Routing
 - EIP-017 — External Partner Adapter / Gateway
 - EIP-018 — Resource-Aware Multimodal Delivery Orchestration
+- EIP-034 — BuckPay Value Ledger & Redemption
 
 ## User Experience Architecture
 
