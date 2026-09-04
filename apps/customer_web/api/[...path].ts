@@ -41,16 +41,25 @@ function orderDto(order: any) {
   return { id: order.id, status: order.status, total: order.total, lines: order.lines };
 }
 
+function requestPath(req: any): string {
+  const url = typeof req.url === 'string' ? req.url : '';
+  const pathname = url.split('?')[0];
+  if (pathname.startsWith('/api/')) return decodeURIComponent(pathname.slice('/api'.length));
+  if (pathname === '/api') return '/';
+
+  const rawPath = typeof req.query?.path === 'string'
+    ? `/${req.query.path}`
+    : Array.isArray(req.query?.path) ? `/${req.query.path.join('/')}` : '/';
+  return decodeURIComponent(rawPath);
+}
+
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-dev-customer-id');
   if (req.method === 'OPTIONS') return res.status(204).end();
 
-  const rawPath = typeof req.query?.path === 'string'
-    ? `/${req.query.path}`
-    : Array.isArray(req.query?.path) ? `/${req.query.path.join('/')}` : '/';
-  const path = decodeURIComponent(rawPath);
+  const path = requestPath(req);
 
   try {
     if (path === '/products' && req.method === 'GET') {
