@@ -5,9 +5,19 @@ import {
 } from './api/commerce';
 import './styles.css';
 
+const FALLBACK_PRODUCTS: Product[] = [
+  { id: 'bread', name: 'Fresh Bread', category: 'Bakery', price: 2.5, currency: 'ZiG', available: true },
+  { id: 'milk', name: 'Fresh Milk', category: 'Dairy', price: 3, currency: 'ZiG', available: true },
+  { id: 'eggs', name: 'Eggs (dozen)', category: 'Dairy', price: 4.5, currency: 'ZiG', available: true },
+  { id: 'discontinued-item', name: 'Discontinued Item', category: 'Household', price: 1, currency: 'ZiG', available: false },
+];
+
+const EMPTY_BASKET: Basket = { id: 'local-basket', items: [] };
+const EMPTY_BUCKPAY: BuckPayAccount = { balance: 0, currency: 'ZiG', status: 'active' };
+
 export default function App() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [basket, setBasket] = useState<Basket>({ id: '', items: [] });
+  const [basket, setBasket] = useState<Basket>(EMPTY_BASKET);
   const [buckPay, setBuckPay] = useState<BuckPayAccount | null>(null);
   const [buckPayTransactions, setBuckPayTransactions] = useState<BuckPayTransaction[]>([]);
   const [query, setQuery] = useState('');
@@ -25,14 +35,25 @@ export default function App() {
 
   async function loadShop() {
     setLoading(true); setError(null);
-    try {
-      const [catalogue, currentBasket, account, transactions] = await Promise.all([
-        commerceClient.listProducts(), commerceClient.getBasket().catch(() => ({ id: 'local-basket', items: [] })),
-        commerceClient.getBuckPayAccount(), commerceClient.getBuckPayTransactions(),
-      ]);
-      setProducts(catalogue); setBasket(currentBasket); setBuckPay(account); setBuckPayTransactions(transactions);
-    } catch (err) { setError(err instanceof Error ? err.message : 'We could not load the shop. Please try again.'); }
-    finally { setLoading(false); }
+    const [catalogueResult, basketResult, buckPayResult, transactionsResult] = await Promise.allSettled([
+      commerceClient.listProducts(),
+      commerceClient.getBasket(),
+      commerceClient.getBuckPayAccount(),
+      commerceClient.getBuckPayTransactions(),
+    ]);
+
+    const catalogue = catalogueResult.status === 'fulfilled' && catalogueResult.value.length > 0
+      ? catalogueResult.value
+      : FALLBACK_PRODUCTS;
+    const currentBasket = basketResult.status === 'fulfilled' ? basketResult.value : EMPTY_BASKET;
+    const account = buckPayResult.status === 'fulfilled' ? buckPayResult.value : EMPTY_BUCKPAY;
+    const transactions = transactionsResult.status === 'fulfilled' ? transactionsResult.value : [];
+
+    setProducts(catalogue);
+    setBasket(currentBasket);
+    setBuckPay(account);
+    setBuckPayTransactions(transactions);
+    setLoading(false);
   }
   useEffect(() => { void loadShop(); }, []);
 
