@@ -1,4 +1,4 @@
-import type { AuthenticatedPrincipal, Money } from "../../domain.js";
+import type { Money } from "../../domain.js";
 import type { BuckPayAccount, BuckPayRepository, BuckPayTransaction } from "../../buckpay.js";
 import { supabaseRest, supabaseRpc } from "./SupabaseCommerceRepositories.js";
 
@@ -6,7 +6,7 @@ function moneyFromRow(row: any): Money { return { amountMinor: Math.round(Number
 function transactionFromRow(row: any, customerId: string): BuckPayTransaction { return { id: row.id, customerId, type: row.transaction_type, amount: moneyFromRow(row), reference: row.reference, createdAt: row.created_at }; }
 
 async function customerDbId(customerId: string): Promise<string> {
-  const byId = await supabaseRest<any[]>(`customers?select=id&auth_user_id=is.null&id=eq.${encodeURIComponent(customerId)}&limit=1`);
+  const byId = await supabaseRest<any[]>(`customers?select=id&id=eq.${encodeURIComponent(customerId)}&limit=1`);
   if (byId[0]?.id) return byId[0].id;
   const rows = await supabaseRest<any[]>(`customers?select=id&external_customer_id=eq.${encodeURIComponent(customerId)}&limit=1`);
   if (rows[0]?.id) return rows[0].id;
