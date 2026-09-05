@@ -1,17 +1,14 @@
-import { InMemoryProductRepository } from '../../../services/commerce-api/src/adapters/dev/InMemoryProductRepository.js';
-import { InMemoryBasketRepository } from '../../../services/commerce-api/src/adapters/dev/InMemoryBasketRepository.js';
-import { InMemoryOrderRepository } from '../../../services/commerce-api/src/adapters/dev/InMemoryOrderRepository.js';
-import { InMemoryCheckoutTransaction } from '../../../services/commerce-api/src/adapters/dev/InMemoryCheckoutTransaction.js';
 import { InMemoryBuckPayRepository } from '../../../services/commerce-api/src/buckpay.js';
 import { CommerceApplicationService } from '../../../services/commerce-api/src/application/CommerceApplicationService.js';
 import { BuckPayApplicationService } from '../../../services/commerce-api/src/application/BuckPayApplicationService.js';
+import { SupabaseProductRepository, SupabaseBasketRepository, SupabaseOrderRepository, SupabaseCheckoutTransaction } from '../../../services/commerce-api/src/adapters/supabase/SupabaseCommerceRepositories.js';
 import type { AuthenticatedPrincipal } from '../../../services/commerce-api/src/domain.js';
 
 const commerce = new CommerceApplicationService(
-  new InMemoryProductRepository(InMemoryProductRepository.defaultSeed()),
-  new InMemoryBasketRepository(),
-  new InMemoryOrderRepository(),
-  new InMemoryCheckoutTransaction(),
+  new SupabaseProductRepository(),
+  new SupabaseBasketRepository(),
+  new SupabaseOrderRepository(),
+  new SupabaseCheckoutTransaction(),
 );
 const buckPay = new BuckPayApplicationService(new InMemoryBuckPayRepository());
 
@@ -107,6 +104,7 @@ export default async function handler(req: any, res: any) {
     return error(res, 404, 'NOT_FOUND', 'No such route.');
   } catch (err: any) {
     const status = err?.code === 'NOT_FOUND' ? 404 : err?.code === 'PRODUCT_UNAVAILABLE' ? 409 : 500;
+    console.error('commerce-api error', err);
     return error(res, status, err?.code ?? 'INTERNAL_ERROR', err instanceof Error ? err.message : 'Unexpected server error.');
   }
 }
