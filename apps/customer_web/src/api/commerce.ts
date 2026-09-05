@@ -32,14 +32,41 @@ const API_BASE_URL = import.meta.env.VITE_COMMERCE_API_URL ?? '/api';
 const CUSTOMER_ID = import.meta.env.VITE_DEV_CUSTOMER_ID ?? 'web-demo-customer';
 const categoryFor = (id: string): string => ({ bread: 'Bakery', milk: 'Dairy', eggs: 'Dairy', 'discontinued-item': 'Household', rice: 'Pantry', soap: 'Household', toothpaste: 'Personal Care' }[id] ?? 'Essentials');
 
+const sleep = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers: { Accept: 'application/json', ...(init?.body ? { 'Content-Type': 'application/json' } : {}), 'x-dev-customer-id': CUSTOMER_ID, ...init?.headers } });
-  const text = await response.text();
-  let body: unknown;
-  try { body = text ? JSON.parse(text) : null; } catch { throw new Error(`Commerce API returned an invalid response (${response.status}).`); }
-  if (!response.ok) { const errorBody = body as { error?: { message?: string } } | null; throw new Error(errorBody?.error?.message ?? `Commerce request failed (${response.status}).`); }
-  if (body === null || body === undefined) throw new Error('Commerce API returned an empty response.');
-  return body as T;
+  const method = (init?.method ?? 'GET').toUpperCase();
+  const attempts = method === 'GET' ? 3 : 1;
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers: { Accept: 'application/json', ...(init?.body ? { 'Content-Type': 'application/json' } : {}), 'x-dev-customer-id': CUSTOMER_ID, ...init?.headers } });
+      const text = await response.text();
+      let body: unknown;
+      try { body = text ? JSON.parse(text) : null; } catch { throw new Error(`Commerce API returned an invalid response (${response.status}).`); }
+      if (!response.ok) {
+        const errorBody = body as { error?: { message?: string } } | null;
+        const message = errorBody?.error?.message ?? `Commerce request failed (${response.status}).`;
+        if (method === 'GET' && (response.status >= 500 || response.status === 429) && attempt < attempts) {
+          await sleep(250 * attempt);
+          continue;
+        }
+        throw new Error(message);
+      }
+      if (body === null || body === undefined) throw new Error('Commerce API returned an empty response.');
+      return body as T;
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error('Commerce request failed.');
+      if (method === 'GET' && attempt < attempts && !(lastError.message.startsWith('Commerce API returned an invalid response'))) {
+        await sleep(250 * attempt);
+        continue;
+      }
+      throw lastError;
+    }
+  }
+
+  throw lastError ?? new Error('Commerce request failed.');
 }
 
 type ProductDto = { id: string; name: string; price: { amountMinor: number; currency: string }; available: boolean };
