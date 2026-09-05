@@ -41,7 +41,7 @@ export interface BuckPayRepository {
   getAccount(customerId: string): Promise<BuckPayAccount>;
   getTransactions(customerId: string): Promise<BuckPayTransaction[]>;
   findTransactionByReference(customerId: string, reference: string): Promise<BuckPayTransaction | null>;
-  appendTransaction(transaction: BuckPayTransaction): Promise<void>;
+  appendTransaction(transaction: BuckPayTransaction): Promise<BuckPayTransaction>;
 }
 
 export class InMemoryBuckPayRepository implements BuckPayRepository {
@@ -72,7 +72,7 @@ export class InMemoryBuckPayRepository implements BuckPayRepository {
     return transaction ? structuredClone(transaction) : null;
   }
 
-  async appendTransaction(transaction: BuckPayTransaction): Promise<void> {
+  async appendTransaction(transaction: BuckPayTransaction): Promise<BuckPayTransaction> {
     const account = await this.getAccount(transaction.customerId);
     const current = account.balance;
     if (current.currency !== transaction.amount.currency) {
@@ -83,11 +83,18 @@ export class InMemoryBuckPayRepository implements BuckPayRepository {
     const nextAmount = current.amountMinor + signedAmount;
     if (nextAmount < 0) throw new BuckPayError("Insufficient BuckPay balance", "INSUFFICIENT_BALANCE");
 
+    const existing = (this.transactions.get(transaction.customerId) ?? []).find((item) => item.reference === transaction.reference);
+    if (existing) {
+      if (existing.type === transaction.type && existing.amount.amountMinor === transaction.amount.amountMinor && existing.amount.currency === transaction.amount.currency) return structuredClone(existing);
+      throw new BuckPayError("Transaction reference has already been used", "DUPLICATE_REFERENCE");
+    }
+
     const updated = { ...account, balance: { ...current, amountMinor: nextAmount } };
     this.accounts.set(transaction.customerId, updated);
     const history = this.transactions.get(transaction.customerId) ?? [];
     history.push(structuredClone(transaction));
     this.transactions.set(transaction.customerId, history);
+    return structuredClone(transaction);
   }
 }
 
