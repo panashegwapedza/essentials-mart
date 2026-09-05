@@ -63,14 +63,23 @@ export class CommerceApplicationService {
   }
 
   async checkout(principal: AuthenticatedPrincipal): Promise<Order> {
+    const basket = await this.getOrCreateBasket(principal);
+    const freshProducts = new Map<string, Product>();
+    for (const line of basket.lines) {
+      const product = await this.products.getById(line.productId);
+      if (product) freshProducts.set(product.id, product);
+    }
+    const order = placeOrder(principal, basket, freshProducts, randomUUID());
+
+    if (this.transaction.commitCheckout) {
+      return (await this.transaction.commitCheckout({
+        customerId: principal.customerId,
+        basketId: basket.id,
+        order,
+      })) as Order;
+    }
+
     return this.transaction.run(async () => {
-      const basket = await this.getOrCreateBasket(principal);
-      const freshProducts = new Map<string, Product>();
-      for (const line of basket.lines) {
-        const product = await this.products.getById(line.productId);
-        if (product) freshProducts.set(product.id, product);
-      }
-      const order = placeOrder(principal, basket, freshProducts, randomUUID());
       await this.orders.save(order);
       await this.baskets.save({ ...basket, lines: [] });
       return order;
