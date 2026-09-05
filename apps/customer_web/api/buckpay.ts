@@ -1,27 +1,25 @@
 import { SupabaseBuckPayRepository } from '../../../services/commerce-api/src/adapters/supabase/SupabaseBuckPayRepository.js';
 import { BuckPayApplicationService } from '../../../services/commerce-api/src/application/BuckPayApplicationService.js';
 import type { AuthenticatedPrincipal } from '../../../services/commerce-api/src/domain.js';
+import { devPrincipal, principal as authPrincipal } from './_auth.js';
 
 const buckPay = new BuckPayApplicationService(new SupabaseBuckPayRepository());
 
-function principal(req: any): AuthenticatedPrincipal | null {
-  const value = req.headers?.['x-dev-customer-id'];
-  const id = Array.isArray(value) ? value[0] : value;
-  return typeof id === 'string' && id.trim() ? { customerId: id } : null;
+async function principal(req: any): Promise<AuthenticatedPrincipal | null> {
+  return devPrincipal(req) ?? authPrincipal(req);
 }
 
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-dev-customer-id');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-dev-customer-id');
+  res.setHeader('Vary', 'Origin, Authorization');
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'GET') return res.status(405).json({ error: { code: 'METHOD_NOT_ALLOWED', message: 'Only GET is supported.' } });
-
-  const user = principal(req);
-  if (!user) return res.status(401).json({ error: { code: 'UNAUTHENTICATED', message: 'No authenticated principal could be resolved for this request.' } });
-
+  const user = await principal(req);
+  if (!user) return res.status(401).json({ error: { code: 'UNAUTHENTICATED', message: 'A valid Supabase Auth session is required.' } });
   try {
-    const account = await buckPay.getAccount(user);
+    const account = await buckPay.getAccount(user.customerId);
     return res.status(200).json({ balance: account.balance, status: account.status });
   } catch (err: any) {
     console.error('buckpay-api error', err);
