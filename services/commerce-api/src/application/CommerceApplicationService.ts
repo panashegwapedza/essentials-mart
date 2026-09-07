@@ -64,11 +64,20 @@ export class CommerceApplicationService {
 
   async checkout(principal: AuthenticatedPrincipal): Promise<Order> {
     const basket = await this.getOrCreateBasket(principal);
-    const freshProducts = new Map<string, Product>();
-    for (const line of basket.lines) {
-      const product = await this.products.getById(line.productId);
-      if (product) freshProducts.set(product.id, product);
+    if (basket.lines.length === 0) {
+      throw new CommerceError("Basket must contain at least one item", "EMPTY_BASKET");
     }
+
+    // Revalidate all catalogue lines in parallel. Checkout remains server-authoritative,
+    // while avoiding one Supabase round-trip after another for larger baskets.
+    const products = await Promise.all(
+      basket.lines.map(async (line) => ({ line, product: await this.products.getById(line.productId) })),
+    );
+    const freshProducts = new Map<string, Product>();
+    for (const { line, product } of products) {
+      if (product) freshProducts.set(line.productId, product);
+    }
+
     const order = placeOrder(principal, basket, freshProducts, randomUUID());
 
     if (this.transaction.commitCheckout) {
