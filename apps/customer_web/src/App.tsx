@@ -32,30 +32,44 @@ export default function App() {
   const [productLoading, setProductLoading] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [buckPayLoading, setBuckPayLoading] = useState(false);
 
   async function loadShop() {
     setLoading(true); setError(null);
-    const [catalogueResult, basketResult, buckPayResult, transactionsResult] = await Promise.allSettled([
+    const [catalogueResult, basketResult] = await Promise.allSettled([
       commerceClient.listProducts(),
       commerceClient.getBasket(),
-      commerceClient.getBuckPayAccount(),
-      commerceClient.getBuckPayTransactions(),
     ]);
 
     const catalogue = catalogueResult.status === 'fulfilled' && catalogueResult.value.length > 0
       ? catalogueResult.value
       : FALLBACK_PRODUCTS;
     const currentBasket = basketResult.status === 'fulfilled' ? basketResult.value : EMPTY_BASKET;
-    const account = buckPayResult.status === 'fulfilled' ? buckPayResult.value : EMPTY_BUCKPAY;
-    const transactions = transactionsResult.status === 'fulfilled' ? transactionsResult.value : [];
 
+    if (catalogueResult.status === 'rejected') setError('The catalogue is temporarily unavailable. Showing essentials while we reconnect.');
+    if (basketResult.status === 'rejected' && catalogueResult.status === 'fulfilled') setError('Your basket could not be refreshed. You can keep browsing and we will retry when needed.');
     setProducts(catalogue);
     setBasket(currentBasket);
-    setBuckPay(account);
-    setBuckPayTransactions(transactions);
     setLoading(false);
   }
+
+  async function loadBuckPay() {
+    if (buckPayLoading) return;
+    setBuckPayLoading(true);
+    try {
+      const [account, transactions] = await Promise.all([commerceClient.getBuckPayAccount(), commerceClient.getBuckPayTransactions()]);
+      setBuckPay(account);
+      setBuckPayTransactions(transactions);
+    } catch {
+      setBuckPay(EMPTY_BUCKPAY);
+      setBuckPayTransactions([]);
+    } finally {
+      setBuckPayLoading(false);
+    }
+  }
+
   useEffect(() => { void loadShop(); }, []);
+  useEffect(() => { if (buckPayOpen && !buckPay) void loadBuckPay(); }, [buckPayOpen, buckPay]);
 
   const productById = useMemo(() => new Map(products.map((product) => [product.id, product])), [products]);
   const categories = useMemo(() => ['All', ...Array.from(new Set(products.map((product) => product.category)))], [products]);
@@ -72,24 +86,37 @@ export default function App() {
   const buckPayDisplayBalance = buckPay ? convertDisplayAmount(buckPay.balance, buckPay.currency, currency) : 0;
 
   function displayPrice(product: Product) { return formatMoney(convertDisplayAmount(product.price, product.currency, currency), currency); }
+
   async function addProduct(product: Product) {
-    if (!product.available) return; setBusyProduct(product.id); setError(null);
+    if (!product.available) return;
+    setBusyProduct(product.id); setError(null);
+    const previous = basket;
+    const existing = previous.items.find((item) => item.productId === product.id);
+    const optimistic: Basket = existing
+      ? { ...previous, items: previous.items.map((item) => item.productId === product.id ? { ...item, quantity: item.quantity + 1 } : item) }
+      : { ...previous, items: [...previous.items, { productId: product.id, quantity: 1, unitPrice: product.price, currency: product.currency }] };
+    setBasket(optimistic);
     try { setBasket(await commerceClient.addBasketItem(product.id, 1)); }
-    catch (err) { setError(err instanceof Error ? err.message : 'We could not add that item.'); }
+    catch (err) { setBasket(previous); setError(err instanceof Error ? err.message : 'We could not add that item. Please try again.'); }
     finally { setBusyProduct(null); }
   }
+
   async function openProduct(product: Product) {
     setSelectedProduct(product); setProductLoading(true); setError(null);
     try { setSelectedProduct(await commerceClient.getProduct(product.id)); }
     catch (err) { setError(err instanceof Error ? err.message : 'We could not load that product.'); }
     finally { setProductLoading(false); }
   }
+
   async function removeProduct(productId: string) {
     setBusyProduct(productId); setError(null);
+    const previous = basket;
+    setBasket({ ...previous, items: previous.items.filter((item) => item.productId !== productId) });
     try { setBasket(await commerceClient.removeBasketItem(productId)); }
-    catch (err) { setError(err instanceof Error ? err.message : 'We could not remove that item.'); }
+    catch (err) { setBasket(previous); setError(err instanceof Error ? err.message : 'We could not remove that item. Please try again.'); }
     finally { setBusyProduct(null); }
   }
+
   async function checkout() {
     if (basketCount === 0) return; setCheckingOut(true); setError(null);
     try { const placedOrder = await commerceClient.checkout(); setOrder(placedOrder); setBasket(await commerceClient.getBasket()); setBasketOpen(false); }
@@ -128,8 +155,8 @@ export default function App() {
           <div className="section-heading"><div><p className="eyebrow">SHOP</p><h2 id="shop-heading">Everyday essentials</h2></div><label className="search-box"><span className="sr-only">Search products</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search essentials" /></label></div>
           <div className="category-row" aria-label="Product categories">{categories.map((item) => <button key={item} type="button" className={category === item ? 'category active' : 'category'} onClick={() => setCategory(item)}>{item}</button>)}</div>
           {loading && <div className="state-card">Loading the catalogue…</div>}
-          {error && <div className="state-card error">{error}</div>}
-          {!loading && !error && <div className="product-grid">{visibleProducts.map((product) => <article className="product-card" key={product.id}>
+          {error && <div className="state-card error" role="alert">{error}</div>}
+          {!loading && <div className="product-grid">{visibleProducts.map((product) => <article className="product-card" key={product.id}>
             <button className="product-image product-image-button" type="button" onClick={() => void openProduct(product)} aria-label={`View ${product.name}`}><span>{product.name.charAt(0)}</span></button>
             <div className="product-meta"><span className="product-category">{product.category}</span><h3>{product.name}</h3><div className="product-footer"><strong>{displayPrice(product)}</strong><div className="product-actions"><button className="secondary-button" type="button" onClick={() => void openProduct(product)}>View</button><button type="button" onClick={() => void addProduct(product)} disabled={!product.available || busyProduct === product.id}>{busyProduct === product.id ? 'Adding…' : product.available ? 'Add' : 'Unavailable'}</button></div></div></div>
           </article>)}{visibleProducts.length === 0 && <div className="state-card empty-results">No essentials match that search.</div>}</div>}
@@ -138,7 +165,7 @@ export default function App() {
 
       {selectedProduct && <div className="product-backdrop" role="presentation" onClick={() => setSelectedProduct(null)}><section className="product-detail" role="dialog" aria-modal="true" aria-labelledby="product-detail-heading" onClick={(event) => event.stopPropagation()}><button className="detail-close" type="button" onClick={() => setSelectedProduct(null)} aria-label="Close product details">×</button><div className="detail-image" aria-hidden="true"><span>{selectedProduct.name.charAt(0)}</span></div><div className="detail-content"><p className="eyebrow">{selectedProduct.category}</p><h2 id="product-detail-heading">{selectedProduct.name}</h2><strong className="detail-price">{displayPrice(selectedProduct)}</strong><p className="detail-copy">Current catalogue information is confirmed through Commerce before this product is added to your basket.</p><p className={selectedProduct.available ? 'availability available' : 'availability unavailable'}>{productLoading ? 'Refreshing availability…' : selectedProduct.available ? 'Available now' : 'Currently unavailable'}</p><button className="detail-add" type="button" onClick={() => { void addProduct(selectedProduct); setSelectedProduct(null); }} disabled={!selectedProduct.available || productLoading || busyProduct === selectedProduct.id}>{busyProduct === selectedProduct.id ? 'Adding…' : 'Add to basket'}</button></div></section></div>}
 
-      {buckPayOpen && <><button className="basket-backdrop" type="button" aria-label="Close BuckPay" onClick={() => setBuckPayOpen(false)} /><aside className="buckpay-drawer" aria-label="BuckPay account"><div className="drawer-header"><div><p className="eyebrow">BUCKPAY</p><h2>Value account</h2></div><button className="drawer-close" type="button" onClick={() => setBuckPayOpen(false)} aria-label="Close BuckPay">×</button></div><div className="buckpay-drawer-balance"><span>Available value</span><strong>{buckPay ? formatMoney(buckPayDisplayBalance, currency) : '—'}</strong><small>{buckPay?.status === 'active' ? 'Account active' : 'Account unavailable'}</small></div><div className="buckpay-history"><h3>Recent activity</h3>{buckPayTransactions.length === 0 ? <p>No BuckPay transactions yet. Earned value and approved funding will appear here.</p> : buckPayTransactions.map((transaction) => <div className="buckpay-transaction" key={transaction.id}><div><strong>{transaction.type.replace('_', ' ')}</strong><span>{new Date(transaction.createdAt).toLocaleDateString()}</span></div><strong>{transaction.type === 'commerce_redemption' ? '−' : '+'}{formatMoney(convertDisplayAmount(transaction.amount, transaction.currency, currency), currency)}</strong></div>)}</div><p className="buckpay-note">BuckPay does not represent a bank deposit or investment product. Future regulated financial capabilities will use approved external partners.</p></aside></>}
+      {buckPayOpen && <><button className="basket-backdrop" type="button" aria-label="Close BuckPay" onClick={() => setBuckPayOpen(false)} /><aside className="buckpay-drawer" aria-label="BuckPay account"><div className="drawer-header"><div><p className="eyebrow">BUCKPAY</p><h2>Value account</h2></div><button className="drawer-close" type="button" onClick={() => setBuckPayOpen(false)} aria-label="Close BuckPay">×</button></div><div className="buckpay-drawer-balance"><span>Available value</span><strong>{buckPay ? formatMoney(buckPayDisplayBalance, currency) : buckPayLoading ? 'Loading…' : '—'}</strong><small>{buckPay?.status === 'active' ? 'Account active' : 'Account unavailable'}</small></div><div className="buckpay-history"><h3>Recent activity</h3>{buckPayLoading ? <p>Loading recent activity…</p> : buckPayTransactions.length === 0 ? <p>No BuckPay transactions yet. Earned value and approved funding will appear here.</p> : buckPayTransactions.map((transaction) => <div className="buckpay-transaction" key={transaction.id}><div><strong>{transaction.type.replace('_', ' ')}</strong><span>{new Date(transaction.createdAt).toLocaleDateString()}</span></div><strong>{transaction.type === 'commerce_redemption' ? '−' : '+'}{formatMoney(convertDisplayAmount(transaction.amount, transaction.currency, currency), currency)}</strong></div>)}</div><p className="buckpay-note">BuckPay does not represent a bank deposit or investment product. Future regulated financial capabilities will use approved external partners.</p></aside></>}
 
       {basketOpen && <><button className="basket-backdrop" type="button" aria-label="Close basket" onClick={() => setBasketOpen(false)} /><aside className="basket-drawer" aria-label="Shopping basket"><div className="drawer-header"><div><p className="eyebrow">YOUR BASKET</p><h2>{basketCount} items</h2></div><button className="drawer-close" type="button" onClick={() => setBasketOpen(false)} aria-label="Close basket">×</button></div>{basket.items.length === 0 ? <div className="empty-basket">Your basket is empty. Add something from the shop.</div> : <div className="basket-lines">{basket.items.map((item) => { const product = productById.get(item.productId); return <div className="basket-line" key={item.productId}><div><strong>{product?.name ?? item.productId}</strong><span>{item.quantity} × {formatMoney(convertDisplayAmount(item.unitPrice, item.currency, currency), currency)}</span></div><button type="button" className="remove-button" onClick={() => void removeProduct(item.productId)} disabled={busyProduct === item.productId}>Remove</button></div>; })}</div>}<div className="basket-summary"><span>Total</span><strong>{formatMoney(basketTotal, currency)}</strong></div><button className="checkout-button" type="button" disabled={basketCount === 0 || checkingOut} onClick={() => void checkout()}>{checkingOut ? 'Placing order…' : 'Checkout'}</button></aside></>}
 
