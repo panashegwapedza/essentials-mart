@@ -27,7 +27,7 @@ const sleep = (ms: number) => new Promise((resolve) => window.setTimeout(resolve
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const method = (init?.method ?? 'GET').toUpperCase();
-  const attempts = method === 'GET' ? 3 : 1;
+  const attempts = method === 'GET' ? 2 : 1;
   let lastError: Error | null = null;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
@@ -36,22 +36,29 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       headers.set('Accept', 'application/json');
       if (init?.body) headers.set('Content-Type', 'application/json');
       if (session?.access_token) headers.set('Authorization', `Bearer ${session.access_token}`);
-      const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
-      const text = await response.text();
-      let body: unknown;
-      try { body = text ? JSON.parse(text) : null; } catch { throw new Error(`Commerce API returned an invalid response (${response.status}).`); }
-      if (!response.ok) {
-        const errorBody = body as { error?: { code?: string; message?: string } } | null;
-        const message = errorBody?.error?.message ?? `Commerce request failed (${response.status}).`;
-        if (response.status === 401) throw new Error('Please sign in again to continue.');
-        if (method === 'GET' && (response.status >= 500 || response.status === 429) && attempt < attempts) { await sleep(250 * attempt); continue; }
-        throw new Error(message);
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 12000);
+      try {
+        const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers, signal: controller.signal });
+        const text = await response.text();
+        let body: unknown;
+        try { body = text ? JSON.parse(text) : null; } catch { throw new Error(`Commerce API returned an invalid response (${response.status}).`); }
+        if (!response.ok) {
+          const errorBody = body as { error?: { code?: string; message?: string } } | null;
+          const message = errorBody?.error?.message ?? `Commerce request failed (${response.status}).`;
+          if (response.status === 401) throw new Error('Please sign in again to continue.');
+          if (method === 'GET' && (response.status >= 500 || response.status === 429) && attempt < attempts) { await sleep(150); continue; }
+          throw new Error(message);
+        }
+        if (body === null || body === undefined) throw new Error('Commerce API returned an empty response.');
+        return body as T;
+      } finally {
+        window.clearTimeout(timeout);
       }
-      if (body === null || body === undefined) throw new Error('Commerce API returned an empty response.');
-      return body as T;
     } catch (err) {
       lastError = err instanceof Error ? err : new Error('Commerce request failed.');
-      if (method === 'GET' && attempt < attempts && !lastError.message.startsWith('Commerce API returned an invalid response')) { await sleep(250 * attempt); continue; }
+      const retryableNetworkError = lastError.name === 'AbortError' || lastError.message === 'Failed to fetch' || lastError.message.includes('fetch failed');
+      if (method === 'GET' && attempt < attempts && retryableNetworkError) { await sleep(150); continue; }
       throw lastError;
     }
   }
