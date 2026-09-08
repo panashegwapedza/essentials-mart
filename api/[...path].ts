@@ -1,16 +1,20 @@
 import { SupabaseBuckPayRepository } from '../services/commerce-api/src/adapters/supabase/SupabaseBuckPayRepository.js';
+import { SupabaseNotificationRepository } from '../services/commerce-api/src/adapters/supabase/SupabaseNotificationRepository.js';
 import { BuckPayApplicationService } from '../services/commerce-api/src/application/BuckPayApplicationService.js';
 import { CommerceApplicationService } from '../services/commerce-api/src/application/CommerceApplicationService.js';
+import { NotificationApplicationService } from '../services/commerce-api/src/application/NotificationApplicationService.js';
 import { SupabaseProductRepository, SupabaseBasketRepository, SupabaseOrderRepository, SupabaseCheckoutTransaction } from '../services/commerce-api/src/adapters/supabase/SupabaseCommerceRepositories.js';
 import type { AuthenticatedPrincipal } from '../services/commerce-api/src/domain.js';
 import { devPrincipal, principal as authPrincipal } from '../apps/customer_web/api/_auth.js';
 const commerce=new CommerceApplicationService(new SupabaseProductRepository(),new SupabaseBasketRepository(),new SupabaseOrderRepository(),new SupabaseCheckoutTransaction());
 const buckPay=new BuckPayApplicationService(new SupabaseBuckPayRepository());
+const notifications=new NotificationApplicationService(new SupabaseNotificationRepository());
 function json(res:any,status:number,body:unknown){res.status(status).setHeader('Content-Type','application/json').send(JSON.stringify(body));}
 function error(res:any,status:number,code:string,message:string){return json(res,status,{error:{code,message}});}
 function productDto(product:any){return{id:product.id,name:product.name,price:product.price,available:product.available};}
 function basketDto(basket:any){return{id:basket.id,lines:basket.lines};}
 function orderDto(order:any){return{id:order.id,status:order.status,total:order.total,subtotal:order.subtotal,deliveryMethod:order.deliveryMethod,deliveryFee:order.deliveryFee,createdAt:order.createdAt,lines:order.lines};}
+function notificationDto(notification:any){return{id:notification.id,type:notification.type,title:notification.title,body:notification.body,status:notification.status,aggregateType:notification.aggregateType,aggregateId:notification.aggregateId,actionType:notification.actionType,actionTarget:notification.actionTarget,createdAt:notification.createdAt};}
 function requestPath(req:any){const url=typeof req.url==='string'?req.url:'';const pathname=url.split('?')[0];if(pathname.startsWith('/api/'))return decodeURIComponent(pathname.slice('/api'.length));if(pathname==='/api')return'/';const raw=typeof req.query?.path==='string'?`/${req.query.path}`:Array.isArray(req.query?.path)?`/${req.query.path.join('/')}`:'/';return decodeURIComponent(raw);}
 async function resolvePrincipal(req:any):Promise<AuthenticatedPrincipal|null>{const dev=devPrincipal(req);if(dev)return dev;return authPrincipal(req);}
 export default async function handler(req:any,res:any){res.setHeader('Access-Control-Allow-Origin','*');res.setHeader('Access-Control-Allow-Methods','GET,POST,DELETE,OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization, x-dev-customer-id');res.setHeader('Vary','Origin, Authorization');if(req.method==='OPTIONS')return res.status(204).end();const path=requestPath(req);try{
@@ -23,6 +27,8 @@ if(path.startsWith('/basket/items/')&&req.method==='DELETE')return json(res,200,
 if(path==='/checkout'&&req.method==='POST'){const body=typeof req.body==='string'?JSON.parse(req.body):req.body;const method=body?.deliveryMethod;if(!['pickup','standard','express'].includes(method))return error(res,400,'INVALID_DELIVERY_METHOD','Select a valid delivery method before checkout.');return json(res,201,orderDto(await commerce.checkout(user,method)));}
 if(path==='/orders'&&req.method==='GET')return json(res,200,{orders:(await commerce.listOwnedOrders(user)).map(orderDto)});
 if(path.startsWith('/orders/')&&req.method==='GET')return json(res,200,orderDto(await commerce.getOwnedOrder(user,path.slice('/orders/'.length))));
+if(path==='/notifications'&&req.method==='GET')return json(res,200,{notifications:(await notifications.list(user)).map(notificationDto)});
+if(path.startsWith('/notifications/')&&path.endsWith('/read')&&req.method==='POST'){const notificationId=path.slice('/notifications/'.length,-'/read'.length);return json(res,200,notificationDto(await notifications.markRead(user,notificationId)));}
 if(path==='/buckpay'&&req.method==='GET'){const account=await buckPay.getAccount(user);return json(res,200,{balance:account.balance,status:account.status});}
 if(path==='/buckpay/transactions'&&req.method==='GET'){const transactions=await buckPay.getTransactions(user);return json(res,200,{transactions:transactions.map(item=>({id:item.id,type:item.type,amount:item.amount,reference:item.reference,createdAt:item.createdAt}))});}
 return error(res,404,'NOT_FOUND','No such route.');
