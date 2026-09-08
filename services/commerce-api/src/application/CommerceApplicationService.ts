@@ -65,11 +65,9 @@ export class CommerceApplicationService {
   async checkout(principal: AuthenticatedPrincipal): Promise<Order> {
     const basket = await this.getOrCreateBasket(principal);
     if (basket.lines.length === 0) {
-      throw new CommerceError("Basket must contain at least one item", "EMPTY_BASKET");
+      throw new CommerceError("Basket must contain at least one item", "BASKET_EMPTY");
     }
 
-    // Revalidate all catalogue lines in parallel. Checkout remains server-authoritative,
-    // while avoiding one Supabase round-trip after another for larger baskets.
     const products = await Promise.all(
       basket.lines.map(async (line) => ({ line, product: await this.products.getById(line.productId) })),
     );
