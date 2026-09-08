@@ -1,175 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
-import {
-  commerceClient, convertDisplayAmount, formatMoney, SUPPORTED_CURRENCIES,
-  type Basket, type BuckPayAccount, type BuckPayTransaction, type Order, type Product, type SupportedCurrency,
-} from './api/commerce';
+import { useEffect,useMemo,useState } from 'react';
+import { commerceClient,convertDisplayAmount,formatMoney,SUPPORTED_CURRENCIES,DELIVERY_OPTIONS,type Basket,type BuckPayAccount,type BuckPayTransaction,type DeliveryMethod,type Order,type Product,type SupportedCurrency } from './api/commerce';
 import './styles.css';
-
-const FALLBACK_PRODUCTS: Product[] = [
-  { id: 'bread', name: 'Fresh Bread', category: 'Bakery', price: 2.5, currency: 'ZiG', available: true },
-  { id: 'milk', name: 'Fresh Milk', category: 'Dairy', price: 3, currency: 'ZiG', available: true },
-  { id: 'eggs', name: 'Eggs (dozen)', category: 'Dairy', price: 4.5, currency: 'ZiG', available: true },
-  { id: 'discontinued-item', name: 'Discontinued Item', category: 'Household', price: 1, currency: 'ZiG', available: false },
-];
-
-const EMPTY_BASKET: Basket = { id: 'local-basket', items: [] };
-const EMPTY_BUCKPAY: BuckPayAccount = { balance: 0, currency: 'ZiG', status: 'active' };
-
-export default function App() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [basket, setBasket] = useState<Basket>(EMPTY_BASKET);
-  const [buckPay, setBuckPay] = useState<BuckPayAccount | null>(null);
-  const [buckPayTransactions, setBuckPayTransactions] = useState<BuckPayTransaction[]>([]);
-  const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('All');
-  const [currency, setCurrency] = useState<SupportedCurrency>('USD');
-  const [loading, setLoading] = useState(true);
-  const [busyProduct, setBusyProduct] = useState<string | null>(null);
-  const [checkingOut, setCheckingOut] = useState(false);
-  const [basketOpen, setBasketOpen] = useState(false);
-  const [buckPayOpen, setBuckPayOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [productLoading, setProductLoading] = useState(false);
-  const [order, setOrder] = useState<Order | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [buckPayLoading, setBuckPayLoading] = useState(false);
-
-  async function loadShop() {
-    setLoading(true); setError(null);
-    const [catalogueResult, basketResult] = await Promise.allSettled([
-      commerceClient.listProducts(),
-      commerceClient.getBasket(),
-    ]);
-
-    const catalogue = catalogueResult.status === 'fulfilled' && catalogueResult.value.length > 0
-      ? catalogueResult.value
-      : FALLBACK_PRODUCTS;
-    const currentBasket = basketResult.status === 'fulfilled' ? basketResult.value : EMPTY_BASKET;
-
-    if (catalogueResult.status === 'rejected') setError('The catalogue is temporarily unavailable. Showing essentials while we reconnect.');
-    if (basketResult.status === 'rejected' && catalogueResult.status === 'fulfilled') setError('Your basket could not be refreshed. You can keep browsing and we will retry when needed.');
-    setProducts(catalogue);
-    setBasket(currentBasket);
-    setLoading(false);
-  }
-
-  async function loadBuckPay() {
-    if (buckPayLoading) return;
-    setBuckPayLoading(true);
-    try {
-      const [account, transactions] = await Promise.all([commerceClient.getBuckPayAccount(), commerceClient.getBuckPayTransactions()]);
-      setBuckPay(account);
-      setBuckPayTransactions(transactions);
-    } catch {
-      setBuckPay(EMPTY_BUCKPAY);
-      setBuckPayTransactions([]);
-    } finally {
-      setBuckPayLoading(false);
-    }
-  }
-
-  useEffect(() => { void loadShop(); }, []);
-  useEffect(() => { if (buckPayOpen && !buckPay) void loadBuckPay(); }, [buckPayOpen, buckPay]);
-
-  const productById = useMemo(() => new Map(products.map((product) => [product.id, product])), [products]);
-  const categories = useMemo(() => ['All', ...Array.from(new Set(products.map((product) => product.category)))], [products]);
-  const visibleProducts = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    return products.filter((product) => (category === 'All' || product.category === category) &&
-      (normalizedQuery.length === 0 || product.name.toLowerCase().includes(normalizedQuery) || product.category.toLowerCase().includes(normalizedQuery)));
-  }, [category, products, query]);
-
-  const basketCount = basket.items.reduce((total, item) => total + item.quantity, 0);
-  const basketBaseTotal = basket.items.reduce((total, item) => total + item.unitPrice * item.quantity, 0);
-  const basketBaseCurrency = (basket.items[0]?.currency ?? products[0]?.currency ?? 'ZiG') as SupportedCurrency;
-  const basketTotal = convertDisplayAmount(basketBaseTotal, basketBaseCurrency, currency);
-  const buckPayDisplayBalance = buckPay ? convertDisplayAmount(buckPay.balance, buckPay.currency, currency) : 0;
-
-  function displayPrice(product: Product) { return formatMoney(convertDisplayAmount(product.price, product.currency, currency), currency); }
-
-  async function addProduct(product: Product) {
-    if (!product.available) return;
-    setBusyProduct(product.id); setError(null);
-    const previous = basket;
-    const existing = previous.items.find((item) => item.productId === product.id);
-    const optimistic: Basket = existing
-      ? { ...previous, items: previous.items.map((item) => item.productId === product.id ? { ...item, quantity: item.quantity + 1 } : item) }
-      : { ...previous, items: [...previous.items, { productId: product.id, quantity: 1, unitPrice: product.price, currency: product.currency }] };
-    setBasket(optimistic);
-    try { setBasket(await commerceClient.addBasketItem(product.id, 1)); }
-    catch (err) { setBasket(previous); setError(err instanceof Error ? err.message : 'We could not add that item. Please try again.'); }
-    finally { setBusyProduct(null); }
-  }
-
-  async function openProduct(product: Product) {
-    setSelectedProduct(product); setProductLoading(true); setError(null);
-    try { setSelectedProduct(await commerceClient.getProduct(product.id)); }
-    catch (err) { setError(err instanceof Error ? err.message : 'We could not load that product.'); }
-    finally { setProductLoading(false); }
-  }
-
-  async function removeProduct(productId: string) {
-    setBusyProduct(productId); setError(null);
-    const previous = basket;
-    setBasket({ ...previous, items: previous.items.filter((item) => item.productId !== productId) });
-    try { setBasket(await commerceClient.removeBasketItem(productId)); }
-    catch (err) { setBasket(previous); setError(err instanceof Error ? err.message : 'We could not remove that item. Please try again.'); }
-    finally { setBusyProduct(null); }
-  }
-
-  async function checkout() {
-    if (basketCount === 0) return; setCheckingOut(true); setError(null);
-    try { const placedOrder = await commerceClient.checkout(); setOrder(placedOrder); setBasket(await commerceClient.getBasket()); setBasketOpen(false); }
-    catch (err) { setError(err instanceof Error ? err.message : 'Checkout could not be completed.'); }
-    finally { setCheckingOut(false); }
-  }
-
-  return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="brand-mark" aria-label="Essentials Mart home"><span className="brand-e">e</span><span>Essentials Mart</span></div>
-        <div className="topbar-actions">
-          <label className="currency-selector"><span className="sr-only">Currency</span><select value={currency} onChange={(event) => setCurrency(event.target.value as SupportedCurrency)} aria-label="Display currency">
-            {SUPPORTED_CURRENCIES.map((item) => <option key={item.code} value={item.code}>{item.symbol} {item.label}</option>)}
-          </select></label>
-          <button className="buckpay-button" type="button" onClick={() => setBuckPayOpen(true)} aria-label="Open BuckPay">BuckPay <span>{buckPay ? formatMoney(buckPayDisplayBalance, currency) : '—'}</span></button>
-          <button className="quiet-button" type="button">Account</button>
-          <button className="basket-button" type="button" aria-label={`Basket, ${basketCount} items`} aria-expanded={basketOpen} onClick={() => setBasketOpen((open) => !open)}>Basket <span>{basketCount}</span></button>
-        </div>
-      </header>
-
-      <main>
-        <section className="hero">
-          <div><p className="eyebrow">HOUSEHOLD CARE PLATFORM</p><h1>Everything your household needs, in one place.</h1><p className="hero-copy">Start with everyday essentials. Your basket, orders and future household services will grow from the same trusted platform.</p></div>
-          <button className="hero-card hero-card-button" type="button" onClick={() => setBasketOpen(true)}><span>Basket</span><strong>{basketCount} items</strong><small>{basketCount > 0 ? formatMoney(basketTotal, currency) : 'Ready when you are.'}</small></button>
-        </section>
-
-        <section className="buckpay-card" aria-labelledby="buckpay-heading">
-          <div><p className="eyebrow">BUCKPAY</p><h2 id="buckpay-heading">Your household value, in one place.</h2><p>Track earned value and future funding from the same governed account. Your balance is held by the platform ledger; regulated financial services remain provider-backed.</p></div>
-          <div className="buckpay-balance"><span>Available value</span><strong>{buckPay ? formatMoney(buckPayDisplayBalance, currency) : '—'}</strong><button type="button" onClick={() => setBuckPayOpen(true)}>View BuckPay</button></div>
-        </section>
-
-        {order && <section className="success-card" role="status"><div><p className="eyebrow">ORDER PLACED</p><strong>Thanks — your order is confirmed.</strong><span>Order {order.id.slice(0, 8)} · {formatMoney(order.total, order.currency as SupportedCurrency)}</span></div><button type="button" onClick={() => setOrder(null)}>Dismiss</button></section>}
-
-        <section className="shop-section" aria-labelledby="shop-heading">
-          <div className="section-heading"><div><p className="eyebrow">SHOP</p><h2 id="shop-heading">Everyday essentials</h2></div><label className="search-box"><span className="sr-only">Search products</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search essentials" /></label></div>
-          <div className="category-row" aria-label="Product categories">{categories.map((item) => <button key={item} type="button" className={category === item ? 'category active' : 'category'} onClick={() => setCategory(item)}>{item}</button>)}</div>
-          {loading && <div className="state-card">Loading the catalogue…</div>}
-          {error && <div className="state-card error" role="alert">{error}</div>}
-          {!loading && <div className="product-grid">{visibleProducts.map((product) => <article className="product-card" key={product.id}>
-            <button className="product-image product-image-button" type="button" onClick={() => void openProduct(product)} aria-label={`View ${product.name}`}><span>{product.name.charAt(0)}</span></button>
-            <div className="product-meta"><span className="product-category">{product.category}</span><h3>{product.name}</h3><div className="product-footer"><strong>{displayPrice(product)}</strong><div className="product-actions"><button className="secondary-button" type="button" onClick={() => void openProduct(product)}>View</button><button type="button" onClick={() => void addProduct(product)} disabled={!product.available || busyProduct === product.id}>{busyProduct === product.id ? 'Adding…' : product.available ? 'Add' : 'Unavailable'}</button></div></div></div>
-          </article>)}{visibleProducts.length === 0 && <div className="state-card empty-results">No essentials match that search.</div>}</div>}
-        </section>
-      </main>
-
-      {selectedProduct && <div className="product-backdrop" role="presentation" onClick={() => setSelectedProduct(null)}><section className="product-detail" role="dialog" aria-modal="true" aria-labelledby="product-detail-heading" onClick={(event) => event.stopPropagation()}><button className="detail-close" type="button" onClick={() => setSelectedProduct(null)} aria-label="Close product details">×</button><div className="detail-image" aria-hidden="true"><span>{selectedProduct.name.charAt(0)}</span></div><div className="detail-content"><p className="eyebrow">{selectedProduct.category}</p><h2 id="product-detail-heading">{selectedProduct.name}</h2><strong className="detail-price">{displayPrice(selectedProduct)}</strong><p className="detail-copy">Current catalogue information is confirmed through Commerce before this product is added to your basket.</p><p className={selectedProduct.available ? 'availability available' : 'availability unavailable'}>{productLoading ? 'Refreshing availability…' : selectedProduct.available ? 'Available now' : 'Currently unavailable'}</p><button className="detail-add" type="button" onClick={() => { void addProduct(selectedProduct); setSelectedProduct(null); }} disabled={!selectedProduct.available || productLoading || busyProduct === selectedProduct.id}>{busyProduct === selectedProduct.id ? 'Adding…' : 'Add to basket'}</button></div></section></div>}
-
-      {buckPayOpen && <><button className="basket-backdrop" type="button" aria-label="Close BuckPay" onClick={() => setBuckPayOpen(false)} /><aside className="buckpay-drawer" aria-label="BuckPay account"><div className="drawer-header"><div><p className="eyebrow">BUCKPAY</p><h2>Value account</h2></div><button className="drawer-close" type="button" onClick={() => setBuckPayOpen(false)} aria-label="Close BuckPay">×</button></div><div className="buckpay-drawer-balance"><span>Available value</span><strong>{buckPay ? formatMoney(buckPayDisplayBalance, currency) : buckPayLoading ? 'Loading…' : '—'}</strong><small>{buckPay?.status === 'active' ? 'Account active' : 'Account unavailable'}</small></div><div className="buckpay-history"><h3>Recent activity</h3>{buckPayLoading ? <p>Loading recent activity…</p> : buckPayTransactions.length === 0 ? <p>No BuckPay transactions yet. Earned value and approved funding will appear here.</p> : buckPayTransactions.map((transaction) => <div className="buckpay-transaction" key={transaction.id}><div><strong>{transaction.type.replace('_', ' ')}</strong><span>{new Date(transaction.createdAt).toLocaleDateString()}</span></div><strong>{transaction.type === 'commerce_redemption' ? '−' : '+'}{formatMoney(convertDisplayAmount(transaction.amount, transaction.currency, currency), currency)}</strong></div>)}</div><p className="buckpay-note">BuckPay does not represent a bank deposit or investment product. Future regulated financial capabilities will use approved external partners.</p></aside></>}
-
-      {basketOpen && <><button className="basket-backdrop" type="button" aria-label="Close basket" onClick={() => setBasketOpen(false)} /><aside className="basket-drawer" aria-label="Shopping basket"><div className="drawer-header"><div><p className="eyebrow">YOUR BASKET</p><h2>{basketCount} items</h2></div><button className="drawer-close" type="button" onClick={() => setBasketOpen(false)} aria-label="Close basket">×</button></div>{basket.items.length === 0 ? <div className="empty-basket">Your basket is empty. Add something from the shop.</div> : <div className="basket-lines">{basket.items.map((item) => { const product = productById.get(item.productId); return <div className="basket-line" key={item.productId}><div><strong>{product?.name ?? item.productId}</strong><span>{item.quantity} × {formatMoney(convertDisplayAmount(item.unitPrice, item.currency, currency), currency)}</span></div><button type="button" className="remove-button" onClick={() => void removeProduct(item.productId)} disabled={busyProduct === item.productId}>Remove</button></div>; })}</div>}<div className="basket-summary"><span>Total</span><strong>{formatMoney(basketTotal, currency)}</strong></div><button className="checkout-button" type="button" disabled={basketCount === 0 || checkingOut} onClick={() => void checkout()}>{checkingOut ? 'Placing order…' : 'Checkout'}</button></aside></>}
-
-      <footer><span>Essentials Mart</span><span>Built as a governed platform capability.</span></footer>
-    </div>
-  );
-}
+const FALLBACK_PRODUCTS:Product[]=[{id:'bread',name:'Fresh Bread',category:'Bakery',price:2.5,currency:'ZiG',available:true},{id:'milk',name:'Fresh Milk',category:'Dairy',price:3,currency:'ZiG',available:true},{id:'eggs',name:'Eggs (dozen)',category:'Dairy',price:4.5,currency:'ZiG',available:true},{id:'rice',name:'Rice',category:'Pantry',price:8.5,currency:'ZiG',available:true},{id:'soap',name:'Bath Soap',category:'Household',price:3.25,currency:'ZiG',available:true},{id:'toothpaste',name:'Toothpaste',category:'Personal Care',price:5.75,currency:'ZiG',available:true}];
+const EMPTY_BASKET:Basket={id:'local-basket',items:[]};const EMPTY_BUCKPAY:BuckPayAccount={balance:0,currency:'ZiG',status:'active'};
+export default function App(){const[products,setProducts]=useState<Product[]>([]),[basket,setBasket]=useState(EMPTY_BASKET),[buckPay,setBuckPay]=useState<BuckPayAccount|null>(null),[buckPayTransactions,setBuckPayTransactions]=useState<BuckPayTransaction[]>([]),[orders,setOrders]=useState<Order[]>([]),[query,setQuery]=useState(''),[category,setCategory]=useState('All'),[currency,setCurrency]=useState<SupportedCurrency>('USD'),[loading,setLoading]=useState(true),[busyProduct,setBusyProduct]=useState<string|null>(null),[checkingOut,setCheckingOut]=useState(false),[basketOpen,setBasketOpen]=useState(false),[buckPayOpen,setBuckPayOpen]=useState(false),[accountOpen,setAccountOpen]=useState(false),[selectedProduct,setSelectedProduct]=useState<Product|null>(null),[selectedOrder,setSelectedOrder]=useState<Order|null>(null),[productLoading,setProductLoading]=useState(false),[order,setOrder]=useState<Order|null>(null),[error,setError]=useState<string|null>(null),[buckPayLoading,setBuckPayLoading]=useState(false),[ordersLoading,setOrdersLoading]=useState(false),[deliveryMethod,setDeliveryMethod]=useState<DeliveryMethod>('standard');
+async function loadShop(){setLoading(true);setError(null);const[a,b]=await Promise.allSettled([commerceClient.listProducts(),commerceClient.getBasket()]);setProducts(a.status==='fulfilled'&&a.value.length?a.value:FALLBACK_PRODUCTS);setBasket(b.status==='fulfilled'?b.value:EMPTY_BASKET);if(a.status==='rejected')setError('The catalogue is temporarily unavailable. Showing essentials while we reconnect.');else if(b.status==='rejected')setError('Your basket could not be refreshed. We will retry when needed.');setLoading(false);}
+async function loadOrders(){if(ordersLoading)return;setOrdersLoading(true);try{setOrders(await commerceClient.listOrders());}catch(e){setError(e instanceof Error?e.message:'Order history could not be loaded.');}finally{setOrdersLoading(false);}}
+async function loadBuckPay(){if(buckPayLoading)return;setBuckPayLoading(true);try{const[a,t]=await Promise.all([commerceClient.getBuckPayAccount(),commerceClient.getBuckPayTransactions()]);setBuckPay(a);setBuckPayTransactions(t);}catch{setBuckPay(EMPTY_BUCKPAY);setBuckPayTransactions([]);}finally{setBuckPayLoading(false);}}
+useEffect(()=>{void loadShop();},[]);useEffect(()=>{if(buckPayOpen&&!buckPay)void loadBuckPay();},[buckPayOpen,buckPay]);useEffect(()=>{if(accountOpen)void loadOrders();},[accountOpen]);
+const productById=useMemo(()=>new Map(products.map(p=>[p.id,p])),[products]);const categories=useMemo(()=>['All',...Array.from(new Set(products.map(p=>p.category)))],[products]);const visibleProducts=useMemo(()=>{const q=query.trim().toLowerCase();return products.filter(p=>(category==='All'||p.category===category)&&(!q||p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q)));},[category,products,query]);const basketCount=basket.items.reduce((t,i)=>t+i.quantity,0);const basketBaseTotal=basket.items.reduce((t,i)=>t+i.unitPrice*i.quantity,0);const basketBaseCurrency=(basket.items[0]?.currency??products[0]?.currency??'ZiG') as SupportedCurrency;const deliveryFeeBase=DELIVERY_OPTIONS.find(x=>x.method===deliveryMethod)?.fee??0;const deliveryFee=convertDisplayAmount(deliveryFeeBase,basketBaseCurrency,currency);const basketTotal=convertDisplayAmount(basketBaseTotal,basketBaseCurrency,currency)+deliveryFee;const buckPayDisplayBalance=buckPay?convertDisplayAmount(buckPay.balance,buckPay.currency,currency):0;const displayPrice=(p:Product)=>formatMoney(convertDisplayAmount(p.price,p.currency,currency),currency);
+async function addProduct(p:Product){if(!p.available)return;setBusyProduct(p.id);setError(null);const previous=basket;const existing=previous.items.find(i=>i.productId===p.id);setBasket(existing?{...previous,items:previous.items.map(i=>i.productId===p.id?{...i,quantity:i.quantity+1}:i)}:{...previous,items:[...previous.items,{productId:p.id,quantity:1,unitPrice:p.price,currency:p.currency}]});try{setBasket(await commerceClient.addBasketItem(p.id,1));}catch(e){setBasket(previous);setError(e instanceof Error?e.message:'We could not add that item.');}finally{setBusyProduct(null);}}
+async function openProduct(p:Product){setSelectedProduct(p);setProductLoading(true);try{setSelectedProduct(await commerceClient.getProduct(p.id));}catch(e){setError(e instanceof Error?e.message:'We could not load that product.');}finally{setProductLoading(false);}}
+async function removeProduct(id:string){setBusyProduct(id);const previous=basket;setBasket({...previous,items:previous.items.filter(i=>i.productId!==id)});try{setBasket(await commerceClient.removeBasketItem(id));}catch(e){setBasket(previous);setError(e instanceof Error?e.message:'We could not remove that item.');}finally{setBusyProduct(null);}}
+async function checkout(){if(!basketCount)return;setCheckingOut(true);setError(null);try{const placed=await commerceClient.checkout(deliveryMethod);setOrder(placed);setBasket(await commerceClient.getBasket());setBasketOpen(false);setOrders(prev=>[placed,...prev.filter(x=>x.id!==placed.id)]);}catch(e){setError(e instanceof Error?e.message:'Checkout could not be completed.');}finally{setCheckingOut(false);}}
+return <div className="app-shell"><header className="topbar"><div className="brand-mark"><span className="brand-e">e</span><span>Essentials Mart</span></div><div className="topbar-actions"><label className="currency-selector"><select value={currency} onChange={e=>setCurrency(e.target.value as SupportedCurrency)}>{SUPPORTED_CURRENCIES.map(x=><option key={x.code} value={x.code}>{x.symbol} {x.label}</option>)}</select></label><button className="buckpay-button" type="button" onClick={()=>setBuckPayOpen(true)}>BuckPay <span>{buckPay?formatMoney(buckPayDisplayBalance,currency):'—'}</span></button><button className="quiet-button" type="button" onClick={()=>setAccountOpen(true)}>Account</button><button className="basket-button" type="button" onClick={()=>setBasketOpen(true)}>Basket <span>{basketCount}</span></button></div></header><main><section className="hero"><div><p className="eyebrow">HOUSEHOLD CARE PLATFORM</p><h1>Everything your household needs, in one place.</h1><p className="hero-copy">Start with everyday essentials. Your basket, orders and future household services will grow from the same trusted platform.</p></div><button className="hero-card hero-card-button" type="button" onClick={()=>setBasketOpen(true)}><span>Basket</span><strong>{basketCount} items</strong><small>{basketCount?formatMoney(basketTotal,currency):'Ready when you are.'}</small></button></section><section className="buckpay-card"><div><p className="eyebrow">BUCKPAY</p><h2>Your household value, in one place.</h2><p>Track earned value and future funding from the same governed account. Your balance is held by the platform ledger; regulated financial services remain provider-backed.</p></div><div className="buckpay-balance"><span>Available value</span><strong>{buckPay?formatMoney(buckPayDisplayBalance,currency):'—'}</strong><button type="button" onClick={()=>setBuckPayOpen(true)}>View BuckPay</button></div></section>{order&&<section className="success-card"><div><p className="eyebrow">ORDER PLACED</p><strong>Thanks — your order is confirmed.</strong><span>Order {order.id.slice(0,8)} · {formatMoney(order.total,order.currency as SupportedCurrency)}</span></div><button type="button" onClick={()=>setOrder(null)}>Dismiss</button></section>}<section className="shop-section"><div className="section-heading"><div><p className="eyebrow">SHOP</p><h2>Everyday essentials</h2></div><label className="search-box"><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search essentials" /></label></div><div className="category-row">{categories.map(x=><button key={x} type="button" className={category===x?'category active':'category'} onClick={()=>setCategory(x)}>{x}</button>)}</div>{loading&&<div className="state-card">Loading the catalogue…</div>}{error&&<div className="state-card error">{error}</div>}{!loading&&<div className="product-grid">{visibleProducts.map(p=><article className="product-card" key={p.id}><button className="product-image product-image-button" type="button" onClick={()=>void openProduct(p)}><span>{p.name.charAt(0)}</span></button><div className="product-meta"><span className="product-category">{p.category}</span><h3>{p.name}</h3><div className="product-footer"><strong>{displayPrice(p)}</strong><div className="product-actions"><button className="secondary-button" type="button" onClick={()=>void openProduct(p)}>View</button><button type="button" onClick={()=>void addProduct(p)} disabled={!p.available||busyProduct===p.id}>{busyProduct===p.id?'Adding…':p.available?'Add':'Unavailable'}</button></div></div></div></article>)}</div>}</section></main>
+{selectedProduct&&<div className="product-backdrop" onClick={()=>setSelectedProduct(null)}><section className="product-detail" role="dialog" onClick={e=>e.stopPropagation()}><button className="detail-close" type="button" onClick={()=>setSelectedProduct(null)}>×</button><div className="detail-image"><span>{selectedProduct.name.charAt(0)}</span></div><div className="detail-content"><p className="eyebrow">{selectedProduct.category}</p><h2>{selectedProduct.name}</h2><strong className="detail-price">{displayPrice(selectedProduct)}</strong><p className={selectedProduct.available?'availability available':'availability unavailable'}>{productLoading?'Refreshing availability…':selectedProduct.available?'Available now':'Currently unavailable'}</p><button className="detail-add" type="button" onClick={()=>{void addProduct(selectedProduct);setSelectedProduct(null);}} disabled={!selectedProduct.available||productLoading}>Add to basket</button></div></section></div>}
+{basketOpen&&<><button className="basket-backdrop" type="button" onClick={()=>setBasketOpen(false)}/><aside className="basket-drawer"><div className="drawer-header"><div><p className="eyebrow">YOUR BASKET</p><h2>{basketCount} items</h2></div><button className="drawer-close" type="button" onClick={()=>setBasketOpen(false)}>×</button></div>{basket.items.length===0?<div className="empty-basket">Your basket is empty. Add something from the shop.</div>:<div className="basket-lines">{basket.items.map(i=>{const p=productById.get(i.productId);return <div className="basket-line" key={i.productId}><div><strong>{p?.name??i.productId}</strong><span>{i.quantity} × {formatMoney(convertDisplayAmount(i.unitPrice,i.currency,currency),currency)}</span></div><button className="remove-button" type="button" onClick={()=>void removeProduct(i.productId)}>Remove</button></div>})}</div>}{basketCount>0&&<div className="delivery-section"><h3>Delivery method</h3>{DELIVERY_OPTIONS.map(o=><label className={deliveryMethod===o.method?'delivery-option active':'delivery-option'} key={o.method}><input type="radio" name="delivery" checked={deliveryMethod===o.method} onChange={()=>setDeliveryMethod(o.method)}/><span><strong>{o.label}</strong><small>{o.description}</small></span><b>{o.fee===0?'Free':formatMoney(convertDisplayAmount(o.fee,basketBaseCurrency,currency),currency)}</b></label>)}</div>}<div className="basket-summary"><div><span>Items</span><strong>{formatMoney(convertDisplayAmount(basketBaseTotal,basketBaseCurrency,currency),currency)}</strong></div><div><span>Delivery</span><strong>{deliveryFee===0?'Free':formatMoney(deliveryFee,currency)}</strong></div><div><span>Total</span><strong>{formatMoney(basketTotal,currency)}</strong></div></div><button className="checkout-button" disabled={!basketCount||checkingOut} onClick={()=>void checkout()}>{checkingOut?'Placing order…':'Continue to checkout'}</button></aside></>}
+{accountOpen&&<><button className="basket-backdrop" type="button" onClick={()=>setAccountOpen(false)}/><aside className="account-drawer"><div className="drawer-header"><div><p className="eyebrow">ACCOUNT</p><h2>Order history</h2></div><button className="drawer-close" type="button" onClick={()=>setAccountOpen(false)}>×</button></div>{ordersLoading?<div className="empty-basket">Loading your orders…</div>:orders.length===0?<div className="empty-basket">No orders yet. Your completed orders will appear here.</div>:<div className="order-history">{orders.map(o=><button className="order-card" key={o.id} type="button" onClick={()=>setSelectedOrder(o)}><div><strong>Order {o.id.slice(0,8)}</strong><span>{o.createdAt?new Date(o.createdAt).toLocaleString():'Recent order'}</span></div><div><strong>{formatMoney(convertDisplayAmount(o.total,o.currency,currency),currency)}</strong><span>{o.status} · {o.deliveryMethod}</span></div></button>)}</div>}</aside></>}
+{selectedOrder&&<div className="product-backdrop" onClick={()=>setSelectedOrder(null)}><section className="product-detail order-detail" role="dialog" onClick={e=>e.stopPropagation()}><button className="detail-close" type="button" onClick={()=>setSelectedOrder(null)}>×</button><div className="detail-content"><p className="eyebrow">ORDER DETAILS</p><h2>Order {selectedOrder.id.slice(0,8)}</h2><p className="order-status">{selectedOrder.status} · {selectedOrder.deliveryMethod}</p>{selectedOrder.items.map(i=><div className="order-line" key={i.productId}><span>{productById.get(i.productId)?.name??i.productId} × {i.quantity}</span><strong>{formatMoney(convertDisplayAmount(i.unitPrice*i.quantity,i.currency,currency),currency)}</strong></div>)}<div className="order-total-line"><span>Subtotal</span><strong>{formatMoney(convertDisplayAmount(selectedOrder.subtotal,selectedOrder.currency,currency),currency)}</strong></div><div className="order-total-line"><span>Delivery</span><strong>{selectedOrder.deliveryFee===0?'Free':formatMoney(convertDisplayAmount(selectedOrder.deliveryFee,selectedOrder.currency,currency),currency)}</strong></div><div className="order-total-line grand"><span>Total</span><strong>{formatMoney(convertDisplayAmount(selectedOrder.total,selectedOrder.currency,currency),currency)}</strong></div></div></section></div>}
+{buckPayOpen&&<><button className="basket-backdrop" type="button" onClick={()=>setBuckPayOpen(false)}/><aside className="buckpay-drawer"><div className="drawer-header"><div><p className="eyebrow">BUCKPAY</p><h2>Value account</h2></div><button className="drawer-close" type="button" onClick={()=>setBuckPayOpen(false)}>×</button></div><div className="buckpay-drawer-balance"><span>Available value</span><strong>{buckPay?formatMoney(buckPayDisplayBalance,currency):buckPayLoading?'Loading…':'—'}</strong><small>{buckPay?.status==='active'?'Account active':'Account unavailable'}</small></div><div className="buckpay-history"><h3>Recent activity</h3>{buckPayLoading?<p>Loading recent activity…</p>:buckPayTransactions.length===0?<p>No BuckPay transactions yet.</p>:buckPayTransactions.map(t=><div className="buckpay-transaction" key={t.id}><div><strong>{t.type.replace('_',' ')}</strong><span>{new Date(t.createdAt).toLocaleDateString()}</span></div><strong>{t.type==='commerce_redemption'?'−':'+'}{formatMoney(convertDisplayAmount(t.amount,t.currency,currency),currency)}</strong></div>)}</div></aside></>}
+<footer><span>Essentials Mart</span><span>Built as a governed platform capability.</span></footer></div>}
