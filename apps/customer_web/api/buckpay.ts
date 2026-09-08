@@ -6,7 +6,9 @@ import { devPrincipal, principal as authPrincipal } from './_auth.js';
 const buckPay = new BuckPayApplicationService(new SupabaseBuckPayRepository());
 
 async function principal(req: any): Promise<AuthenticatedPrincipal | null> {
-  return devPrincipal(req) ?? authPrincipal(req);
+  const dev = devPrincipal(req);
+  if (dev) return dev;
+  return authPrincipal(req);
 }
 
 export default async function handler(req: any, res: any) {
@@ -19,7 +21,7 @@ export default async function handler(req: any, res: any) {
   const user = await principal(req);
   if (!user) return res.status(401).json({ error: { code: 'UNAUTHENTICATED', message: 'A valid Supabase Auth session is required.' } });
   try {
-    const account = await buckPay.getAccount(user.customerId);
+    const account = await buckPay.getAccount(user);
     return res.status(200).json({ balance: account.balance, status: account.status });
   } catch (err: any) {
     console.error('buckpay-api error', err);
