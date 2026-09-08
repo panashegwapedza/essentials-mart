@@ -50,8 +50,8 @@ export default async function handler(req: any, res: any) {
     }
     if (path.startsWith('/basket/items/') && req.method === 'DELETE') return json(res, 200, basketDto(await commerce.removeItem(user, path.slice('/basket/items/'.length))));
     if (path === '/checkout' && req.method === 'POST') return json(res, 201, orderDto(await commerce.checkout(user)));
-    if (path === '/buckpay' && req.method === 'GET') { const account = await buckPay.getAccount(user.customerId); return json(res, 200, { balance: account.balance, status: account.status }); }
-    if (path === '/buckpay/transactions' && req.method === 'GET') { const transactions = await buckPay.getTransactions(user.customerId); return json(res, 200, { transactions: transactions.map((item) => ({ id: item.id, type: item.type, amount: item.amount, reference: item.reference, createdAt: item.createdAt })) }); }
+    if (path === '/buckpay' && req.method === 'GET') { const account = await buckPay.getAccount(user); return json(res, 200, { balance: account.balance, status: account.status }); }
+    if (path === '/buckpay/transactions' && req.method === 'GET') { const transactions = await buckPay.getTransactions(user); return json(res, 200, { transactions: transactions.map((item) => ({ id: item.id, type: item.type, amount: item.amount, reference: item.reference, createdAt: item.createdAt })) }); }
     return error(res, 404, 'NOT_FOUND', 'No such route.');
   } catch (err: any) {
     const status = err?.code === 'NOT_FOUND' ? 404 : err?.code === 'PRODUCT_UNAVAILABLE' ? 409 : 500;
