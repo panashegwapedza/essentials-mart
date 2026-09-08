@@ -4,6 +4,7 @@ export type BasketId = string;
 export type OrderId = string;
 export type Money = { amountMinor: number; currency: string };
 export type DeliveryMethod = "pickup" | "standard" | "express";
+export type OrderStatus = "placed" | "confirmed" | "fulfilling" | "fulfilled" | "cancelled" | "refunded";
 
 export type AuthenticatedPrincipal = { customerId: CustomerId; assuranceLevel?: string };
 export type Product = { id: ProductId; name: string; price: Money; available: boolean };
@@ -17,6 +18,6 @@ export type Order = {
   deliveryMethod: DeliveryMethod;
   deliveryFee: Money;
   total: Money;
-  status: "placed";
+  status: OrderStatus;
   createdAt?: string;
 };
