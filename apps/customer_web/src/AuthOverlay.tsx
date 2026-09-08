@@ -15,7 +15,7 @@ export default function AuthOverlay() {
     const onClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
       const button = target?.closest('button');
-      if (button?.textContent?.trim() === 'Account') { event.preventDefault(); event.stopPropagation(); setOpen(true); }
+      if (button?.textContent?.trim() === 'Account' && !getSession()?.user) { event.preventDefault(); event.stopPropagation(); setOpen(true); }
     };
     document.addEventListener('click', onClick, true);
     return () => document.removeEventListener('click', onClick, true);
@@ -29,11 +29,7 @@ export default function AuthOverlay() {
         if (!name.trim()) throw new Error('Please enter your name.');
         if (password.length < 6) throw new Error('Password must be at least 6 characters.');
         const session = await signUp(email.trim().toLowerCase(), password, name.trim());
-        if (!session) {
-          setError('Account created. Check your email to confirm the account, then sign in.');
-          setMode('signin');
-          return;
-        }
+        if (!session) { setError('Account created. Check your email to confirm the account, then sign in.'); setMode('signin'); return; }
         setUser(session.user);
       } else {
         const session = await signIn(email.trim().toLowerCase(), password);
@@ -41,15 +37,12 @@ export default function AuthOverlay() {
       }
       setOpen(false);
       window.location.reload();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Authentication failed.');
-    } finally { setBusy(false); }
+    } catch (err) { setError(err instanceof Error ? err.message : 'Authentication failed.'); }
+    finally { setBusy(false); }
   }
 
   async function handleSignOut() {
-    setBusy(true);
-    await signOut();
-    setUser(null); setBusy(false); setOpen(false); window.location.reload();
+    setBusy(true); await signOut(); setUser(null); setBusy(false); setOpen(false); window.location.reload();
   }
 
   return <>
