@@ -12,6 +12,19 @@
     <script>
       (() => {
         const sections = ['Profile', 'Addresses', 'Order History', 'Payments', 'Preferences'];
+        const getSessionUser = () => {
+          try {
+            for (const key of Object.keys(localStorage)) {
+              if (!key.startsWith('sb-') || !key.endsWith('-auth-token')) continue;
+              const raw = localStorage.getItem(key);
+              if (!raw) continue;
+              const parsed = JSON.parse(raw);
+              const session = parsed?.currentSession || parsed;
+              if (session?.user) return session.user;
+            }
+          } catch (_) {}
+          return null;
+        };
         const enhanceAccount = () => {
           document.querySelectorAll('.account-drawer').forEach((drawer) => {
             if (drawer.dataset.accountEnhanced === 'true') return;
@@ -23,13 +36,47 @@
               .account-section{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:13px 14px;border:1px solid #dfe7df;border-radius:12px;background:#fff;color:#18301d;font:inherit;font-weight:600;cursor:pointer}
               .account-section:hover{background:#f6faf6}
               .account-section.active{border-color:#2f6b3a;background:#edf6ee;box-shadow:inset 3px 0 0 #2f6b3a}
-              .account-panel-heading{margin-bottom:12px}
-              .account-panel-heading h3{margin:2px 0 0}
+              .account-profile{display:grid;gap:16px;margin:0 0 20px;padding:18px;border:1px solid #e3e9e3;border-radius:16px;background:#f8faf8}
+              .account-profile-head{display:flex;align-items:center;gap:14px}
+              .account-avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;overflow:hidden;background:#dfeee1;color:#285d32;font-weight:800;font-size:20px;flex:none}
+              .account-avatar img{width:100%;height:100%;object-fit:cover}
+              .account-profile-name{margin:0;font-size:18px}
+              .account-profile-membership{margin:3px 0 0;color:#667469;font-size:13px}
+              .account-profile-grid{display:grid;grid-template-columns:1fr;gap:10px}
+              .account-profile-field{padding:11px 12px;border:1px solid #dfe7df;border-radius:11px;background:#fff}
+              .account-profile-field span{display:block;color:#718075;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+              .account-profile-field strong{font-size:14px}
+              .account-edit-profile{border:0;border-radius:10px;padding:11px 13px;background:#2f6b3a;color:#fff;font:inherit;font-weight:700;cursor:pointer}
               .account-placeholder{padding:20px;border:1px solid #e3e9e3;border-radius:14px;background:#f8faf8}
               .account-placeholder h3{margin:2px 0 8px}
               .account-placeholder p:last-child{margin:0;color:#617064}
             `;
             drawer.appendChild(style);
+
+            const user = getSessionUser();
+            const metadata = user?.user_metadata || {};
+            const name = metadata.full_name || metadata.name || user?.email?.split('@')[0] || 'Essentials Mart customer';
+            const email = user?.email || 'Not available';
+            const phone = user?.phone || metadata.phone || 'Not set';
+            const loyalty = metadata.loyalty_points ?? '0';
+            const avatarUrl = metadata.avatar_url || metadata.picture || '';
+            const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'E';
+
+            const profile = document.createElement('section');
+            profile.className = 'account-profile';
+            profile.setAttribute('data-account-profile', 'true');
+            profile.innerHTML = `
+              <div class="account-profile-head">
+                <div class="account-avatar">${avatarUrl ? `<img src="${avatarUrl}" alt="${name} avatar">` : initials}</div>
+                <div><h3 class="account-profile-name">${name}</h3><p class="account-profile-membership">Household customer</p></div>
+              </div>
+              <div class="account-profile-grid">
+                <div class="account-profile-field"><span>Email</span><strong>${email}</strong></div>
+                <div class="account-profile-field"><span>Phone</span><strong>${phone}</strong></div>
+                <div class="account-profile-field"><span>Loyalty points</span><strong>${loyalty}</strong></div>
+              </div>
+              <button type="button" class="account-edit-profile">Edit Profile</button>
+            `;
 
             const nav = document.createElement('nav');
             nav.className = 'account-sections';
@@ -37,17 +84,19 @@
             sections.forEach((section) => {
               const button = document.createElement('button');
               button.type = 'button';
-              button.className = 'account-section' + (section === 'Order History' ? ' active' : '');
+              button.className = 'account-section' + (section === 'Profile' ? ' active' : '');
               button.textContent = section;
               button.addEventListener('click', () => {
                 nav.querySelectorAll('.account-section').forEach((item) => item.classList.remove('active'));
                 button.classList.add('active');
+                const isProfile = section === 'Profile';
                 const isHistory = section === 'Order History';
+                profile.style.display = isProfile ? 'grid' : 'none';
                 Array.from(drawer.children).forEach((child) => {
-                  if (child === nav || child === style || child === placeholder || child.classList?.contains('drawer-header')) return;
+                  if (child === nav || child === style || child === placeholder || child === profile || child.classList?.contains('drawer-header')) return;
                   child.style.display = isHistory ? '' : 'none';
                 });
-                placeholder.style.display = isHistory ? 'none' : 'block';
+                placeholder.style.display = isProfile || isHistory ? 'none' : 'block';
                 placeholder.querySelector('[data-account-placeholder-title]').textContent = section;
                 placeholder.querySelector('[data-account-placeholder-eyebrow]').textContent = section.toUpperCase();
               });
@@ -60,8 +109,13 @@
             placeholder.innerHTML = '<p class="eyebrow" data-account-placeholder-eyebrow></p><h3 data-account-placeholder-title></h3><p>This account section is reserved for the next implementation phase.</p>';
 
             const header = drawer.querySelector('.drawer-header');
-            if (header) header.insertAdjacentElement('afterend', nav);
-            else drawer.prepend(nav);
+            if (header) {
+              header.insertAdjacentElement('afterend', profile);
+              profile.insertAdjacentElement('afterend', nav);
+            } else {
+              drawer.prepend(nav);
+              drawer.prepend(profile);
+            }
             drawer.appendChild(placeholder);
           });
         };
