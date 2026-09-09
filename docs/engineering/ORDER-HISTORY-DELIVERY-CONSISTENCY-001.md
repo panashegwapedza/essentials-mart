@@ -1,11 +1,11 @@
 # Essentials Mart — Order History & Delivery Implementation Consistency
 
 **Status:** Implemented / Consistency Checked
-**Date:** 2026-09-08
+**Date:** 2026-09-09
 
 ## 1. Scope
 
-This consistency check covers the customer-facing Order History capability and mandatory delivery-method selection introduced into the Commerce checkout flow.
+This consistency check covers the customer-facing Order History capability, mandatory delivery-method selection, delivery lifecycle enforcement, delivery history, and lifecycle notifications.
 
 Implemented behaviour:
 
@@ -15,6 +15,9 @@ Implemented behaviour:
 - checkout requires a delivery method;
 - delivery fee is calculated authoritatively by Commerce rather than trusted from the browser;
 - delivery selection and fee are persisted with the order;
+- delivery transitions are restricted to valid lifecycle paths;
+- delivery status history is append-oriented and customer-readable through the ownership boundary;
+- genuine delivery transitions create customer notifications linked to the exact Order ID;
 - customer-web access is through the Commerce API rather than direct database access.
 
 ## 2. Architecture alignment
@@ -23,41 +26,41 @@ Implemented behaviour:
 
 Aligned with the enterprise data/domain boundary: Commerce owns the authoritative Order transaction, while Delivery/Fulfilment owns subsequent delivery execution. The customer history view is a read capability over Commerce-owned order history; it does not create a second order authority.
 
-The implementation preserves the EDA principle that state transitions remain with the authoritative domain and that cross-domain delivery execution can consume order facts without mutating the historical order directly.
+Delivery state transitions remain with the Delivery/Fulfilment boundary. Cross-domain Order status changes are derived operational consequences and do not replace the Delivery history.
 
 ### ADR-003 — Event-Driven Architecture
 
-No conflict identified. Order history is a read capability over authoritative commerce state. Future order-status and delivery-status notifications can be emitted as domain events without changing the ownership model.
+No conflict identified. Delivery transitions are durable facts and customer notifications are downstream communication consequences. The delivery history does not become a second Order authority.
 
 ### ADR-004 — API & Service Architecture
 
-Aligned. Customer Web calls the Commerce API. Authoritative validation and delivery pricing remain server-side.
+Aligned. Customer Web calls the Commerce API. Authoritative lifecycle validation remains server-side in the service-role delivery command boundary.
 
 ### ADR-005 — Data Ownership & Database Boundaries
 
-Aligned. Order and Order Item data remain Commerce-owned. Delivery execution remains a separate concern. Customer access is ownership-scoped rather than implemented as unrestricted client-side database access.
+Aligned. Order and Order Item data remain Commerce-owned. Delivery execution and Delivery history remain separately owned. Customer access is ownership-scoped.
 
 ### ADR-006 — Identity, Authentication & Authorisation
 
-Aligned. Order history requires the authenticated customer principal and must be scoped to that customer's identity. The UI must never be treated as the authorization boundary.
+Aligned. Delivery history and current delivery state are customer-readable only when the authenticated principal owns the Delivery/Customer relationship. Mutation remains unavailable to normal customer roles.
 
 ### ADR-016 — Observability, Auditability & Trust
 
-Aligned. Historical orders remain durable records. Delivery cost and selected method are persisted with the transaction so the customer-visible history can be reconciled against the authoritative order.
+Aligned. Material delivery transitions are now durably recorded in `delivery_status_history`, with previous state, resulting state, tracking reference and transition time. Customer notifications are correlated to the exact Order aggregate.
 
 ### ADR-017 — Scalability & Multi-Store Architecture
 
-Aligned at the current single-store implementation stage. Delivery pricing is currently a governed baseline tariff and must evolve into store/region-specific configuration before multi-store rollout.
+Aligned at the current single-store implementation stage. Delivery pricing remains a governed baseline tariff and must evolve into store/region-specific configuration before multi-store rollout.
 
 ### ADR-018 — Deployment & Environment Strategy
 
-Aligned. The customer-web implementation is deployed through the existing Vercel production pipeline and continues to use the existing Supabase production persistence boundary.
+Aligned. The implementation is delivered through the existing Git/Vercel production pipeline and the migration is applied to the connected Supabase production project.
 
 ## 3. Information architecture alignment
 
-`ENTITY-LIFECYCLES.md` defines Order as the authoritative commercial transaction record and requires historical order information to remain stable rather than being reconstructed from current Product data. The implementation follows this rule.
+`ENTITY-LIFECYCLES.md` requires explicit lifecycle states, rejected invalid transitions, terminal-state discipline and auditable state changes. The delivery implementation now enforces those requirements at the authoritative database command boundary.
 
-Delivery is separately lifecycle-owned. The current checkout records the customer's selected delivery method and fee on the Order; later delivery execution should remain a Delivery/Fulfilment concern.
+The current physical delivery vocabulary is `pending`, `preparing`, `ready_for_pickup`, `out_for_delivery`, `delivered`, `failed`, and `cancelled`. Method-specific guards prevent pickup deliveries from entering `out_for_delivery` and non-pickup deliveries from entering `ready_for_pickup`.
 
 ## 4. EIP alignment
 
@@ -67,56 +70,57 @@ This implementation is recorded explicitly here so the delivery/order-history ca
 
 ### EIP-020 — Enterprise Domain / Bounded Context Implementation Map
 
-Commerce remains the owning bounded context for Order and Order Item history. Delivery remains a downstream capability rather than a second owner of Order.
+Commerce remains the owning bounded context for Order and Order Item history. Delivery remains a downstream operational capability rather than a second owner of Order.
 
 ### EIP-021 — Backend Service/API Implementation Architecture
 
-The browser consumes the Commerce API. Customer ownership and authoritative delivery pricing are enforced at the backend boundary.
+The browser consumes the Commerce API. Delivery mutation is not exposed as a customer API capability; authoritative lifecycle enforcement is server-side.
 
 ### EIP-029 — API Contract Engineering
 
-The Order response exposes the fields required by the customer history view without moving business authority into the client.
+The existing Order contract remains backward compatible. Delivery lifecycle evidence is additive and does not move business authority into the client.
 
 ### EIP-030 — Testing & Verification Architecture
 
-Required verification includes authenticated ownership isolation, order-detail correctness, mandatory delivery selection, authoritative delivery-fee calculation, and retry/idempotency behaviour.
+Required verification includes valid transition paths, invalid transition rejection, terminal-state rejection, method-specific transition guards, history persistence, customer ownership isolation, notification creation, and idempotent notification channels.
 
 ### EIP-031 — Release & Change Management
 
-The change is delivered through the existing Git/Vercel pipeline and must be verified in production before the BuckPay payment checkpoint is enabled.
+The change is delivered through the existing Git/Vercel pipeline. Supabase production now contains the delivery lifecycle hardening migration.
 
 ## 5. Forward-consistency check
 
 ### Direct impacts
 
-- Commerce Order aggregate/read model
-- Order API contract
-- Customer Web account/order-history UI
-- Checkout delivery selection
-- Delivery pricing authority
-- Customer authorization boundary
+- Delivery lifecycle authority
+- Delivery status history
+- Customer delivery visibility
+- Order status synchronization
+- Delivery notifications
+- Supabase RLS and service-role command boundary
 
 ### Secondary impacts
 
-- Delivery/Fulfilment integration
-- Order status notifications
-- Observability/audit records
-- Multi-store pricing configuration
+- Order Detail delivery presentation
+- Notification centre and exact Order deep links
+- Observability/audit evidence
+- Fulfilment/provider integration
+- Multi-store delivery policy
 - BuckPay payment correlation
 
 ### Result
 
-No architectural contradiction was found. The implementation follows the existing EDA/ADR/EIP ownership model.
+No architectural contradiction was found. Delivery remains independently lifecycle-owned while Order remains the authoritative commercial transaction.
 
-One implementation defect was found during this review: `AuthOverlay` captured every click on the `Account` button and opened the authentication overlay even when the customer was already authenticated. This prevented the Commerce account drawer from opening. The defect has been corrected so the authentication interceptor only handles `Account` clicks when there is no authenticated user.
+The previously identified executable `SECURITY DEFINER` trigger function exposure was also closed by explicitly revoking RPC execution from `public`, `anon`, and `authenticated`, leaving the function available only to the service-role execution boundary.
 
 ## 6. Remaining architecture work
 
 Before enabling real BuckPay payment authorization:
 
-1. complete production verification of Order History and order-detail access;
+1. expose the current Delivery summary/history through the authenticated Order Detail contract;
 2. add/verify delivery-region/store configuration rather than relying on the baseline tariff;
-3. verify delivery status integration remains owned by Delivery/Fulfilment;
+3. add delivery-provider command/webhook adapters behind the Delivery boundary;
 4. correlate BuckPay payment transactions with the authoritative Order;
 5. implement verified payment webhook/idempotency handling;
 6. close the related observability and release verification gates.
