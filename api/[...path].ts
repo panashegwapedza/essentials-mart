@@ -1,6 +1,6 @@
 import { SupabaseBuckPayRepository } from '../services/commerce-api/src/adapters/supabase/SupabaseBuckPayRepository.js';
 import { SupabaseNotificationRepository } from '../services/commerce-api/src/adapters/supabase/SupabaseNotificationRepository.js';
-import { SupabaseCommerceRepositories, SupabaseProductRepository, SupabaseBasketRepository, SupabaseOrderRepository, SupabaseCheckoutTransaction } from '../services/commerce-api/src/adapters/supabase/SupabaseCommerceRepositories.js';
+import { supabaseRest, SupabaseProductRepository, SupabaseBasketRepository, SupabaseOrderRepository, SupabaseCheckoutTransaction } from '../services/commerce-api/src/adapters/supabase/SupabaseCommerceRepositories.js';
 import { BuckPayApplicationService } from '../services/commerce-api/src/application/BuckPayApplicationService.js';
 import { CommerceApplicationService } from '../services/commerce-api/src/application/CommerceApplicationService.js';
 import { NotificationApplicationService } from '../services/commerce-api/src/application/NotificationApplicationService.js';
@@ -9,7 +9,6 @@ import { devPrincipal, principal as authPrincipal } from '../apps/customer_web/a
 const commerce=new CommerceApplicationService(new SupabaseProductRepository(),new SupabaseBasketRepository(),new SupabaseOrderRepository(),new SupabaseCheckoutTransaction());
 const buckPay=new BuckPayApplicationService(new SupabaseBuckPayRepository());
 const notifications=new NotificationApplicationService(new SupabaseNotificationRepository());
-const supabaseRest=SupabaseCommerceRepositories.supabaseRest;
 function json(res:any,status:number,body:unknown){res.status(status).setHeader('Content-Type','application/json').send(JSON.stringify(body));}
 function error(res:any,status:number,code:string,message:string){return json(res,status,{error:{code,message}});}
 function productDto(product:any){return{id:product.id,name:product.name,price:product.price,available:product.available};}
