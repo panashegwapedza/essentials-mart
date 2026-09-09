@@ -9,6 +9,68 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (() => {
+        const sections = ['Profile', 'Addresses', 'Order History', 'Payments', 'Preferences'];
+        const enhanceAccount = () => {
+          document.querySelectorAll('.account-drawer').forEach((drawer) => {
+            if (drawer.dataset.accountEnhanced === 'true') return;
+            drawer.dataset.accountEnhanced = 'true';
+
+            const style = document.createElement('style');
+            style.textContent = `
+              .account-sections{display:grid;gap:8px;margin:18px 0 20px}
+              .account-section{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:13px 14px;border:1px solid #dfe7df;border-radius:12px;background:#fff;color:#18301d;font:inherit;font-weight:600;cursor:pointer}
+              .account-section:hover{background:#f6faf6}
+              .account-section.active{border-color:#2f6b3a;background:#edf6ee;box-shadow:inset 3px 0 0 #2f6b3a}
+              .account-panel-heading{margin-bottom:12px}
+              .account-panel-heading h3{margin:2px 0 0}
+              .account-placeholder{padding:20px;border:1px solid #e3e9e3;border-radius:14px;background:#f8faf8}
+              .account-placeholder h3{margin:2px 0 8px}
+              .account-placeholder p:last-child{margin:0;color:#617064}
+            `;
+            drawer.appendChild(style);
+
+            const nav = document.createElement('nav');
+            nav.className = 'account-sections';
+            nav.setAttribute('aria-label', 'Account sections');
+            sections.forEach((section) => {
+              const button = document.createElement('button');
+              button.type = 'button';
+              button.className = 'account-section' + (section === 'Order History' ? ' active' : '');
+              button.textContent = section;
+              button.addEventListener('click', () => {
+                nav.querySelectorAll('.account-section').forEach((item) => item.classList.remove('active'));
+                button.classList.add('active');
+                const isHistory = section === 'Order History';
+                Array.from(drawer.children).forEach((child) => {
+                  if (child === nav || child === style || child === placeholder || child.classList?.contains('drawer-header')) return;
+                  child.style.display = isHistory ? '' : 'none';
+                });
+                placeholder.style.display = isHistory ? 'none' : 'block';
+                placeholder.querySelector('[data-account-placeholder-title]').textContent = section;
+                placeholder.querySelector('[data-account-placeholder-eyebrow]').textContent = section.toUpperCase();
+              });
+              nav.appendChild(button);
+            });
+
+            const placeholder = document.createElement('div');
+            placeholder.className = 'account-placeholder';
+            placeholder.style.display = 'none';
+            placeholder.innerHTML = '<p class="eyebrow" data-account-placeholder-eyebrow></p><h3 data-account-placeholder-title></h3><p>This account section is reserved for the next implementation phase.</p>';
+
+            const header = drawer.querySelector('.drawer-header');
+            if (header) header.insertAdjacentElement('afterend', nav);
+            else drawer.prepend(nav);
+            drawer.appendChild(placeholder);
+          });
+        };
+
+        const observer = new MutationObserver(enhanceAccount);
+        observer.observe(document.getElementById('root'), { childList: true, subtree: true });
+        enhanceAccount();
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
