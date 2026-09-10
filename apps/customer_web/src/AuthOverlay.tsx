@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { beginSocialSignIn, consumeOAuthSession, getSession, signIn, signOut, signUp } from './auth';
+import { beginSocialSignIn, consumeOAuthSession, ensureFreshSession, getSession, signIn, signOut, signUp } from './auth';
 
 const SUPABASE_URL = 'https://gnmcfenenikvvvvmeuwp.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RyqK29U1JIHt4nmu-mGX4Q_jFRYWLEZ';
@@ -7,7 +7,7 @@ const SUPABASE_KEY = 'sb_publishable_RyqK29U1JIHt4nmu-mGX4Q_jFRYWLEZ';
 export default function AuthOverlay() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-  const [user, setUser] = useState(() => getSession()?.user ?? null);
+  const [user, setUser] = useState<typeof getSession extends () => infer T ? NonNullable<T>['user'] | null : null>(null);
   const [name, setName] = useState('');
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -17,8 +17,9 @@ export default function AuthOverlay() {
   const syncAccountButton = () => {
     const button = document.querySelector<HTMLButtonElement>('.topbar .quiet-button');
     if (!button) return;
+    const label = getSession()?.user ? 'Account' : 'Log in';
     button.dataset.authAccountButton = 'true';
-    button.textContent = getSession()?.user ? 'Account' : 'Log in';
+    if (button.textContent !== label) button.textContent = label;
   };
 
   const enhanceAccountSettings = () => {
@@ -59,15 +60,18 @@ export default function AuthOverlay() {
   };
 
   useEffect(() => {
-    void consumeOAuthSession().then((session) => {
-      if (session) setUser(session.user);
+    let cancelled = false;
+    void ensureFreshSession().then((session) => {
+      if (!cancelled) setUser(session?.user ?? null);
+      syncAccountButton();
     });
-    syncAccountButton();
+
     const observer = new MutationObserver(() => {
       syncAccountButton();
       if (getSession()?.user) enhanceAccountSettings();
     });
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    observer.observe(document.body, { childList: true, subtree: true });
+
     const onClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
       const button = target?.closest<HTMLButtonElement>('.topbar .quiet-button');
@@ -84,6 +88,7 @@ export default function AuthOverlay() {
     };
     document.addEventListener('click', onClick, true);
     return () => {
+      cancelled = true;
       observer.disconnect();
       document.removeEventListener('click', onClick, true);
     };
