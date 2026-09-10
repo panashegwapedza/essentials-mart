@@ -61,17 +61,23 @@ export function beginSocialSignIn(provider: 'google' | 'apple') {
   window.location.assign(url.toString());
 }
 
-export function consumeOAuthSession(): AuthSession | null {
+export async function consumeOAuthSession(): Promise<AuthSession | null> {
   const hash = window.location.hash.replace(/^#/, '');
   if (!hash) return null;
   const params = new URLSearchParams(hash);
   const accessToken = params.get('access_token');
   const refreshToken = params.get('refresh_token');
-  const userJson = params.get('user');
   if (!accessToken || !refreshToken) return null;
   let user: AuthSession['user'] | null = null;
+  const userJson = params.get('user');
   try { user = userJson ? JSON.parse(userJson) : null; } catch { user = null; }
-  if (!user) return null;
+  if (!user) {
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${accessToken}` },
+    });
+    if (!response.ok) return null;
+    user = await response.json() as AuthSession['user'];
+  }
   const session: AuthSession = {
     access_token: accessToken,
     refresh_token: refreshToken,
@@ -105,7 +111,7 @@ export async function signOut(): Promise<void> {
 }
 
 export async function ensureFreshSession(): Promise<AuthSession | null> {
-  consumeOAuthSession();
+  await consumeOAuthSession();
   const session = getSession();
   if (!session) return null;
   if (!session.expires_at || session.expires_at * 1000 > Date.now() + 60_000) return session;
