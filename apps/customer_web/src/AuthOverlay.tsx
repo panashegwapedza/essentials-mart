@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { beginSocialSignIn, consumeOAuthSession, ensureFreshSession, getSession, signIn, signOut, signUp } from './auth';
+import { beginSocialSignIn, consumeOAuthSession, ensureFreshSession, getSession, signIn, signOut, signUp, type AuthSession } from './auth';
 
 const SUPABASE_URL = 'https://gnmcfenenikvvvvmeuwp.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RyqK29U1JIHt4nmu-mGX4Q_jFRYWLEZ';
@@ -7,7 +7,7 @@ const SUPABASE_KEY = 'sb_publishable_RyqK29U1JIHt4nmu-mGX4Q_jFRYWLEZ';
 export default function AuthOverlay() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-  const [user, setUser] = useState<typeof getSession extends () => infer T ? NonNullable<T>['user'] | null : null>(null);
+  const [user, setUser] = useState<AuthSession['user'] | null>(null);
   const [name, setName] = useState('');
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
