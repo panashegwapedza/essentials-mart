@@ -2,20 +2,28 @@ export type AuthSession = {
   access_token: string;
   refresh_token: string;
   expires_at?: number;
+  expires_in?: number;
+  token_type?: string;
   user: { id: string; email?: string | null; phone?: string | null; user_metadata?: Record<string, unknown> | null };
 };
 
 const SUPABASE_URL = 'https://gnmcfenenikvvvvmeuwp.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RyqK29U1JIHt4nmu-mGX4Q_jFRYWLEZ';
 const SESSION_KEY = 'essentials-mart-auth-session';
+const SUPABASE_SESSION_KEY = 'sb-gnmcfenenikvvvvmeuwp-auth-token';
 
 export function getSession(): AuthSession | null {
   try { return JSON.parse(localStorage.getItem(SESSION_KEY) ?? 'null') as AuthSession | null; } catch { return null; }
 }
 
 function saveSession(session: AuthSession | null) {
-  if (session) localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-  else localStorage.removeItem(SESSION_KEY);
+  if (session) {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    localStorage.setItem(SUPABASE_SESSION_KEY, JSON.stringify(session));
+  } else {
+    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(SUPABASE_SESSION_KEY);
+  }
 }
 
 async function authRequest<T>(path: string, body: unknown): Promise<T> {
@@ -111,7 +119,8 @@ export async function signOut(): Promise<void> {
 }
 
 export async function ensureFreshSession(): Promise<AuthSession | null> {
-  await consumeOAuthSession();
+  const oauthSession = await consumeOAuthSession();
+  if (oauthSession) return oauthSession;
   const session = getSession();
   if (!session) return null;
   if (!session.expires_at || session.expires_at * 1000 > Date.now() + 60_000) return session;
