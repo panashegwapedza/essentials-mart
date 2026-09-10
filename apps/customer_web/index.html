@@ -12,6 +12,10 @@
     <script>
       (() => {
         const sections = ['Profile', 'Addresses', 'Order History', 'Payments', 'Preferences'];
+        const SUPABASE_URL = 'https://gnmcfenenikvvvvmeuwp.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_RyqK29U1JIHt4nmu-mGX4Q_jFRYWLEZ';
+
+        const escapeHtml = (value) => String(value ?? '').replace(/[&<>\"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
         const getSessionUser = () => {
           try {
             for (const key of Object.keys(localStorage)) {
@@ -25,6 +29,32 @@
           } catch (_) {}
           return null;
         };
+        const getAccessToken = () => {
+          const user = getSessionUser();
+          try {
+            for (const key of Object.keys(localStorage)) {
+              if (!key.startsWith('sb-') || !key.endsWith('-auth-token')) continue;
+              const raw = localStorage.getItem(key);
+              if (!raw) continue;
+              const parsed = JSON.parse(raw);
+              const session = parsed?.currentSession || parsed;
+              if (session?.user?.id === user?.id) return session.access_token || '';
+            }
+          } catch (_) {}
+          return '';
+        };
+        const api = async (path, options = {}) => {
+          const token = getAccessToken();
+          const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}`, ...(options.headers || {}) };
+          const response = await fetch(`${SUPABASE_URL}${path}`, { ...options, headers });
+          if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || `Request failed (${response.status})`);
+          }
+          if (response.status === 204) return null;
+          return response.json();
+        };
+
         const enhanceAccount = () => {
           document.querySelectorAll('.account-drawer').forEach((drawer) => {
             if (drawer.dataset.accountEnhanced === 'true') return;
@@ -32,55 +62,169 @@
 
             const style = document.createElement('style');
             style.textContent = `
+              .account-drawer{overflow-y:auto;max-height:calc(100vh - 24px);-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
               .account-sections{display:grid;gap:8px;margin:18px 0 20px}
               .account-section{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:13px 14px;border:1px solid #dfe7df;border-radius:12px;background:#fff;color:#18301d;font:inherit;font-weight:600;cursor:pointer}
               .account-section:hover{background:#f6faf6}
               .account-section.active{border-color:#2f6b3a;background:#edf6ee;box-shadow:inset 3px 0 0 #2f6b3a}
               .account-profile{display:grid;gap:16px;margin:0 0 20px;padding:18px;border:1px solid #e3e9e3;border-radius:16px;background:#f8faf8}
               .account-profile-head{display:flex;align-items:center;gap:14px}
-              .account-avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;overflow:hidden;background:#dfeee1;color:#285d32;font-weight:800;font-size:20px;flex:none}
+              .account-avatar{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;overflow:hidden;background:#dfeee1;color:#285d32;font-weight:800;font-size:21px;flex:none}
               .account-avatar img{width:100%;height:100%;object-fit:cover}
+              .account-avatar-upload{display:inline-flex;margin-top:8px;border:1px solid #cddacc;border-radius:9px;padding:7px 10px;background:#fff;color:#285d32;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+              .account-avatar-upload input{display:none}
               .account-profile-name{margin:0;font-size:18px}
               .account-profile-membership{margin:3px 0 0;color:#667469;font-size:13px}
               .account-profile-grid{display:grid;grid-template-columns:1fr;gap:10px}
               .account-profile-field{padding:11px 12px;border:1px solid #dfe7df;border-radius:11px;background:#fff}
               .account-profile-field span{display:block;color:#718075;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-              .account-profile-field strong{font-size:14px}
+              .account-profile-field strong{font-size:14px;overflow-wrap:anywhere}
+              .account-address{padding:13px;border:1px solid #dfe7df;border-radius:11px;background:#fff}
+              .account-address h4{margin:0 0 7px;font-size:13px}
+              .account-address p{margin:3px 0;color:#536257;font-size:13px}
               .account-edit-profile{border:0;border-radius:10px;padding:11px 13px;background:#2f6b3a;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+              .account-edit-profile:hover{background:#24562e}
               .account-placeholder{padding:20px;border:1px solid #e3e9e3;border-radius:14px;background:#f8faf8}
               .account-placeholder h3{margin:2px 0 8px}
               .account-placeholder p:last-child{margin:0;color:#617064}
+              .account-profile-editor{display:none;gap:12px;padding:16px;border:1px solid #cfdccf;border-radius:14px;background:#fff}
+              .account-profile-editor label{display:grid;gap:5px;color:#536257;font-size:12px;font-weight:700}
+              .account-profile-editor input{width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid #ccd8cc;border-radius:9px;background:#fff;color:#18301d;font:inherit}
+              .account-editor-actions{display:flex;gap:8px;flex-wrap:wrap}
+              .account-save-profile,.account-cancel-profile{border:0;border-radius:9px;padding:10px 13px;font:inherit;font-weight:700;cursor:pointer}
+              .account-save-profile{background:#2f6b3a;color:#fff}
+              .account-cancel-profile{background:#edf1ed;color:#29402e}
+              .account-profile-status{min-height:18px;color:#536257;font-size:12px}
             `;
             drawer.appendChild(style);
 
             const user = getSessionUser();
             const metadata = user?.user_metadata || {};
-            const name = metadata.full_name || metadata.name || user?.email?.split('@')[0] || 'Essentials Mart customer';
-            const email = user?.email || 'Not available';
-            const phone = user?.phone || metadata.phone || 'Not set';
-            const loyalty = metadata.loyalty_points ?? '0';
-            const avatarUrl = metadata.avatar_url || metadata.picture || '';
-            const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'E';
+            const customerFallback = { display_name: metadata.full_name || metadata.name || user?.email?.split('@')[0] || 'Essentials Mart customer', phone: user?.phone || metadata.phone || '' };
+            let customer = null;
+            let profileData = { ...customerFallback };
 
             const profile = document.createElement('section');
             profile.className = 'account-profile';
             profile.setAttribute('data-account-profile', 'true');
-            profile.innerHTML = `
-              <div class="account-profile-head">
-                <div class="account-avatar">${avatarUrl ? `<img src="${avatarUrl}" alt="${name} avatar">` : initials}</div>
-                <div><h3 class="account-profile-name">${name}</h3><p class="account-profile-membership">Household customer</p></div>
-              </div>
-              <div class="account-profile-grid">
-                <div class="account-profile-field"><span>Email</span><strong>${email}</strong></div>
-                <div class="account-profile-field"><span>Phone</span><strong>${phone}</strong></div>
-                <div class="account-profile-field"><span>Loyalty points</span><strong>${loyalty}</strong></div>
-              </div>
-              <button type="button" class="account-edit-profile">Edit Profile</button>
-            `;
+            profile.innerHTML = `<div class="account-profile-status">Loading profile…</div>`;
 
             const nav = document.createElement('nav');
             nav.className = 'account-sections';
             nav.setAttribute('aria-label', 'Account sections');
+
+            const placeholder = document.createElement('div');
+            placeholder.className = 'account-placeholder';
+            placeholder.style.display = 'none';
+            placeholder.innerHTML = '<p class="eyebrow" data-account-placeholder-eyebrow></p><h3 data-account-placeholder-title></h3><p>This account section is reserved for the next implementation phase.</p>';
+
+            const renderProfile = () => {
+              const name = profileData.display_name || customerFallback.display_name;
+              const email = user?.email || 'Not available';
+              const phone = profileData.phone || 'Not set';
+              const addressParts = [profileData.address_line1, profileData.address_line2, profileData.city, profileData.region, profileData.postal_code, profileData.country].filter(Boolean);
+              const address = addressParts.length ? addressParts : ['No address saved'];
+              const avatarUrl = profileData.avatar_url || '';
+              const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'E';
+              profile.innerHTML = `
+                <div class="account-profile-head">
+                  <div>
+                    <div class="account-avatar">${avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="Profile picture">` : escapeHtml(initials)}</div>
+                    <label class="account-avatar-upload">${avatarUrl ? 'Change photo' : 'Add profile picture'}<input type="file" accept="image/*" data-avatar-input></label>
+                  </div>
+                  <div><h3 class="account-profile-name">${escapeHtml(name)}</h3><p class="account-profile-membership">Household customer</p></div>
+                </div>
+                <div class="account-profile-grid">
+                  <div class="account-profile-field"><span>Email</span><strong>${escapeHtml(email)}</strong></div>
+                  <div class="account-profile-field"><span>Phone</span><strong>${escapeHtml(phone)}</strong></div>
+                  <div class="account-address"><h4>Address</h4>${address.map((line) => `<p>${escapeHtml(line)}</p>`).join('')}</div>
+                </div>
+                <button type="button" class="account-edit-profile">Edit Profile</button>
+                <div class="account-profile-editor" data-profile-editor>
+                  <label>Name<input type="text" data-edit-name value="${escapeHtml(name)}" autocomplete="name"></label>
+                  <label>Phone<input type="tel" data-edit-phone value="${escapeHtml(profileData.phone || '')}" autocomplete="tel"></label>
+                  <label>Address line 1<input type="text" data-edit-address1 value="${escapeHtml(profileData.address_line1 || '')}" autocomplete="street-address"></label>
+                  <label>Address line 2<input type="text" data-edit-address2 value="${escapeHtml(profileData.address_line2 || '')}"></label>
+                  <label>City<input type="text" data-edit-city value="${escapeHtml(profileData.city || '')}" autocomplete="address-level2"></label>
+                  <label>Region / Province<input type="text" data-edit-region value="${escapeHtml(profileData.region || '')}" autocomplete="address-level1"></label>
+                  <label>Postal code<input type="text" data-edit-postal value="${escapeHtml(profileData.postal_code || '')}" autocomplete="postal-code"></label>
+                  <label>Country<input type="text" data-edit-country value="${escapeHtml(profileData.country || '')}" autocomplete="country-name"></label>
+                  <div class="account-profile-status" data-profile-status></div>
+                  <div class="account-editor-actions"><button type="button" class="account-save-profile">Save changes</button><button type="button" class="account-cancel-profile">Cancel</button></div>
+                </div>`;
+
+              profile.querySelector('.account-edit-profile').addEventListener('click', () => {
+                const editor = profile.querySelector('[data-profile-editor]');
+                editor.style.display = 'grid';
+                profile.querySelector('.account-edit-profile').style.display = 'none';
+                editor.querySelector('[data-edit-name]').focus();
+              });
+              profile.querySelector('.account-cancel-profile').addEventListener('click', () => renderProfile());
+              profile.querySelector('.account-save-profile').addEventListener('click', saveProfile);
+              profile.querySelector('[data-avatar-input]').addEventListener('change', handleAvatarUpload);
+            };
+
+            const loadCustomer = async () => {
+              if (!user?.id) throw new Error('No authenticated user found');
+              const rows = await api(`/rest/v1/customers?auth_user_id=eq.${encodeURIComponent(user.id)}&select=*`);
+              customer = rows?.[0] || null;
+              if (customer) profileData = { ...customerFallback, ...customer };
+              else profileData = customerFallback;
+              renderProfile();
+            };
+
+            const saveProfile = async () => {
+              const editor = profile.querySelector('[data-profile-editor]');
+              const status = profile.querySelector('[data-profile-status]');
+              const updates = {
+                display_name: editor.querySelector('[data-edit-name]').value.trim(),
+                phone: editor.querySelector('[data-edit-phone]').value.trim() || null,
+                address_line1: editor.querySelector('[data-edit-address1]').value.trim() || null,
+                address_line2: editor.querySelector('[data-edit-address2]').value.trim() || null,
+                city: editor.querySelector('[data-edit-city]').value.trim() || null,
+                region: editor.querySelector('[data-edit-region]').value.trim() || null,
+                postal_code: editor.querySelector('[data-edit-postal]').value.trim() || null,
+                country: editor.querySelector('[data-edit-country]').value.trim() || null,
+                updated_at: new Date().toISOString()
+              };
+              if (!updates.display_name) { status.textContent = 'Name is required.'; return; }
+              try {
+                status.textContent = 'Saving…';
+                if (!customer) {
+                  throw new Error('Customer identity is not available for this account.');
+                }
+                await api(`/rest/v1/customers?id=eq.${encodeURIComponent(customer.id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' }, body: JSON.stringify(updates) });
+                try { await fetch(`${SUPABASE_URL}/auth/v1/user`, { method: 'PUT', headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${getAccessToken()}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ data: { full_name: updates.display_name, phone: updates.phone || undefined } }) }); } catch (_) {}
+                profileData = { ...profileData, ...updates };
+                status.textContent = 'Profile saved.';
+                renderProfile();
+              } catch (error) {
+                status.textContent = error.message || 'Unable to save profile.';
+              }
+            };
+
+            const handleAvatarUpload = async (event) => {
+              const file = event.target.files?.[0];
+              if (!file || !user?.id || !customer) return;
+              const status = profile.querySelector('[data-profile-status]') || profile.querySelector('.account-profile-status');
+              try {
+                if (!file.type.startsWith('image/')) throw new Error('Please choose an image file.');
+                if (file.size > 5 * 1024 * 1024) throw new Error('Profile pictures must be 5 MB or smaller.');
+                status.textContent = 'Uploading photo…';
+                const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+                const path = `${user.id}/profile.${ext}`;
+                const token = getAccessToken();
+                const upload = await fetch(`${SUPABASE_URL}/storage/v1/object/avatars/${path}`, { method: 'POST', headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}`, 'Content-Type': file.type, 'x-upsert': 'true' }, body: file });
+                if (!upload.ok) throw new Error((await upload.text()) || `Upload failed (${upload.status})`);
+                const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/avatars/${path}`;
+                await api(`/rest/v1/customers?id=eq.${encodeURIComponent(customer.id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ avatar_url: publicUrl, updated_at: new Date().toISOString() }) });
+                profileData.avatar_url = publicUrl;
+                renderProfile();
+              } catch (error) {
+                status.textContent = error.message || 'Unable to upload profile picture.';
+              }
+            };
+
             sections.forEach((section) => {
               const button = document.createElement('button');
               button.type = 'button';
@@ -103,11 +247,6 @@
               nav.appendChild(button);
             });
 
-            const placeholder = document.createElement('div');
-            placeholder.className = 'account-placeholder';
-            placeholder.style.display = 'none';
-            placeholder.innerHTML = '<p class="eyebrow" data-account-placeholder-eyebrow></p><h3 data-account-placeholder-title></h3><p>This account section is reserved for the next implementation phase.</p>';
-
             const header = drawer.querySelector('.drawer-header');
             if (header) {
               header.insertAdjacentElement('afterend', profile);
@@ -117,6 +256,9 @@
               drawer.prepend(profile);
             }
             drawer.appendChild(placeholder);
+            loadCustomer().catch((error) => {
+              profile.innerHTML = `<div class="account-profile-status">${escapeHtml(error.message || 'Unable to load profile.')}</div>`;
+            });
           });
         };
 
