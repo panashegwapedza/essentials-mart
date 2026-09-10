@@ -15,13 +15,10 @@ export default function AuthOverlay() {
   const [busy, setBusy] = useState(false);
 
   const syncAccountButton = () => {
-    document.querySelectorAll('button').forEach((button) => {
-      if (button.dataset.authAccountButton === 'true') return;
-      const text = button.textContent?.trim();
-      if (text !== 'Account' && text !== 'Log in') return;
-      button.dataset.authAccountButton = 'true';
-      button.textContent = getSession()?.user ? 'Account' : 'Log in';
-    });
+    const button = document.querySelector<HTMLButtonElement>('.topbar .quiet-button');
+    if (!button) return;
+    button.dataset.authAccountButton = 'true';
+    button.textContent = getSession()?.user ? 'Account' : 'Log in';
   };
 
   const enhanceAccountSettings = () => {
@@ -73,19 +70,26 @@ export default function AuthOverlay() {
     observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     const onClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
-      const button = target?.closest('button');
+      const button = target?.closest<HTMLButtonElement>('.topbar .quiet-button');
       if (!button) return;
-      const text = button.textContent?.trim();
-      if ((text === 'Log in' || text === 'Account') && !getSession()?.user) {
-        event.preventDefault(); event.stopPropagation(); setMode('signin'); setError(''); setOpen(true);
+      if (!getSession()?.user) {
+        event.preventDefault();
+        event.stopPropagation();
+        setMode('signin');
+        setError('');
+        setOpen(true);
+      } else {
+        window.setTimeout(enhanceAccountSettings, 0);
       }
-      if (text === 'Account' && getSession()?.user) window.setTimeout(enhanceAccountSettings, 0);
     };
     document.addEventListener('click', onClick, true);
-    return () => { observer.disconnect(); document.removeEventListener('click', onClick, true); };
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('click', onClick, true);
+    };
   }, []);
 
-  useEffect(() => { if (user) syncAccountButton(); }, [user]);
+  useEffect(() => { syncAccountButton(); }, [user]);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault(); setError(''); setBusy(true);
