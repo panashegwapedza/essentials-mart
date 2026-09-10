@@ -2,7 +2,7 @@ export type AuthSession = {
   access_token: string;
   refresh_token: string;
   expires_at?: number;
-  user: { id: string; email?: string | null; user_metadata?: Record<string, unknown> | null };
+  user: { id: string; email?: string | null; phone?: string | null; user_metadata?: Record<string, unknown> | null };
 };
 
 const SUPABASE_URL = 'https://gnmcfenenikvvvvmeuwp.supabase.co';
@@ -35,8 +35,11 @@ async function authRequest<T>(path: string, body: unknown): Promise<T> {
   return payload as T;
 }
 
-export async function signIn(email: string, password: string): Promise<AuthSession> {
-  const session = await authRequest<AuthSession>('token?grant_type=password', { email, password });
+export async function signIn(identifier: string, password: string): Promise<AuthSession> {
+  const credentials = identifier.includes('@')
+    ? { email: identifier.trim().toLowerCase(), password }
+    : { phone: identifier.trim(), password };
+  const session = await authRequest<AuthSession>('token?grant_type=password', credentials);
   saveSession(session);
   return session;
 }
@@ -48,6 +51,36 @@ export async function signUp(email: string, password: string, name: string): Pro
     return result;
   }
   return null;
+}
+
+export function beginSocialSignIn(provider: 'google' | 'apple') {
+  const redirectTo = window.location.origin + window.location.pathname;
+  const url = new URL(`${SUPABASE_URL}/auth/v1/authorize`);
+  url.searchParams.set('provider', provider);
+  url.searchParams.set('redirect_to', redirectTo);
+  window.location.assign(url.toString());
+}
+
+export function consumeOAuthSession(): AuthSession | null {
+  const hash = window.location.hash.replace(/^#/, '');
+  if (!hash) return null;
+  const params = new URLSearchParams(hash);
+  const accessToken = params.get('access_token');
+  const refreshToken = params.get('refresh_token');
+  const userJson = params.get('user');
+  if (!accessToken || !refreshToken) return null;
+  let user: AuthSession['user'] | null = null;
+  try { user = userJson ? JSON.parse(userJson) : null; } catch { user = null; }
+  if (!user) return null;
+  const session: AuthSession = {
+    access_token: accessToken,
+    refresh_token: refreshToken,
+    expires_at: Number(params.get('expires_at') || 0) || undefined,
+    user,
+  };
+  saveSession(session);
+  window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
+  return session;
 }
 
 export async function refreshSession(): Promise<AuthSession | null> {
@@ -72,6 +105,7 @@ export async function signOut(): Promise<void> {
 }
 
 export async function ensureFreshSession(): Promise<AuthSession | null> {
+  consumeOAuthSession();
   const session = getSession();
   if (!session) return null;
   if (!session.expires_at || session.expires_at * 1000 > Date.now() + 60_000) return session;
