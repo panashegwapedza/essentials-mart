@@ -7,7 +7,7 @@ const SUPABASE_KEY = 'sb_publishable_RyqK29U1JIHt4nmu-mGX4Q_jFRYWLEZ';
 export default function AuthOverlay() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-  const [user, setUser] = useState(() => consumeOAuthSession() ?? getSession()?.user ?? null);
+  const [user, setUser] = useState(() => getSession()?.user ?? null);
   const [name, setName] = useState('');
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -28,8 +28,6 @@ export default function AuthOverlay() {
     const drawer = document.querySelector('.account-drawer') as HTMLElement | null;
     if (!drawer || drawer.dataset.settingsEnhanced === 'true') return;
     drawer.dataset.settingsEnhanced = 'true';
-
-    const nav = drawer.querySelector('.account-sections');
     const buttons = Array.from(drawer.querySelectorAll<HTMLButtonElement>('.account-section'));
     const preferences = buttons.find((button) => button.textContent?.trim() === 'Preferences');
     if (preferences) preferences.textContent = 'Settings';
@@ -50,10 +48,6 @@ export default function AuthOverlay() {
     const placeholder = drawer.querySelector('.account-placeholder') as HTMLElement | null;
     if (settingsButton && placeholder) {
       settingsButton.addEventListener('click', () => {
-        const eyebrow = placeholder.querySelector('[data-account-placeholder-eyebrow]');
-        const title = placeholder.querySelector('[data-account-placeholder-title]');
-        if (eyebrow) eyebrow.textContent = 'ACCOUNT SETTINGS';
-        if (title) title.textContent = 'Settings';
         placeholder.innerHTML = `
           <p class="eyebrow">ACCOUNT SETTINGS</p>
           <h3>Settings</h3>
@@ -68,6 +62,9 @@ export default function AuthOverlay() {
   };
 
   useEffect(() => {
+    void consumeOAuthSession().then((session) => {
+      if (session) setUser(session.user);
+    });
     syncAccountButton();
     const observer = new MutationObserver(() => {
       syncAccountButton();
@@ -80,26 +77,15 @@ export default function AuthOverlay() {
       if (!button) return;
       const text = button.textContent?.trim();
       if ((text === 'Log in' || text === 'Account') && !getSession()?.user) {
-        event.preventDefault();
-        event.stopPropagation();
-        setMode('signin');
-        setError('');
-        setOpen(true);
+        event.preventDefault(); event.stopPropagation(); setMode('signin'); setError(''); setOpen(true);
       }
-      if (text === 'Account' && getSession()?.user) {
-        window.setTimeout(enhanceAccountSettings, 0);
-      }
+      if (text === 'Account' && getSession()?.user) window.setTimeout(enhanceAccountSettings, 0);
     };
     document.addEventListener('click', onClick, true);
-    return () => {
-      observer.disconnect();
-      document.removeEventListener('click', onClick, true);
-    };
+    return () => { observer.disconnect(); document.removeEventListener('click', onClick, true); };
   }, []);
 
-  useEffect(() => {
-    if (user) syncAccountButton();
-  }, [user]);
+  useEffect(() => { if (user) syncAccountButton(); }, [user]);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault(); setError(''); setBusy(true);
@@ -116,19 +102,13 @@ export default function AuthOverlay() {
         const session = await signIn(identifier.trim(), password);
         setUser(session.user);
       }
-      setOpen(false);
-      window.location.reload();
+      setOpen(false); window.location.reload();
     } catch (err) { setError(err instanceof Error ? err.message : 'Authentication failed.'); }
     finally { setBusy(false); }
   }
 
-  async function handleSignOut() {
-    setBusy(true); await signOut(); setUser(null); setBusy(false); setOpen(false); window.location.reload();
-  }
-
   function social(provider: 'google' | 'apple') {
-    setError('');
-    setBusy(true);
+    setError(''); setBusy(true);
     try { beginSocialSignIn(provider); } catch (err) { setBusy(false); setError(err instanceof Error ? err.message : 'Social sign-in could not start.'); }
   }
 
