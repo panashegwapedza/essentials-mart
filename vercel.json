@@ -1,5 +1,12 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm --prefix apps/customer_web run build",
   "outputDirectory": "apps/customer_web/dist",
-  "installCommand": "npm install --prefix apps/customer_web"
+  "installCommand": "npm install --prefix apps/customer_web",
+  "rewrites": [
+    {
+      "source": "/api/products/:id",
+      "destination": "/api/products"
+    }
+  ]
 }
