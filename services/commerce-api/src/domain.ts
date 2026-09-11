@@ -10,7 +10,17 @@ export type DeliveryHistoryEntry = { fromStatus: DeliveryStatus | null; toStatus
 export type DeliverySummary = { status: DeliveryStatus; trackingReference?: string; scheduledFor?: string; deliveredAt?: string; history: DeliveryHistoryEntry[] };
 
 export type AuthenticatedPrincipal = { customerId: CustomerId; assuranceLevel?: string };
-export type Product = { id: ProductId; name: string; price: Money; available: boolean };
+export type Product = {
+  id: ProductId;
+  name: string;
+  category?: string;
+  productFamily?: string;
+  brand?: string;
+  variantLabel?: string;
+  sizeLabel?: string;
+  price: Money;
+  available: boolean;
+};
 export type BasketLine = { productId: ProductId; quantity: number; unitPrice: Money };
 export type Basket = { id: BasketId; customerId: CustomerId; lines: BasketLine[] };
 export type Order = {
