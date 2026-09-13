@@ -10,6 +10,7 @@ create table if not exists public.deliveries (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
 create index if not exists idx_deliveries_customer_updated on public.deliveries(customer_id, updated_at desc);
 create index if not exists idx_deliveries_status_updated on public.deliveries(status, updated_at desc);
 
@@ -84,28 +85,34 @@ language plpgsql
 security definer
 set search_path = public
 as $$
-declare v_notification_id uuid;
+declare v_delivery_id uuid; v_notification_id uuid;
 begin
   if tg_op = 'INSERT' then
     insert into public.deliveries(order_id, customer_id, method, status)
-    values (new.id, new.customer_id, new.delivery_method, 'pending')
+    values (new.id, new.customer_id, new.delivery_method, case when new.delivery_method='pickup' then 'pending' else 'pending' end)
     on conflict (order_id) do nothing;
     insert into public.notifications(customer_id,type,title,body,aggregate_type,aggregate_id,action_type,action_target,dedupe_key)
     values(new.customer_id,'order.confirmed','Order confirmed','Your order has been confirmed and is now being prepared.','order',new.id,'open_order','/orders/'||new.id,'order.confirmed:'||new.id)
     on conflict (dedupe_key) do nothing returning id into v_notification_id;
     if v_notification_id is not null then
-      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at) values(v_notification_id,'in_app','sent',now()) on conflict(notification_id,channel) do nothing;
-      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at) values(v_notification_id,'push','pending',now()) on conflict(notification_id,channel) do nothing;
-      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at) values(v_notification_id,'whatsapp','pending',now()) on conflict(notification_id,channel) do nothing;
+      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at)
+      values(v_notification_id,'in_app','sent',now()) on conflict(notification_id,channel) do nothing;
+      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at)
+      values(v_notification_id,'push','pending',now()) on conflict(notification_id,channel) do nothing;
+      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at)
+      values(v_notification_id,'whatsapp','pending',now()) on conflict(notification_id,channel) do nothing;
     end if;
   elsif tg_op = 'UPDATE' and new.status is distinct from old.status then
     insert into public.notifications(customer_id,type,title,body,aggregate_type,aggregate_id,action_type,action_target,dedupe_key)
     values(new.customer_id,'order.status_changed','Order status updated','Your order is now '||replace(new.status,'_',' ')||'.','order',new.id,'open_order','/orders/'||new.id,'order.status:'||new.id||':'||new.status)
     on conflict (dedupe_key) do nothing returning id into v_notification_id;
     if v_notification_id is not null then
-      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at) values(v_notification_id,'in_app','sent',now()) on conflict(notification_id,channel) do nothing;
-      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at) values(v_notification_id,'push','pending',now()) on conflict(notification_id,channel) do nothing;
-      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at) values(v_notification_id,'whatsapp','pending',now()) on conflict(notification_id,channel) do nothing;
+      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at)
+      values(v_notification_id,'in_app','sent',now()) on conflict(notification_id,channel) do nothing;
+      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at)
+      values(v_notification_id,'push','pending',now()) on conflict(notification_id,channel) do nothing;
+      insert into public.notification_deliveries(notification_id,channel,status,next_attempt_at)
+      values(v_notification_id,'whatsapp','pending',now()) on conflict(notification_id,channel) do nothing;
     end if;
   end if;
   return new;
