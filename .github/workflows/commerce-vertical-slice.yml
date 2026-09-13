@@ -23,8 +23,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: services/commerce-api/package-lock.json
 
       # Dependency auditing was previously disabled via --no-audit. It is
       # back on: install stays clean, and a separate step below fails the
