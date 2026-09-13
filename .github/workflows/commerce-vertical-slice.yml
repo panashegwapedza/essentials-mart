@@ -23,12 +23,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: npm
+          cache-dependency-path: services/commerce-api/package-lock.json
 
+      # Dependency auditing was previously disabled via --no-audit. It is
+      # back on: install stays clean, and a separate step below fails the
+      # build on any high/critical advisory so a vulnerable transitive
+      # dependency can't silently ride into main.
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm install --no-fund
+
+      - name: Dependency audit (fails on high/critical)
+        run: npm audit --audit-level=high
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Architecture boundary check
+        run: npm run lint:boundaries
 
       - name: Build
         run: npm run build
 
-      - name: Test
+      - name: Contract tests (HTTP API surface)
+        run: npm run test:contract
+
+      - name: Full test suite
         run: npm test
