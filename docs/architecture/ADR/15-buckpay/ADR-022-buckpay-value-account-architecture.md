@@ -1,4 +1,4 @@
-# ADR-021 — BuckPay Value Account Architecture
+# ADR-022 — BuckPay Value Account Architecture
 
 **Status:** Proposed
 **Date:** 2026-09-04
