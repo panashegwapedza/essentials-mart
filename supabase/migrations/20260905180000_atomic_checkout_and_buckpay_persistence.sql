@@ -82,6 +82,7 @@ declare
   v_currency text;
   v_item record;
   v_inventory public.inventory%rowtype;
+  v_product public.products%rowtype;
   v_order public.orders%rowtype;
   v_items jsonb := '[]'::jsonb;
 begin
