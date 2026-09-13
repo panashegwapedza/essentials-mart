@@ -23,12 +23,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: npm
+          cache-dependency-path: services/commerce-api/package.json
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm install --no-fund
 
-      - name: Build
-        run: npm run build
+      - name: Dependency audit
+        run: npm audit --audit-level=high
 
-      - name: Test
+      - name: Lint
+        run: npm run lint
+
+      - name: Architecture boundaries
+        run: npm run lint:boundaries
+
+      - name: HTTP contract tests
+        run: npm run test:contract
+
+      - name: Full test suite
         run: npm test
