@@ -40,7 +40,7 @@ test("unsupported content type returns 415", async () => {
       body: "x",
     });
     assert.equal(res.status, 415);
-    assert.equal((await res.json()).error.code, "UNSUPPORTED_MEDIA_TYPE");
+    assert.equal((await res.json()).error.code, "INVALID_CONTENT_TYPE");
   } finally {
     await close(server);
   }
