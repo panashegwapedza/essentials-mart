@@ -32,8 +32,9 @@ test("POST /checkout creates an order with a server-calculated total", async () 
     assert.equal(res.status, 201);
     const order = await res.json();
     assert.equal(order.status, "placed");
-    assert.equal(order.total.amountMinor, 550);
+    assert.equal(order.total.amountMinor, 850);
     assert.equal(order.total.currency, DEV_FIXTURE_CURRENCY);
+    assert.equal(order.deliveryFee.amountMinor, 300);
   } finally {
     await close(server);
   }
@@ -54,7 +55,8 @@ test("checkout ignores a client-supplied total", async () => {
     });
     assert.equal(res.status, 201);
     const order = await res.json();
-    assert.equal(order.total.amountMinor, 500);
+    assert.equal(order.total.amountMinor, 800);
+    assert.equal(order.deliveryFee.amountMinor, 300);
   } finally {
     await close(server);
   }
