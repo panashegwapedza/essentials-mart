@@ -17,7 +17,7 @@ const basket: Basket = {
   ],
 };
 
-test("calculates the authoritative basket total from current product prices", () => {
+test("calculates the authoritative basket subtotal from current product prices", () => {
   assert.deepEqual(calculateBasketTotal(basket, products), { amountMinor: 800, currency: "USD" });
 });
 
@@ -25,7 +25,9 @@ test("places an order only for the authenticated customer's basket", () => {
   const order = placeOrder({ customerId: "customer-1" }, basket, products, "order-1");
   assert.equal(order.id, "order-1");
   assert.equal(order.status, "placed");
-  assert.equal(order.total.amountMinor, 800);
+  assert.equal(order.subtotal.amountMinor, 800);
+  assert.equal(order.deliveryFee.amountMinor, 300);
+  assert.equal(order.total.amountMinor, 1100);
 });
 
 test("rejects a basket owned by another customer", () => {

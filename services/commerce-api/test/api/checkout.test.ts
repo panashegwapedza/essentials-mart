@@ -7,6 +7,9 @@ async function close(server: import("node:http").Server) {
   await new Promise<void>((resolve) => server.close(() => resolve()));
 }
 
+const checkoutHeaders = () => ({ ...devAuthHeaders("customer-1"), "Content-Type": "application/json" });
+const checkoutBody = (deliveryMethod = "standard") => JSON.stringify({ deliveryMethod });
+
 test("POST /checkout creates an order with a server-calculated total", async () => {
   const { server, baseUrl } = await startTestServer();
   try {
@@ -21,12 +24,17 @@ test("POST /checkout creates an order with a server-calculated total", async () 
       body: JSON.stringify({ productId: "milk", quantity: 1 }),
     });
 
-    const res = await fetch(`${baseUrl}/checkout`, { method: "POST", headers: devAuthHeaders("customer-1") });
+    const res = await fetch(`${baseUrl}/checkout`, {
+      method: "POST",
+      headers: checkoutHeaders(),
+      body: checkoutBody(),
+    });
     assert.equal(res.status, 201);
     const order = await res.json();
     assert.equal(order.status, "placed");
-    assert.equal(order.total.amountMinor, 550);
+    assert.equal(order.total.amountMinor, 850);
     assert.equal(order.total.currency, DEV_FIXTURE_CURRENCY);
+    assert.equal(order.deliveryFee.amountMinor, 300);
   } finally {
     await close(server);
   }
@@ -42,12 +50,13 @@ test("checkout ignores a client-supplied total", async () => {
     });
     const res = await fetch(`${baseUrl}/checkout`, {
       method: "POST",
-      headers: { ...devAuthHeaders("customer-1"), "Content-Type": "application/json" },
-      body: JSON.stringify({ total: { amountMinor: 1, currency: DEV_FIXTURE_CURRENCY } }),
+      headers: checkoutHeaders(),
+      body: JSON.stringify({ deliveryMethod: "standard", total: { amountMinor: 1, currency: DEV_FIXTURE_CURRENCY } }),
     });
     assert.equal(res.status, 201);
     const order = await res.json();
-    assert.equal(order.total.amountMinor, 500);
+    assert.equal(order.total.amountMinor, 800);
+    assert.equal(order.deliveryFee.amountMinor, 300);
   } finally {
     await close(server);
   }
