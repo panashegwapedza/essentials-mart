@@ -1,0 +1,30 @@
+name: Production Smoke
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check API health
+        env:
+          BASE_URL: https://essentials-mart.vercel.app
+        run: |
+          set -euo pipefail
+          body="$(curl --fail --silent --show-error --max-time 20 "$BASE_URL/api/health")"
+          echo "$body"
+          grep -q '"status":"ok"' <<<"$body"
+          grep -q '"supabase":"ok"' <<<"$body"
+
+      - name: Check production catalogue
+        env:
+          BASE_URL: https://essentials-mart.vercel.app
+        run: |
+          set -euo pipefail
+          body="$(curl --fail --silent --show-error --max-time 20 "$BASE_URL/api/products")"
+          echo "$body"
+          grep -q '"products"' <<<"$body"
+          grep -q '"name":"Bread"' <<<"$body"
