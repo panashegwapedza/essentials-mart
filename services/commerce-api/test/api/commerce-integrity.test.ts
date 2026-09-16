@@ -30,6 +30,10 @@ class Baskets implements BasketRepository {
 class Orders implements OrderRepository {
   data = new Map<string, Order>();
   async save(order: Order) { this.data.set(order.id, structuredClone(order)); }
+  async getById(orderId: string) {
+    const order = this.data.get(orderId);
+    return order ? structuredClone(order) : null;
+  }
   async getOwnedById(customerId: string, orderId: string) {
     const order = this.data.get(orderId);
     return order?.customerId === customerId ? structuredClone(order) : null;
