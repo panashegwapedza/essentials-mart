@@ -4,5 +4,5 @@
  */
 export interface CheckoutTransaction {
   run<T>(work: () => Promise<T>): Promise<T>;
-  commitCheckout?: (input: { customerId: string; basketId: string; order: unknown }) => Promise<unknown>;
+  commitCheckout?: (input: { customerId: string; basketId: string; order: unknown; idempotencyKey?: string; requestFingerprint?: string }) => Promise<unknown>;
 }
