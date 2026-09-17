@@ -9,7 +9,7 @@ export type DeliveryStatus = "pending" | "preparing" | "ready_for_pickup" | "out
 export type DeliveryHistoryEntry = { fromStatus: DeliveryStatus | null; toStatus: DeliveryStatus; trackingReference?: string; changedAt: string };
 export type DeliverySummary = { status: DeliveryStatus; trackingReference?: string; scheduledFor?: string; deliveredAt?: string; history: DeliveryHistoryEntry[] };
 
-export type AuthenticatedPrincipal = { customerId: CustomerId; assuranceLevel?: string };
+export type AuthenticatedPrincipal = { customerId: CustomerId; authUserId?: string; assuranceLevel?: string };
 export type Product = {
   id: ProductId;
   name: string;
