@@ -13,86 +13,42 @@ function config() {
   if (!url || !key) throw new Error('Supabase authentication requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.');
   return { url: url.replace(/\/$/, ''), key };
 }
-
 function bearer(req: any): string | null {
-  const raw = req.headers?.authorization;
-  const value = Array.isArray(raw) ? raw[0] : raw;
+  const raw = req.headers?.authorization; const value = Array.isArray(raw) ? raw[0] : raw;
   if (typeof value !== 'string' || !/^Bearer\s+\S+$/i.test(value)) return null;
   return value.replace(/^Bearer\s+/i, '').trim();
 }
-
 async function fetchSupabase(input: string, init: RequestInit): Promise<Response> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-    try {
-      const response = await fetch(input, { ...init, signal: controller.signal });
-      if (!TRANSIENT_STATUS.has(response.status) || attempt === MAX_ATTEMPTS) return response;
-      await new Promise((resolve) => setTimeout(resolve, 150 * 2 ** (attempt - 1)));
-    } catch (error) {
-      lastError = error;
-      if (attempt === MAX_ATTEMPTS) throw error;
-      await new Promise((resolve) => setTimeout(resolve, 150 * 2 ** (attempt - 1)));
-    } finally {
-      clearTimeout(timeout);
-    }
+    const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    try { const response = await fetch(input, { ...init, signal: controller.signal }); if (!TRANSIENT_STATUS.has(response.status) || attempt === MAX_ATTEMPTS) return response; await new Promise(resolve => setTimeout(resolve, 150 * 2 ** (attempt - 1))); }
+    catch (error) { lastError = error; if (attempt === MAX_ATTEMPTS) throw error; await new Promise(resolve => setTimeout(resolve, 150 * 2 ** (attempt - 1))); }
+    finally { clearTimeout(timeout); }
   }
   throw lastError instanceof Error ? lastError : new Error('Supabase request failed after retries.');
 }
-
 async function getAuthUser(token: string): Promise<AuthUser | null> {
-  const { url, key } = config();
-  const response = await fetchSupabase(`${url}/auth/v1/user`, { headers: { apikey: key, Authorization: `Bearer ${token}` } });
-  if (response.status === 401 || response.status === 403) return null;
-  if (!response.ok) throw new Error(`Supabase Auth verification failed (${response.status}).`);
-  return await response.json() as AuthUser;
+  const { url, key } = config(); const response = await fetchSupabase(`${url}/auth/v1/user`, { headers: { apikey: key, Authorization: `Bearer ${token}` } });
+  if (response.status === 401 || response.status === 403) return null; if (!response.ok) throw new Error(`Supabase Auth verification failed (${response.status}).`); return await response.json() as AuthUser;
 }
-
 async function resolveCustomer(user: AuthUser): Promise<CustomerRow> {
-  const { url, key } = config();
-  const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
+  const { url, key } = config(); const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
   const query = new URLSearchParams({ auth_user_id: `eq.${user.id}`, select: 'id,auth_user_id,external_customer_id,email,display_name', limit: '1' });
-  const lookup = await fetchSupabase(`${url}/rest/v1/customers?${query}`, { headers });
-  if (!lookup.ok) throw new Error(`Customer identity lookup failed (${lookup.status}).`);
-  const rows = await lookup.json() as CustomerRow[];
-  const metadata = user.user_metadata ?? {};
+  const lookup = await fetchSupabase(`${url}/rest/v1/customers?${query}`, { headers }); if (!lookup.ok) throw new Error(`Customer identity lookup failed (${lookup.status}).`);
+  const rows = await lookup.json() as CustomerRow[]; const metadata = user.user_metadata ?? {};
   const displayName = typeof metadata.full_name === 'string' ? metadata.full_name : typeof metadata.name === 'string' ? metadata.name : null;
-  if (rows[0]) {
-    const customer = rows[0];
-    if (customer.external_customer_id !== user.id || customer.email !== (user.email ?? null) || (displayName && customer.display_name !== displayName)) {
+  if (rows[0]) { const customer = rows[0]; if (customer.external_customer_id !== user.id || customer.email !== (user.email ?? null) || (displayName && customer.display_name !== displayName)) {
       const update = await fetchSupabase(`${url}/rest/v1/customers?id=eq.${customer.id}`, { method: 'PATCH', headers: { ...headers, Prefer: 'return=representation' }, body: JSON.stringify({ external_customer_id: user.id, email: user.email ?? null, display_name: displayName ?? customer.display_name, updated_at: new Date().toISOString() }) });
-      if (!update.ok) throw new Error(`Customer identity update failed (${update.status}).`);
-      return (await update.json() as CustomerRow[])[0] ?? { ...customer, external_customer_id: user.id };
-    }
-    return customer;
-  }
-
+      if (!update.ok) throw new Error(`Customer identity update failed (${update.status}).`); return (await update.json() as CustomerRow[])[0] ?? { ...customer, external_customer_id: user.id };
+    } return customer; }
   const create = await fetchSupabase(`${url}/rest/v1/customers`, { method: 'POST', headers: { ...headers, Prefer: 'return=representation,resolution=ignore-duplicates' }, body: JSON.stringify({ auth_user_id: user.id, external_customer_id: user.id, email: user.email ?? null, display_name: displayName }) });
-  if (!create.ok) throw new Error(`Customer identity creation failed (${create.status}).`);
-  const created = await create.json() as CustomerRow[];
-  if (created[0]) return created[0];
-
-  const retry = await fetchSupabase(`${url}/rest/v1/customers?${query}`, { headers });
-  if (!retry.ok) throw new Error(`Customer identity retry failed (${retry.status}).`);
-  const retryRows = await retry.json() as CustomerRow[];
-  if (!retryRows[0]) throw new Error('Authenticated user has no customer identity.');
-  return retryRows[0];
+  if (!create.ok) throw new Error(`Customer identity creation failed (${create.status}).`); const created = await create.json() as CustomerRow[]; if (created[0]) return created[0];
+  const retry = await fetchSupabase(`${url}/rest/v1/customers?${query}`, { headers }); if (!retry.ok) throw new Error(`Customer identity retry failed (${retry.status}).`); const retryRows = await retry.json() as CustomerRow[]; if (!retryRows[0]) throw new Error('Authenticated user has no customer identity.'); return retryRows[0];
 }
-
 export async function principal(req: any): Promise<AuthenticatedPrincipal | null> {
-  const token = bearer(req);
-  if (!token) return null;
-  const user = await getAuthUser(token);
-  if (!user?.id) return null;
-  const customer = await resolveCustomer(user);
-  return { customerId: customer.external_customer_id ?? customer.id };
+  const token = bearer(req); if (!token) return null; const user = await getAuthUser(token); if (!user?.id) return null; const customer = await resolveCustomer(user);
+  return { customerId: customer.external_customer_id ?? customer.id, authUserId: user.id };
 }
-
 export function isDevelopment(req: any): boolean { return process.env.NODE_ENV !== 'production' && Boolean(req.headers?.['x-dev-customer-id']); }
-export function devPrincipal(req: any): AuthenticatedPrincipal | null {
-  if (!isDevelopment(req)) return null;
-  const value = req.headers?.['x-dev-customer-id'];
-  const id = Array.isArray(value) ? value[0] : value;
-  return typeof id === 'string' && id.trim() ? { customerId: id } : null;
-}
+export function devPrincipal(req: any): AuthenticatedPrincipal | null { if (!isDevelopment(req)) return null; const value = req.headers?.['x-dev-customer-id']; const id = Array.isArray(value) ? value[0] : value; return typeof id === 'string' && id.trim() ? { customerId: id, authUserId: id } : null; }
