@@ -33,4 +33,4 @@ if(path.startsWith('/notifications/')&&path.endsWith('/read')&&req.method==='POS
 if(path==='/buckpay'&&req.method==='GET'){const account=await buckPay.getAccount(user);return json(res,200,{balance:account.balance,status:account.status});}
 if(path==='/buckpay/transactions'&&req.method==='GET'){const transactions=await buckPay.getTransactions(user);return json(res,200,{transactions:transactions.map(item=>({id:item.id,type:item.type,amount:item.amount,reference:item.reference,createdAt:item.createdAt}))});}
 return error(res,404,'NOT_FOUND','No such route.');
-}catch(err:any){const status=err?.code==='NOT_FOUND'?404:err?.code==='PRODUCT_UNAVAILABLE'?409:err?.code==='BASKET_EMPTY'?400:500;console.error('commerce-api error',err);return error(res,status,err?.code??'INTERNAL_ERROR',err instanceof Error?err.message:'Unexpected server error.');}}
+}catch(err:any){const status=err?.code==='NOT_FOUND'?404:err?.code==='PRODUCT_UNAVAILABLE'||err?.code==='IDEMPOTENCY_KEY_REUSED'?409:err?.code==='BASKET_EMPTY'?400:500;console.error('commerce-api error',err);return error(res,status,err?.code??'INTERNAL_ERROR',err instanceof Error?err.message:'Unexpected server error.');}}
