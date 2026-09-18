@@ -149,3 +149,11 @@ grant execute on function public.record_fulfilment_item(uuid,integer,uuid,intege
 grant execute on function public.complete_order_fulfilment(uuid,boolean) to authenticated;
 grant execute on function public.adjust_store_inventory(uuid,uuid,integer,text,text,uuid) to authenticated;
 grant execute on function public.update_delivery_status(uuid,text,text) to authenticated;
+
+
+-- Data API access is explicit; RLS remains the row-level authorization boundary.
+grant select on public.stores, public.store_staff, public.order_fulfilments, public.order_fulfilment_items, public.inventory, public.inventory_adjustments to authenticated;
+grant execute on function public.start_order_fulfilment(uuid) to authenticated;
+grant execute on function public.record_fulfilment_item(uuid,integer,uuid,integer,text) to authenticated;
+grant execute on function public.complete_order_fulfilment(uuid,boolean) to authenticated;
+grant execute on function public.adjust_store_inventory(uuid,uuid,integer,text,text,uuid) to authenticated;
