@@ -137,7 +137,7 @@ returns public.order_fulfilments language sql security invoker set search_path='
 create or replace function public.record_fulfilment_item(p_fulfilment_item_id uuid,p_picked_quantity integer,p_substitution_product_id uuid default null,p_substitution_quantity integer default null,p_notes text default null)
 returns public.order_fulfilment_items language sql security invoker set search_path='public' as $$ select private.ops_record_fulfilment_item($1,$2,$3,$4,$5); $$;
 create or replace function public.complete_order_fulfilment(p_order_id uuid,p_hand_off boolean default false)
-returns public.order_fulfilmentS language sql security invoker set search_path='public' as $$ select private.ops_complete_order_fulfilment($1,$2); $$;
+returns public.order_fulfilments language sql security invoker set search_path='public' as $$ select private.ops_complete_order_fulfilment($1,$2); $$;
 create or replace function public.adjust_store_inventory(p_store_id uuid,p_product_id uuid,p_quantity_delta integer,p_reason text,p_reference_type text default null,p_reference_id uuid default null)
 returns public.inventory_adjustments language sql security invoker set search_path='public' as $$ select private.ops_adjust_store_inventory($1,$2,$3,$4,$5,$6); $$;
 create or replace function public.update_delivery_status(p_order_id uuid,p_status text,p_tracking_reference text default null)
