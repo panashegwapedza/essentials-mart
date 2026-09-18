@@ -70,6 +70,13 @@ export async function handleOperations(req: RequestLike, res: any, path: string)
     return send(res, result.status, result.body ? { inventory: result.body } : result.body);
   }
 
+  if (path.startsWith('/ops/fulfilments/') && path.endsWith('/items') && req.method === 'GET') {
+    const fulfilmentId = path.slice('/ops/fulfilments/'.length, -'/items'.length);
+    if (!fulfilmentId) return send(res, 400, { error: { code: 'VALIDATION_ERROR', message: 'fulfilmentId is required.' } });
+    const result = await supabase(req, `order_fulfilment_items?select=id,fulfilment_id,order_item_id,requested_quantity,picked_quantity,status,substitution_product_id,substitution_quantity,notes,order_items(product_id,products(id,name))&fulfilment_id=eq.${encodeURIComponent(fulfilmentId)}&order_item_id=order_item_id`);
+    return send(res, result.status, result.body ? { items: result.body } : result.body);
+  }
+
   if (path.startsWith('/ops/fulfilments/') && req.method === 'POST') {
     const parts = path.split('/').filter(Boolean);
     const fulfilmentId = parts[2];
