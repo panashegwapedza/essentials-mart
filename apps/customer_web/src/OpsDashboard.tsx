@@ -1,0 +1,30 @@
+import { useCallback,useEffect,useMemo,useState } from 'react';
+import './styles.css';
+type Store={id:string;code:string;name:string;status:string;region?:string};
+type Event={id:string;event_type:string;entity_type:string;entity_id?:string;severity:'info'|'warning'|'critical';payload:Record<string,unknown>;created_at:string};
+type Dashboard={store_id:string;generated_at:string;workload:{orders_paid:number;orders_fulfilling:number;orders_ready:number};exceptions:{unavailable_items:number;partial_items:number;failed_deliveries:number;low_stock_items:number};recent_events:Event[]};
+const token=()=>{try{for(const key of Object.keys(localStorage)){if(!key.startsWith('sb-')||!key.endsWith('-auth-token'))continue;const p=JSON.parse(localStorage.getItem(key)||'{}');const s=p.currentSession||p;if(s?.access_token)return s.access_token;}}catch{}return '';};
+async function api<T>(path:string):Promise<T>{const t=token();if(!t)throw new Error('Sign in with an authorized store account to continue.');const r=await fetch(path,{headers:{Authorization:'Bearer '+t}});const body=await r.json().catch(()=>null);if(!r.ok)throw new Error(body?.error?.message||body?.message||'Request failed ('+r.status+')');return body as T;}
+const label=(v:string)=>v.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+export default function OpsDashboard(){
+ const[stores,setStores]=useState<Store[]>([]),[storeId,setStoreId]=useState(''),[data,setData]=useState<Dashboard|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState<string|null>(null),[live,setLive]=useState(false);
+ const store=useMemo(()=>stores.find(s=>s.id===storeId),[stores,storeId]);
+ const load=useCallback(async(id:string)=>{if(!id)return;setLoading(true);setError(null);try{setData(await api<Dashboard>('/api/ops/dashboard/'+id));}catch(e){setError(e instanceof Error?e.message:'Operations dashboard could not be loaded.');}finally{setLoading(false);}},[]);
+ useEffect(()=>{api<{stores:Store[]}>('/api/ops/stores').then(x=>{setStores(x.stores);if(x.stores[0])setStoreId(x.stores[0].id);}).catch(e=>setError(e instanceof Error?e.message:'Store access could not be loaded.')).finally(()=>setLoading(false));},[]);
+ useEffect(()=>{if(storeId)void load(storeId);},[storeId,load]);
+ useEffect(()=>{if(!storeId||!live)return;const timer=window.setInterval(()=>void load(storeId),10000);return()=>window.clearInterval(timer);},[storeId,load,live]);
+ return <div className='ops-shell'>
+ <header className='ops-topbar'><div className='brand-mark'><span className='brand-e'>e</span><span>Essentials Mart · Store Operations</span></div><div className='ops-actions'><span className={live?'ops-live active':'ops-live'}><i/>Live</span><select value={storeId} onChange={e=>setStoreId(e.target.value)} disabled={!stores.length}>{stores.map(s=><option key={s.id} value={s.id}>{s.name} · {s.code}</option>)}</select><button type='button' onClick={()=>void load(storeId)} disabled={loading}>{loading?'Refreshing…':'Refresh'}</button></div></header>
+ <main className='ops-main'><div className='ops-heading'><div><p className='eyebrow'>CONTROL SURFACE</p><h1>{store?.name||'Store operations'}</h1><p>Live workload, fulfilment exceptions and inventory signals for authorized store staff.</p></div><div className='ops-updated'>{data?'Updated '+new Date(data.generated_at).toLocaleTimeString():'Waiting for store data'}</div></div>
+ {error&&<div className='ops-error'>{error}</div>}
+ {loading&&!data?<div className='ops-state'>Loading operational intelligence…</div>:data&&<><section className='ops-metrics'>
+ <article><span>Paid orders</span><strong>{data.workload.orders_paid}</strong><small>Awaiting fulfilment</small></article>
+ <article><span>Fulfilling</span><strong>{data.workload.orders_fulfilling}</strong><small>Active picking workload</small></article>
+ <article><span>Ready</span><strong>{data.workload.orders_ready}</strong><small>Ready for hand-off</small></article>
+ <article className='warning'><span>Exceptions</span><strong>{data.exceptions.unavailable_items+data.exceptions.partial_items}</strong><small>{data.exceptions.unavailable_items} unavailable · {data.exceptions.partial_items} partial</small></article>
+ <article className='critical'><span>Delivery failures</span><strong>{data.exceptions.failed_deliveries}</strong><small>Requires intervention</small></article>
+ <article className='warning'><span>Low stock</span><strong>{data.exceptions.low_stock_items}</strong><small>At or below threshold</small></article>
+ </section><section className='ops-grid'><div className='ops-panel'><div className='ops-panel-head'><div><p className='eyebrow'>EXCEPTION QUEUE</p><h2>Needs attention</h2></div></div><div className='exception-list'>{data.recent_events.filter(e=>e.severity!=='info').slice(0,12).map(e=><div className={'exception-row '+e.severity} key={e.id}><span className='severity'>{label(e.severity)}</span><div><strong>{label(e.event_type)}</strong><small>{label(e.entity_type)} {e.entity_id?'· '+e.entity_id.slice(0,8):''}</small></div><time>{new Date(e.created_at).toLocaleString()}</time></div>)}{data.recent_events.filter(e=>e.severity!=='info').length===0&&<div className='ops-empty'>No active warning or critical events in the latest event window.</div>}</div></div>
+ <div className='ops-panel'><div className='ops-panel-head'><div><p className='eyebrow'>EVENT STREAM</p><h2>Recent activity</h2></div><button type='button' onClick={()=>setLive(v=>!v)}>{live?'Pause live':'Enable live'}</button></div><div className='event-list'>{data.recent_events.map(e=><div className='event-row' key={e.id}><span className={'event-dot '+e.severity}/><div><strong>{label(e.event_type)}</strong><small>{label(e.entity_type)} {e.payload?.status?'· '+String(e.payload.status):''}</small></div><time>{new Date(e.created_at).toLocaleTimeString()}</time></div>)}</div></div></section></>}
+ </main></div>;
+}
