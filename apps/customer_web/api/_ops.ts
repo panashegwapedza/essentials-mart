@@ -45,6 +45,16 @@ export async function handleOperations(req: RequestLike, res: any, path: string)
   const principal = await authPrincipal(req);
   if (!principal) { send(res, 401, { error: { code: 'UNAUTHENTICATED', message: 'A valid Supabase Auth session is required.' } }); return true; }
 
+  if (path.startsWith('/ops/dashboard/') && req.method === 'GET') {
+    const storeId = path.slice('/ops/dashboard/'.length);
+    if (!storeId) return send(res, 400, { error: { code: 'VALIDATION_ERROR', message: 'storeId is required.' } });
+    const result = await supabase(req, 'rpc/get_store_ops_dashboard', {
+      method: 'POST',
+      body: JSON.stringify({ p_store_id: storeId }),
+    });
+    return send(res, result.status, result.body);
+  }
+
   if (path === '/ops/stores' && req.method === 'GET') {
     const result = await supabase(req, `stores?select=id,code,name,status,region,created_at,updated_at&order=name.asc`);
     return send(res, result.status, result.body ? { stores: result.body } : result.body);
