@@ -21,6 +21,7 @@ export type Product = {
   imageUrl?: string;
   price: Money;
   available: boolean;
+  stockQuantity?: number;
 };
 export type BasketLine = { productId: ProductId; quantity: number; unitPrice: Money };
 export type Basket = { id: BasketId; customerId: CustomerId; lines: BasketLine[] };
