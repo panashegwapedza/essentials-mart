@@ -60,6 +60,14 @@ export async function handleOperations(req: RequestLike, res: any, path: string)
     return send(res, result.status, result.body ? { stores: result.body } : result.body);
   }
 
+  if (path === '/ops/orders' && req.method === 'GET') {
+    const storeId = typeof req.query?.storeId === 'string' ? req.query.storeId : '';
+    const status = typeof req.query?.status === 'string' ? req.query.status : 'paid';
+    if (!storeId) return send(res, 400, { error: { code: 'VALIDATION_ERROR', message: 'storeId is required.' } });
+    const result = await supabase(req, `orders?select=id,store_id,status,payment_status,created_at,updated_at&store_id=eq.${encodeURIComponent(storeId)}&status=eq.${encodeURIComponent(status)}&order=created_at.asc`);
+    return send(res, result.status, result.body ? { orders: result.body } : result.body);
+  }
+
   if (path === '/ops/fulfilments' && req.method === 'GET') {
     const result = await supabase(req, 'order_fulfilments?select=id,order_id,store_id,status,picker_auth_user_id,started_at,completed_at,handed_off_at,created_at,updated_at&order=created_at.desc');
     return send(res, result.status, result.body ? { fulfilments: result.body } : result.body);
