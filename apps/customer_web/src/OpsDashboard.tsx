@@ -17,7 +17,8 @@ export default function OpsDashboard(){
  useEffect(()=>{api<{products:Product[]}>('/api/products').then(x=>setProducts(x.products)).catch(()=>{});api<{stores:Store[]}>('/api/ops/stores').then(x=>{setStores(x.stores);if(x.stores[0])setStoreId(x.stores[0].id);}).catch(e=>setError(e instanceof Error?e.message:'Store access could not be loaded.')).finally(()=>setLoading(false));},[]);
  useEffect(()=>{if(storeId)void load(storeId);},[storeId,load]);
  useEffect(()=>{if(!storeId||!live)return;const timer=window.setInterval(()=>void load(storeId),10000);return()=>window.clearInterval(timer);},[storeId,load,live]);
- const fDeliveries=(orderId:string)=>fulfilments.find(x=>x.order_id===orderId)?.deliveries?.[0] as ({method?:string;status:string}|undefined);\n const act=async(kind:string,id:string)=>{setBusy(id);setError(null);try{
+ const fDeliveries=(orderId:string)=>fulfilments.find(x=>x.order_id===orderId)?.deliveries?.[0] as ({method?:string;status:string}|undefined);
+ const act=async(kind:string,id:string)=>{setBusy(id);setError(null);try{
    if(kind==='start'){
      await api('/api/ops/orders/'+id+'/fulfil',{method:'POST'});
    }else if(kind==='ready'){
