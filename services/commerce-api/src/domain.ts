@@ -18,6 +18,7 @@ export type Product = {
   brand?: string;
   variantLabel?: string;
   sizeLabel?: string;
+  imageUrl?: string;
   price: Money;
   available: boolean;
 };
