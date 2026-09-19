@@ -17,7 +17,7 @@ export default function OpsDashboard(){
  useEffect(()=>{api<{products:Product[]}>('/api/products').then(x=>setProducts(x.products)).catch(()=>{});api<{stores:Store[]}>('/api/ops/stores').then(x=>{setStores(x.stores);if(x.stores[0])setStoreId(x.stores[0].id);}).catch(e=>setError(e instanceof Error?e.message:'Store access could not be loaded.')).finally(()=>setLoading(false));},[]);
  useEffect(()=>{if(storeId)void load(storeId);},[storeId,load]);
  useEffect(()=>{if(!storeId||!live)return;const timer=window.setInterval(()=>void load(storeId),10000);return()=>window.clearInterval(timer);},[storeId,load,live]);
- const act=async(kind:string,id:string)=>{setBusy(id);setError(null);try{
+ const fDeliveries=(orderId:string)=>fulfilments.find(x=>x.order_id===orderId)?.deliveries?.[0] as ({method?:string;status:string}|undefined);\n const act=async(kind:string,id:string)=>{setBusy(id);setError(null);try{
    if(kind==='start'){
      await api('/api/ops/orders/'+id+'/fulfil',{method:'POST'});
    }else if(kind==='ready'){
@@ -30,6 +30,10 @@ export default function OpsDashboard(){
      await api('/api/ops/orders/'+id+'/delivery-status',{method:'POST',body:JSON.stringify({status:'failed'})});
    }else if(kind==='retry'){
      await api('/api/ops/orders/'+id+'/delivery-status',{method:'POST',body:JSON.stringify({status:'preparing'})});
+   }else if(kind==='resume'){
+     const delivery=fDeliveries(id);
+     const method=delivery?.method;
+     await api('/api/ops/orders/'+id+'/delivery-status',{method:'POST',body:JSON.stringify({status:method==='pickup'?'ready_for_pickup':'out_for_delivery'})});
    }
    await load(storeId);
  }catch(e){setError(e instanceof Error?e.message:'Operation failed.');}finally{setBusy(null);}};
@@ -44,7 +48,7 @@ export default function OpsDashboard(){
    {['picking','partial','ready'].includes(f.status)&&<button type='button' onClick={()=>void openFulfilment(f)}>Pick items</button>}
    {f.status==='picking'&&<button type='button' disabled={busy===f.order_id} onClick={()=>void act('ready',f.order_id)}>{busy===f.order_id?'Working…':'Mark ready'}</button>}
    {['ready','partial'].includes(f.status)&&<button type='button' disabled={busy===f.order_id} onClick={()=>void act('handoff',f.order_id)}>{busy===f.order_id?'Working…':'Handoff'}</button>}
-   {f.status==='handed_off'&&f.deliveries?.[0]?.status==='failed'&&<button type='button' disabled={busy===f.order_id} onClick={()=>void act('retry',f.order_id)}>{busy===f.order_id?'Working…':'Retry delivery'}</button>}
+   {f.status==='handed_off'&&f.deliveries?.[0]?.status==='failed'&&<><button type='button' disabled={busy===f.order_id} onClick={()=>void act('retry',f.order_id)}>{busy===f.order_id?'Working…':'Retry delivery'}</button><button type='button' disabled={busy===f.order_id} onClick={()=>void act('resume',f.order_id)}>{busy===f.order_id?'Working…':'Resume delivery'}</button></>}
    {f.status==='handed_off'&&['ready_for_pickup','out_for_delivery'].includes(f.deliveries?.[0]?.status||'')&&<><button type='button' disabled={busy===f.order_id} onClick={()=>void act('failed',f.order_id)}>{busy===f.order_id?'Working…':'Mark failed'}</button><button type='button' disabled={busy===f.order_id} onClick={()=>void act('delivered',f.order_id)}>{busy===f.order_id?'Working…':'Mark delivered'}</button></>}
  </div></div>)}{actionable.length===0&&<div className='ops-empty'>No fulfilments currently require action.</div>}</div></div>
  <div className='ops-panel'><div className='ops-panel-head'><div><p className='eyebrow'>EXCEPTION QUEUE</p><h2>Needs attention</h2></div><button type='button' onClick={()=>setLive(v=>!v)}>{live?'Pause live':'Enable live'}</button></div><div className='event-list'>{data.recent_events.filter(e=>e.severity!=='info').slice(0,12).map(e=><div className='event-row' key={e.id}><span className={'event-dot '+e.severity}/><div><strong>{label(e.event_type)}</strong><small>{label(e.entity_type)} {e.entity_id?'· '+e.entity_id.slice(0,8):''}</small></div><time>{new Date(e.created_at).toLocaleString()}</time></div>)}{data.recent_events.filter(e=>e.severity!=='info').length===0&&<div className='ops-empty'>No warning or critical events in the latest event window.</div>}</div></div></section></>}
