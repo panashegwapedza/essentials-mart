@@ -9,7 +9,7 @@ function money(row:any):Money{return{amountMinor:Math.round(Number(row.price)*10
 function product(row:any):Product{
   const inventory=Array.isArray(row.inventory)?row.inventory[0]:row.inventory;
   const sellableQuantity=Math.max(0,Number(inventory?.quantity??0)-Number(inventory?.reserved_quantity??0));
-  return{id:row.id,name:row.name,category:row.category??undefined,productFamily:row.product_family??undefined,brand:row.brand??undefined,variantLabel:row.variant_label??undefined,sizeLabel:row.size_label??undefined,imageUrl:row.image_url??undefined,price:money(row),available:Boolean(row.is_active)&&sellableQuantity>0};
+  return{id:row.id,name:row.name,category:row.category??undefined,productFamily:row.product_family??undefined,brand:row.brand??undefined,variantLabel:row.variant_label??undefined,sizeLabel:row.size_label??undefined,imageUrl:row.image_url??undefined,price:money(row),available:Boolean(row.is_active)&&sellableQuantity>0,stockQuantity:sellableQuantity};
 }
 async function defaultStoreId():Promise<string>{
   const rows=await supabaseRest<any[]>("stores?select=id&code=eq.MAIN&limit=1");
