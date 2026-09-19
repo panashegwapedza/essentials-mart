@@ -3,7 +3,7 @@ import './styles.css';
 type Store={id:string;code:string;name:string;status:string;region?:string};
 type Event={id:string;event_type:string;entity_type:string;entity_id?:string;severity:'info'|'warning'|'critical';payload:Record<string,unknown>;created_at:string};
 type Dashboard={store_id:string;generated_at:string;workload:{orders_paid:number;orders_fulfilling:number;orders_ready:number};exceptions:{unavailable_items:number;partial_items:number;failed_deliveries:number;low_stock_items:number};recent_events:Event[]};
-type Fulfilment={id:string;order_id:string;store_id:string;status:string;created_at:string;updated_at:string;handed_off_at?:string;deliveries?:{id:string;status:string;tracking_reference?:string|null;scheduled_for?:string|null;delivered_at?:string|null}[]};
+type Fulfilment={id:string;order_id:string;store_id:string;status:string;created_at:string;updated_at:string;handed_off_at?:string;deliveries?:{id:string;status:string;method?:string;tracking_reference?:string|null;scheduled_for?:string|null;delivered_at?:string|null}[]};
 type PaidOrder={id:string;store_id:string;status:string;payment_status:string;created_at:string;updated_at:string};
 type FulfilmentItem={id:string;fulfilment_id:string;order_item_id:string;requested_quantity:number;picked_quantity:number;status:string;substitution_product_id?:string|null;substitution_quantity?:number|null;notes?:string|null;order_items?:{product_id:string;products?:{id:string;name:string}|null}|null};
 type Product={id:string;name:string;price:number;available:boolean};
