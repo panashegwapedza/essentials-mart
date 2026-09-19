@@ -106,8 +106,30 @@ export async function handleOperations(req: RequestLike, res: any, path: string)
 
   if (path.startsWith('/ops/orders/') && path.endsWith('/complete') && req.method === 'POST') {
     const orderId = path.slice('/ops/orders/'.length, -'/complete'.length);
+    if (!orderId) return send(res, 400, { error: { code: 'VALIDATION_ERROR', message: 'orderId is required.' } });
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    const result = await supabase(req, 'rpc/complete_order_fulfilment', { method: 'POST', body: JSON.stringify({ p_order_id: orderId, p_hand_off: body?.handOff === true }) });
+    const result = await supabase(req, 'rpc/complete_order_fulfilment', {
+      method: 'POST',
+      body: JSON.stringify({ p_order_id: orderId, p_hand_off: body?.handOff === true }),
+    });
+    return send(res, result.status, result.body);
+  }
+
+  if (path.startsWith('/ops/orders/') && path.endsWith('/delivery-status') && req.method === 'POST') {
+    const orderId = path.slice('/ops/orders/'.length, -'/delivery-status'.length);
+    if (!orderId) return send(res, 400, { error: { code: 'VALIDATION_ERROR', message: 'orderId is required.' } });
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    if (typeof body?.status !== 'string') {
+      return send(res, 400, { error: { code: 'VALIDATION_ERROR', message: 'status is required.' } });
+    }
+    const result = await supabase(req, 'rpc/update_delivery_status', {
+      method: 'POST',
+      body: JSON.stringify({
+        p_order_id: orderId,
+        p_status: body.status,
+        p_tracking_reference: typeof body.trackingReference === 'string' ? body.trackingReference : null,
+      }),
+    });
     return send(res, result.status, result.body);
   }
 
