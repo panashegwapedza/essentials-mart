@@ -69,7 +69,7 @@ export async function handleOperations(req: RequestLike, res: any, path: string)
   }
 
   if (path === '/ops/fulfilments' && req.method === 'GET') {
-    const result = await supabase(req, 'order_fulfilments?select=id,order_id,store_id,status,picker_auth_user_id,started_at,completed_at,handed_off_at,created_at,updated_at,deliveries(id,status,tracking_reference,scheduled_for,delivered_at)&order=created_at.desc');
+    const result = await supabase(req, 'order_fulfilments?select=id,order_id,store_id,status,picker_auth_user_id,started_at,completed_at,handed_off_at,created_at,updated_at,deliveries(id,status,method,tracking_reference,scheduled_for,delivered_at)&order=created_at.desc');
     return send(res, result.status, result.body ? { fulfilments: result.body } : result.body);
   }
 
