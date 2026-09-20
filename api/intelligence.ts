@@ -1,5 +1,6 @@
 import { principal } from '../apps/customer_web/api/_auth.js';
 import { runAISociety } from '../services/intelligence/ai-society-runtime';
+import type { HouseholdNeed } from '../services/intelligence/household/household-needs-engine';
 import type { HouseholdSignal } from '../services/intelligence/household/household-recommendation-engine';
 import type { PredictionSignal } from '../services/intelligence/household/household-prediction-engine';
 import type { PersonalisationSignal } from '../services/intelligence/household/household-personalisation-engine';
@@ -45,6 +46,49 @@ export default async function intelligenceHandler(req:any,res:any) {
     const user=await principal(req); if(!user)return json(res,401,{error:{code:'UNAUTHENTICATED',message:'A valid Supabase Auth session is required.'}});
     const customerId=await customerIdForAuthUser(user.authUserId); if(!customerId)return json(res,404,{error:{code:'CUSTOMER_NOT_FOUND',message:'Authenticated user has no customer identity.'}});
     const signals=await householdSignals(customerId);
+    const memberships=await supabase<Array<{household_id:string}>>('household_memberships?customer_id=eq.'+encodeURIComponent(customerId)+'&status=eq.active&select=household_id&limit=1');
+    const householdId=memberships[0]?.household_id;
+    let householdNeeds: HouseholdNeed[]=[];
+    if(householdId){
+      const pantry=await supabase<Array<{id:string;product_id:string|null;product_name:string;status:string}>>('household_pantry_items?household_id=eq.'+encodeURIComponent(householdId)+'&select=id,product_id,product_name,status&limit=500');
+      householdNeeds.push(...pantry.filter(item=>item.status==='low'||item.status==='depleted').map(item=>({
+        needId:'pantry:'+item.id,
+        type:'pantry-replenishment' as const,
+        productId:item.product_id,
+        productName:item.product_name,
+        priority:item.status==='depleted'?'high' as const:'medium' as const,
+        reason:item.status==='depleted'?'Pantry item is depleted.':'Pantry item is low.',
+        source:'pantry' as const,
+      })));
+      const lists=await supabase<Array<{id:string;status:string}>>('household_shopping_lists?household_id=eq.'+encodeURIComponent(householdId)+'&status=eq.active&select=id,status&limit=100');
+      const listIds=lists.map(list=>list.id);
+      if(listIds.length){
+        const items=await supabase<Array<{id:string;product_id:string|null;requested_name:string|null;quantity:number;status:string}>>('household_shopping_list_items?shopping_list_id=in.('+listIds.join(',')+')&status=eq.open&select=id,product_id,requested_name,quantity,status&limit=500');
+        householdNeeds.push(...items.map(item=>({
+          needId:'list:'+item.id,
+          type:'shopping-list-item' as const,
+          productId:item.product_id,
+          productName:item.requested_name,
+          priority:'medium' as const,
+          reason:'Open item on an active household shopping list.',
+          source:'shopping-list' as const,
+          quantity:Number(item.quantity??1),
+        })));
+      }
+    }
+    const now=Date.now();
+    householdNeeds.push(...signals.filter(signal=>signal.productId && Date.parse(signal.nextExpectedAt)<=now).map(signal=>({
+      needId:'recurring:'+signal.productId,
+      type:'recurring-purchase-due' as const,
+      productId:signal.productId,
+      productName:signal.productName,
+      priority:signal.confidence>=0.8?'high' as const:'medium' as const,
+      reason:'Observed purchase pattern is due based on household history.',
+      source:'purchase-history' as const,
+      confidence:signal.confidence,
+      expectedAt:signal.nextExpectedAt,
+    })));
+    const householdNeedsResult=runAISociety({capability:'household-needs',needs:householdNeeds});
     const catalogue=await supabase<Array<{id:string;name:string;is_active:boolean}>>('products?select=id,name,is_active&is_active=eq.true&limit=1000');
     const result=runAISociety({capability:'household-recommendations',signals,catalogue});
     const predictionSignals:PredictionSignal[]=signals.map((signal,index)=>({signalId:'household-purchase-signal:'+index+':'+(signal.productId??signal.productName),type:signal.classification==='recurring'?'recurring-purchase':'consumption',productId:signal.productId!,productName:signal.productName,purchaseCount:signal.purchaseCount,averageQuantity:signal.averageQuantity,averageIntervalDays:signal.averageIntervalDays,lastObservedAt:signal.lastPurchasedAt,confidence:signal.confidence}));
@@ -58,6 +102,6 @@ export default async function intelligenceHandler(req:any,res:any) {
     const substitutionProducts:SubstitutionProduct[]=await supabase<Array<{id:string;name:string;category:string|null;product_family:string|null;brand:string|null;variant_label:string|null;size_label:string|null;price:number;currency:string;is_active:boolean}>>('products?select=id,name,category,product_family,brand,variant_label,size_label,price,currency,is_active&is_active=eq.true&limit=1000');
     const substitutionInventory:SubstitutionInventory[]=inventoryRows.map(row=>({productId:row.product_id,storeId:row.store_id,quantity:Number(row.quantity),reservedQuantity:Number(row.reserved_quantity)}));
     const substitutions=runAISociety({capability:'inventory-substitution',signals:substitutionSignals,products:substitutionProducts,inventory:substitutionInventory});
-    return json(res,200,{recommendations:result.recommendations,predictions:predictions.predictions,personalisation:personalisation.products,trace:result.trace,predictionTrace:predictions.trace,personalisationTrace:personalisation.trace,inventoryInsights:inventory.insights,inventoryTrace:inventory.trace,substitutions:substitutions.substitutions,substitutionTrace:substitutions.trace,generatedAt:new Date().toISOString()});
+    return json(res,200,{householdNeeds:householdNeedsResult.needs,householdNeedsSummary:householdNeedsResult.summary,householdNeedsTrace:householdNeedsResult.trace,recommendations:result.recommendations,predictions:predictions.predictions,personalisation:personalisation.products,trace:result.trace,predictionTrace:predictions.trace,personalisationTrace:personalisation.trace,inventoryInsights:inventory.insights,inventoryTrace:inventory.trace,substitutions:substitutions.substitutions,substitutionTrace:substitutions.trace,generatedAt:new Date().toISOString()});
   } catch(error) { console.error('intelligence-api error',error); return json(res,500,{error:{code:'INTELLIGENCE_INTERNAL_ERROR',message:error instanceof Error?error.message:'Intelligence service unavailable.'}}); }
 }
