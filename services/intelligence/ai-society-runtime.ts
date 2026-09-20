@@ -8,7 +8,7 @@ import { generateInventorySubstitutions, type SubstitutionProduct, type Substitu
 
 export type IntelligenceRequest =
   | { capability: 'search-understanding'; query: string; vocabulary?: string[] }
-  | { capability: 'household-recommendations'; signals: HouseholdSignal[]; catalogue: CatalogueProduct[] }
+  | { capability: 'household-recommendations'; signals: HouseholdSignal[]; catalogue: CatalogueProduct[]; needs?: HouseholdNeed[] }
   | { capability: 'household-predictions'; signals: PredictionSignal[] }
   | { capability: 'household-personalisation'; signals: PersonalisationSignal[] }
   | { capability: 'inventory-intelligence'; signals: InventorySignal[] }
@@ -26,7 +26,7 @@ export type IntelligenceResponse =
 
 export function runAISociety(request: IntelligenceRequest): IntelligenceResponse {
   if (request.capability === 'search-understanding') return { ...understandSearchQuery(request.query, request.vocabulary), trace: { agentId: 'catalogue-search-agent.v1', authority: 'interpretation-only' } };
-  if (request.capability === 'household-recommendations') return generateHouseholdRecommendations(request.signals, request.catalogue);
+  if (request.capability === 'household-recommendations') return generateHouseholdRecommendations(request.signals, request.catalogue, request.needs ?? []);
   if (request.capability === 'household-predictions') return generateHouseholdPredictions(request.signals);
   if (request.capability === 'household-personalisation') return generateHouseholdPersonalisation(request.signals);
   if (request.capability === 'inventory-intelligence') return generateInventoryIntelligence(request.signals);
