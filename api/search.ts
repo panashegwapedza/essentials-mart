@@ -90,7 +90,7 @@ export default async function searchHandler(req:any,res:any){
   const threshold=Math.max(3,queryTokens.length*1.5);
   const matches=ranked.filter(x=>x.score>=threshold).slice(0,40);
   const top=matches[0];
-  const correctedQuery=top&&normalizeSearchText(top.p.name)!==normalized&&top.score>=6?top.p.name:null;
+  const normalizedDiffers=raw.toLowerCase().trim()!==normalized;const correctedQuery=normalizedDiffers?normalized:(top&&normalizeSearchText(top.p.name)!==normalized&&top.score>=6?top.p.name:null);
   return res.status(200).setHeader('Cache-Control','public, s-maxage=0, must-revalidate').json({
    query:raw,
    normalizedQuery:normalized,
