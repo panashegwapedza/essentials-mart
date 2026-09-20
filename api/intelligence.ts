@@ -90,7 +90,7 @@ export default async function intelligenceHandler(req:any,res:any) {
     })));
     const householdNeedsResult=runAISociety({capability:'household-needs',needs:householdNeeds});
     const catalogue=await supabase<Array<{id:string;name:string;is_active:boolean}>>('products?select=id,name,is_active&is_active=eq.true&limit=1000');
-    const result=runAISociety({capability:'household-recommendations',signals,catalogue});
+    const result=runAISociety({capability:'household-recommendations',signals,catalogue,needs:householdNeedsResult.needs});
     const predictionSignals:PredictionSignal[]=signals.map((signal,index)=>({signalId:'household-purchase-signal:'+index+':'+(signal.productId??signal.productName),type:signal.classification==='recurring'?'recurring-purchase':'consumption',productId:signal.productId!,productName:signal.productName,purchaseCount:signal.purchaseCount,averageQuantity:signal.averageQuantity,averageIntervalDays:signal.averageIntervalDays,lastObservedAt:signal.lastPurchasedAt,confidence:signal.confidence}));
     const predictions=runAISociety({capability:'household-predictions',signals:predictionSignals});
     const personalisationSignals:PersonalisationSignal[]=signals.filter(s=>s.productId).map((signal,index)=>({signalId:'household-personalisation-signal:'+index+':'+signal.productId,productId:signal.productId!,productName:signal.productName,purchaseCount:signal.purchaseCount,averageQuantity:signal.averageQuantity,averageIntervalDays:signal.averageIntervalDays,confidence:signal.confidence,lastObservedAt:signal.lastPurchasedAt}));
