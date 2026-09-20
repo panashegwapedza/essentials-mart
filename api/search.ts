@@ -14,10 +14,10 @@ const UNIT_ALIASES:Record<string,string>={litre:'l',litres:'l',liter:'l',liters:
 function canonicalUnit(value:string){return UNIT_ALIASES[value]??value;}
 
 function normalizeSearchText(value:string){
- let text=value.normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+ let text=value.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  text=text.replace(/&/g,' and ');
- text=text.replace(/(\\d+(?:[.,]\\d+)?)\\s*(litres?|liters?|litre|liter|millilitres?|milliliters?|millilitre|milliliter|ml|kilograms?|kg|grams?|g|packs?|l)\\b/gi,(_,n,u)=>`${n.replace(',','.') } ${canonicalUnit(String(u).toLowerCase())}`);
- text=text.replace(/[^a-z0-9.]+/g,' ').replace(/\\s+/g,' ').trim();
+ text=text.replace(/(\d+(?:[.,]\d+)?)\s*(litres?|liters?|litre|liter|millilitres?|milliliters?|millilitre|milliliter|ml|kilograms?|kg|grams?|g|packs?|l)\b/gi,(_,n,u)=>`${n.replace(',','.')}${canonicalUnit(String(u).toLowerCase())}`);
+ text=text.replace(/[^a-z0-9.]+/g,' ').replace(/\s+/g,' ').trim();
  return text;
 }
 
