@@ -213,12 +213,47 @@ export default async function householdHandler(req: any, res: any) {
           : 'repeat_purchase_pattern',
       }));
 
+      const recurringByProductId = new Map(
+        recurringPurchases
+          .filter(item => item.productId)
+          .map(item => [item.productId as string, item]),
+      );
+      const pantryItems = pantry.map(item => {
+        const recurring = item.product_id ? recurringByProductId.get(item.product_id) : undefined;
+        const quantity = Number(item.quantity ?? 0);
+        const state = item.status ?? (quantity <= 0 ? 'depleted' : 'available');
+        return {
+          ...item,
+          quantity,
+          state,
+          needsAttention: state === 'low' || state === 'depleted',
+          recurringPurchase: recurring
+            ? {
+                averageQuantity: recurring.averageQuantity,
+                averageIntervalDays: recurring.averageIntervalDays,
+                nextExpectedAt: recurring.nextExpectedAt,
+                confidence: recurring.confidence,
+              }
+            : null,
+        };
+      });
+      const pantrySummary = {
+        itemCount: pantryItems.length,
+        availableCount: pantryItems.filter(item => item.state === 'available').length,
+        lowCount: pantryItems.filter(item => item.state === 'low').length,
+        depletedCount: pantryItems.filter(item => item.state === 'depleted').length,
+        needsAttentionCount: pantryItems.filter(item => item.needsAttention).length,
+        recurringLinkedCount: pantryItems.filter(item => item.recurringPurchase).length,
+      };
+
       return json(res, 200, {
         household,
         memberCount: memberIds.length,
         preferences: preferences[0] ?? null,
         shoppingLists: lists,
-        pantry,
+        shoppingListSummary,
+        pantry: pantryItems,
+        pantrySummary,
         purchaseHistory,
         purchasePatterns,
         recurringPurchases,
