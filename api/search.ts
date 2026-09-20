@@ -1,4 +1,4 @@
-import { understandSearchQuery } from '../services/intelligence/search/search-intelligence-engine';
+import { runAISociety } from '../services/intelligence/ai-society-runtime';
 
 type ProductRow={id:string;sku:string;name:string;description:string|null;category:string|null;product_family:string|null;brand:string|null;variant_label:string|null;size_label:string|null;image_url:string|null;price:number;currency:string;is_active:boolean};
 
@@ -78,7 +78,7 @@ export default async function searchHandler(req:any,res:any){
  try{
   const raw=typeof req.query?.q==='string'?req.query.q.trim():'';
   if(!raw)return res.status(200).json({query:'',normalizedQuery:'',correctedQuery:null,products:[]});
-  const interpretation=understandSearchQuery(raw);
+  const interpretation=runAISociety({capability:'search-understanding',query:raw});
   const normalized=interpretation.normalizedQuery;
   const queryTokens=normalized.split(' ').filter(Boolean);
   if(!queryTokens.length)return res.status(200).json({query:raw,normalizedQuery:normalized,correctedQuery:null,products:[]});
@@ -104,6 +104,8 @@ export default async function searchHandler(req:any,res:any){
    confidence:interpretation.confidence,
    intelligenceEngine:interpretation.engineId,
    aiSocietyRuntime:interpretation.runtimeId,
+   agentId:interpretation.trace.agentId,
+   authority:interpretation.trace.authority,
    products:matches.map(x=>mapProduct(x.p,stock.get(x.p.id)??0))
   });
  }catch(e){
