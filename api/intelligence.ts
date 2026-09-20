@@ -52,41 +52,24 @@ export default async function intelligenceHandler(req:any,res:any) {
     if(householdId){
       const pantry=await supabase<Array<{id:string;product_id:string|null;product_name:string;status:string}>>('household_pantry_items?household_id=eq.'+encodeURIComponent(householdId)+'&select=id,product_id,product_name,status&limit=500');
       householdNeeds.push(...pantry.filter(item=>item.status==='low'||item.status==='depleted').map(item=>({
-        needId:'pantry:'+item.id,
-        type:'pantry-replenishment' as const,
-        productId:item.product_id,
-        productName:item.product_name,
-        priority:item.status==='depleted'?'high' as const:'medium' as const,
-        reason:item.status==='depleted'?'Pantry item is depleted.':'Pantry item is low.',
-        source:'pantry' as const,
+        needId:'pantry:'+item.id,type:'pantry-replenishment' as const,productId:item.product_id,productName:item.product_name,
+        priority:item.status==='depleted'?'high' as const:'medium' as const,reason:item.status==='depleted'?'Pantry item is depleted.':'Pantry item is low.',source:'pantry' as const,
       })));
       const lists=await supabase<Array<{id:string;status:string}>>('household_shopping_lists?household_id=eq.'+encodeURIComponent(householdId)+'&status=eq.active&select=id,status&limit=100');
       const listIds=lists.map(list=>list.id);
       if(listIds.length){
         const items=await supabase<Array<{id:string;product_id:string|null;requested_name:string|null;quantity:number;status:string}>>('household_shopping_list_items?shopping_list_id=in.('+listIds.join(',')+')&status=eq.open&select=id,product_id,requested_name,quantity,status&limit=500');
         householdNeeds.push(...items.map(item=>({
-          needId:'list:'+item.id,
-          type:'shopping-list-item' as const,
-          productId:item.product_id,
-          productName:item.requested_name,
-          priority:'medium' as const,
-          reason:'Open item on an active household shopping list.',
-          source:'shopping-list' as const,
-          quantity:Number(item.quantity??1),
+          needId:'list:'+item.id,type:'shopping-list-item' as const,productId:item.product_id,productName:item.requested_name,priority:'medium' as const,
+          reason:'Open item on an active household shopping list.',source:'shopping-list' as const,quantity:Number(item.quantity??1),
         })));
       }
     }
     const now=Date.now();
     householdNeeds.push(...signals.filter(signal=>signal.productId && Date.parse(signal.nextExpectedAt)<=now).map(signal=>({
-      needId:'recurring:'+signal.productId,
-      type:'recurring-purchase-due' as const,
-      productId:signal.productId,
-      productName:signal.productName,
-      priority:signal.confidence>=0.8?'high' as const:'medium' as const,
-      reason:'Observed purchase pattern is due based on household history.',
-      source:'purchase-history' as const,
-      confidence:signal.confidence,
-      expectedAt:signal.nextExpectedAt,
+      needId:'recurring:'+signal.productId,type:'recurring-purchase-due' as const,productId:signal.productId,productName:signal.productName,
+      priority:signal.confidence>=0.8?'high' as const:'medium' as const,reason:'Observed purchase pattern is due based on household history.',source:'purchase-history' as const,
+      confidence:signal.confidence,expectedAt:signal.nextExpectedAt,
     })));
     const householdNeedsResult=runAISociety({capability:'household-needs',needs:householdNeeds});
     const catalogue=await supabase<Array<{id:string;name:string;is_active:boolean}>>('products?select=id,name,is_active&is_active=eq.true&limit=1000');
@@ -94,7 +77,7 @@ export default async function intelligenceHandler(req:any,res:any) {
     const predictionSignals:PredictionSignal[]=signals.map((signal,index)=>({signalId:'household-purchase-signal:'+index+':'+(signal.productId??signal.productName),type:signal.classification==='recurring'?'recurring-purchase':'consumption',productId:signal.productId!,productName:signal.productName,purchaseCount:signal.purchaseCount,averageQuantity:signal.averageQuantity,averageIntervalDays:signal.averageIntervalDays,lastObservedAt:signal.lastPurchasedAt,confidence:signal.confidence}));
     const predictions=runAISociety({capability:'household-predictions',signals:predictionSignals,needs:householdNeedsResult.needs});
     const personalisationSignals:PersonalisationSignal[]=signals.filter(s=>s.productId).map((signal,index)=>({signalId:'household-personalisation-signal:'+index+':'+signal.productId,productId:signal.productId!,productName:signal.productName,purchaseCount:signal.purchaseCount,averageQuantity:signal.averageQuantity,averageIntervalDays:signal.averageIntervalDays,confidence:signal.confidence,lastObservedAt:signal.lastPurchasedAt}));
-    const personalisation=runAISociety({capability:'household-personalisation',signals:personalisationSignals});
+    const personalisation=runAISociety({capability:'household-personalisation',signals:personalisationSignals,needs:householdNeedsResult.needs});
     const inventoryRows=await supabase<Array<{product_id:string;quantity:number;reserved_quantity:number;updated_at:string;store_id:string}>>('inventory?select=product_id,quantity,reserved_quantity,updated_at,store_id&limit=5000');
     const inventorySignals:InventorySignal[]=inventoryRows.map((row,index)=>({signalId:'inventory-signal:'+index+':'+row.store_id+':'+row.product_id,productId:row.product_id,productName:catalogue.find(p=>p.id===row.product_id)?.name??row.product_id,storeId:row.store_id,quantity:Number(row.quantity),reservedQuantity:Number(row.reserved_quantity),observedAt:row.updated_at}));
     const inventory=runAISociety({capability:'inventory-intelligence',signals:inventorySignals});
