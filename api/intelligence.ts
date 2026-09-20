@@ -1,6 +1,7 @@
 import { principal } from '../apps/customer_web/api/_auth.js';
 import { runAISociety } from '../services/intelligence/ai-society-runtime';
 import type { HouseholdSignal } from '../services/intelligence/household/household-recommendation-engine';
+import type { PredictionSignal } from '../services/intelligence/household/household-prediction-engine';
 
 type Row = Record<string, any>;
 function json(res: any, status: number, body: unknown) { return res.status(status).setHeader('Content-Type', 'application/json').setHeader('Cache-Control', 'no-store').json(body); }
@@ -43,6 +44,8 @@ export default async function intelligenceHandler(req:any,res:any) {
     const signals=await householdSignals(customerId);
     const catalogue=await supabase<Array<{id:string;name:string;is_active:boolean}>>('products?select=id,name,is_active&is_active=eq.true&limit=1000');
     const result=runAISociety({capability:'household-recommendations',signals,catalogue});
-    return json(res,200,{recommendations:result.recommendations,trace:result.trace,generatedAt:new Date().toISOString()});
+    const predictionSignals:PredictionSignal[]=signals.map((signal,index)=>({signalId:'household-purchase-signal:'+index+':'+(signal.productId??signal.productName),type:signal.classification==='recurring'?'recurring-purchase':'consumption',productId:signal.productId!,productName:signal.productName,purchaseCount:signal.purchaseCount,averageQuantity:signal.averageQuantity,averageIntervalDays:signal.averageIntervalDays,lastObservedAt:signal.lastPurchasedAt,confidence:signal.confidence}));
+    const predictions=runAISociety({capability:'household-predictions',signals:predictionSignals});
+    return json(res,200,{recommendations:result.recommendations,predictions:predictions.predictions,trace:result.trace,predictionTrace:predictions.trace,generatedAt:new Date().toISOString()});
   } catch(error) { console.error('intelligence-api error',error); return json(res,500,{error:{code:'INTELLIGENCE_INTERNAL_ERROR',message:error instanceof Error?error.message:'Intelligence service unavailable.'}}); }
 }
