@@ -1,3 +1,5 @@
+import { understandSearchQuery } from '../services/intelligence/search/search-intelligence-engine';
+
 type ProductRow={id:string;sku:string;name:string;description:string|null;category:string|null;product_family:string|null;brand:string|null;variant_label:string|null;size_label:string|null;image_url:string|null;price:number;currency:string;is_active:boolean};
 
 async function supabase<T>(table:string,params:string):Promise<T>{
@@ -76,8 +78,9 @@ export default async function searchHandler(req:any,res:any){
  try{
   const raw=typeof req.query?.q==='string'?req.query.q.trim():'';
   if(!raw)return res.status(200).json({query:'',normalizedQuery:'',correctedQuery:null,products:[]});
-  const normalized=normalizeSearchText(raw);
-  const queryTokens=tokens(raw);
+  const interpretation=understandSearchQuery(raw);
+  const normalized=interpretation.normalizedQuery;
+  const queryTokens=normalized.split(' ').filter(Boolean);
   if(!queryTokens.length)return res.status(200).json({query:raw,normalizedQuery:normalized,correctedQuery:null,products:[]});
   const stores=await supabase<Array<{id:string}>>('stores','select=id&code=eq.MAIN&limit=1');
   const storeId=stores[0]?.id;
@@ -90,11 +93,17 @@ export default async function searchHandler(req:any,res:any){
   const threshold=Math.max(3,queryTokens.length*1.5);
   const matches=ranked.filter(x=>x.score>=threshold).slice(0,40);
   const top=matches[0];
-  const normalizedDiffers=raw.toLowerCase().trim()!==normalized;const correctedQuery=normalizedDiffers?normalized:(top&&normalizeSearchText(top.p.name)!==normalized&&top.score>=6?top.p.name:null);
+  const correctedQuery=interpretation.correctedQuery??(top&&normalizeSearchText(top.p.name)!==normalized&&top.score>=6?top.p.name:null);
   return res.status(200).setHeader('Cache-Control','public, s-maxage=0, must-revalidate').json({
    query:raw,
    normalizedQuery:normalized,
    correctedQuery,
+   intent:interpretation.intent,
+   entities:interpretation.entities,
+   corrections:interpretation.corrections,
+   confidence:interpretation.confidence,
+   intelligenceEngine:interpretation.engineId,
+   aiSocietyRuntime:interpretation.runtimeId,
    products:matches.map(x=>mapProduct(x.p,stock.get(x.p.id)??0))
   });
  }catch(e){
