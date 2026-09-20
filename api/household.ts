@@ -75,12 +75,78 @@ export default async function householdHandler(req: any, res: any) {
     if (req.method === 'GET') {
       const household = await householdForCustomer(customerId);
       if (!household) return json(res, 200, { household: null });
-      const [preferences, lists, pantry] = await Promise.all([
+
+      const memberships = await supabase<Array<{ customer_id: string }>>(
+        'household_memberships?household_id=eq.' + encodeURIComponent(household.id) +
+        '&status=eq.active&select=customer_id',
+      );
+      const memberIds = memberships.map(row => row.customer_id);
+      const [preferences, lists, pantry, orders] = await Promise.all([
         supabase<Row[]>('household_preferences?household_id=eq.' + household.id + '&select=*&limit=1'),
         supabase<Row[]>('household_shopping_lists?household_id=eq.' + household.id + '&status=eq.active&select=id,name,status,created_by_customer_id,created_at,updated_at,version&order=created_at.asc'),
         supabase<Row[]>('household_pantry_items?household_id=eq.' + household.id + '&select=id,product_id,product_name,quantity,unit,status,source,last_confirmed_at,updated_at&order=updated_at.desc'),
+        memberIds.length
+          ? supabase<Row[]>('orders?customer_id=in.(' + memberIds.join(',') + ')&select=id,customer_id,status,currency,total,subtotal,created_at&order=created_at.desc&limit=100')
+          : Promise.resolve([]),
       ]);
-      return json(res, 200, { household, preferences: preferences[0] ?? null, shoppingLists: lists, pantry });
+
+      const orderIds = orders.map(order => order.id);
+      const orderItems = orderIds.length
+        ? await supabase<Row[]>('order_items?order_id=in.(' + orderIds.join(',') + ')&select=order_id,product_id,product_name,sku,quantity,unit_price,line_total,created_at&order=created_at.asc')
+        : [];
+
+      const itemsByOrder = new Map<string, Row[]>();
+      for (const item of orderItems) {
+        const items = itemsByOrder.get(item.order_id) ?? [];
+        items.push(item);
+        itemsByOrder.set(item.order_id, items);
+      }
+
+      const purchaseHistory = orders.map(order => ({
+        id: order.id,
+        customerId: order.customer_id,
+        status: order.status,
+        currency: order.currency,
+        total: Number(order.total),
+        subtotal: Number(order.subtotal),
+        createdAt: order.created_at,
+        items: itemsByOrder.get(order.id) ?? [],
+      }));
+
+      const productTotals = new Map<string, { productId: string; productName: string; quantity: number; purchases: number; lastPurchasedAt: string }>();
+      for (const order of purchaseHistory) {
+        for (const item of order.items) {
+          const key = item.product_id ?? item.product_name;
+          const current = productTotals.get(key);
+          if (current) {
+            current.quantity += Number(item.quantity);
+            current.purchases += 1;
+            if (item.created_at > current.lastPurchasedAt) current.lastPurchasedAt = item.created_at;
+          } else {
+            productTotals.set(key, {
+              productId: item.product_id,
+              productName: item.product_name,
+              quantity: Number(item.quantity),
+              purchases: 1,
+              lastPurchasedAt: item.created_at,
+            });
+          }
+        }
+      }
+
+      const purchasePatterns = [...productTotals.values()]
+        .sort((a, b) => b.quantity - a.quantity || b.purchases - a.purchases)
+        .slice(0, 100);
+
+      return json(res, 200, {
+        household,
+        memberCount: memberIds.length,
+        preferences: preferences[0] ?? null,
+        shoppingLists: lists,
+        pantry,
+        purchaseHistory,
+        purchasePatterns,
+      });
     }
 
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
