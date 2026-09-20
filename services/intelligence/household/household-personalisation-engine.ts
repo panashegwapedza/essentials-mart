@@ -1,4 +1,5 @@
 import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts';
+import type { HouseholdNeed } from './household-needs-engine';
 
 export type PersonalisationSignal = {
   signalId: string;
@@ -26,8 +27,17 @@ export type PersonalisationResult = {
 
 export function generateHouseholdPersonalisation(
   signals: PersonalisationSignal[],
+  needs: HouseholdNeed[] = [],
   now = new Date(),
 ): PersonalisationResult {
+  const needsByProduct = new Map<string, HouseholdNeed[]>();
+  for (const need of needs) {
+    if (!need.productId) continue;
+    const values = needsByProduct.get(need.productId) ?? [];
+    values.push(need);
+    needsByProduct.set(need.productId, values);
+  }
+
   const products = signals
     .filter(signal => signal.productId && signal.confidence >= 0.5)
     .map(signal => {
@@ -38,22 +48,31 @@ export function generateHouseholdPersonalisation(
       const recencyFactor = Math.max(0, 1 - recencyDays / 90);
       const frequencyFactor = Math.min(1, signal.purchaseCount / 6);
       const consistencyFactor = Math.min(1, signal.confidence);
+      const matchingNeeds = needsByProduct.get(signal.productId) ?? [];
+      const needBoost = matchingNeeds.some(need => need.priority === 'high')
+        ? 0.2
+        : matchingNeeds.length
+          ? 0.1
+          : 0;
       const relevance = clampConfidence(
-        frequencyFactor * 0.4 +
-          recencyFactor * 0.3 +
-          consistencyFactor * 0.3,
+        frequencyFactor * 0.35 +
+          recencyFactor * 0.25 +
+          consistencyFactor * 0.2 +
+          needBoost,
       );
 
+      const needReason = matchingNeeds[0]?.reason;
       return {
         productId: signal.productId,
         productName: signal.productName,
         relevance,
-        reason:
-          'Relevant because this household has purchased it ' +
-          signal.purchaseCount +
-          ' times, with an average quantity of ' +
-          signal.averageQuantity +
-          '.',
+        reason: needReason
+          ? needReason + ' This product is also established in household purchase history.'
+          : 'Relevant because this household has purchased it ' +
+            signal.purchaseCount +
+            ' times, with an average quantity of ' +
+            signal.averageQuantity +
+            '.',
         sourceSignalId: signal.signalId,
       };
     })
@@ -66,7 +85,10 @@ export function generateHouseholdPersonalisation(
       'household-personalisation-agent.v1',
       'household-personalisation-engine.v1',
       'recommendation-only',
-      signals.map(signal => signal.signalId),
+      [
+        ...signals.map(signal => signal.signalId),
+        ...needs.map(need => need.needId),
+      ],
       now,
     ),
   };
