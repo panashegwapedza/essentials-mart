@@ -1,4 +1,5 @@
 import { runAISociety } from '../services/intelligence/ai-society-runtime';
+import { buildSearchVocabulary } from '../services/intelligence/search/search-intelligence-engine';
 
 type ProductRow={id:string;sku:string;name:string;description:string|null;category:string|null;product_family:string|null;brand:string|null;variant_label:string|null;size_label:string|null;image_url:string|null;price:number;currency:string;is_active:boolean};
 
@@ -78,14 +79,14 @@ export default async function searchHandler(req:any,res:any){
  try{
   const raw=typeof req.query?.q==='string'?req.query.q.trim():'';
   if(!raw)return res.status(200).json({query:'',normalizedQuery:'',correctedQuery:null,products:[]});
-  const interpretation=runAISociety({capability:'search-understanding',query:raw});
-  const normalized=interpretation.normalizedQuery;
-  const queryTokens=normalized.split(' ').filter(Boolean);
-  if(!queryTokens.length)return res.status(200).json({query:raw,normalizedQuery:normalized,correctedQuery:null,products:[]});
   const stores=await supabase<Array<{id:string}>>('stores','select=id&code=eq.MAIN&limit=1');
   const storeId=stores[0]?.id;
   if(!storeId)return res.status(500).setHeader('Cache-Control','no-store').json({error:{message:'MAIN store is not configured.'}});
   const products=await supabase<ProductRow[]>('products','select=id,sku,name,description,category,product_family,brand,variant_label,size_label,image_url,price,currency,is_active&is_active=eq.true&order=name.asc');
+  const interpretation=runAISociety({capability:'search-understanding',query:raw,vocabulary:buildSearchVocabulary(products)});
+  const normalized=interpretation.normalizedQuery;
+  const queryTokens=normalized.split(' ').filter(Boolean);
+  if(!queryTokens.length)return res.status(200).json({query:raw,normalizedQuery:normalized,correctedQuery:null,products:[]});
   const ids=products.map(p=>p.id);
   const inventory=ids.length?await supabase<Array<{product_id:string;quantity:number;reserved_quantity:number}>>('inventory',`select=product_id,quantity,reserved_quantity&store_id=eq.${encodeURIComponent(storeId)}&product_id=in.(${ids.join(',')})`):[];
   const stock=new Map(inventory.map(x=>[x.product_id,Math.max(0,Number(x.quantity)-Number(x.reserved_quantity))]));
