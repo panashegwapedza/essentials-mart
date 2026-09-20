@@ -138,6 +138,63 @@ export default async function householdHandler(req: any, res: any) {
         .sort((a, b) => b.quantity - a.quantity || b.purchases - a.purchases)
         .slice(0, 100);
 
+      // Derive behavioural signals from completed purchase history without introducing
+      // an AI prediction layer. These signals are descriptive and become inputs to
+      // later recommendation / forecasting intelligence.
+      const productPurchases = new Map<string, Array<{ at: string; quantity: number }>>();
+      for (const order of purchaseHistory) {
+        for (const item of order.items) {
+          const key = item.product_id ?? item.product_name;
+          const entries = productPurchases.get(key) ?? [];
+          entries.push({ at: item.created_at ?? order.created_at, quantity: Number(item.quantity) });
+          productPurchases.set(key, entries);
+        }
+      }
+
+      const recurringPurchases = [...productPurchases.entries()]
+        .map(([key, entries]) => {
+          const sorted = entries.slice().sort((a, b) => a.at.localeCompare(b.at));
+          const intervals: number[] = [];
+          for (let i = 1; i < sorted.length; i += 1) {
+            const days = (Date.parse(sorted[i].at) - Date.parse(sorted[i - 1].at)) / 86400000;
+            if (Number.isFinite(days) && days > 0) intervals.push(days);
+          }
+          if (intervals.length < 1) return null;
+          const averageIntervalDays = intervals.reduce((sum, value) => sum + value, 0) / intervals.length;
+          const recentIntervals = intervals.slice(-3);
+          const intervalSpread = recentIntervals.length > 1
+            ? Math.max(...recentIntervals) - Math.min(...recentIntervals)
+            : 0;
+          const consistency = Math.max(0, Math.min(1, 1 - (intervalSpread / Math.max(averageIntervalDays, 1))));
+          const lastPurchase = sorted[sorted.length - 1];
+          const averageQuantity = sorted.reduce((sum, entry) => sum + entry.quantity, 0) / sorted.length;
+          const nextExpectedAt = new Date(Date.parse(lastPurchase.at) + averageIntervalDays * 86400000).toISOString();
+          const pattern = purchasePatterns.find(item => (item.productId ?? item.productName) === key);
+          const confidence = Math.max(0, Math.min(1, (Math.min(sorted.length, 6) / 6) * 0.7 + consistency * 0.3));
+
+          return {
+            productId: pattern?.productId ?? null,
+            productName: pattern?.productName ?? key,
+            purchaseCount: sorted.length,
+            averageQuantity: Number(averageQuantity.toFixed(2)),
+            averageIntervalDays: Number(averageIntervalDays.toFixed(1)),
+            lastPurchasedAt: lastPurchase.at,
+            nextExpectedAt,
+            confidence: Number(confidence.toFixed(2)),
+            classification: confidence >= 0.65 && averageIntervalDays <= 90 ? 'recurring' : 'emerging',
+          };
+        })
+        .filter((item): item is NonNullable<typeof item> => item !== null)
+        .sort((a, b) => Date.parse(a.nextExpectedAt) - Date.parse(b.nextExpectedAt))
+        .slice(0, 100);
+
+      const consumptionSignals = recurringPurchases.map(item => ({
+        ...item,
+        signal: item.classification === 'recurring'
+          ? 'regular_household_purchase'
+          : 'repeat_purchase_pattern',
+      }));
+
       return json(res, 200, {
         household,
         memberCount: memberIds.length,
@@ -146,6 +203,8 @@ export default async function householdHandler(req: any, res: any) {
         pantry,
         purchaseHistory,
         purchasePatterns,
+        recurringPurchases,
+        consumptionSignals,
       });
     }
 
