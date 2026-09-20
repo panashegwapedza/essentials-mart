@@ -246,6 +246,58 @@ export default async function householdHandler(req: any, res: any) {
         recurringLinkedCount: pantryItems.filter(item => item.recurringPurchase).length,
       };
 
+      // Consolidate trusted household signals into one actionable context. This is
+      // descriptive context only: it does not add items to a basket or place orders.
+      const now = Date.now();
+      const householdNeeds = [
+        ...pantryItems
+          .filter(item => item.needsAttention)
+          .map(item => ({
+            needId: 'pantry:' + item.id,
+            type: 'pantry-replenishment',
+            productId: item.product_id ?? null,
+            productName: item.product_name,
+            priority: item.state === 'depleted' ? 'high' : 'medium',
+            reason: item.state === 'depleted' ? 'Pantry item is depleted.' : 'Pantry item is low.',
+            source: 'pantry',
+            recurringPurchase: item.recurringPurchase,
+          })),
+        ...recurringPurchases
+          .filter(item => item.productId && Date.parse(item.nextExpectedAt) <= now)
+          .map(item => ({
+            needId: 'recurring:' + item.productId,
+            type: 'recurring-purchase-due',
+            productId: item.productId,
+            productName: item.productName,
+            priority: item.confidence >= 0.8 ? 'high' : 'medium',
+            reason: 'Observed purchase pattern is due based on household history.',
+            source: 'purchase-history',
+            confidence: item.confidence,
+            expectedAt: item.nextExpectedAt,
+          })),
+        ...listItems
+          .filter(item => item.status === 'open')
+          .map(item => ({
+            needId: 'list:' + item.id,
+            type: 'shopping-list-item',
+            productId: item.product_id ?? null,
+            productName: item.requested_name ?? null,
+            priority: 'medium',
+            reason: 'Open item on an active household shopping list.',
+            source: 'shopping-list',
+            quantity: Number(item.quantity ?? 1),
+          })),
+      ].slice(0, 100);
+
+      const householdNeedsSummary = {
+        total: householdNeeds.length,
+        highPriority: householdNeeds.filter(item => item.priority === 'high').length,
+        mediumPriority: householdNeeds.filter(item => item.priority === 'medium').length,
+        pantryReplenishment: householdNeeds.filter(item => item.type === 'pantry-replenishment').length,
+        recurringDue: householdNeeds.filter(item => item.type === 'recurring-purchase-due').length,
+        shoppingListOpen: householdNeeds.filter(item => item.type === 'shopping-list-item').length,
+      };
+
       return json(res, 200, {
         household,
         memberCount: memberIds.length,
