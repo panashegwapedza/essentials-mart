@@ -3,6 +3,7 @@ import { runAISociety } from '../services/intelligence/ai-society-runtime';
 import type { HouseholdSignal } from '../services/intelligence/household/household-recommendation-engine';
 import type { PredictionSignal } from '../services/intelligence/household/household-prediction-engine';
 import type { PersonalisationSignal } from '../services/intelligence/household/household-personalisation-engine';
+import type { InventorySignal } from '../services/intelligence/inventory/inventory-intelligence-engine';
 
 type Row = Record<string, any>;
 function json(res: any, status: number, body: unknown) { return res.status(status).setHeader('Content-Type', 'application/json').setHeader('Cache-Control', 'no-store').json(body); }
@@ -49,6 +50,9 @@ export default async function intelligenceHandler(req:any,res:any) {
     const predictions=runAISociety({capability:'household-predictions',signals:predictionSignals});
     const personalisationSignals:PersonalisationSignal[]=signals.filter(s=>s.productId).map((signal,index)=>({signalId:'household-personalisation-signal:'+index+':'+signal.productId,productId:signal.productId!,productName:signal.productName,purchaseCount:signal.purchaseCount,averageQuantity:signal.averageQuantity,averageIntervalDays:signal.averageIntervalDays,confidence:signal.confidence,lastObservedAt:signal.lastPurchasedAt}));
     const personalisation=runAISociety({capability:'household-personalisation',signals:personalisationSignals});
-    return json(res,200,{recommendations:result.recommendations,predictions:predictions.predictions,personalisation:personalisation.products,trace:result.trace,predictionTrace:predictions.trace,personalisationTrace:personalisation.trace,generatedAt:new Date().toISOString()});
+    const inventoryRows=await supabase<Array<{product_id:string;quantity:number;reserved_quantity:number;updated_at:string;store_id:string}>>('inventory?select=product_id,quantity,reserved_quantity,updated_at,store_id&limit=5000');
+    const inventorySignals:InventorySignal[]=inventoryRows.map((row,index)=>({signalId:'inventory-signal:'+index+':'+row.store_id+':'+row.product_id,productId:row.product_id,productName:catalogue.find(p=>p.id===row.product_id)?.name??row.product_id,storeId:row.store_id,quantity:Number(row.quantity),reservedQuantity:Number(row.reserved_quantity),observedAt:row.updated_at}));
+    const inventory=runAISociety({capability:'inventory-intelligence',signals:inventorySignals});
+    return json(res,200,{recommendations:result.recommendations,predictions:predictions.predictions,personalisation:personalisation.products,trace:result.trace,predictionTrace:predictions.trace,personalisationTrace:personalisation.trace,inventoryInsights:inventory.insights,inventoryTrace:inventory.trace,generatedAt:new Date().toISOString()});
   } catch(error) { console.error('intelligence-api error',error); return json(res,500,{error:{code:'INTELLIGENCE_INTERNAL_ERROR',message:error instanceof Error?error.message:'Intelligence service unavailable.'}}); }
 }
