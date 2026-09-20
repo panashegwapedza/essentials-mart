@@ -90,6 +90,24 @@ export default async function householdHandler(req: any, res: any) {
           : Promise.resolve([]),
       ]);
 
+      const listItems = lists.length
+        ? await supabase<Row[]>('household_shopping_list_items?shopping_list_id=in.(' + lists.map(list => list.id).join(',') + ')&select=id,shopping_list_id,product_id,requested_name,quantity,status,source,added_by_customer_id,created_at,updated_at&order=created_at.asc')
+        : [];
+      const listItemsByList = new Map<string, Row[]>();
+      for (const item of listItems) {
+        const items = listItemsByList.get(item.shopping_list_id) ?? [];
+        items.push(item);
+        listItemsByList.set(item.shopping_list_id, items);
+      }
+      const shoppingListSummary = {
+        activeListCount: lists.length,
+        openItemCount: listItems.filter(item => item.status === 'open').length,
+        basketReadyItemCount: listItems.filter(item => item.status === 'added_to_basket').length,
+        recurringItemCount: listItems.filter(item => item.source === 'recurring').length,
+        aiSuggestedItemCount: listItems.filter(item => item.source === 'ai' || item.source === 'recommendation').length,
+        lists: lists.map(list => ({ ...list, itemCount: (listItemsByList.get(list.id) ?? []).length, items: listItemsByList.get(list.id) ?? [] })),
+      };
+
       const orderIds = orders.map(order => order.id);
       const orderItems = orderIds.length
         ? await supabase<Row[]>('order_items?order_id=in.(' + orderIds.join(',') + ')&select=order_id,product_id,product_name,sku,quantity,unit_price,line_total,created_at&order=created_at.asc')
