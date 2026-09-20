@@ -76,7 +76,7 @@ function fuzzyCorrect(token:string){
  return best;
 }
 
-export function understandSearchQuery(originalQuery:string):SearchInterpretation{
+export function understandSearchQuery(originalQuery:string,vocabulary:string[]=[]):SearchInterpretation{
  const original=originalQuery.trim();
  const cleaned=clean(original);
  const rawTokens=cleaned.split(' ').filter(Boolean);
@@ -93,8 +93,18 @@ export function understandSearchQuery(originalQuery:string):SearchInterpretation
   }
   if(STOP_WORDS.has(token))continue;
   const corrected=correctToken(token);
-  const fuzzy=fuzzyCorrect(corrected);
-  const finalToken=fuzzyCorrected(corrected,fuzzy);
+  const fuzzy=fuzzyCorrected(corrected,fuzzyCorrect(corrected));
+  let finalToken=fuzzy;
+  if(finalToken===token&&vocabulary.length){
+   let best=token,bestDistance=Number.MAX_SAFE_INTEGER;
+   for(const candidate of vocabulary){
+    if(candidate.length<3)continue;
+    const d=levenshtein(token,candidate);
+    const allowed=token.length<=4?1:Math.max(2,Math.floor(token.length*0.3));
+    if(d<=allowed&&d<bestDistance){bestDistance=d;best=candidate;}
+   }
+   finalToken=best;
+  }
   if(finalToken!==token)corrections.push(`${token}→${finalToken}`);
   terms.push(finalToken);
  }
@@ -106,3 +116,12 @@ export function understandSearchQuery(originalQuery:string):SearchInterpretation
 }
 
 function fuzzyCorrected(a:string,b:string){return b||a;}
+
+export function buildSearchVocabulary(rows:Array<Record<string,unknown>>):string[]{
+ const values:string[]=[];
+ for(const row of rows)for(const key of ['name','product_family','brand','variant_label','size_label','category']){
+  const value=typeof row[key]==='string'?row[key] as string:'';
+  values.push(...clean(value).split(' ').filter(x=>x.length>=3));
+ }
+ return [...new Set(values)];
+}
