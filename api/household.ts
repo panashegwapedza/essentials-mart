@@ -1,0 +1,124 @@
+import { principal } from '../apps/customer_web/api/_auth.js';
+
+type Row = Record<string, any>;
+
+function json(res: any, status: number, body: unknown) {
+  return res.status(status).setHeader('Content-Type', 'application/json').setHeader('Cache-Control', 'no-store').json(body);
+}
+
+function config() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error('Supabase household configuration is missing.');
+  return { url: url.replace(/\/$/, ''), key };
+}
+
+async function supabase<T>(path: string, init?: RequestInit): Promise<T> {
+  const { url, key } = config();
+  const response = await fetch(url + '/rest/v1/' + path, {
+    ...init,
+    headers: {
+      apikey: key,
+      Authorization: 'Bearer ' + key,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...(init?.headers ?? {}),
+    },
+  });
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error('Supabase household request failed (' + response.status + '): ' + detail.slice(0, 300));
+  }
+  if (response.status === 204) return undefined as T;
+  return await response.json() as T;
+}
+
+async function customerIdForAuthUser(authUserId: string) {
+  const rows = await supabase<Array<{ id: string }>>(
+    'customers?auth_user_id=eq.' + encodeURIComponent(authUserId) + '&select=id&limit=1',
+  );
+  return rows[0]?.id ?? null;
+}
+
+async function householdForCustomer(customerId: string) {
+  const rows = await supabase<Array<{
+    household_id: string;
+    role: string;
+    status: string;
+    households: { status: string; name: string | null };
+  }>>(
+    'household_memberships?customer_id=eq.' + encodeURIComponent(customerId) +
+    '&status=eq.active&select=household_id,role,status,households!inner(status,name)&limit=1',
+  );
+  const row = rows[0];
+  if (!row) return null;
+  return {
+    id: row.household_id,
+    name: row.households.name,
+    status: row.households.status,
+    role: row.role,
+  };
+}
+
+export default async function householdHandler(req: any, res: any) {
+  if (!['GET', 'POST'].includes(req.method)) {
+    return res.status(405).setHeader('Allow', 'GET, POST').json({ error: { message: 'Method not allowed.' } });
+  }
+
+  try {
+    const user = await principal(req);
+    if (!user) return json(res, 401, { error: { code: 'UNAUTHENTICATED', message: 'A valid Supabase Auth session is required.' } });
+
+    const customerId = await customerIdForAuthUser(user.authUserId);
+    if (!customerId) return json(res, 404, { error: { code: 'CUSTOMER_NOT_FOUND', message: 'Authenticated user has no customer identity.' } });
+
+    if (req.method === 'GET') {
+      const household = await householdForCustomer(customerId);
+      if (!household) return json(res, 200, { household: null });
+      const [preferences, lists, pantry] = await Promise.all([
+        supabase<Row[]>('household_preferences?household_id=eq.' + household.id + '&select=*&limit=1'),
+        supabase<Row[]>('household_shopping_lists?household_id=eq.' + household.id + '&status=eq.active&select=id,name,status,created_by_customer_id,created_at,updated_at,version&order=created_at.asc'),
+        supabase<Row[]>('household_pantry_items?household_id=eq.' + household.id + '&select=id,product_id,product_name,quantity,unit,status,source,last_confirmed_at,updated_at&order=updated_at.desc'),
+      ]);
+      return json(res, 200, { household, preferences: preferences[0] ?? null, shoppingLists: lists, pantry });
+    }
+
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
+    const requestedName = typeof body.name === 'string' ? body.name.trim() : '';
+    const existing = await householdForCustomer(customerId);
+    if (existing) return json(res, 409, { error: { code: 'HOUSEHOLD_EXISTS', message: 'The authenticated customer already belongs to an active household.', household: existing } });
+
+    const created = await supabase<Row[]>('households', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({ name: requestedName || null }),
+    });
+    const household = created[0];
+    if (!household?.id) throw new Error('Household creation returned no household.');
+
+    try {
+      await supabase('household_memberships', {
+        method: 'POST',
+        headers: { Prefer: 'return=representation' },
+        body: JSON.stringify({ household_id: household.id, customer_id: customerId, role: 'owner', status: 'active' }),
+      });
+      await supabase('household_preferences', {
+        method: 'POST',
+        body: JSON.stringify({ household_id: household.id }),
+      });
+    } catch (error) {
+      await supabase('households?id=eq.' + encodeURIComponent(household.id), { method: 'DELETE' }).catch(() => undefined);
+      throw error;
+    }
+
+    return json(res, 201, {
+      household: { id: household.id, name: household.name, status: household.status, role: 'owner' },
+      preferences: { household_id: household.id },
+      shoppingLists: [],
+      pantry: [],
+    });
+  } catch (error) {
+    console.error('household-api error', error);
+    return json(res, 500, { error: { code: 'HOUSEHOLD_INTERNAL_ERROR', message: error instanceof Error ? error.message : 'Household service unavailable.' } });
+  }
+}
