@@ -101,7 +101,7 @@ export function understandSearchQuery(originalQuery:string):SearchInterpretation
  const normalized=[...terms,quantity!==undefined&&unit?`${quantity}${unit}`:null].filter(Boolean).join(' ');
  const originalClean=clean(original);
  const correctedQuery=normalized&&normalized!==originalClean?normalized:null;
- const confidence=corrections.length===0&&normalized===originalClean?.99:corrections.length<=1?.95:corrections.length<=2?.88:.78;
+ const confidence=corrections.length===0&&normalized===originalClean?0.99:corrections.length<=1?0.95:corrections.length<=2?0.88:0.78;
  return {originalQuery:original,normalizedQuery:normalized,intent:normalized?'product_search':'unknown',correctedQuery,entities:{productTerms:terms,quantity,unit},corrections,confidence,engineId:'search-intelligence-engine.v1',runtimeId:'ai-society-runtime.v1'};
 }
 
