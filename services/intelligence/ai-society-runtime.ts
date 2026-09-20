@@ -5,6 +5,7 @@ import { generateHouseholdPersonalisation, type PersonalisationResult, type Pers
 import { generateInventoryIntelligence, type InventoryIntelligenceResult, type InventorySignal } from './inventory/inventory-intelligence-engine';
 import { generateHouseholdNeeds, type HouseholdNeed, type HouseholdNeedsResult } from './household/household-needs-engine';
 import { generateInventorySubstitutions, type SubstitutionProduct, type SubstitutionInventory, type SubstitutionResult, type SubstitutionSignal } from './inventory/inventory-substitution-engine';
+import { generateIntelligenceLayer, type IntelligenceLayerInput, type IntelligenceLayerResult } from './core/intelligence-layer-engine';
 
 export type IntelligenceRequest =
   | { capability: 'search-understanding'; query: string; vocabulary?: string[] }
@@ -13,6 +14,7 @@ export type IntelligenceRequest =
   | { capability: 'household-personalisation'; signals: PersonalisationSignal[]; needs?: HouseholdNeed[] }
   | { capability: 'inventory-intelligence'; signals: InventorySignal[] }
   | { capability: 'household-needs'; needs: HouseholdNeed[] }
+  | { capability: 'intelligence-layer'; input: IntelligenceLayerInput }
   | { capability: 'inventory-substitution'; signals: SubstitutionSignal[]; products: SubstitutionProduct[]; inventory: SubstitutionInventory[] };
 
 export type IntelligenceResponse =
@@ -22,6 +24,7 @@ export type IntelligenceResponse =
   | PersonalisationResult
   | InventoryIntelligenceResult
   | HouseholdNeedsResult
+  | IntelligenceLayerResult
   | SubstitutionResult;
 
 export function runAISociety(request: IntelligenceRequest): IntelligenceResponse {
@@ -31,6 +34,7 @@ export function runAISociety(request: IntelligenceRequest): IntelligenceResponse
   if (request.capability === 'household-personalisation') return generateHouseholdPersonalisation(request.signals, request.needs ?? []);
   if (request.capability === 'inventory-intelligence') return generateInventoryIntelligence(request.signals);
   if (request.capability === 'household-needs') return generateHouseholdNeeds(request.needs);
+  if (request.capability === 'intelligence-layer') return generateIntelligenceLayer(request.input);
   if (request.capability === 'inventory-substitution') return generateInventorySubstitutions(request.signals, request.products, request.inventory);
   throw new Error('Unsupported AI Society capability.');
 }
