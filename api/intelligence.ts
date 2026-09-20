@@ -4,6 +4,7 @@ import type { HouseholdSignal } from '../services/intelligence/household/househo
 import type { PredictionSignal } from '../services/intelligence/household/household-prediction-engine';
 import type { PersonalisationSignal } from '../services/intelligence/household/household-personalisation-engine';
 import type { InventorySignal } from '../services/intelligence/inventory/inventory-intelligence-engine';
+import type { SubstitutionProduct, SubstitutionInventory, SubstitutionSignal } from '../services/intelligence/inventory/inventory-substitution-engine';
 
 type Row = Record<string, any>;
 function json(res: any, status: number, body: unknown) { return res.status(status).setHeader('Content-Type', 'application/json').setHeader('Cache-Control', 'no-store').json(body); }
@@ -53,6 +54,10 @@ export default async function intelligenceHandler(req:any,res:any) {
     const inventoryRows=await supabase<Array<{product_id:string;quantity:number;reserved_quantity:number;updated_at:string;store_id:string}>>('inventory?select=product_id,quantity,reserved_quantity,updated_at,store_id&limit=5000');
     const inventorySignals:InventorySignal[]=inventoryRows.map((row,index)=>({signalId:'inventory-signal:'+index+':'+row.store_id+':'+row.product_id,productId:row.product_id,productName:catalogue.find(p=>p.id===row.product_id)?.name??row.product_id,storeId:row.store_id,quantity:Number(row.quantity),reservedQuantity:Number(row.reserved_quantity),observedAt:row.updated_at}));
     const inventory=runAISociety({capability:'inventory-intelligence',signals:inventorySignals});
-    return json(res,200,{recommendations:result.recommendations,predictions:predictions.predictions,personalisation:personalisation.products,trace:result.trace,predictionTrace:predictions.trace,personalisationTrace:personalisation.trace,inventoryInsights:inventory.insights,inventoryTrace:inventory.trace,generatedAt:new Date().toISOString()});
+    const substitutionSignals:SubstitutionSignal[]=inventory.insights.filter(i=>i.type!=='healthy-stock').map(i=>({signalId:i.sourceSignalId,productId:i.productId,productName:i.productName,storeId:i.storeId,availableQuantity:i.availableQuantity,reason:i.type}));
+    const substitutionProducts:SubstitutionProduct[]=await supabase<Array<{id:string;name:string;category:string|null;product_family:string|null;brand:string|null;variant_label:string|null;size_label:string|null;price:number;currency:string;is_active:boolean}>>('products?select=id,name,category,product_family,brand,variant_label,size_label,price,currency,is_active&is_active=eq.true&limit=1000');
+    const substitutionInventory:SubstitutionInventory[]=inventoryRows.map(row=>({productId:row.product_id,storeId:row.store_id,quantity:Number(row.quantity),reservedQuantity:Number(row.reserved_quantity)}));
+    const substitutions=runAISociety({capability:'inventory-substitution',signals:substitutionSignals,products:substitutionProducts,inventory:substitutionInventory});
+    return json(res,200,{recommendations:result.recommendations,predictions:predictions.predictions,personalisation:personalisation.products,trace:result.trace,predictionTrace:predictions.trace,personalisationTrace:personalisation.trace,inventoryInsights:inventory.insights,inventoryTrace:inventory.trace,substitutions:substitutions.substitutions,substitutionTrace:substitutions.trace,generatedAt:new Date().toISOString()});
   } catch(error) { console.error('intelligence-api error',error); return json(res,500,{error:{code:'INTELLIGENCE_INTERNAL_ERROR',message:error instanceof Error?error.message:'Intelligence service unavailable.'}}); }
 }
