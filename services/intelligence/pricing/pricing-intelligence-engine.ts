@@ -26,6 +26,8 @@ export type PricingInsight = {
   currency: string;
   familyAveragePrice: number | null;
   familyPriceIndex: number | null;
+  normalizedUnitPrice: number | null;
+  normalizedUnit: 'L' | 'kg' | null;
   position: 'below-family-average' | 'near-family-average' | 'above-family-average' | 'no-comparison';
   reason: string;
   confidence: number;
@@ -43,6 +45,18 @@ export type PricingIntelligenceResult = {
   trace: IntelligenceTrace;
 };
 
+function parseNormalizedSize(label: string | null): { value: number; unit: 'L' | 'kg' } | null {
+  if (!label) return null;
+  const match = label.trim().toLowerCase().match(/([0-9]+(?:\\.[0-9]+)?)\\s*(ml|l|g|kg)\\b/);
+  if (!match) return null;
+  const value = Number(match[1]);
+  if (!Number.isFinite(value) || value <= 0) return null;
+  if (match[2] === 'ml') return { value: value / 1000, unit: 'L' };
+  if (match[2] === 'l') return { value, unit: 'L' };
+  if (match[2] === 'g') return { value: value / 1000, unit: 'kg' };
+  return { value, unit: 'kg' };
+}
+
 export function generatePricingIntelligence(products: PricingProduct[]): PricingIntelligenceResult {
   const active = products.filter((p) => p.available && Number.isFinite(p.price) && p.price >= 0);
   const groups = new Map<string, PricingProduct[]>();
@@ -56,9 +70,19 @@ export function generatePricingIntelligence(products: PricingProduct[]): Pricing
 
   const insights = active.slice(0, 500).map((product) => {
     const key = (product.productFamily || product.category || product.name).trim().toLowerCase();
-    const peers = (groups.get(key) ?? []).filter((peer) => peer.currency === product.currency && peer.id !== product.id);
-    const average = peers.length ? peers.reduce((sum, peer) => sum + peer.price, 0) / peers.length : null;
-    const index = average && average > 0 ? product.price / average : null;
+    const size = parseNormalizedSize(product.sizeLabel);
+    const productUnitPrice = size ? product.price / size.value : null;
+    const peers = (groups.get(key) ?? []).filter((peer) => {
+      if (peer.currency !== product.currency || peer.id === product.id) return false;
+      const peerSize = parseNormalizedSize(peer.sizeLabel);
+      return size && peerSize ? peerSize.unit === size.unit : !size && !peerSize;
+    });
+    const peerUnitPrices = peers.map((peer) => {
+      const peerSize = parseNormalizedSize(peer.sizeLabel);
+      return peerSize ? peer.price / peerSize.value : peer.price;
+    });
+    const average = peerUnitPrices.length ? peerUnitPrices.reduce((sum, price) => sum + price, 0) / peerUnitPrices.length : null;
+    const index = average && average > 0 && productUnitPrice !== null ? productUnitPrice / average : null;
     const position = index === null
       ? 'no-comparison'
       : index < 0.95
@@ -81,6 +105,8 @@ export function generatePricingIntelligence(products: PricingProduct[]): Pricing
       currency: product.currency,
       familyAveragePrice: average === null ? null : Number(average.toFixed(2)),
       familyPriceIndex: index === null ? null : Number(index.toFixed(3)),
+      normalizedUnitPrice: productUnitPrice === null ? null : Number(productUnitPrice.toFixed(3)),
+      normalizedUnit: size?.unit ?? null,
       position,
       reason,
       confidence: clampConfidence(peers.length >= 2 ? 0.9 : peers.length === 1 ? 0.7 : 0.4),
