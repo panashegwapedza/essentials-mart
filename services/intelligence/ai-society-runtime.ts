@@ -25,7 +25,7 @@ export type IntelligenceRequest =
   | { capability: 'commerce-action-preparation'; requests: CommerceActionRequest[]; catalogue: CommerceActionProduct[]; inventory: CommerceActionInventory[] }
   | { capability: 'basket-intelligence'; basket: BasketIntelligenceBasketItem[]; catalogue: BasketIntelligenceProduct[]; inventory: BasketIntelligenceInventory[] }
   | { capability: 'delivery-intelligence'; input: DeliveryIntelligenceRequest }
-  | { capability: 'pricing-intelligence'; products: PricingProduct[] };
+  | { capability: 'pricing-intelligence'; products: PricingProduct[]; context?: { productIds?: string[]; basketProductIds?: string[] } };
 
 export type IntelligenceResponse =
   | (SearchInterpretation & { trace: { agentId: 'catalogue-search-agent.v1'; authority: 'interpretation-only' } })
@@ -55,6 +55,6 @@ export function runAISociety(request: IntelligenceRequest): IntelligenceResponse
   if (request.capability === 'commerce-action-preparation') return prepareCommerceActions(request.requests, request.catalogue, request.inventory);
   if (request.capability === 'basket-intelligence') return generateBasketIntelligence(request.basket, request.catalogue, request.inventory);
   if (request.capability === 'delivery-intelligence') return generateDeliveryIntelligence(request.input);
-  if (request.capability === 'pricing-intelligence') return generatePricingIntelligence(request.products);
+  if (request.capability === 'pricing-intelligence') return generatePricingIntelligence(request.products, request.context);
   throw new Error('Unsupported AI Society capability.');
 }
