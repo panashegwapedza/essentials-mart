@@ -1,2 +1,2 @@
-import handler from '../[...path].js';
+import handler from '../../../../api/[...path].js';
 export default handler;
