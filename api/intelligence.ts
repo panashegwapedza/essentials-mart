@@ -59,21 +59,35 @@ export default async function intelligenceHandler(req:any,res:any) {
       }
     }
     householdNeeds.push(...signals.filter(signal=>signal.productId && Date.parse(signal.nextExpectedAt)<=Date.now()).map(signal=>({needId:'recurring:'+signal.productId,type:'recurring-purchase-due' as const,productId:signal.productId,productName:signal.productName,priority:signal.confidence>=0.8?'high' as const:'medium' as const,reason:'Observed purchase pattern is due based on household history.',source:'purchase-history' as const,confidence:signal.confidence,expectedAt:signal.nextExpectedAt})));
-    const householdNeedsResult=runAISociety({capability:'household-needs',needs:householdNeeds});
     const catalogue=await supabase<Array<{id:string;name:string;is_active:boolean}>>('products?select=id,name,is_active&is_active=eq.true&limit=1000');
-    const result=runAISociety({capability:'household-recommendations',signals,catalogue,needs:householdNeedsResult.needs});
     const predictionSignals:PredictionSignal[]=signals.map((signal,index)=>({signalId:'household-purchase-signal:'+index+':'+(signal.productId??signal.productName),type:signal.classification==='recurring'?'recurring-purchase':'consumption',productId:signal.productId!,productName:signal.productName,purchaseCount:signal.purchaseCount,averageQuantity:signal.averageQuantity,averageIntervalDays:signal.averageIntervalDays,lastObservedAt:signal.lastPurchasedAt,confidence:signal.confidence}));
-    const predictions=runAISociety({capability:'household-predictions',signals:predictionSignals,needs:householdNeedsResult.needs});
     const personalisationSignals:PersonalisationSignal[]=signals.filter(s=>s.productId).map((signal,index)=>({signalId:'household-personalisation-signal:'+index+':'+signal.productId,productId:signal.productId!,productName:signal.productName,purchaseCount:signal.purchaseCount,averageQuantity:signal.averageQuantity,averageIntervalDays:signal.averageIntervalDays,confidence:signal.confidence,lastObservedAt:signal.lastPurchasedAt}));
-    const personalisation=runAISociety({capability:'household-personalisation',signals:personalisationSignals,needs:householdNeedsResult.needs});
     const inventoryRows=await supabase<Array<{product_id:string;quantity:number;reserved_quantity:number;updated_at:string;store_id:string}>>('inventory?select=product_id,quantity,reserved_quantity,updated_at,store_id&limit=5000');
     const inventorySignals:InventorySignal[]=inventoryRows.map((row,index)=>({signalId:'inventory-signal:'+index+':'+row.store_id+':'+row.product_id,productId:row.product_id,productName:catalogue.find(p=>p.id===row.product_id)?.name??row.product_id,storeId:row.store_id,quantity:Number(row.quantity),reservedQuantity:Number(row.reserved_quantity),observedAt:row.updated_at}));
-    const inventory=runAISociety({capability:'inventory-intelligence',signals:inventorySignals});
-    const substitutionSignals:SubstitutionSignal[]=inventory.insights.filter(i=>i.type!=='healthy-stock').map(i=>({signalId:i.sourceSignalId,productId:i.productId,productName:i.productName,storeId:i.storeId,availableQuantity:i.availableQuantity,reason:i.type}));
+    const substitutionSignals:SubstitutionSignal[]=inventorySignals.map((signal,index)=>({signalId:signal.signalId,productId:signal.productId,productName:signal.productName,storeId:signal.storeId,availableQuantity:Math.max(0,signal.quantity-signal.reservedQuantity),reason:(Math.max(0,signal.quantity-signal.reservedQuantity)<=0?'out-of-stock':'low-stock') as 'out-of-stock'|'low-stock'}));
     const substitutionProducts:SubstitutionProduct[]=await supabase<Array<{id:string;name:string;category:string|null;product_family:string|null;brand:string|null;variant_label:string|null;size_label:string|null;price:number;currency:string;is_active:boolean}>>('products?select=id,name,category,product_family,brand,variant_label,size_label,price,currency,is_active&is_active=eq.true&limit=1000');
     const substitutionInventory:SubstitutionInventory[]=inventoryRows.map(row=>({productId:row.product_id,storeId:row.store_id,quantity:Number(row.quantity),reservedQuantity:Number(row.reserved_quantity)}));
-    const substitutions=runAISociety({capability:'inventory-substitution',signals:substitutionSignals,products:substitutionProducts,inventory:substitutionInventory});
-    const unified=runAISociety({capability:'intelligence-layer',input:{needs:householdNeedsResult.needs,recommendations:result.recommendations,predictions:predictions.predictions,personalisation:personalisation.products,inventory:inventory.insights}});
+    const householdIntelligence=runAISociety({
+      capability:'household-intelligence',
+      input:{
+        needs:householdNeeds,
+        householdSignals:signals,
+        catalogue,
+        predictionSignals,
+        personalisationSignals,
+        inventorySignals,
+        substitutionSignals:substitutionSignals.filter(signal=>signal.reason==='out-of-stock'||signal.reason==='low-stock'),
+        substitutionProducts,
+        substitutionInventory,
+      },
+    });
+    const householdNeedsResult=householdIntelligence.householdNeeds;
+    const result=householdIntelligence.recommendations;
+    const predictions=householdIntelligence.predictions;
+    const personalisation=householdIntelligence.personalisation;
+    const inventory=householdIntelligence.inventory;
+    const substitutions=householdIntelligence.substitutions;
+    const unified=householdIntelligence.intelligenceLayer;
     return json(res,200,{householdNeeds:householdNeedsResult.needs,householdNeedsSummary:householdNeedsResult.summary,householdNeedsTrace:householdNeedsResult.trace,recommendations:result.recommendations,predictions:predictions.predictions,personalisation:personalisation.products,trace:result.trace,predictionTrace:predictions.trace,personalisationTrace:personalisation.trace,inventoryInsights:inventory.insights,inventoryTrace:inventory.trace,substitutions:substitutions.substitutions,substitutionTrace:substitutions.trace,intelligenceLayer:unified.items,intelligenceLayerSummary:unified.summary,intelligenceLayerTrace:unified.trace,generatedAt:new Date().toISOString()});
   } catch(error) { console.error('intelligence-api error',error); return json(res,500,{error:{code:'INTELLIGENCE_INTERNAL_ERROR',message:error instanceof Error?error.message:'Intelligence service unavailable.'}}); }
 }
