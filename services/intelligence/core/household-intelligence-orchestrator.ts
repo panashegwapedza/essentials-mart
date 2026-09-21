@@ -37,7 +37,7 @@ export function generateHouseholdIntelligence(
   const recommendations = generateHouseholdRecommendations(input.householdSignals, input.catalogue, householdNeeds.needs, now);
   const predictions = generateHouseholdPredictions(input.predictionSignals, householdNeeds.needs, now);
   const personalisation = generateHouseholdPersonalisation(input.personalisationSignals, householdNeeds.needs, now);
-  const inventory = generateInventoryIntelligence(input.inventorySignals, now);
+  const inventory = generateInventoryIntelligence(input.inventorySignals);
 
   const substitutions = generateInventorySubstitutions(
     input.substitutionSignals,
