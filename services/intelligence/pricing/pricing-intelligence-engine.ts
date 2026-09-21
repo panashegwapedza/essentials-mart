@@ -33,6 +33,8 @@ export type PricingInsight = {
   confidence: number;
 };
 
+export type PricingContext = { productIds?: string[]; basketProductIds?: string[] };
+
 export type PricingIntelligenceResult = {
   insights: PricingInsight[];
   summary: {
@@ -57,7 +59,7 @@ function parseNormalizedSize(label: string | null): { value: number; unit: 'L' |
   return { value, unit: 'kg' };
 }
 
-export function generatePricingIntelligence(products: PricingProduct[]): PricingIntelligenceResult {
+export function generatePricingIntelligence(products: PricingProduct[], context: PricingContext = {}): PricingIntelligenceResult {
   const active = products.filter((p) => p.available && Number.isFinite(p.price) && p.price >= 0);
   const groups = new Map<string, PricingProduct[]>();
 
@@ -90,6 +92,7 @@ export function generatePricingIntelligence(products: PricingProduct[]): Pricing
         : index > 1.05
           ? 'above-family-average'
           : 'near-family-average';
+    const inContext = new Set([...(context.productIds ?? []), ...(context.basketProductIds ?? [])]).has(product.id);
     const reason = index === null
       ? 'No same-currency comparison products are currently available.'
       : position === 'below-family-average'
