@@ -8,6 +8,7 @@ import { generateInventorySubstitutions, type SubstitutionProduct, type Substitu
 import { generateIntelligenceLayer, type IntelligenceLayerInput, type IntelligenceLayerResult } from './core/intelligence-layer-engine';
 import { generateHouseholdIntelligence, type HouseholdIntelligenceInput, type HouseholdIntelligenceResult } from './core/household-intelligence-orchestrator';
 import { prepareCommerceActions, type CommerceActionRequest, type CommerceActionProduct, type CommerceActionInventory, type CommerceActionResult } from './commerce/commerce-action-engine';
+import { generateBasketIntelligence, type BasketIntelligenceBasketItem, type BasketIntelligenceProduct, type BasketIntelligenceInventory, type BasketIntelligenceResult } from './commerce/basket-intelligence-engine';
 
 export type IntelligenceRequest =
   | { capability: 'search-understanding'; query: string; vocabulary?: string[] }
@@ -19,7 +20,8 @@ export type IntelligenceRequest =
   | { capability: 'intelligence-layer'; input: IntelligenceLayerInput }
   | { capability: 'inventory-substitution'; signals: SubstitutionSignal[]; products: SubstitutionProduct[]; inventory: SubstitutionInventory[] }
   | { capability: 'household-intelligence'; input: HouseholdIntelligenceInput }
-  | { capability: 'commerce-action-preparation'; requests: CommerceActionRequest[]; catalogue: CommerceActionProduct[]; inventory: CommerceActionInventory[] };
+  | { capability: 'commerce-action-preparation'; requests: CommerceActionRequest[]; catalogue: CommerceActionProduct[]; inventory: CommerceActionInventory[] }
+  | { capability: 'basket-intelligence'; basket: BasketIntelligenceBasketItem[]; catalogue: BasketIntelligenceProduct[]; inventory: BasketIntelligenceInventory[] };
 
 export type IntelligenceResponse =
   | (SearchInterpretation & { trace: { agentId: 'catalogue-search-agent.v1'; authority: 'interpretation-only' } })
@@ -31,7 +33,8 @@ export type IntelligenceResponse =
   | IntelligenceLayerResult
   | SubstitutionResult
   | HouseholdIntelligenceResult
-  | CommerceActionResult;
+  | CommerceActionResult
+  | BasketIntelligenceResult;
 
 export function runAISociety(request: IntelligenceRequest): IntelligenceResponse {
   if (request.capability === 'search-understanding') return { ...understandSearchQuery(request.query, request.vocabulary), trace: { agentId: 'catalogue-search-agent.v1', authority: 'interpretation-only' } };
@@ -44,5 +47,6 @@ export function runAISociety(request: IntelligenceRequest): IntelligenceResponse
   if (request.capability === 'inventory-substitution') return generateInventorySubstitutions(request.signals, request.products, request.inventory);
   if (request.capability === 'household-intelligence') return generateHouseholdIntelligence(request.input);
   if (request.capability === 'commerce-action-preparation') return prepareCommerceActions(request.requests, request.catalogue, request.inventory);
+  if (request.capability === 'basket-intelligence') return generateBasketIntelligence(request.basket, request.catalogue, request.inventory);
   throw new Error('Unsupported AI Society capability.');
 }
