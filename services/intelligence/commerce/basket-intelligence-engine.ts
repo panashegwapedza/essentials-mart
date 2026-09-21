@@ -66,8 +66,8 @@ export function generateBasketIntelligence(
     const quantity = Math.max(0, Math.floor(Number(line.quantity) || 0));
     const status =
       availableQuantity <= 0 ? 'out-of-stock' :
-      quantity > availableQuantity ? 'low-stock' :
-      quantity > availableQuantity + 20 ? 'over-stocked' : 'healthy';
+      quantity > availableQuantity + 20 ? 'over-stocked' :
+      quantity > availableQuantity ? 'low-stock' : 'healthy';
     const issue =
       !product ? 'Product is no longer present in the authoritative catalogue.' :
       !product.available ? 'Product is currently unavailable.' :
