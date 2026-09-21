@@ -9,6 +9,10 @@
       "destination": "/api/products?id=:id"
     },
     {
+      "source": "/checkout",
+      "destination": "/"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/"
     }
