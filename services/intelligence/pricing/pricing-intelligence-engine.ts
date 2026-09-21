@@ -93,13 +93,14 @@ export function generatePricingIntelligence(products: PricingProduct[], context:
           ? 'above-family-average'
           : 'near-family-average';
     const inContext = new Set([...(context.productIds ?? []), ...(context.basketProductIds ?? [])]).has(product.id);
+    const inContext = new Set([...(context.productIds ?? []), ...(context.basketProductIds ?? [])]).has(product.id);
     const reason = index === null
-      ? 'No same-currency comparison products are currently available.'
+      ? (inContext ? 'No same-currency comparison products are currently available for this household-relevant product.' : 'No same-currency comparison products are currently available.')
       : position === 'below-family-average'
-        ? 'The current catalogue price is below the observed family average.'
+        ? (inContext ? 'This household-relevant product is priced below the observed family average per normalized unit.' : 'The current catalogue price is below the observed family average per normalized unit.')
         : position === 'above-family-average'
-          ? 'The current catalogue price is above the observed family average.'
-          : 'The current catalogue price is close to the observed family average.';
+          ? (inContext ? 'This household-relevant product is priced above the observed family average per normalized unit.' : 'The current catalogue price is above the observed family average per normalized unit.')
+          : (inContext ? 'This household-relevant product is close to the observed family average per normalized unit.' : 'The current catalogue price is close to the observed family average per normalized unit.');
 
     return {
       productId: product.id,
