@@ -27,11 +27,24 @@ function saveSession(session: AuthSession | null) {
 }
 
 async function authRequest<T>(path: string, body: unknown): Promise<T> {
-  const response = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
-    method: 'POST',
-    headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 15_000);
+  let response: Response;
+  try {
+    response = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new Error('Authentication is taking too long. Please check the connection and try again.');
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeout);
+  }
   const payload = await response.json().catch(() => null);
   if (!response.ok) {
     const message = (payload as { error_description?: string; msg?: string; message?: string } | null)?.error_description
