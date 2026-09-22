@@ -20,7 +20,6 @@ if(path==='/delivery-intelligence')return (await import('./delivery-intelligence
 if(path==='/pricing-intelligence')return (await import('./pricing-intelligence.js')).default(req,res);
 if(path==='/search')return (await import('./search.js')).default(req,res);
 if(path==='/checkout')return (await import('./checkout.js')).default(req,res);
-if(path==='/cart')return (await import('./cart.js')).default(req,res);
 if(path==='/products'&&req.method==='GET')return json(res,200,{products:(await commerce.listProducts()).map(productDto)}); if(path.startsWith('/products/')&&req.method==='GET')return json(res,200,productDto(await commerce.getProduct(path.slice('/products/'.length))));
 const user=await resolvePrincipal(req);if(!user)return error(res,401,'UNAUTHENTICATED','A valid Supabase Auth session is required.'); if(path==='/basket'&&req.method==='GET')return json(res,200,basketDto(await commerce.getOrCreateBasket(user)));
 if(path==='/basket/items'&&req.method==='POST'){const body=typeof req.body==='string'?JSON.parse(req.body):req.body;if(!body||typeof body.productId!=='string'||!Number.isInteger(body.quantity)||body.quantity<=0)return error(res,400,'VALIDATION_ERROR','productId must be a non-empty string and quantity must be a positive integer.');return json(res,201,basketDto(await commerce.addItem(user,body.productId,body.quantity)));}
