@@ -74,12 +74,21 @@ export function generateBasketIntelligence(
     const quantity = quantityValid ? rawQuantity : 0;
     const productUnavailable = !product || !product.available;
     const currencyMismatch = Boolean(product && line.currency !== product.currency);
+    const unitPrice = Number(line.unitPrice);
+    const cataloguePrice = product ? Number(product.price) : NaN;
+    const priceValid =
+      Number.isFinite(unitPrice) &&
+      Number.isFinite(cataloguePrice);
     const priceMismatch = Boolean(
       product &&
-      Number.isFinite(Number(line.unitPrice)) &&
-      Math.abs(Number(line.unitPrice) - Number(product.price)) > 0.000001,
+      priceValid &&
+      Math.abs(unitPrice - cataloguePrice) > 0.000001,
     );
-    const invalid = !quantityValid || currencyMismatch || priceMismatch;
+    const invalid =
+      !quantityValid ||
+      currencyMismatch ||
+      !priceValid ||
+      priceMismatch;
 
     const status =
       invalid ? 'invalid' :
@@ -91,6 +100,7 @@ export function generateBasketIntelligence(
       !quantityValid ? 'Basket quantity must be a positive whole number.' :
       !product ? 'Product is no longer present in the authoritative catalogue.' :
       !product.available ? 'Product is currently unavailable.' :
+      !priceValid ? 'Basket price must be a finite number.' :
       currencyMismatch ? `Basket currency ${line.currency} does not match the catalogue currency ${product.currency}.` :
       priceMismatch ? `Basket price ${Number(line.unitPrice)} does not match the current catalogue price ${Number(product.price)}.` :
       availableQuantity <= 0 ? 'There is no available stock after reservations.' :
@@ -101,7 +111,7 @@ export function generateBasketIntelligence(
       productId: line.productId,
       productName: product?.name ?? 'Unknown product',
       quantity,
-      unitPrice: finiteNumber(line.unitPrice),
+      unitPrice: finiteNumber(unitPrice),
       currency: line.currency,
       availableQuantity,
       status,
