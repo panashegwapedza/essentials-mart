@@ -64,8 +64,12 @@ export function generateBasketIntelligence(
     const product = products.get(line.productId);
     const availableQuantity = stock.get(line.productId) ?? 0;
     const quantity = Math.max(0, Math.floor(Number(line.quantity) || 0));
+    // Catalogue availability is authoritative and must be evaluated before stock.
+    // A product that is missing or inactive can never be reported as healthy, even
+    // if a stale inventory row still exists.
+    const unavailable = !product || !product.available;
     const status =
-      availableQuantity <= 0 ? 'out-of-stock' :
+      unavailable || availableQuantity <= 0 ? 'out-of-stock' :
       quantity > availableQuantity + 20 ? 'over-stocked' :
       quantity > availableQuantity ? 'low-stock' : 'healthy';
     const issue =
