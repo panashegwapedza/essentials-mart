@@ -77,8 +77,8 @@ export function generateBasketIntelligence(
     const unitPrice = Number(line.unitPrice);
     const cataloguePrice = product ? Number(product.price) : NaN;
     const priceValid =
-      Number.isFinite(unitPrice) &&
-      Number.isFinite(cataloguePrice);
+      !product ||
+      (Number.isFinite(unitPrice) && Number.isFinite(cataloguePrice));
     const priceMismatch = Boolean(
       product &&
       priceValid &&
