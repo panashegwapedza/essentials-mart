@@ -90,7 +90,7 @@ export function generateBasketIntelligence(
       !priceValid ||
       priceMismatch;
 
-    const status =
+    const status: BasketIntelligenceItem['status'] =
       invalid ? 'invalid' :
       productUnavailable || availableQuantity <= 0 ? 'out-of-stock' :
       quantity > availableQuantity + 20 ? 'over-stocked' :
