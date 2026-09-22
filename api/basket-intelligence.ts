@@ -24,25 +24,70 @@ export default async function basketIntelligenceHandler(req: any, res: any) {
     const user = await principal(req);
     if (!user) return json(res, 401, { error: { code: 'UNAUTHENTICATED', message: 'A valid Supabase Auth session is required.' } });
 
-    const body = (req.body ?? {}) as { basket?: { items?: BasketIntelligenceBasketItem[] } };
-    const basketLines = Array.isArray(body.basket?.items)
-      ? body.basket.items.filter((line): line is BasketIntelligenceBasketItem => typeof line?.productId === 'string')
-      : [];
-    if (!basketLines.length) return json(res, 200, { items: [], summary: { itemCount: 0, healthyCount: 0, lowStockCount: 0, outOfStockCount: 0, overRequestedCount: 0, estimatedSubtotal: 0, currency: null }, trace: null });
+    const customers = await supabase<Array<{ id: string }>>(
+      'customers?select=id&external_customer_id=eq.' + encodeURIComponent(user.customerId) + '&limit=1',
+    );
+    const customer = customers[0];
+    if (!customer) return json(res, 409, { error: { code: 'CUSTOMER_NOT_FOUND', message: 'Authenticated customer identity was not found.' } });
 
-    const catalogue = await supabase<Array<{ id: string; name: string; price: number; currency: string; is_active: boolean }>>(
-      'products?select=id,name,price,currency,is_active&limit=1000',
+    const baskets = await supabase<Array<{ id: string; currency: string; status: string }>>(
+      'baskets?select=id,currency,status&customer_id=eq.' + encodeURIComponent(customer.id) + '&status=eq.active&order=updated_at.desc&limit=1',
     );
-    const inventory = await supabase<Array<{ product_id: string; quantity: number; reserved_quantity: number }>>(
-      'inventory?select=product_id,quantity,reserved_quantity&limit=5000',
+    const basket = baskets[0];
+    if (!basket) {
+      return json(res, 200, {
+        items: [],
+        summary: { itemCount: 0, healthyCount: 0, lowStockCount: 0, outOfStockCount: 0, overRequestedCount: 0, invalidCount: 0, estimatedSubtotal: 0, currency: null },
+        trace: null,
+      });
+    }
+
+    const basketRows = await supabase<Array<{ product_id: string; quantity: number; unit_price: number }>>(
+      'basket_items?select=product_id,quantity,unit_price&basket_id=eq.' + encodeURIComponent(basket.id) + '&order=created_at.asc',
     );
-    const products: BasketIntelligenceProduct[] = catalogue.map(product => ({
-      id: product.id, name: product.name, price: Number(product.price), currency: product.currency, available: product.is_active,
+    const basketLines: BasketIntelligenceBasketItem[] = basketRows.map((line) => ({
+      productId: line.product_id,
+      quantity: Number(line.quantity),
+      unitPrice: Number(line.unit_price),
+      currency: basket.currency,
     }));
-    const stock: BasketIntelligenceInventory[] = inventory.map(row => ({
-      productId: row.product_id, quantity: Number(row.quantity), reservedQuantity: Number(row.reserved_quantity),
+
+    if (!basketLines.length) {
+      return json(res, 200, {
+        items: [],
+        summary: { itemCount: 0, healthyCount: 0, lowStockCount: 0, outOfStockCount: 0, overRequestedCount: 0, invalidCount: 0, estimatedSubtotal: 0, currency: basket.currency },
+        trace: null,
+      });
+    }
+
+    const [catalogue, inventory] = await Promise.all([
+      supabase<Array<{ id: string; name: string; price: number; currency: string; is_active: boolean }>>(
+        'products?select=id,name,price,currency,is_active&limit=1000',
+      ),
+      supabase<Array<{ product_id: string; quantity: number; reserved_quantity: number }>>(
+        'inventory?select=product_id,quantity,reserved_quantity&limit=5000',
+      ),
+    ]);
+
+    const products: BasketIntelligenceProduct[] = catalogue.map((product) => ({
+      id: product.id,
+      name: product.name,
+      price: Number(product.price),
+      currency: product.currency,
+      available: product.is_active,
     }));
-    return json(res, 200, runAISociety({ capability: 'basket-intelligence', basket: basketLines, catalogue: products, inventory: stock }));
+    const stock: BasketIntelligenceInventory[] = inventory.map((row) => ({
+      productId: row.product_id,
+      quantity: Number(row.quantity),
+      reservedQuantity: Number(row.reserved_quantity),
+    }));
+
+    return json(res, 200, runAISociety({
+      capability: 'basket-intelligence',
+      basket: basketLines,
+      catalogue: products,
+      inventory: stock,
+    }));
   } catch (error) {
     return json(res, 500, { error: { code: 'BASKET_INTELLIGENCE_FAILED', message: error instanceof Error ? error.message : 'Basket intelligence failed.' } });
   }
