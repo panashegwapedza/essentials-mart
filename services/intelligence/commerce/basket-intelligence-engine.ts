@@ -7,7 +7,7 @@ export type BasketIntelligenceItem = {
   unitPrice: number;
   currency: string;
   availableQuantity: number;
-  status: 'healthy' | 'low-stock' | 'out-of-stock' | 'over-stocked';
+  status: 'healthy' | 'low-stock' | 'out-of-stock' | 'over-stocked' | 'invalid';
   issue: string | null;
   confidence: number;
 };
@@ -20,6 +20,7 @@ export type BasketIntelligenceResult = {
     lowStockCount: number;
     outOfStockCount: number;
     overRequestedCount: number;
+    invalidCount: number;
     estimatedSubtotal: number;
     currency: string | null;
   };
@@ -47,6 +48,11 @@ export type BasketIntelligenceBasketItem = {
   currency: string;
 };
 
+function finiteNumber(value: unknown, fallback = 0): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 export function generateBasketIntelligence(
   basket: BasketIntelligenceBasketItem[],
   catalogue: BasketIntelligenceProduct[],
@@ -56,25 +62,37 @@ export function generateBasketIntelligence(
   const stock = new Map(
     inventory.map((row) => [
       row.productId,
-      Math.max(0, Number(row.quantity) - Number(row.reservedQuantity)),
+      Math.max(0, finiteNumber(row.quantity) - finiteNumber(row.reservedQuantity)),
     ]),
   );
 
   const items = basket.slice(0, 100).map((line) => {
     const product = products.get(line.productId);
     const availableQuantity = stock.get(line.productId) ?? 0;
-    const quantity = Math.max(0, Math.floor(Number(line.quantity) || 0));
-    // Catalogue availability is authoritative and must be evaluated before stock.
-    // A product that is missing or inactive can never be reported as healthy, even
-    // if a stale inventory row still exists.
-    const unavailable = !product || !product.available;
+    const rawQuantity = Number(line.quantity);
+    const quantityValid = Number.isFinite(rawQuantity) && Number.isInteger(rawQuantity) && rawQuantity > 0;
+    const quantity = quantityValid ? rawQuantity : 0;
+    const productUnavailable = !product || !product.available;
+    const currencyMismatch = Boolean(product && line.currency !== product.currency);
+    const priceMismatch = Boolean(
+      product &&
+      Number.isFinite(Number(line.unitPrice)) &&
+      Math.abs(Number(line.unitPrice) - Number(product.price)) > 0.000001,
+    );
+    const invalid = !quantityValid || currencyMismatch || priceMismatch;
+
     const status =
-      unavailable || availableQuantity <= 0 ? 'out-of-stock' :
+      invalid ? 'invalid' :
+      productUnavailable || availableQuantity <= 0 ? 'out-of-stock' :
       quantity > availableQuantity + 20 ? 'over-stocked' :
       quantity > availableQuantity ? 'low-stock' : 'healthy';
+
     const issue =
+      !quantityValid ? 'Basket quantity must be a positive whole number.' :
       !product ? 'Product is no longer present in the authoritative catalogue.' :
       !product.available ? 'Product is currently unavailable.' :
+      currencyMismatch ? `Basket currency ${line.currency} does not match the catalogue currency ${product.currency}.` :
+      priceMismatch ? `Basket price ${Number(line.unitPrice)} does not match the current catalogue price ${Number(product.price)}.` :
       availableQuantity <= 0 ? 'There is no available stock after reservations.' :
       quantity > availableQuantity ? `Basket requests ${quantity} units but only ${availableQuantity} are currently available.` :
       null;
@@ -83,7 +101,7 @@ export function generateBasketIntelligence(
       productId: line.productId,
       productName: product?.name ?? 'Unknown product',
       quantity,
-      unitPrice: Number(line.unitPrice) || 0,
+      unitPrice: finiteNumber(line.unitPrice),
       currency: line.currency,
       availableQuantity,
       status,
@@ -103,6 +121,7 @@ export function generateBasketIntelligence(
       lowStockCount: items.filter((item) => item.status === 'low-stock').length,
       outOfStockCount: items.filter((item) => item.status === 'out-of-stock').length,
       overRequestedCount: items.filter((item) => item.status === 'over-stocked').length,
+      invalidCount: items.filter((item) => item.status === 'invalid').length,
       estimatedSubtotal,
       currency,
     },
