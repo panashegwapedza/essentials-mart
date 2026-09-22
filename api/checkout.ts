@@ -1,5 +1,6 @@
 function json(res:any,status:number,body:unknown){return res.status(status).setHeader('Content-Type','application/json').setHeader('Cache-Control','no-store').json(body);}
 function money(amount:number,currency:string){return{amountMinor:Math.round(Number(amount)*100),currency};}
+import crypto from 'node:crypto';
 export default async function handler(req:any,res:any){
  if(req.method!=='POST')return json(res,405,{error:{code:'METHOD_NOT_ALLOWED',message:'Checkout requires POST.'}});
  try{
@@ -14,21 +15,31 @@ export default async function handler(req:any,res:any){
   const customerId=customers[0].id; const fingerprint='deliveryMethod:'+method;
   const existingKeys=await db('checkout_idempotency_keys?select=idempotency_key,request_fingerprint,order_id&customer_id=eq.'+encodeURIComponent(customerId)+'&idempotency_key=eq.'+encodeURIComponent(idempotencyKey)+'&limit=1');
   if(existingKeys[0]){const existing=existingKeys[0];if(existing.request_fingerprint!==fingerprint)return json(res,409,{error:{code:'IDEMPOTENCY_KEY_REUSED',message:'This Idempotency-Key was already used for a different checkout request.'}});if(existing.order_id){const existingOrders=await db('orders?select=id,status,subtotal,total,currency,delivery_method,delivery_fee,created_at&customer_id=eq.'+encodeURIComponent(customerId)+'&id=eq.'+encodeURIComponent(existing.order_id)+'&limit=1');const existingOrder=existingOrders[0];if(existingOrder){const existingLines=await db('order_items?select=product_id,quantity,unit_price&order_id=eq.'+encodeURIComponent(existingOrder.id)+'&order=created_at.asc');return json(res,200,{id:existingOrder.id,status:existingOrder.status,subtotal:money(existingOrder.subtotal,existingOrder.currency),deliveryMethod:existingOrder.delivery_method,deliveryFee:money(existingOrder.delivery_fee,existingOrder.currency),total:money(existingOrder.total,existingOrder.currency),currency:existingOrder.currency,lines:existingLines.map((x:any)=>({productId:x.product_id,quantity:Number(x.quantity),unitPrice:money(x.unit_price,existingOrder.currency)})),createdAt:existingOrder.created_at});}}}
-  const reservations=await db('checkout_idempotency_keys',{method:'POST',headers:{Prefer:'return=representation,resolution=ignore-duplicates'},body:JSON.stringify({customer_id:customerId,idempotency_key:idempotencyKey,request_fingerprint:fingerprint})});
-  if(!reservations.length){const retryKeys=await db('checkout_idempotency_keys?select=request_fingerprint,order_id&customer_id=eq.'+encodeURIComponent(customerId)+'&idempotency_key=eq.'+encodeURIComponent(idempotencyKey)+'&limit=1');if(retryKeys[0]?.request_fingerprint!==fingerprint)return json(res,409,{error:{code:'IDEMPOTENCY_KEY_REUSED',message:'This Idempotency-Key was already used for a different checkout request.'}});if(retryKeys[0]?.order_id)return json(res,409,{error:{code:'CHECKOUT_ALREADY_COMPLETED',message:'This checkout has already been completed. Please use the returned order.'}});}
   const baskets=await db('baskets?select=id,currency,status&customer_id=eq.'+encodeURIComponent(customerId)+'&status=eq.active&order=updated_at.desc&limit=1'); const basket=baskets[0]; if(!basket)return json(res,400,{error:{code:'BASKET_EMPTY',message:'Your basket is empty.'}});
-  const lines=await db('basket_items?select=product_id,quantity,unit_price,products(id,name,price,currency,is_active)&basket_id=eq.'+encodeURIComponent(basket.id)+'&order=created_at.asc'); if(!lines.length)return json(res,400,{error:{code:'BASKET_EMPTY',message:'Your basket is empty.'}});
-  const products=lines.map((x:any)=>x.products).filter(Boolean); if(products.length!==lines.length)return json(res,409,{error:{code:'PRODUCT_UNAVAILABLE',message:'One or more basket products are no longer available.'}});
-  const bad=products.find((p:any)=>!p.is_active); if(bad)return json(res,409,{error:{code:'PRODUCT_UNAVAILABLE',message:'One or more basket products are no longer available.'}});
-  const subtotal=lines.reduce((s:number,x:any)=>s+Number(x.unit_price)*Number(x.quantity),0); const fees:any={pickup:0,standard:3,express:6}; const fee=fees[method]; const currency=basket.currency||products[0].currency||'USD'; if(products.some((p:any)=>p.currency!==currency))return json(res,409,{error:{code:'CURRENCY_MISMATCH',message:'Basket contains products in different currencies.'}});
-  const total=subtotal+fee;
-  const orderNo='EM-'+Date.now().toString(36).toUpperCase();
-  const orders=await db('orders',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({order_number:orderNo,customer_id:customers[0].id,basket_id:basket.id,status:'pending',payment_status:'pending',currency,subtotal,total,delivery_method:method,delivery_fee:fee})});
-  const order=orders[0]; if(!order)throw new Error('Order could not be created.');
-  const orderItems=lines.map((x:any)=>({order_id:order.id,product_id:x.product_id,product_name:x.products.name,sku:null,quantity:x.quantity,unit_price:x.unit_price,line_total:Number(x.unit_price)*Number(x.quantity)}));
-  await db('order_items',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(orderItems)});
-  await db('checkout_idempotency_keys?customer_id=eq.'+encodeURIComponent(customerId)+'&idempotency_key=eq.'+encodeURIComponent(idempotencyKey),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({order_id:order.id,updated_at:new Date().toISOString()})});
-  await db('baskets?id=eq.'+encodeURIComponent(basket.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:'converted',updated_at:new Date().toISOString()})});
+
+  const orderId=crypto.randomUUID();
+  const rpc=await db('rpc/checkout_basket',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({
+    p_customer_external_id:user.customerId,
+    p_order_id:orderId,
+    p_basket_id:basket.id,
+    p_delivery_method:method,
+    p_idempotency_key:idempotencyKey,
+    p_request_fingerprint:fingerprint,
+  })});
+  const result=Array.isArray(rpc)?rpc[0]:rpc;
+  if(!result)throw new Error('Checkout transaction returned no order.');
+  return json(res,result.idempotent?200:201,{
+    id:result.id,
+    status:result.status,
+    subtotal:result.subtotal,
+    deliveryMethod:result.deliveryMethod,
+    deliveryFee:result.deliveryFee,
+    total:result.total,
+    currency:result.total?.currency??basket.currency,
+    lines:(result.lines??[]).map((x:any)=>({productId:x.productId,quantity:Number(x.quantity),unitPrice:money(x.unitPrice,result.total?.currency??basket.currency)})),
+    createdAt:result.createdAt??null,
+    idempotent:result.idempotent??false,
+  });
   return json(res,201,{id:order.id,status:order.status,subtotal:money(subtotal,currency),deliveryMethod:method,deliveryFee:money(fee,currency),total:money(total,currency),currency,lines:lines.map((x:any)=>({productId:x.product_id,quantity:Number(x.quantity),unitPrice:money(x.unit_price,currency)})),createdAt:order.created_at});
  }catch(error:any){console.error('checkout-api error',error);return json(res,500,{error:{code:error?.code??'CHECKOUT_FAILED',message:error instanceof Error?error.message:'Checkout failed.'}});}
 }
