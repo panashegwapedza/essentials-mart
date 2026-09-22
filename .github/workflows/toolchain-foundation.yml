@@ -50,3 +50,27 @@ jobs:
             echo 'Environment files must not be committed.'
             exit 1
           fi
+
+
+  verifier-2:
+    name: Verifier 2 checkout readiness
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/customer_web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/customer_web/package-lock.json
+
+      - name: Install customer web dependencies
+        run: npm ci
+
+      - name: Execute Verifier 2 tests
+        run: npm test
