@@ -1,0 +1,24 @@
+name: Customer Web Verifier 2
+
+on:
+  push:
+    paths:
+      - "apps/customer_web/**"
+      - ".github/workflows/verifier-2.yml"
+  workflow_dispatch:
+
+jobs:
+  verifier-2:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/customer_web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/customer_web/package-lock.json
+      - run: npm ci
+      - run: npm test
