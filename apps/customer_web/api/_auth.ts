@@ -1,5 +1,3 @@
-import type { AuthenticatedPrincipal } from '../../../services/commerce-api/src/domain.js';
-
 type AuthUser = { id: string; email?: string | null; user_metadata?: Record<string, unknown> | null };
 type CustomerRow = { id: string; auth_user_id: string; external_customer_id: string | null; email: string | null; display_name: string | null };
 
@@ -46,6 +44,8 @@ async function resolveCustomer(user: AuthUser): Promise<CustomerRow> {
   if (!create.ok) throw new Error(`Customer identity creation failed (${create.status}).`); const created = await create.json() as CustomerRow[]; if (created[0]) return created[0];
   const retry = await fetchSupabase(`${url}/rest/v1/customers?${query}`, { headers }); if (!retry.ok) throw new Error(`Customer identity retry failed (${retry.status}).`); const retryRows = await retry.json() as CustomerRow[]; if (!retryRows[0]) throw new Error('Authenticated user has no customer identity.'); return retryRows[0];
 }
+type AuthenticatedPrincipal = { customerId: string; authUserId: string };
+
 export async function principal(req: any): Promise<AuthenticatedPrincipal | null> {
   const token = bearer(req); if (!token) return null; const user = await getAuthUser(token); if (!user?.id) return null; const customer = await resolveCustomer(user);
   return { customerId: customer.external_customer_id ?? customer.id, authUserId: user.id };
