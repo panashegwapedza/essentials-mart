@@ -1,4 +1,4 @@
-import { principal } from '../apps/customer_web/api/_auth.js';
+async function principal(req:any){ const auth=await import('../apps/customer_web/api/_auth.js'); return auth.principal(req); }
 
 type Row = Record<string, any>;
 
