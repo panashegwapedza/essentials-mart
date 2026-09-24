@@ -7,7 +7,7 @@ function error(res:any,status:number,code:string,message:string){
   return json(res,status,{error:{code,message}});
 }
 function productDto(product:any){
-  return {id:product.id,name:product.name,category:product.category||product.productFamily||'Essentials',productFamily:product.productFamily,brand:product.brand||'Essentials',variantLabel:product.variantLabel,sizeLabel:product.sizeLabel,imageUrl:product.imageUrl,price:product.price,available:product.available};
+  return {id:product.id,name:product.name,category:product.category||product.productFamily||'Essentials',productFamily:product.productFamily,brand:product.brand||'Essentials',variantLabel:product.variantLabel,sizeLabel:product.sizeLabel,imageUrl:product.imageUrl,price:product.price,available:product.available,stockQuantity:product.stockQuantity};
 }
 function basketDto(basket:any){return {id:basket.id,lines:basket.lines};}
 function orderDto(order:any){return {id:order.id,status:order.status,subtotal:order.subtotal,deliveryMethod:order.deliveryMethod,deliveryFee:order.deliveryFee,total:order.total,lines:(order.lines??[]).map((line:any)=>({productId:line.productId,quantity:line.quantity,unitPrice:line.unitPrice})),delivery:order.delivery,createdAt:order.createdAt};}
