@@ -6,19 +6,30 @@ import { CommerceApplicationService } from '../services/commerce-api/src/applica
 import { NotificationApplicationService } from '../services/commerce-api/src/application/NotificationApplicationService.js';
 import type { AuthenticatedPrincipal } from '../services/commerce-api/src/domain.js';
 import { devPrincipal, principal as authPrincipal } from '../apps/customer_web/api/_auth.js';
+import householdHandler from './household.js';
+import householdListsHandler from './household-lists.js';
+import householdPantryHandler from './household-pantry.js';
+import intelligenceHandler from './intelligence.js';
+import intelligenceActionHandler from './intelligence-action.js';
+import basketIntelligenceHandler from './basket-intelligence.js';
+import deliveryIntelligenceHandler from './delivery-intelligence.js';
+import pricingIntelligenceHandler from './pricing-intelligence.js';
+import searchHandler from './search.js';
+import healthHandler from './health.js';
+
 const commerce=new CommerceApplicationService(new SupabaseProductRepository(),new SupabaseBasketRepository(),new SupabaseOrderRepository(),new SupabaseCheckoutTransaction()); const buckPay=new BuckPayApplicationService(new SupabaseBuckPayRepository()); const notifications=new NotificationApplicationService(new SupabaseNotificationRepository());
 function json(res:any,status:number,body:unknown){res.status(status).setHeader('Content-Type','application/json').send(JSON.stringify(body));} function error(res:any,status:number,code:string,message:string){return json(res,status,{error:{code,message}});} function productDto(product:any){return{id:product.id,name:product.name,category:product.category||product.productFamily||'Essentials',productFamily:product.productFamily,brand:product.brand||'Essentials',variantLabel:product.variantLabel,sizeLabel:product.sizeLabel,imageUrl:product.imageUrl,price:product.price,available:product.available};} function basketDto(basket:any){return{id:basket.id,lines:basket.lines};} function orderDto(order:any,delivery?:any){return{id:order.id,status:order.status,total:order.total,subtotal:order.subtotal,deliveryMethod:order.deliveryMethod,deliveryFee:order.deliveryFee,createdAt:order.createdAt,lines:order.lines,...(delivery?{delivery}: {})};}
 async function deliveryDto(orderId:string,customerId:string){const deliveries=await supabaseRest<any[]>(`deliveries?select=id,status,tracking_reference,scheduled_for,delivered_at&order_id=eq.${encodeURIComponent(orderId)}&customer_id=eq.${encodeURIComponent(customerId)}&limit=1`);const delivery=deliveries[0];if(!delivery)return null;const history=await supabaseRest<any[]>(`delivery_status_history?select=from_status,to_status,tracking_reference,changed_at&order_id=eq.${encodeURIComponent(orderId)}&customer_id=eq.${encodeURIComponent(customerId)}&order=changed_at.asc`);return{status:delivery.status,trackingReference:delivery.tracking_reference??undefined,scheduledFor:delivery.scheduled_for??undefined,deliveredAt:delivery.delivered_at??undefined,history:history.map(h=>({fromStatus:h.from_status??null,toStatus:h.to_status,trackingReference:h.tracking_reference??undefined,changedAt:h.changed_at}))};} function notificationDto(notification:any){return{id:notification.id,type:notification.type,title:notification.title,body:notification.body,status:notification.status,aggregateType:notification.aggregateType,aggregateId:notification.aggregateId,actionType:notification.actionType,actionTarget:notification.actionTarget,createdAt:notification.createdAt};} function requestPath(req:any){const url=typeof req.url==='string'?req.url:'';const pathname=url.split('?')[0];if(pathname.startsWith('/api/'))return decodeURIComponent(pathname.slice('/api'.length));if(pathname==='/api')return'/';const raw=typeof req.query?.path==='string'?`/${req.query.path}`:Array.isArray(req.query?.path)?`/${req.query.path.join('/')}`:'/';return decodeURIComponent(raw);} async function resolvePrincipal(req:any):Promise<AuthenticatedPrincipal|null>{const dev=devPrincipal(req);if(dev)return dev;return authPrincipal(req);}
-export default async function handler(req:any,res:any){res.setHeader('Access-Control-Allow-Origin','*');res.setHeader('Access-Control-Allow-Methods','GET,POST,DELETE,OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization, x-dev-customer-id, Idempotency-Key');res.setHeader('Vary','Origin, Authorization');if(req.method==='OPTIONS')return res.status(204).end();const path=requestPath(req);try{
-if(path==='/household')return (await import('./household.js')).default(req,res);
-if(path==='/household-lists')return (await import('./household-lists.js')).default(req,res);
-if(path==='/household-pantry')return (await import('./household-pantry.js')).default(req,res);
-if(path==='/intelligence')return (await import('./intelligence.js')).default(req,res);
-if(path==='/intelligence-action')return (await import('./intelligence-action.js')).default(req,res);
-if(path==='/basket-intelligence')return (await import('./basket-intelligence.js')).default(req,res);
-if(path==='/delivery-intelligence')return (await import('./delivery-intelligence.js')).default(req,res);
-if(path==='/pricing-intelligence')return (await import('./pricing-intelligence.js')).default(req,res);
-if(path==='/search')return (await import('./search.js')).default(req,res);
+export default async function handler(req:any,res:any){res.setHeader('Access-Control-Allow-Origin','*');res.setHeader('Access-Control-Allow-Methods','GET,POST,DELETE,OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization, x-dev-customer-id, Idempotency-Key');res.setHeader('Vary','Origin, Authorization');if(req.method==='OPTIONS')return res.status(204).end();const path=requestPath(req);try{if(path==='/health')return healthHandler(req,res);
+if(path==='/household')return householdHandler(req,res);
+if(path==='/household-lists')return householdListsHandler(req,res);
+if(path==='/household-pantry')return householdPantryHandler(req,res);
+if(path==='/intelligence')return intelligenceHandler(req,res);
+if(path==='/intelligence-action')return intelligenceActionHandler(req,res);
+if(path==='/basket-intelligence')return basketIntelligenceHandler(req,res);
+if(path==='/delivery-intelligence')return deliveryIntelligenceHandler(req,res);
+if(path==='/pricing-intelligence')return pricingIntelligenceHandler(req,res);
+if(path==='/search')return searchHandler(req,res);
 if(path==='/products'&&req.method==='GET')return json(res,200,{products:(await commerce.listProducts()).map(productDto)}); if(path.startsWith('/products/')&&req.method==='GET')return json(res,200,productDto(await commerce.getProduct(path.slice('/products/'.length))));
 const user=await resolvePrincipal(req);if(!user)return error(res,401,'UNAUTHENTICATED','A valid Supabase Auth session is required.'); if(path==='/basket'&&req.method==='GET')return json(res,200,basketDto(await commerce.getOrCreateBasket(user)));
 if(path==='/basket/items'&&req.method==='POST'){const body=typeof req.body==='string'?JSON.parse(req.body):req.body;if(!body||typeof body.productId!=='string'||!Number.isInteger(body.quantity)||body.quantity<=0)return error(res,400,'VALIDATION_ERROR','productId must be a non-empty string and quantity must be a positive integer.');return json(res,201,basketDto(await commerce.addItem(user,body.productId,body.quantity)));}
