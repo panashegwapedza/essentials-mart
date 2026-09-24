@@ -126,7 +126,7 @@ export function generateBasketIntelligence(
   return {
     items,
     summary: {
-      itemCount: items.length,
+      itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
       healthyCount: items.filter((item) => item.status === 'healthy').length,
       lowStockCount: items.filter((item) => item.status === 'low-stock').length,
       outOfStockCount: items.filter((item) => item.status === 'out-of-stock').length,
