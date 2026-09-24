@@ -10,7 +10,7 @@ function productDto(product:any){
   return {id:product.id,name:product.name,category:product.category||product.productFamily||'Essentials',productFamily:product.productFamily,brand:product.brand||'Essentials',variantLabel:product.variantLabel,sizeLabel:product.sizeLabel,imageUrl:product.imageUrl,price:product.price,available:product.available};
 }
 function basketDto(basket:any){return {id:basket.id,lines:basket.lines};}
-function orderDto(order:any){return {id:order.id,status:order.status,total:order.total,subtotal:order.subtotal,deliveryMethod:order.deliveryMethod,deliveryFee:order.deliveryFee,createdAt:order.createdAt,lines:order.lines};}
+function orderDto(order:any){return {id:order.id,status:order.status,subtotal:order.subtotal,deliveryMethod:order.deliveryMethod,deliveryFee:order.deliveryFee,total:order.total,lines:(order.lines??[]).map((line:any)=>({productId:line.productId,quantity:line.quantity,unitPrice:line.unitPrice})),delivery:order.delivery,createdAt:order.createdAt};}
 async function getCommerce(){
   const [{SupabaseProductRepository,SupabaseBasketRepository,SupabaseOrderRepository,SupabaseCheckoutTransaction},{CommerceApplicationService}]=await Promise.all([
     import('../services/commerce-api/src/adapters/supabase/SupabaseCommerceRepositories.js'),
