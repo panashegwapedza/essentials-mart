@@ -1,8 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm --prefix apps/customer_web run build",
+  "buildCommand": "cd apps/customer_web && npm install && npm run build",
   "outputDirectory": "apps/customer_web/dist",
-  "installCommand": "npm install --prefix apps/customer_web",
   "functions": {
     "api/checkout.ts": {
       "runtime": "nodejs22.x"
