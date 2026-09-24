@@ -3,6 +3,14 @@
   "buildCommand": "npm --prefix apps/customer_web run build",
   "outputDirectory": "apps/customer_web/dist",
   "installCommand": "npm install --prefix apps/customer_web",
+  "functions": {
+    "api/checkout.ts": {
+      "runtime": "nodejs22.x"
+    },
+    "api/delivery-intelligence.ts": {
+      "runtime": "nodejs22.x"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/products/:id",
