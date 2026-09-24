@@ -93,7 +93,6 @@ export function generatePricingIntelligence(products: PricingProduct[], context:
           ? 'above-family-average'
           : 'near-family-average';
     const inContext = new Set([...(context.productIds ?? []), ...(context.basketProductIds ?? [])]).has(product.id);
-    const inContext = new Set([...(context.productIds ?? []), ...(context.basketProductIds ?? [])]).has(product.id);
     const reason = index === null
       ? (inContext ? 'No same-currency comparison products are currently available for this household-relevant product.' : 'No same-currency comparison products are currently available.')
       : position === 'below-family-average'
