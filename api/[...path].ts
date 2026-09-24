@@ -22,6 +22,20 @@ async function getSupabaseRest(){
   const {supabaseRest}=await import('../services/commerce-api/src/adapters/supabase/SupabaseCommerceRepositories.js');
   return supabaseRest;
 }
+async function getBuckPay(){
+  const [{SupabaseBuckPayRepository},{BuckPayApplicationService}]=await Promise.all([
+    import('../services/commerce-api/src/adapters/supabase/SupabaseBuckPayRepository.js'),
+    import('../services/commerce-api/src/application/BuckPayApplicationService.js')
+  ]);
+  return new BuckPayApplicationService(new SupabaseBuckPayRepository());
+}
+async function getNotifications(){
+  const [{SupabaseNotificationRepository},{NotificationApplicationService}]=await Promise.all([
+    import('../services/commerce-api/src/adapters/supabase/SupabaseNotificationRepository.js'),
+    import('../services/commerce-api/src/application/NotificationApplicationService.js')
+  ]);
+  return new NotificationApplicationService(new SupabaseNotificationRepository());
+}
 async function resolvePrincipal(req:any):Promise<AuthenticatedPrincipal|null>{
   const {devPrincipal,principal}=await import('../apps/customer_web/api/_auth.js');
   const dev=devPrincipal(req);
@@ -96,6 +110,26 @@ export default async function handler(req:any,res:any){
       return json(res,200,{orders:(await commerce.listOwnedOrders(user)).map(orderDto)});
     if(path.startsWith('/orders/')&&req.method==='GET')
       return json(res,200,orderDto(await commerce.getOwnedOrder(user,path.slice('/orders/'.length))));
+if(path==='/notifications'&&req.method==='GET'){
+      const notifications=await getNotifications();
+      return json(res,200,{notifications:(await notifications.list(user)).map((n:any)=>({id:n.id,type:n.type,title:n.title,body:n.body,status:n.status,aggregateType:n.aggregateType,aggregateId:n.aggregateId,actionType:n.actionType,actionTarget:n.actionTarget,createdAt:n.createdAt}))});
+    }
+    if(path.startsWith('/notifications/')&&path.endsWith('/read')&&req.method==='POST'){
+      const notifications=await getNotifications();
+      const notificationId=path.slice('/notifications/'.length,-'/read'.length);
+      const n=await notifications.markRead(user,notificationId);
+      return json(res,200,{id:n.id,type:n.type,title:n.title,body:n.body,status:n.status,aggregateType:n.aggregateType,aggregateId:n.aggregateId,actionType:n.actionType,actionTarget:n.actionTarget,createdAt:n.createdAt});
+    }
+    if(path==='/buckpay'&&req.method==='GET'){
+      const buckPay=await getBuckPay();
+      const account=await buckPay.getAccount(user);
+      return json(res,200,{balance:account.balance,status:account.status});
+    }
+    if(path==='/buckpay/transactions'&&req.method==='GET'){
+      const buckPay=await getBuckPay();
+      const transactions=await buckPay.getTransactions(user);
+      return json(res,200,{transactions:transactions.map((n:any)=>({id:n.id,type:n.type,amount:n.amount,reference:n.reference,createdAt:n.createdAt}))});
+    }
 
     return error(res,404,'NOT_FOUND','No such route.');
   }catch(err:any){
