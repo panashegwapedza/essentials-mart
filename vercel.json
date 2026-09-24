@@ -2,14 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "cd apps/customer_web && npm install && npm run build",
   "outputDirectory": "apps/customer_web/dist",
-  "functions": {
-    "api/checkout.ts": {
-      "runtime": "nodejs22.x"
-    },
-    "api/delivery-intelligence.ts": {
-      "runtime": "nodejs22.x"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/products/:id",
