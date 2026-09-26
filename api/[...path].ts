@@ -90,6 +90,14 @@ export default async function handler(req:any,res:any){
       return json(res,201,basketDto(await commerce.addItem(user,body.productId,body.quantity)));
     }
 
+    if(path.startsWith('/basket/items/')&&req.method==='PATCH'){
+      const body=typeof req.body==='string'?JSON.parse(req.body):(req.body??{});
+      const productId=path.slice('/basket/items/'.length);
+      if(!productId||!Number.isInteger(body.quantity)||body.quantity<=0)
+        return error(res,400,'VALIDATION_ERROR','productId must be present and quantity must be a positive integer.');
+      return json(res,200,basketDto(await commerce.setItemQuantity(user,productId,body.quantity)));
+    }
+
     if(path.startsWith('/basket/items/')&&req.method==='DELETE')
       return json(res,200,basketDto(await commerce.removeItem(user,path.slice('/basket/items/'.length))));
 
