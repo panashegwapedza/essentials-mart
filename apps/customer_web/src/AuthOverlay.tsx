@@ -17,9 +17,11 @@ export default function AuthOverlay() {
   const syncAccountButton = () => {
     const button = document.querySelector<HTMLButtonElement>('.topbar .quiet-button');
     if (!button) return;
-    const label = getSession()?.user ? 'Account' : 'Log in';
+    const label = getSession()?.user ? 'Account settings' : 'Log in';
     button.dataset.authAccountButton = 'true';
-    if (button.textContent !== label) button.textContent = label;
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+    button.innerHTML = '<span aria-hidden="true" class="account-gear">⚙</span>';
   };
 
   const enhanceAccountSettings = () => {
@@ -58,6 +60,11 @@ export default function AuthOverlay() {
       });
     }
   };
+
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem('essentials-mart-theme');
+    document.documentElement.dataset.theme = savedTheme === 'dark' ? 'dark' : 'light';
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
