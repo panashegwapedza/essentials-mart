@@ -51,12 +51,19 @@ export default function AuthOverlay() {
         placeholder.innerHTML = `
           <p class="eyebrow">ACCOUNT SETTINGS</p>
           <h3>Settings</h3>
-          <div style="display:grid;gap:10px;margin-top:14px">
-            <div style="padding:12px;border:1px solid #dfe7df;border-radius:11px;background:#fff"><strong>Notifications</strong><p style="margin:4px 0 0;color:#617064">Manage order and household notifications from the notification centre.</p></div>
-            <div style="padding:12px;border:1px solid #dfe7df;border-radius:11px;background:#fff"><strong>Privacy & security</strong><p style="margin:4px 0 0;color:#617064">Authentication and commerce access are governed by your Supabase session and account policies.</p></div>
-            <div style="padding:12px;border:1px solid #dfe7df;border-radius:11px;background:#fff"><strong>Sign-in methods</strong><p style="margin:4px 0 0;color:#617064">Email/phone password and configured social sign-in methods are managed through account authentication.</p></div>
+          <div class="settings-list">
+            <div class="settings-card"><div><strong>Appearance</strong><p>Choose how Essentials Mart looks across the app.</p></div><label class="theme-toggle"><span>Night mode</span><input type="checkbox" ${document.documentElement.dataset.theme === 'dark' ? 'checked' : ''} aria-label="Night mode"></label></div>
+            <div class="settings-card"><div><strong>Notifications</strong><p>Manage order and household notifications from the notification centre.</p></div></div>
+            <div class="settings-card"><div><strong>Privacy & security</strong><p>Authentication and commerce access are governed by your Supabase session and account policies.</p></div></div>
+            <div class="settings-card"><div><strong>Sign-in methods</strong><p>Email/phone password and configured social sign-in methods are managed through account authentication.</p></div></div>
           </div>`;
         placeholder.style.display = 'block';
+        const themeInput = placeholder.querySelector<HTMLInputElement>('.theme-toggle input');
+        themeInput?.addEventListener('change', () => {
+          const theme = themeInput.checked ? 'dark' : 'light';
+          document.documentElement.dataset.theme = theme;
+          window.localStorage.setItem('essentials-mart-theme', theme);
+        });
       });
     }
   };
