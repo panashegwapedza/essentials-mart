@@ -22,7 +22,8 @@ export default function AuthOverlay() {
     button.dataset.authAccountButton = 'true';
     button.setAttribute('aria-label', label);
     button.setAttribute('title', label);
-    button.innerHTML = signedIn ? '<span aria-hidden="true" class="account-gear">⚙</span>' : 'Log in';
+    const desiredMarkup = signedIn ? '<span aria-hidden="true" class="account-gear">⚙</span>' : 'Log in';
+    if (button.innerHTML !== desiredMarkup) button.innerHTML = desiredMarkup;
   };
 
   const enhanceAccountSettings = () => {
