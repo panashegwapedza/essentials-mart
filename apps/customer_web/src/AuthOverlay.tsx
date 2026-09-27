@@ -17,11 +17,12 @@ export default function AuthOverlay() {
   const syncAccountButton = () => {
     const button = document.querySelector<HTMLButtonElement>('.topbar .quiet-button');
     if (!button) return;
-    const label = getSession()?.user ? 'Account settings' : 'Log in';
+    const signedIn = Boolean(getSession()?.user);
+    const label = signedIn ? 'Account settings' : 'Log in';
     button.dataset.authAccountButton = 'true';
     button.setAttribute('aria-label', label);
     button.setAttribute('title', label);
-    button.innerHTML = '<span aria-hidden="true" class="account-gear">⚙</span>';
+    button.innerHTML = signedIn ? '<span aria-hidden="true" class="account-gear">⚙</span>' : 'Log in';
   };
 
   const enhanceAccountSettings = () => {
