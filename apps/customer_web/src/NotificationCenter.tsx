@@ -6,8 +6,18 @@ export default function NotificationCenter(){
   const [open,setOpen]=useState(false);
   const unread=useMemo(()=>items.filter(x=>x.status==='unread').length,[items]);
 
-  async function refresh(){
-    try{ setItems(await commerceClient.listNotifications()); }
+  async function refresh(markVisibleAsRead=false){
+    try{
+      const next=await commerceClient.listNotifications();
+      setItems(next);
+      if(markVisibleAsRead){
+        const unreadItems=next.filter(x=>x.status==='unread');
+        if(unreadItems.length){
+          setItems(prev=>prev.map(x=>x.status==='unread'?{...x,status:'read'}:x));
+          await Promise.all(unreadItems.map(x=>commerceClient.markNotificationRead(x.id).catch(()=>null)));
+        }
+      }
+    }
     catch{ /* AuthOverlay handles authentication; notification centre stays non-blocking. */ }
   }
 
@@ -31,7 +41,7 @@ export default function NotificationCenter(){
   }
 
   return <>
-    <button type="button" aria-label={`Notifications${unread?` (${unread} unread)`:''}`} onClick={()=>setOpen(true)} style={{position:'fixed',right:18,top:82,zIndex:40,border:'1px solid rgba(20,40,30,.12)',borderRadius:999,padding:'10px 14px',background:'#fff',boxShadow:'0 10px 30px rgba(20,40,30,.12)',cursor:'pointer',fontWeight:700}}>
+    <button type="button" aria-label={`Notifications${unread?` (${unread} unread)`:''}`} onClick={()=>{setOpen(true);void refresh(true);}} style={{position:'fixed',right:18,top:82,zIndex:40,border:'1px solid rgba(20,40,30,.12)',borderRadius:999,padding:'10px 14px',background:'#fff',boxShadow:'0 10px 30px rgba(20,40,30,.12)',cursor:'pointer',fontWeight:700}}>
       Notifications{unread>0&&<span style={{marginLeft:8,minWidth:20,height:20,display:'inline-flex',alignItems:'center',justifyContent:'center',borderRadius:999,background:'#173b2a',color:'#fff',fontSize:12}}>{unread}</span>}
     </button>
     {open&&<>
