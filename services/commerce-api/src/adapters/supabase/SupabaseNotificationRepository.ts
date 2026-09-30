@@ -21,7 +21,7 @@ function map(row: any): NotificationRecord {
 export class SupabaseNotificationRepository implements NotificationRepository {
   async listForCustomer(customerId: CustomerId, includeArchived = false) {
     const rows = await supabaseRest<any[]>(
-      `notifications?select=id,customer_id,type,title,body,aggregate_type,aggregate_id,action_type,action_target,status,created_at,customers!inner(external_customer_id)&customers.external_customer_id=eq.${encodeURIComponent(customerId)}&${includeArchived ? "" : "status=neq.archived&"}order=created_at.desc&limit=100`,
+      `notifications?select=id,customer_id,type,title,body,aggregate_type,aggregate_id,action_type,action_target,status,created_at,customers!inner(external_customer_id)&customers.external_customer_id=eq.${encodeURIComponent(customerId)}&${includeArchived ? "" : "status=neq.archived&dismissed_at=is.null&"}order=created_at.desc&limit=100`,
     );
     return rows.map(map);
   }
