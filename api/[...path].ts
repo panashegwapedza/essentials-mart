@@ -115,7 +115,7 @@ export default async function handler(req:any,res:any){
     }
 
     if(path==='/orders'&&req.method==='GET')
-      return json(res,200,{orders:(await commerce.listOwnedOrders(user)).map(orderDto)});
+      return json(res,200,{orders:await Promise.all((await commerce.listOwnedOrders(user)).map(orderDto))});
     if(path.startsWith('/orders/')&&req.method==='GET')
       return json(res,200,await orderDto(await commerce.getOwnedOrder(user,path.slice('/orders/'.length))));
 if(path==='/notifications'&&req.method==='GET'){
