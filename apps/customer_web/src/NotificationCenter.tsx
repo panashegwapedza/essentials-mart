@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { commerceClient, type Notification } from './api/commerce';
 
+const HIDDEN_NOTIFICATIONS_KEY='essentials-mart:archived-notification-ids';
+function hiddenIds():Set<string>{try{return new Set(JSON.parse(localStorage.getItem(HIDDEN_NOTIFICATIONS_KEY)||'[]'));}catch{return new Set();}}
+function rememberHidden(ids:string[]){const next=hiddenIds();ids.forEach(id=>next.add(id));localStorage.setItem(HIDDEN_NOTIFICATIONS_KEY,JSON.stringify([...next]));}
+
 export default function NotificationCenter(){
   const [items,setItems]=useState<Notification[]>([]);
   const [open,setOpen]=useState(false);
@@ -15,7 +19,8 @@ export default function NotificationCenter(){
       const next=await commerceClient.listNotifications();
       // The active panel must never display archived notifications, even if an
       // older API/client response contains them.
-      setItems(next.filter(x=>x.status!=='archived'));
+      const hidden=hiddenIds();
+      setItems(next.filter(x=>x.status!=='archived'&&!hidden.has(x.id)));
     }
     catch{ /* AuthOverlay handles authentication; notification centre stays non-blocking. */ }
   }
@@ -27,12 +32,15 @@ export default function NotificationCenter(){
     setBusy(true);
     setActionError(null);
     try{
+      const ids=items.map(x=>x.id);
       await commerceClient.clearNotifications();
+      rememberHidden(ids);
       const [active,archived]=await Promise.all([
         commerceClient.listNotifications(),
         commerceClient.listNotificationHistory()
       ]);
-      setItems(active.filter(x=>x.status!=='archived'));
+      const hidden=hiddenIds();
+      setItems(active.filter(x=>x.status!=='archived'&&!hidden.has(x.id)));
       setHistory(archived);
     }catch(e){
       setActionError(e instanceof Error?e.message:'Could not clear notifications.');
@@ -46,6 +54,7 @@ export default function NotificationCenter(){
     setActionError(null);
     try{
       const archived=await commerceClient.dismissNotification(notification.id);
+      rememberHidden([notification.id]);
       setItems(prev=>prev.filter(x=>x.id!==notification.id));
       setHistory(prev=>[archived,...prev.filter(x=>x.id!==archived.id)]);
     }catch(e){
