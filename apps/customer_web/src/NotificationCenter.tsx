@@ -13,14 +13,47 @@ export default function NotificationCenter(){
   async function refresh(){
     try{
       const next=await commerceClient.listNotifications();
-      setItems(next);    }
+      // The active panel must never display archived notifications, even if an
+      // older API/client response contains them.
+      setItems(next.filter(x=>x.status!=='archived'));
+    }
     catch{ /* AuthOverlay handles authentication; notification centre stays non-blocking. */ }
   }
 
   useEffect(()=>{ void refresh(); const timer=window.setInterval(()=>void refresh(),20000); return()=>window.clearInterval(timer); },[]);
 
-  async function clearAll(){if(busy)return;setBusy(true);setActionError(null);try{await commerceClient.clearNotifications();setItems([]);setHistory(await commerceClient.listNotificationHistory());}catch(e){setActionError(e instanceof Error?e.message:'Could not clear notifications.');}finally{setBusy(false);}}
-  async function dismiss(notification:Notification){if(busy)return;setBusy(true);setActionError(null);try{await commerceClient.dismissNotification(notification.id);setItems(prev=>prev.filter(x=>x.id!==notification.id));}catch(e){setActionError(e instanceof Error?e.message:'Could not remove notification.');}finally{setBusy(false);}}
+  async function clearAll(){
+    if(busy)return;
+    setBusy(true);
+    setActionError(null);
+    try{
+      await commerceClient.clearNotifications();
+      const [active,archived]=await Promise.all([
+        commerceClient.listNotifications(),
+        commerceClient.listNotificationHistory()
+      ]);
+      setItems(active.filter(x=>x.status!=='archived'));
+      setHistory(archived);
+    }catch(e){
+      setActionError(e instanceof Error?e.message:'Could not clear notifications.');
+    }finally{
+      setBusy(false);
+    }
+  }
+  async function dismiss(notification:Notification){
+    if(busy)return;
+    setBusy(true);
+    setActionError(null);
+    try{
+      const archived=await commerceClient.dismissNotification(notification.id);
+      setItems(prev=>prev.filter(x=>x.id!==notification.id));
+      setHistory(prev=>[archived,...prev.filter(x=>x.id!==archived.id)]);
+    }catch(e){
+      setActionError(e instanceof Error?e.message:'Could not remove notification.');
+    }finally{
+      setBusy(false);
+    }
+  }
   async function showHistory(){try{setHistory(await commerceClient.listNotificationHistory());setHistoryOpen(true);setActionError(null);}catch(e){setActionError(e instanceof Error?e.message:'Could not load notification history.');}}
 
   async function openNotification(notification:Notification){
