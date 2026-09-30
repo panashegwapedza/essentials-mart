@@ -19,9 +19,9 @@ function map(row: any): NotificationRecord {
 }
 
 export class SupabaseNotificationRepository implements NotificationRepository {
-  async listForCustomer(customerId: CustomerId) {
+  async listForCustomer(customerId: CustomerId, includeArchived = false) {
     const rows = await supabaseRest<any[]>(
-      `notifications?select=id,customer_id,type,title,body,aggregate_type,aggregate_id,action_type,action_target,status,created_at,customers!inner(external_customer_id)&customers.external_customer_id=eq.${encodeURIComponent(customerId)}&order=created_at.desc&limit=50`,
+      `notifications?select=id,customer_id,type,title,body,aggregate_type,aggregate_id,action_type,action_target,status,created_at,customers!inner(external_customer_id)&customers.external_customer_id=eq.${encodeURIComponent(customerId)}&${includeArchived ? "" : "status=neq.archived&"}order=created_at.desc&limit=100`,
     );
     return rows.map(map);
   }
@@ -36,5 +36,18 @@ export class SupabaseNotificationRepository implements NotificationRepository {
       { method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify({ status: "read", read_at: new Date().toISOString() }) },
     );
     return updated[0] ? map({ ...updated[0], customers: { external_customer_id: customerId } }) : null;
+  }
+
+  async archive(customerId: CustomerId, notificationId: string) {
+    const rows = await supabaseRest<any[]>(`notifications?select=id,customer_id,type,title,body,aggregate_type,aggregate_id,action_type,action_target,status,created_at,customers!inner(external_customer_id)&id=eq.${encodeURIComponent(notificationId)}&customers.external_customer_id=eq.${encodeURIComponent(customerId)}&limit=1`);
+    if (!rows[0]) return null;
+    const updated = await supabaseRest<any[]>(`notifications?id=eq.${encodeURIComponent(notificationId)}&customer_id=eq.${encodeURIComponent(rows[0].customer_id)}`,{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify({status:"archived",dismissed_at:new Date().toISOString()})});
+    return updated[0] ? map({ ...updated[0], customers:{external_customer_id:customerId} }) : null;
+  }
+
+  async archiveAll(customerId: CustomerId) {
+    const customers = await supabaseRest<any[]>(`customers?select=id&external_customer_id=eq.${encodeURIComponent(customerId)}&limit=1`);
+    if (!customers[0]) return;
+    await supabaseRest(`notifications?customer_id=eq.${customers[0].id}&status=neq.archived`,{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({status:"archived",dismissed_at:new Date().toISOString()})});
   }
 }
