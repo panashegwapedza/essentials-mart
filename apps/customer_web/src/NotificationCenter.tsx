@@ -52,13 +52,19 @@ export default function NotificationCenter(){
     if(busy)return;
     setBusy(true);
     setActionError(null);
+    // Remove it immediately so the notification cannot remain on screen while
+    // the archive request is travelling to the server. Restore it only if the
+    // server rejects the dismissal.
+    setItems(prev=>prev.filter(x=>x.id!==notification.id));
+    rememberHidden([notification.id]);
     try{
       const archived=await commerceClient.dismissNotification(notification.id);
-      rememberHidden([notification.id]);
-      setItems(prev=>prev.filter(x=>x.id!==notification.id));
       setHistory(prev=>[archived,...prev.filter(x=>x.id!==archived.id)]);
     }catch(e){
-      setActionError(e instanceof Error?e.message:'Could not remove notification.');
+      const message=e instanceof Error?e.message:'Could not remove notification.';
+      setActionError(message);
+      localStorage.setItem(HIDDEN_NOTIFICATIONS_KEY,JSON.stringify([...hiddenIds()].filter(id=>id!==notification.id)));
+      setItems(prev=>prev.some(x=>x.id===notification.id)?prev:[notification,...prev]);
     }finally{
       setBusy(false);
     }
@@ -90,7 +96,7 @@ export default function NotificationCenter(){
       <button type="button" aria-label="Close notifications" onClick={()=>setOpen(false)} style={{position:'fixed',inset:0,zIndex:44,border:0,background:'rgba(0,0,0,.18)'}}/>
       <aside style={{position:'fixed',right:0,top:0,bottom:0,width:'min(420px,92vw)',zIndex:45,background:'#fff',boxShadow:'-20px 0 60px rgba(0,0,0,.18)',padding:24,overflowY:'auto'}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}><div><div style={{fontSize:11,letterSpacing:'.14em',fontWeight:800,opacity:.55}}>NOTIFICATIONS</div><h2 style={{margin:'6px 0 0'}}>Updates</h2></div><div style={{display:'flex',gap:8}}><button type="button" disabled={busy} onClick={()=>void showHistory()} style={{border:'1px solid rgba(20,40,30,.12)',background:'#fff',borderRadius:10,padding:'7px 10px',cursor:'pointer'}}>History</button><button type="button" disabled={busy} onClick={()=>void clearAll()} style={{border:'1px solid rgba(20,40,30,.12)',background:'#fff',borderRadius:10,padding:'7px 10px',cursor:'pointer'}}>Clear</button><button type="button" onClick={()=>setOpen(false)} style={{border:0,background:'transparent',fontSize:28,cursor:'pointer'}}>×</button></div></div>
-        {items.length===0?<p style={{opacity:.65}}>No notifications yet.</p>:<div style={{display:'grid',gap:10}}>{items.map(item=><div key={item.id} style={{position:'relative'}}><button type="button" onClick={()=>void openNotification(item)} style={{textAlign:'left',border:'1px solid rgba(20,40,30,.1)',borderRadius:16,padding:14,background:item.status==='unread'?'#f1f7f3':'#fff',cursor:item.actionType?'pointer':'default'}}><strong style={{display:'block'}}>{item.title}</strong><span style={{display:'block',marginTop:5,opacity:.75,lineHeight:1.4}}>{item.body}</span><small style={{display:'block',marginTop:8,opacity:.5}}>{new Date(item.createdAt).toLocaleString()}</small></button><button type="button" aria-label="Dismiss notification" onClick={()=>void dismiss(item)} style={{position:'absolute',right:10,top:10,border:0,background:'transparent',fontSize:20,cursor:'pointer',opacity:.6}}>×</button></div>)}</div>}
+        {items.length===0?<p style={{opacity:.65}}>No notifications yet.</p>:<div style={{display:'grid',gap:10}}>{items.map(item=><div key={item.id} style={{position:'relative'}}><button type="button" onClick={()=>void openNotification(item)} style={{textAlign:'left',border:'1px solid rgba(20,40,30,.1)',borderRadius:16,padding:14,background:item.status==='unread'?'#f1f7f3':'#fff',cursor:item.actionType?'pointer':'default'}}><strong style={{display:'block'}}>{item.title}</strong><span style={{display:'block',marginTop:5,opacity:.75,lineHeight:1.4}}>{item.body}</span><small style={{display:'block',marginTop:8,opacity:.5}}>{new Date(item.createdAt).toLocaleString()}</small></button><button type="button" aria-label="Dismiss notification" title="Dismiss notification" disabled={busy} onClick={(event)=>{event.preventDefault();event.stopPropagation();void dismiss(item)}} style={{position:'absolute',right:6,top:6,zIndex:3,width:34,height:34,border:'1px solid rgba(20,40,30,.10)',borderRadius:999,background:'#fff',fontSize:20,lineHeight:1,cursor:busy?'not-allowed':'pointer',opacity:busy?.45:.7,display:'grid',placeItems:'center'}}>×</button></div>)}</div>}
       </aside>
       {historyOpen&&<div style={{position:'fixed',inset:0,zIndex:50,background:'rgba(0,0,0,.22)',display:'grid',placeItems:'center',padding:20}}><section style={{width:'min(620px,94vw)',maxHeight:'80vh',overflowY:'auto',background:'#fff',borderRadius:20,padding:22}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><div><div style={{fontSize:11,letterSpacing:'.14em',fontWeight:800,opacity:.55}}>NOTIFICATION HISTORY</div><h2>Previous notifications</h2></div><button type="button" onClick={()=>setHistoryOpen(false)} style={{border:0,background:'transparent',fontSize:26,cursor:'pointer'}}>×</button></div>{history.length===0?<p style={{opacity:.65}}>No archived notifications.</p>:<div style={{display:'grid',gap:10}}>{history.map(item=><div key={item.id} style={{border:'1px solid rgba(20,40,30,.1)',borderRadius:14,padding:14}}><strong>{item.title}</strong><div style={{marginTop:4,opacity:.75}}>{item.body}</div><small style={{display:'block',marginTop:7,opacity:.5}}>{new Date(item.createdAt).toLocaleString()}</small></div>)}</div>}</section></div>}
     </>}
