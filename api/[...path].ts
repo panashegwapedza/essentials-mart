@@ -122,6 +122,7 @@ if(path==='/notifications'&&req.method==='GET'){
       const notifications=await getNotifications();
       return json(res,200,{notifications:(await notifications.list(user)).map((n:any)=>({id:n.id,type:n.type,title:n.title,body:n.body,status:n.status,aggregateType:n.aggregateType,aggregateId:n.aggregateId,actionType:n.actionType,actionTarget:n.actionTarget,createdAt:n.createdAt}))});
     }
+    if(path==='/notifications/mark-all-read'&&req.method==='POST'){ const notifications=await getNotifications(); await notifications.markAllRead(user); return json(res,200,{ok:true}); }
     if(path==='/notifications/history'&&req.method==='GET'){
       const notifications=await getNotifications();
       return json(res,200,{notifications:(await notifications.history(user)).map((n:any)=>({id:n.id,type:n.type,title:n.title,body:n.body,status:n.status,aggregateType:n.aggregateType,aggregateId:n.aggregateId,actionType:n.actionType,actionTarget:n.actionTarget,createdAt:n.createdAt}))});
