@@ -111,7 +111,7 @@ export default async function handler(req:any,res:any){
       if(idempotencyKey!==undefined&&typeof idempotencyKey!=='string')
         return error(res,400,'INVALID_IDEMPOTENCY_KEY','Idempotency-Key must be a single string.');
       const placed=await commerce.checkout(user,method,idempotencyKey);
-      return json(res,201,orderDto(placed));
+      return json(res,201,await orderDto(placed));
     }
 
     if(path==='/orders'&&req.method==='GET')
