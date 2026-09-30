@@ -26,6 +26,12 @@ export class SupabaseNotificationRepository implements NotificationRepository {
     return rows.map(map);
   }
 
+  async markAllRead(customerId: CustomerId) {
+    const customers = await supabaseRest<any[]>(`customers?select=id&external_customer_id=eq.${encodeURIComponent(customerId)}&limit=1`);
+    if (!customers[0]) return;
+    await supabaseRest(`notifications?customer_id=eq.${customers[0].id}&status=eq.unread`, { method: "PATCH", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ status: "read", read_at: new Date().toISOString() }) });
+  }
+
   async markRead(customerId: CustomerId, notificationId: string) {
     const rows = await supabaseRest<any[]>(
       `notifications?select=id,customer_id,type,title,body,aggregate_type,aggregate_id,action_type,action_target,status,created_at,customers!inner(external_customer_id)&id=eq.${encodeURIComponent(notificationId)}&customers.external_customer_id=eq.${encodeURIComponent(customerId)}&limit=1`,
