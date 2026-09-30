@@ -17,6 +17,7 @@ export type NotificationRecord = {
 export interface NotificationRepository {
   listForCustomer(customerId: CustomerId, includeArchived?: boolean): Promise<NotificationRecord[]>;
   markRead(customerId: CustomerId, notificationId: string): Promise<NotificationRecord | null>;
+  markAllRead(customerId: CustomerId): Promise<void>;
   archive(customerId: CustomerId, notificationId: string): Promise<NotificationRecord | null>;
   archiveAll(customerId: CustomerId): Promise<void>;
 }
