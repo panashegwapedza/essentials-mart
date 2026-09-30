@@ -10,7 +10,7 @@ function productDto(product:any){
   return {id:product.id,name:product.name,category:product.category||product.productFamily||'Essentials',productFamily:product.productFamily,brand:product.brand||'Essentials',variantLabel:product.variantLabel,sizeLabel:product.sizeLabel,imageUrl:product.imageUrl,price:product.price,available:product.available,stockQuantity:product.stockQuantity};
 }
 function basketDto(basket:any){return {id:basket.id,lines:basket.lines};}
-function orderDto(order:any){return {id:order.id,status:order.status,subtotal:order.subtotal,deliveryMethod:order.deliveryMethod,deliveryFee:order.deliveryFee,total:order.total,lines:(order.lines??[]).map((line:any)=>({productId:line.productId,quantity:line.quantity,unitPrice:line.unitPrice})),delivery:order.delivery,createdAt:order.createdAt};}
+async function orderDto(order:any){const ids=[...new Set((order.lines??[]).map((line:any)=>line.productId).filter(Boolean))];let products:any[]=[];if(ids.length){try{const q=ids.map((id:string)=>encodeURIComponent(id)).join(',');products=await getSupabaseRest()<any[]>(`products?select=id,name,brand,variant_label,size_label&id=in.(${q})`);}catch{products=[];}}const byId=new Map(products.map((p:any)=>[p.id,p]));return {id:order.id,status:order.status,subtotal:order.subtotal,deliveryMethod:order.deliveryMethod,deliveryFee:order.deliveryFee,total:order.total,lines:(order.lines??[]).map((line:any)=>{const p=byId.get(line.productId);return {productId:line.productId,quantity:line.quantity,unitPrice:line.unitPrice,product:p?{name:p.name,brand:p.brand,variantLabel:p.variant_label,sizeLabel:p.size_label}:undefined};}),delivery:order.delivery,createdAt:order.createdAt};}
 async function getCommerce(){
   const [{SupabaseProductRepository,SupabaseBasketRepository,SupabaseOrderRepository,SupabaseCheckoutTransaction},{CommerceApplicationService}]=await Promise.all([
     import('../services/commerce-api/src/adapters/supabase/SupabaseCommerceRepositories.js'),
@@ -117,10 +117,20 @@ export default async function handler(req:any,res:any){
     if(path==='/orders'&&req.method==='GET')
       return json(res,200,{orders:(await commerce.listOwnedOrders(user)).map(orderDto)});
     if(path.startsWith('/orders/')&&req.method==='GET')
-      return json(res,200,orderDto(await commerce.getOwnedOrder(user,path.slice('/orders/'.length))));
+      return json(res,200,await orderDto(await commerce.getOwnedOrder(user,path.slice('/orders/'.length))));
 if(path==='/notifications'&&req.method==='GET'){
       const notifications=await getNotifications();
       return json(res,200,{notifications:(await notifications.list(user)).map((n:any)=>({id:n.id,type:n.type,title:n.title,body:n.body,status:n.status,aggregateType:n.aggregateType,aggregateId:n.aggregateId,actionType:n.actionType,actionTarget:n.actionTarget,createdAt:n.createdAt}))});
+    }
+    if(path==='/notifications/history'&&req.method==='GET'){
+      const notifications=await getNotifications();
+      return json(res,200,{notifications:(await notifications.history(user)).map((n:any)=>({id:n.id,type:n.type,title:n.title,body:n.body,status:n.status,aggregateType:n.aggregateType,aggregateId:n.aggregateId,actionType:n.actionType,actionTarget:n.actionTarget,createdAt:n.createdAt}))});
+    }
+    if(path==='/notifications/clear'&&req.method==='POST'){
+      const notifications=await getNotifications(); await notifications.archiveAll(user); return json(res,200,{ok:true});
+    }
+    if(path.startsWith('/notifications/')&&path.endsWith('/dismiss')&&req.method==='POST'){
+      const notifications=await getNotifications(); const notificationId=path.slice('/notifications/'.length,-'/dismiss'.length); const n=await notifications.archive(user,notificationId); return json(res,200,{id:n.id,type:n.type,title:n.title,body:n.body,status:n.status,aggregateType:n.aggregateType,aggregateId:n.aggregateId,actionType:n.actionType,actionTarget:n.actionTarget,createdAt:n.createdAt});
     }
     if(path.startsWith('/notifications/')&&path.endsWith('/read')&&req.method==='POST'){
       const notifications=await getNotifications();
