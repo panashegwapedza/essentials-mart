@@ -10,6 +10,8 @@ export class NotificationApplicationService {
 
   async history(principal: AuthenticatedPrincipal): Promise<NotificationRecord[]> { return this.repository.listForCustomer(principal.customerId, true); }
 
+  async markAllRead(principal: AuthenticatedPrincipal): Promise<void> { await this.repository.markAllRead(principal.customerId); }
+
   async markRead(principal: AuthenticatedPrincipal, notificationId: string): Promise<NotificationRecord> {
     const notification = await this.repository.markRead(principal.customerId, notificationId);
     if (!notification) throw Object.assign(new Error("Notification not found"), { code: "NOT_FOUND" });
