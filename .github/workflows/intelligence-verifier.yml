@@ -1,0 +1,26 @@
+name: Household Intelligence Verifier
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/intelligence/**"
+      - "api/intelligence.ts"
+      - ".github/workflows/intelligence-verifier.yml"
+  workflow_dispatch:
+
+jobs:
+  household-intelligence:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/intelligence
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: services/intelligence/package.json
+      - run: npm install
+      - run: npm test
