@@ -1,16 +1,16 @@
-import { understandSearchQuery, type SearchInterpretation } from './search/search-intelligence-engine';
-import { generateHouseholdRecommendations, type CatalogueProduct, type HouseholdSignal, type RecommendationResult } from './household/household-recommendation-engine';
-import { generateHouseholdPredictions, type PredictionResult, type PredictionSignal } from './household/household-prediction-engine';
-import { generateHouseholdPersonalisation, type PersonalisationResult, type PersonalisationSignal } from './household/household-personalisation-engine';
-import { generateInventoryIntelligence, type InventoryIntelligenceResult, type InventorySignal } from './inventory/inventory-intelligence-engine';
-import { generateHouseholdNeeds, type HouseholdNeed, type HouseholdNeedsResult } from './household/household-needs-engine';
-import { generateInventorySubstitutions, type SubstitutionProduct, type SubstitutionInventory, type SubstitutionResult, type SubstitutionSignal } from './inventory/inventory-substitution-engine';
-import { generateIntelligenceLayer, type IntelligenceLayerInput, type IntelligenceLayerResult } from './core/intelligence-layer-engine';
-import { generateHouseholdIntelligence, type HouseholdIntelligenceInput, type HouseholdIntelligenceResult } from './core/household-intelligence-orchestrator';
-import { prepareCommerceActions, type CommerceActionRequest, type CommerceActionProduct, type CommerceActionInventory, type CommerceActionResult } from './commerce/commerce-action-engine';
-import { generateBasketIntelligence, type BasketIntelligenceBasketItem, type BasketIntelligenceProduct, type BasketIntelligenceInventory, type BasketIntelligenceResult } from './commerce/basket-intelligence-engine';
-import { generateDeliveryIntelligence, type DeliveryIntelligenceRequest, type DeliveryIntelligenceResult } from './commerce/delivery-intelligence-engine';
-import { generatePricingIntelligence, type PricingIntelligenceResult, type PricingProduct } from './pricing/pricing-intelligence-engine';
+import { understandSearchQuery, type SearchInterpretation } from './search/search-intelligence-engine.js';
+import { generateHouseholdRecommendations, type CatalogueProduct, type HouseholdSignal, type RecommendationResult } from './household/household-recommendation-engine.js';
+import { generateHouseholdPredictions, type PredictionResult, type PredictionSignal } from './household/household-prediction-engine.js';
+import { generateHouseholdPersonalisation, type PersonalisationResult, type PersonalisationSignal } from './household/household-personalisation-engine.js';
+import { generateInventoryIntelligence, type InventoryIntelligenceResult, type InventorySignal } from './inventory/inventory-intelligence-engine.js';
+import { generateHouseholdNeeds, type HouseholdNeed, type HouseholdNeedsResult } from './household/household-needs-engine.js';
+import { generateInventorySubstitutions, type SubstitutionProduct, type SubstitutionInventory, type SubstitutionResult, type SubstitutionSignal } from './inventory/inventory-substitution-engine.js';
+import { generateIntelligenceLayer, type IntelligenceLayerInput, type IntelligenceLayerResult } from './core/intelligence-layer-engine.js';
+import { generateHouseholdIntelligence, type HouseholdIntelligenceInput, type HouseholdIntelligenceResult } from './core/household-intelligence-orchestrator.js';
+import { prepareCommerceActions, type CommerceActionRequest, type CommerceActionProduct, type CommerceActionInventory, type CommerceActionResult } from './commerce/commerce-action-engine.js';
+import { generateBasketIntelligence, type BasketIntelligenceBasketItem, type BasketIntelligenceProduct, type BasketIntelligenceInventory, type BasketIntelligenceResult } from './commerce/basket-intelligence-engine.js';
+import { generateDeliveryIntelligence, type DeliveryIntelligenceRequest, type DeliveryIntelligenceResult } from './commerce/delivery-intelligence-engine.js';
+import { generatePricingIntelligence, type PricingIntelligenceResult, type PricingProduct } from './pricing/pricing-intelligence-engine.js';
 
 export type IntelligenceRequest =
   | { capability: 'search-understanding'; query: string; vocabulary?: string[] }
