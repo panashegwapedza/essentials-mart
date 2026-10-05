@@ -1,10 +1,10 @@
 async function principal(req:any){ const auth=await import('../apps/customer_web/api/_auth.js'); return auth.principal(req); }
-import { runAISociety } from '../services/intelligence/ai-society-runtime';
 import type { PricingProduct } from '../services/intelligence/pricing/pricing-intelligence-engine';
 
 export default async function handler(req:any,res:any){
   if(req.method!=='GET')return res.status(405).setHeader('Allow','GET').json({error:{message:'Method not allowed.'}});
   try{
+    const { runAISociety } = await import('../services/intelligence/ai-society-runtime.js');
     if(!await principal(req))return res.status(401).json({error:{code:'UNAUTHENTICATED',message:'A valid Supabase Auth session is required.'}});
     const contextIds=typeof req.query?.productIds==='string'?req.query.productIds.split(',').filter((x:string)=>x.length>0).slice(0,100):[];
     const base=process.env.SUPABASE_URL;
