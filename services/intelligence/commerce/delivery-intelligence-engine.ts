@@ -1,4 +1,4 @@
-import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts';
+import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts.js';
 
 export type DeliveryIntelligenceRequest={basketSubtotal:number;currency:string;selectedMethod:'pickup'|'standard'|'express';availableMethods:Array<'pickup'|'standard'|'express'>};
 export type DeliveryIntelligenceResult={selectedMethod:DeliveryIntelligenceRequest['selectedMethod'];recommendation:'pickup'|'standard'|'express';reason:string;estimatedFee:number;confidence:number;trace:IntelligenceTrace};
