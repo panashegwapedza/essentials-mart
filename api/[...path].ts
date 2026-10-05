@@ -106,8 +106,7 @@ export default async function handler(req:any,res:any){
       const mode=['MANUAL','AI_ASSISTED','AUTOPILOT'].includes(body.mode)?body.mode:'MANUAL';
       if(!storeId)return error(res,400,'VALIDATION_ERROR','storeId is required.');
       const supabaseRest=await getSupabaseRest();
-      const customers=await supabaseRest<any[]>('customers?select=id&auth_user_id=eq.'+encodeURIComponent(user.userId)+'&limit=1');
-      const customerId=customers?.[0]?.id;
+      const customerId=user.customerId;
       if(!customerId)return error(res,404,'CUSTOMER_NOT_FOUND','Customer identity could not be resolved.');
       const layouts=await supabaseRest<any[]>('walk_layouts?select=id,version&store_id=eq.'+encodeURIComponent(storeId)+'&status=eq.active&order=version.desc&limit=1');
       const layout=layouts?.[0];
