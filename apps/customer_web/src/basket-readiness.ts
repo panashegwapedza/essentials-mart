@@ -21,7 +21,7 @@ export function evaluateBasketReadiness(
     readiness.summary &&
     readiness.summary.itemCount !== undefined &&
     (!Number.isInteger(Number(readiness.summary.itemCount)) ||
-      Number(readiness.summary.itemCount) !== readiness.items.length)
+      Number(readiness.summary.itemCount) !== readiness.items.reduce((total: number, item: any) => total + Number(item?.quantity ?? 0), 0))
   ) {
     return { ready: false, reason: 'Basket readiness response is inconsistent.' };
   }
