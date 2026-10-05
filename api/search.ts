@@ -76,6 +76,7 @@ function mapProduct(p:ProductRow,stock:number){
 export default async function searchHandler(req:any,res:any){
  if(req.method!=='GET')return res.status(405).setHeader('Allow','GET').json({error:{message:'Method not allowed.'}});
  try{
+  const { runAISociety } = await import('../services/intelligence/ai-society-runtime.js');
   const raw=typeof req.query?.q==='string'?req.query.q.trim():'';
   if(!raw)return res.status(200).json({query:'',normalizedQuery:'',correctedQuery:null,products:[]});
   const stores=await supabase<Array<{id:string}>>('stores','select=id&code=eq.MAIN&limit=1');
