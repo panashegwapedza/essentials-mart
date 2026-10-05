@@ -1,4 +1,3 @@
-import { runAISociety } from '../services/intelligence/ai-society-runtime';
 import { buildSearchVocabulary } from '../services/intelligence/search/search-intelligence-engine';
 
 type ProductRow={id:string;sku:string;name:string;description:string|null;category:string|null;product_family:string|null;brand:string|null;variant_label:string|null;size_label:string|null;image_url:string|null;price:number;currency:string;is_active:boolean};
