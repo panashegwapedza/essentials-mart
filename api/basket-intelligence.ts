@@ -1,5 +1,4 @@
 async function principal(req:any){ const auth=await import('../apps/customer_web/api/_auth.js'); return auth.principal(req); }
-import { runAISociety } from '../services/intelligence/ai-society-runtime';
 import type { BasketIntelligenceBasketItem, BasketIntelligenceProduct, BasketIntelligenceInventory } from '../services/intelligence/commerce/basket-intelligence-engine';
 
 function json(res: any, status: number, body: unknown) {
@@ -21,6 +20,7 @@ async function supabase<T>(path: string): Promise<T> {
 export default async function basketIntelligenceHandler(req: any, res: any) {
   if (req.method !== 'POST') return res.status(405).setHeader('Allow', 'POST').json({ error: { message: 'Method not allowed.' } });
   try {
+    const { runAISociety } = await import('../services/intelligence/ai-society-runtime.js');
     const user = await principal(req);
     if (!user) return json(res, 401, { error: { code: 'UNAUTHENTICATED', message: 'A valid Supabase Auth session is required.' } });
 
