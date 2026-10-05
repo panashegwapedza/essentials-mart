@@ -1,5 +1,4 @@
 async function principal(req:any){ const auth=await import('../apps/customer_web/api/_auth.js'); return auth.principal(req); }
-import { runAISociety } from '../services/intelligence/ai-society-runtime';
 import type { HouseholdNeed } from '../services/intelligence/household/household-needs-engine';
 import type { HouseholdSignal } from '../services/intelligence/household/household-recommendation-engine';
 import type { PredictionSignal } from '../services/intelligence/household/household-prediction-engine';
