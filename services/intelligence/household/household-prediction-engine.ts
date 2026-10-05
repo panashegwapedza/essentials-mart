@@ -1,5 +1,5 @@
-import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts';
-import type { HouseholdNeed } from './household-needs-engine';
+import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts.js';
+import type { HouseholdNeed } from './household-needs-engine.js';
 
 export type PredictionSignal = {
   signalId: string;
