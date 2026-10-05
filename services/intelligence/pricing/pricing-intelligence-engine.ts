@@ -1,4 +1,4 @@
-import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts';
+import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts.js';
 
 export type PricingProduct = {
   id: string;
