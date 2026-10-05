@@ -8,8 +8,8 @@ import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { PointerEventTypes } from '@babylonjs/core/Events/pointerEvents';
+import type { Product } from './api/commerce';
 
-type Product = { id:string; name:string; category:string; brand?:string; sizeLabel?:string; };
 type Layout = {
   layout:{id:string;storeId:string;version:number};
   aisles:Array<{id:string;name:string;department:string;x:number;z:number;width:number;length:number}>;
