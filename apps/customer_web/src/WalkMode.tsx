@@ -36,7 +36,7 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     return()=>{cancelled=true;};
   },[]);
 
-  useEffect(()=>{if(!storeId)return;let cancelled=false;setLoading(true);setError(null);
+  useEffect(()=>{if(!storeId)return;fetch('/api/walk/sessions',{method:'POST',credentials:'include',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({storeId,mode:'MANUAL'})}).catch(()=>{});},[storeId]);\n\n  useEffect(()=>{if(!storeId)return;let cancelled=false;setLoading(true);setError(null);
     fetch('/api/walk/stores/'+encodeURIComponent(storeId)+'/layout',{credentials:'include',headers:{Accept:'application/json'}})
       .then(async r=>{if(!r.ok)throw new Error('The store layout could not be loaded.');return r.json();})
       .then(data=>{if(!cancelled)setLayout(data);})
