@@ -1,5 +1,5 @@
-import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts';
-import type { HouseholdNeed } from './household-needs-engine';
+import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts.js';
+import type { HouseholdNeed } from './household-needs-engine.js';
 
 export type HouseholdSignal={productId:string|null;productName:string;purchaseCount:number;averageQuantity:number;averageIntervalDays:number;lastPurchasedAt:string;nextExpectedAt:string;confidence:number;classification:'recurring'|'emerging'};
 export type RecommendationCandidate={recommendationId:string;type:'replenishment';productId:string;productName:string;suggestedQuantity:number;reason:string;signal:{source:'household-purchase-history'|'household-needs';purchaseCount:number;averageIntervalDays:number;nextExpectedAt?:string};confidence:number;priority:'high'|'medium'|'low';authority:'recommendation-only'};
