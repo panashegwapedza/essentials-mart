@@ -1,4 +1,4 @@
-import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts';
+import { clampConfidence, createTrace, type IntelligenceTrace } from '../core/intelligence-contracts.js';
 
 export type SubstitutionProduct={id:string;name:string;category:string|null;product_family:string|null;brand:string|null;variant_label:string|null;size_label:string|null;price:number;currency:string;is_active:boolean};
 export type SubstitutionInventory={productId:string;storeId:string;quantity:number;reservedQuantity:number};
