@@ -70,6 +70,27 @@ export default async function handler(req:any,res:any){
       }
     }
 
+    if(path==='/walk/stores'&&req.method==='GET'){
+      const supabaseRest=await getSupabaseRest();
+      const stores=await supabaseRest<any[]>('stores?select=id,code,name,status&status=eq.active&order=name.asc');
+      return json(res,200,{stores:stores??[]});
+    }
+    if(path.startsWith('/walk/stores/')&&path.endsWith('/layout')&&req.method==='GET'){
+      const storeId=decodeURIComponent(path.slice('/walk/stores/'.length,-'/layout'.length));
+      if(!storeId)return error(res,400,'VALIDATION_ERROR','storeId is required.');
+      const supabaseRest=await getSupabaseRest();
+      const layouts=await supabaseRest<any[]>('walk_layouts?select=id,store_id,version,status&store_id=eq.'+encodeURIComponent(storeId)+'&status=eq.active&order=version.desc&limit=1');
+      const layout=layouts?.[0];
+      if(!layout)return error(res,404,'NOT_FOUND','No active Walk Mode layout exists for this store.');
+      const [aisles,positions,nodes,edges]=await Promise.all([
+        supabaseRest<any[]>('walk_aisles?select=id,name,department,x,z,width,length&layout_id=eq.'+encodeURIComponent(layout.id)+'&order=sort_order.asc'),
+        supabaseRest<any[]>('walk_product_positions?select=id,product_id,aisle_id,position_x,position_y,position_z,facing&layout_id=eq.'+encodeURIComponent(layout.id)+'&status=eq.active'),
+        supabaseRest<any[]>('walk_navigation_nodes?select=id,label,node_type,x,y,z,status&layout_id=eq.'+encodeURIComponent(layout.id)+'&order=label.asc'),
+        supabaseRest<any[]>('walk_navigation_edges?select=id,from_node_id,to_node_id,distance,traversal_type,status&layout_id=eq.'+encodeURIComponent(layout.id)+'&status=eq.OPEN')
+      ]);
+      return json(res,200,{layout,aisles:aisles??[],products:positions??[],nodes:nodes??[],edges:edges??[]});
+    }
+
     const commerce=await getCommerce();
 
     if(path==='/products'&&req.method==='GET')
@@ -79,6 +100,25 @@ export default async function handler(req:any,res:any){
 
     const user=await resolvePrincipal(req);
     if(!user)return error(res,401,'UNAUTHENTICATED','A valid Supabase Auth session is required.');
+    if(path==='/walk/sessions'&&req.method==='POST'){
+      const body=typeof req.body==='string'?JSON.parse(req.body):(req.body??{});
+      const storeId=typeof body.storeId==='string'?body.storeId:'';
+      const mode=['MANUAL','AI_ASSISTED','AUTOPILOT'].includes(body.mode)?body.mode:'MANUAL';
+      if(!storeId)return error(res,400,'VALIDATION_ERROR','storeId is required.');
+      const supabaseRest=await getSupabaseRest();
+      const customers=await supabaseRest<any[]>('customers?select=id&auth_user_id=eq.'+encodeURIComponent(user.userId)+'&limit=1');
+      const customerId=customers?.[0]?.id;
+      if(!customerId)return error(res,404,'CUSTOMER_NOT_FOUND','Customer identity could not be resolved.');
+      const layouts=await supabaseRest<any[]>('walk_layouts?select=id,version&store_id=eq.'+encodeURIComponent(storeId)+'&status=eq.active&order=version.desc&limit=1');
+      const layout=layouts?.[0];
+      if(!layout)return error(res,404,'NOT_FOUND','No active Walk Mode layout exists for this store.');
+      const entrances=await supabaseRest<any[]>('walk_navigation_nodes?select=id&layout_id=eq.'+encodeURIComponent(layout.id)+'&node_type=eq.ENTRANCE&limit=1');
+      const payload={customer_id:customerId,store_id:storeId,layout_id:layout.id,layout_version:layout.version,mode,status:'ACTIVE',current_node_id:entrances?.[0]?.id??null};
+      const created=await supabaseRest<any[]>('walk_sessions',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(payload)});
+      return json(res,201,{session:created?.[0]??null});
+    }
+
+
 
     if(path==='/basket'&&req.method==='GET')
       return json(res,200,basketDto(await commerce.getOrCreateBasket(user)));
