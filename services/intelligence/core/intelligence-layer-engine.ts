@@ -1,4 +1,4 @@
-import { clampConfidence, createTrace, type IntelligenceTrace } from './intelligence-contracts';
+import { clampConfidence, createTrace, type IntelligenceTrace } from './intelligence-contracts.js';
 
 export type IntelligenceLayerItem = {
   productId: string;
