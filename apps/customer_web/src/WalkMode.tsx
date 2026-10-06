@@ -17,6 +17,7 @@ import { REFERENCE_LAYOUT } from './store-layout-reference';
 type Layout = {
   layout:{id:string;storeId:string;version:number};
   aisles:Array<{id:string;name:string;department:string;x:number;z:number;width:number;length:number}>;
+  zones?:Array<{id:string;name:string;type:string;x:number;z:number;width:number;depth:number}>;
   products:Array<{id:string;productId:string;aisleId:string;positionX:number;positionY:number;positionZ:number;facing:number}>;
   nodes:Array<{id:string;label:string;nodeType:string;x:number;y:number;z:number}>;
   edges?:Array<{id:string;fromNodeId:string;toNodeId:string;distance:number;traversalType:string;status:string}>;
@@ -66,21 +67,37 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     const entrance=currentLayout.nodes.find(n=>n.nodeType==='ENTRANCE');const camera=new UniversalCamera('walk-camera',new Vector3(entrance?.x??0,1.65,(entrance?.z??-12)-2),scene);cameraRef.current=camera;
     camera.setTarget(new Vector3(entrance?.x??0,1.65,entrance?.z??0));camera.speed=.32;camera.angularSensibility=3500;camera.minZ=.05;camera.attachControl(canvas,true);
     new HemisphericLight('walk-light',new Vector3(0,1,0),scene).intensity=.95;
-    const ground=MeshBuilder.CreateGround('walk-ground',{width:44,height:38},scene);const groundMat=new StandardMaterial('walk-ground-mat',scene);groundMat.diffuseColor=new Color3(.91,.94,.89);ground.material=groundMat;
-    const makeMat=(name:string,color:Color3)=>{const m=new StandardMaterial(name,scene);m.diffuseColor=color;return m;};const shelfMat=makeMat('shelf-mat',new Color3(.30,.34,.30));const aisleMat=makeMat('aisle-mat',new Color3(.78,.80,.75));const productMat=makeMat('product-mat',new Color3(.86,.68,.28));const signMat=makeMat('sign-mat',new Color3(.12,.15,.13));const wallMat=makeMat('wall-mat',new Color3(.23,.24,.22));const counterMat=makeMat('counter-mat',new Color3(.38,.40,.36));const coldMat=makeMat('cold-case-mat',new Color3(.62,.69,.68));const freshMat=makeMat('fresh-case-mat',new Color3(.55,.38,.24));
-    const wallBack=MeshBuilder.CreateBox('back-wall',{width:39,height:2.8,depth:.35},scene);wallBack.position.set(0,1.4,15.7);wallBack.material=wallMat;wallBack.isPickable=false;
-    const wallLeft=MeshBuilder.CreateBox('left-wall',{width:.35,height:2.8,depth:32},scene);wallLeft.position.set(-19.7,1.4,0);wallLeft.material=wallMat;wallLeft.isPickable=false;
-    const wallRight=MeshBuilder.CreateBox('right-wall',{width:.35,height:2.8,depth:32},scene);wallRight.position.set(19.7,1.4,0);wallRight.material=wallMat;wallRight.isPickable=false;
-    currentLayout.aisles.forEach(a=>{const shelf=MeshBuilder.CreateBox('aisle-'+a.id,{width:a.width,height:a.id==='specials'?1.15:1.8,depth:a.length},scene);shelf.position.set(a.x,a.id==='specials'?.58:.9,a.z);shelf.material=a.id==='specials'?counterMat:shelfMat;const floor=MeshBuilder.CreateBox('aisle-floor-'+a.id,{width:a.width+1.4,height:.025,depth:a.length+.6},scene);floor.position.set(a.x,.015,a.z);floor.material=aisleMat;floor.isPickable=false;});
-    const backDepartments=[['dairy',-10.2,coldMat],['frozen',0,coldMat],['meat',10.2,freshMat]] as const;backDepartments.forEach(([id,x,mat])=>{const unit=MeshBuilder.CreateBox('back-'+id,{width:9.1,height:2.05,depth:.8},scene);unit.position.set(x,1.05,14.85);unit.material=mat;unit.isPickable=false;});
-    const sideCases=[[-18.2,7,5.5,1.6,freshMat],[18.2,7,5.5,1.6,freshMat]] as const;sideCases.forEach(([x,z,w,d,mat],i)=>{const unit=MeshBuilder.CreateBox('side-case-'+i,{width:w,height:1.55,depth:d},scene);unit.position.set(x,0.78,z);unit.material=mat;unit.isPickable=false;});
-    const checkoutBase=MeshBuilder.CreateBox('checkout-bank',{width:10.5,height:.9,depth:2.4},scene);checkoutBase.position.set(11.5,.45,-11.2);checkoutBase.material=counterMat;checkoutBase.isPickable=false;for(let i=0;i<4;i++){const lane=MeshBuilder.CreateBox('checkout-lane-'+i,{width:2.1,height:.35,depth:1.3},scene);lane.position.set(7.4+i*2.75,.95,-11.2);lane.material=signMat;lane.isPickable=false;}
-    const cartRack=MeshBuilder.CreateBox('cart-rack',{width:5.2,height:.55,depth:1.4},scene);cartRack.position.set(-14.2,.28,-11.4);cartRack.material=counterMat;cartRack.isPickable=false;for(let i=0;i<5;i++){const cart=MeshBuilder.CreateBox('cart-'+i,{width:.75,height:.32,depth:1.05},scene);cart.position.set(-16.1+i*.85,.62,-11.4);cart.material=signMat;cart.isPickable=false;}
-    const entranceMat=makeMat('entrance-mat',new Color3(.28,.62,.31));const entranceZone=MeshBuilder.CreateBox('entrance-zone',{width:3.2,height:.05,depth:1.4},scene);entranceZone.position.set(0,.05,-15.2);entranceZone.material=entranceMat;entranceZone.isPickable=false;
+    const ground=MeshBuilder.CreateGround('walk-ground',{width:44,height:38},scene);
+    const structureMat=new StandardMaterial('structure-mat',scene);structureMat.diffuseColor=new Color3(.55,.56,.53);ground.material=structureMat;
+    const floorMat=new StandardMaterial('structure-floor-mat',scene);floorMat.diffuseColor=new Color3(.72,.73,.69);
+    const wallMat=new StandardMaterial('structure-wall-mat',scene);wallMat.diffuseColor=new Color3(.28,.29,.27);
+    const zoneMat=new StandardMaterial('structure-zone-mat',scene);zoneMat.diffuseColor=new Color3(.48,.49,.46);
+    const aisleMat=new StandardMaterial('structure-aisle-mat',scene);aisleMat.diffuseColor=new Color3(.63,.64,.60);
+
+    // PART 1 — STRUCTURE ONLY: footprint, perimeter, circulation, aisle blocks and service zones.
+    const wallBack=MeshBuilder.CreateBox('structure-back-wall',{width:39,height:2.8,depth:.35},scene);wallBack.position.set(0,1.4,15.7);wallBack.material=wallMat;wallBack.isPickable=false;
+    const wallLeft=MeshBuilder.CreateBox('structure-left-wall',{width:.35,height:2.8,depth:32},scene);wallLeft.position.set(-19.7,1.4,0);wallLeft.material=wallMat;wallLeft.isPickable=false;
+    const wallRight=MeshBuilder.CreateBox('structure-right-wall',{width:.35,height:2.8,depth:32},scene);wallRight.position.set(19.7,1.4,0);wallRight.material=wallMat;wallRight.isPickable=false;
+
+    const circulation=MeshBuilder.CreateBox('structure-circulation',{width:30,height:.04,depth:28},scene);circulation.position.set(0,.02,0);circulation.material=floorMat;circulation.isPickable=false;
+    currentLayout.aisles.filter(a=>a.id!=='specials').forEach(a=>{
+      const block=MeshBuilder.CreateBox('structure-aisle-'+a.id,{width:a.width,height:.42,depth:a.length},scene);
+      block.position.set(a.x,.21,a.z);block.material=aisleMat;block.isPickable=false;
+      const lane=MeshBuilder.CreateBox('structure-lane-'+a.id,{width:a.width+1.45,height:.025,depth:a.length+.5},scene);
+      lane.position.set(a.x,.025,a.z);lane.material=floorMat;lane.isPickable=false;
+    });
+
+    (currentLayout.zones??[]).forEach(z=>{
+      const zone=MeshBuilder.CreateBox('structure-zone-'+z.id,{width:z.width,height:.5,depth:z.depth},scene);
+      zone.position.set(z.x,.25,z.z);zone.material=zoneMat;zone.isPickable=false;
+    });
+
+    const entrance=MeshBuilder.CreateBox('structure-entrance',{width:4.2,height:.06,depth:1.8},scene);entrance.position.set(0,.06,-15.2);entrance.material=zoneMat;entrance.isPickable=false;
+    const exit=MeshBuilder.CreateBox('structure-exit',{width:3.0,height:.06,depth:1.8},scene);exit.position.set(14.2,.06,-15.2);exit.material=zoneMat;exit.isPickable=false;
+    const cartZone=MeshBuilder.CreateBox('structure-cart-zone',{width:5.8,height:.5,depth:2.2},scene);cartZone.position.set(-14.2,.25,-11.8);cartZone.material=zoneMat;cartZone.isPickable=false;
+    const checkoutZone=MeshBuilder.CreateBox('structure-checkout-zone',{width:11.5,height:.5,depth:3.0},scene);checkoutZone.position.set(10.4,.25,-11.5);checkoutZone.material=zoneMat;checkoutZone.isPickable=false;
+
     const highlight=new HighlightLayer('walk-highlights',scene);highlightRef.current=highlight;
-    currentLayout.products.forEach(p=>{const product=products.find(x=>x.id===p.productId);if(!product)return;const mesh=MeshBuilder.CreateBox('product-'+p.productId,{width:.52,height:.72,depth:.32},scene);mesh.position.set(p.positionX+(p.facing>0?1.7:-1.7),p.positionY,p.positionZ);mesh.material=productMat;mesh.metadata={productId:product.id};});
-    if(!currentLayout.products.length&&products.length){currentLayout.aisles.filter(a=>a.id!=='specials').forEach((a,i)=>{const product=products[i%products.length];const mesh=MeshBuilder.CreateBox('reference-product-'+i,{width:.55,height:.75,depth:.34},scene);mesh.position.set(a.x+a.width/2+.45,.62,a.z-2.5);mesh.material=productMat;mesh.metadata={productId:product.id};});}
-    currentLayout.nodes.filter(n=>['ENTRANCE','CHECKOUT','EXIT'].includes(n.nodeType)).forEach(n=>{const marker=MeshBuilder.CreateBox('marker-'+n.id,{width:1.8,height:.08,depth:.55},scene);marker.position.set(n.x,.08,n.z);marker.material=signMat;marker.isPickable=false;});
     const pointer=scene.onPointerObservable.add(info=>{if(info.type!==PointerEventTypes.POINTERPICK)return;const id=info.pickInfo?.pickedMesh?.metadata?.productId as string|undefined;if(!id)return;const product=products.find(p=>p.id===id);if(product){setSelected(product);const mesh=info.pickInfo?.pickedMesh;if(mesh instanceof Mesh)highlight.addMesh(mesh,Color3.FromHexString('#238a4b'));onProductSelect(product);}});
     engine.runRenderLoop(()=>scene.render());const resize=()=>engine.resize();window.addEventListener('resize',resize);
     return()=>{scene.onPointerObservable.remove(pointer);window.removeEventListener('resize',resize);camera.detachControl();highlight.dispose();scene.dispose();cameraRef.current=null;highlightRef.current=null;engine.dispose();};
