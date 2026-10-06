@@ -59,7 +59,8 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
   },[storeId]);
 
   useEffect(()=>{
-    const canvas=canvasRef.current;if(!canvas||!layout)return;\n    const currentLayout=layout;
+    const canvas=canvasRef.current;if(!canvas||!layout)return;
+    const currentLayout=layout;
     const engine=new Engine(canvas,true,{preserveDrawingBuffer:false,stencil:true});const scene=new Scene(engine);scene.clearColor=new Color3(0.965,0.975,0.955).toColor4(1);
     const entrance=currentLayout.nodes.find(n=>n.nodeType==='ENTRANCE');const camera=new UniversalCamera('walk-camera',new Vector3(entrance?.x??0,1.65,(entrance?.z??-12)-2),scene);cameraRef.current=camera;
     camera.setTarget(new Vector3(entrance?.x??0,1.65,entrance?.z??0));camera.speed=.32;camera.angularSensibility=3500;camera.minZ=.05;camera.attachControl(canvas,true);
