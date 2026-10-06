@@ -85,7 +85,7 @@ export function generatePricingIntelligence(products: PricingProduct[], context:
     });
     const average = peerUnitPrices.length ? peerUnitPrices.reduce((sum, price) => sum + price, 0) / peerUnitPrices.length : null;
     const index = average && average > 0 && productUnitPrice !== null ? productUnitPrice / average : null;
-    const position = index === null
+    const position:PricingInsight['position'] = index === null
       ? 'no-comparison'
       : index < 0.95
         ? 'below-family-average'
