@@ -92,7 +92,7 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
       zone.position.set(z.x,.25,z.z);zone.material=zoneMat;zone.isPickable=false;
     });
 
-    const entrance=MeshBuilder.CreateBox('structure-entrance',{width:4.2,height:.06,depth:1.8},scene);entrance.position.set(0,.06,-15.2);entrance.material=zoneMat;entrance.isPickable=false;
+    const entranceZone=MeshBuilder.CreateBox('structure-entrance',{width:4.2,height:.06,depth:1.8},scene);entranceZone.position.set(0,.06,-15.2);entranceZone.material=zoneMat;entranceZone.isPickable=false;
     const exit=MeshBuilder.CreateBox('structure-exit',{width:3.0,height:.06,depth:1.8},scene);exit.position.set(14.2,.06,-15.2);exit.material=zoneMat;exit.isPickable=false;
     const cartZone=MeshBuilder.CreateBox('structure-cart-zone',{width:5.8,height:.5,depth:2.2},scene);cartZone.position.set(-14.2,.25,-11.8);cartZone.material=zoneMat;cartZone.isPickable=false;
     // CHECKOUT SECTION — built independently to match the reference front-right checkout bank.
