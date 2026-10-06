@@ -1,4 +1,4 @@
-import { buildSearchVocabulary } from '../services/intelligence/search/search-intelligence-engine';
+import { buildSearchVocabulary, type SearchInterpretation } from '../services/intelligence/search/search-intelligence-engine.js';
 
 type ProductRow={id:string;sku:string;name:string;description:string|null;category:string|null;product_family:string|null;brand:string|null;variant_label:string|null;size_label:string|null;image_url:string|null;price:number;currency:string;is_active:boolean};
 
@@ -83,7 +83,7 @@ export default async function searchHandler(req:any,res:any){
   const storeId=stores[0]?.id;
   if(!storeId)return res.status(500).setHeader('Cache-Control','no-store').json({error:{message:'MAIN store is not configured.'}});
   const products=await supabase<ProductRow[]>('products','select=id,sku,name,description,category,product_family,brand,variant_label,size_label,image_url,price,currency,is_active&is_active=eq.true&order=name.asc');
-  const interpretation=runAISociety({capability:'search-understanding',query:raw,vocabulary:buildSearchVocabulary(products)});
+  const interpretation=runAISociety({capability:'search-understanding',query:raw,vocabulary:buildSearchVocabulary(products)}) as SearchInterpretation & {trace:{agentId:string;authority:string}};
   const normalized=interpretation.normalizedQuery;
   const queryTokens=normalized.split(' ').filter(Boolean);
   if(!queryTokens.length)return res.status(200).json({query:raw,normalizedQuery:normalized,correctedQuery:null,products:[]});
