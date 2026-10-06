@@ -5,7 +5,7 @@ type ProductRow={id:string;sku:string;name:string;description:string|null;catego
 async function supabase<T>(table:string,params:string):Promise<T>{
  const url=process.env.SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;
  if(!url||!key)throw new Error('Supabase catalogue configuration is missing.');
- const r=await fetch(`${url.replace(/\\/$/,'')}/rest/v1/${table}?${params}`,{headers:{apikey:key,Authorization:`Bearer ${key}`,Accept:'application/json'}});
+ const r=await fetch(`${url.replace(/\/$/,'')}/rest/v1/${table}?${params}`,{headers:{apikey:key,Authorization:`Bearer ${key}`,Accept:'application/json'}});
  if(!r.ok)throw new Error(`Supabase catalogue request failed (${r.status}).`);
  return r.json() as Promise<T>;
 }
