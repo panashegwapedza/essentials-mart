@@ -119,6 +119,37 @@ export default async function handler(req:any,res:any){
 
 
 
+    if(path.startsWith('/walk/sessions/')&&path.endsWith('/actions')&&req.method==='POST'){
+      const sessionId=decodeURIComponent(path.slice('/walk/sessions/'.length,-'/actions'.length));
+      const body=typeof req.body==='string'?JSON.parse(req.body):(req.body??{});
+      const action=typeof body.action==='string'?body.action:'';
+      const allowed=['MOVE','PAUSE','TAKE_OVER','RESUME','COMPLETE','CANCEL'];
+      if(!sessionId||!allowed.includes(action))return error(res,400,'VALIDATION_ERROR','A valid Walk Mode action is required.');
+      const supabaseRest=await getSupabaseRest();
+      const owned=await supabaseRest<any[]>('walk_sessions?select=id,status,mode&'+'id=eq.'+encodeURIComponent(sessionId)+'&customer_id=eq.'+encodeURIComponent(user.customerId)+'&limit=1');
+      const session=owned?.[0];
+      if(!session)return error(res,404,'NOT_FOUND','Walk Mode session could not be found.');
+      const patch:any={updated_at:new Date().toISOString()};
+      if(action==='PAUSE')patch.status='PAUSED';
+      if(action==='TAKE_OVER')patch.status='TAKEN_OVER';
+      if(action==='RESUME')patch.status='ACTIVE';
+      if(action==='COMPLETE')patch.status='COMPLETED';
+      if(action==='CANCEL')patch.status='CANCELLED';
+      if(action==='MOVE'&&typeof body.nodeId==='string')patch.current_node_id=body.nodeId;
+      const updated=await supabaseRest<any[]>('walk_sessions?id=eq.'+encodeURIComponent(sessionId),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(patch)});
+      return json(res,200,{session:updated?.[0]??null});
+    }
+    if(path.startsWith('/walk/sessions/')&&path.endsWith('/mode')&&req.method==='POST'){
+      const sessionId=decodeURIComponent(path.slice('/walk/sessions/'.length,-'/mode'.length));
+      const body=typeof req.body==='string'?JSON.parse(req.body):(req.body??{});
+      const mode=['MANUAL','AI_ASSISTED','AUTOPILOT'].includes(body.mode)?body.mode:null;
+      if(!sessionId||!mode)return error(res,400,'VALIDATION_ERROR','A valid Walk Mode mode is required.');
+      const supabaseRest=await getSupabaseRest();
+      const owned=await supabaseRest<any[]>('walk_sessions?select=id,status&'+'id=eq.'+encodeURIComponent(sessionId)+'&customer_id=eq.'+encodeURIComponent(user.customerId)+'&limit=1');
+      if(!owned?.[0])return error(res,404,'NOT_FOUND','Walk Mode session could not be found.');
+      const updated=await supabaseRest<any[]>('walk_sessions?id=eq.'+encodeURIComponent(sessionId),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({mode,status:'ACTIVE',updated_at:new Date().toISOString()})});
+      return json(res,200,{session:updated?.[0]??null});
+    }
     if(path==='/basket'&&req.method==='GET')
       return json(res,200,basketDto(await commerce.getOrCreateBasket(user)));
 
