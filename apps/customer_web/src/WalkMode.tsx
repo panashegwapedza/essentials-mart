@@ -95,7 +95,22 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     const entrance=MeshBuilder.CreateBox('structure-entrance',{width:4.2,height:.06,depth:1.8},scene);entrance.position.set(0,.06,-15.2);entrance.material=zoneMat;entrance.isPickable=false;
     const exit=MeshBuilder.CreateBox('structure-exit',{width:3.0,height:.06,depth:1.8},scene);exit.position.set(14.2,.06,-15.2);exit.material=zoneMat;exit.isPickable=false;
     const cartZone=MeshBuilder.CreateBox('structure-cart-zone',{width:5.8,height:.5,depth:2.2},scene);cartZone.position.set(-14.2,.25,-11.8);cartZone.material=zoneMat;cartZone.isPickable=false;
-    const checkoutZone=MeshBuilder.CreateBox('structure-checkout-zone',{width:11.5,height:.5,depth:3.0},scene);checkoutZone.position.set(10.4,.25,-11.5);checkoutZone.material=zoneMat;checkoutZone.isPickable=false;
+    // CHECKOUT SECTION — built independently to match the reference front-right checkout bank.
+    const checkoutFloor=MeshBuilder.CreateBox('checkout-section-floor',{width:12.8,height:.035,depth:5.6},scene);checkoutFloor.position.set(10.1,.035,-10.8);checkoutFloor.material=floorMat;checkoutFloor.isPickable=false;
+    const checkoutBack=MeshBuilder.CreateBox('checkout-section-back',{width:12.2,height:1.0,depth:.45},scene);checkoutBack.position.set(10.1,.5,-13.25);checkoutBack.material=wallMat;checkoutBack.isPickable=false;
+    const checkoutLaneWidth=2.55;
+    for(let i=0;i<4;i++){
+      const x=5.9+i*2.85;
+      const counter=MeshBuilder.CreateBox('checkout-counter-'+i,{width:2.35,height:.82,depth:1.15},scene);counter.position.set(x,.41,-11.75);counter.material=zoneMat;counter.isPickable=false;
+      const conveyor=MeshBuilder.CreateBox('checkout-conveyor-'+i,{width:1.28,height:.12,depth:1.65},scene);conveyor.position.set(x-.22,.9,-11.72);conveyor.material=floorMat;conveyor.isPickable=false;
+      const register=MeshBuilder.CreateBox('checkout-register-'+i,{width:.42,height:.28,depth:.38},scene);register.position.set(x+.55,1.06,-11.55);register.material=wallMat;register.isPickable=false;
+      const divider=MeshBuilder.CreateBox('checkout-divider-'+i,{width:.08,height:1.15,depth:2.0},scene);divider.position.set(x+1.28,.58,-11.5);divider.material=wallMat;divider.isPickable=false;
+      const queue=MeshBuilder.CreateBox('checkout-queue-'+i,{width:2.15,height:.025,depth:2.1},scene);queue.position.set(x,.025,-9.7);queue.material=floorMat;queue.isPickable=false;
+      const lanePostA=MeshBuilder.CreateBox('checkout-post-a-'+i,{width:.10,height:.85,depth:.10},scene);lanePostA.position.set(x-1.0,.43,-8.7);lanePostA.material=wallMat;lanePostA.isPickable=false;
+      const lanePostB=MeshBuilder.CreateBox('checkout-post-b-'+i,{width:.10,height:.85,depth:.10},scene);lanePostB.position.set(x+1.0,.43,-8.7);lanePostB.material=wallMat;lanePostB.isPickable=false;
+    }
+    const checkoutAisle=MeshBuilder.CreateBox('checkout-approach',{width:11.8,height:.025,depth:2.0},scene);checkoutAisle.position.set(10.1,.025,-7.5);checkoutAisle.material=floorMat;checkoutAisle.isPickable=false;
+    const checkoutSign=MeshBuilder.CreateBox('checkout-sign',{width:7.2,height:.42,depth:.18},scene);checkoutSign.position.set(10.1,2.35,-13.0);checkoutSign.material=wallMat;checkoutSign.isPickable=false;
 
     const highlight=new HighlightLayer('walk-highlights',scene);highlightRef.current=highlight;
     const pointer=scene.onPointerObservable.add(info=>{if(info.type!==PointerEventTypes.POINTERPICK)return;const id=info.pickInfo?.pickedMesh?.metadata?.productId as string|undefined;if(!id)return;const product=products.find(p=>p.id===id);if(product){setSelected(product);const mesh=info.pickInfo?.pickedMesh;if(mesh instanceof Mesh)highlight.addMesh(mesh,Color3.FromHexString('#238a4b'));onProductSelect(product);}});
