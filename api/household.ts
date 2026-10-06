@@ -164,7 +164,7 @@ export default async function householdHandler(req: any, res: any) {
         for (const item of order.items) {
           const key = item.product_id ?? item.product_name;
           const entries = productPurchases.get(key) ?? [];
-          entries.push({ at: item.created_at ?? order.created_at, quantity: Number(item.quantity) });
+          entries.push({ at: item.created_at ?? order.createdAt, quantity: Number(item.quantity) });
           productPurchases.set(key, entries);
         }
       }
@@ -249,7 +249,7 @@ export default async function householdHandler(req: any, res: any) {
       // Consolidate trusted household signals into one actionable context. This is
       // descriptive context only: it does not add items to a basket or place orders.
       const now = Date.now();
-      const householdNeeds = [
+      const householdNeeds: Array<{needId:string;type:string;productId:string|null;productName:string|null;priority:'high'|'medium'|'low';reason:string;source:string;confidence?:number;expectedAt?:string;quantity?:number;recurringPurchase?:unknown}> = [
         ...pantryItems
           .filter(item => item.needsAttention)
           .map(item => ({
