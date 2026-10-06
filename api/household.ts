@@ -251,8 +251,8 @@ export default async function householdHandler(req: any, res: any) {
       const now = Date.now();
       const householdNeeds: any[] = [
         ...pantryItems
-          .filter(item => item.needsAttention)
-          .map(item => ({
+          .filter((item:any) => item.needsAttention)
+          .map((item:any) => ({
             needId: 'pantry:' + item.id,
             type: 'pantry-replenishment',
             productId: item.product_id ?? null,
