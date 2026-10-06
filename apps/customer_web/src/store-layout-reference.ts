@@ -5,7 +5,6 @@ export const REFERENCE_LAYOUT = {
     { id: 'pantry', name: 'Pantry', department: 'Grocery', x: -7.0, z: 1.8, width: 2.7, length: 14 },
     { id: 'snacks', name: 'Snacks', department: 'Grocery', x: -2.5, z: 1.8, width: 2.7, length: 14 },
     { id: 'beverages', name: 'Beverages', department: 'Drinks', x: 2.2, z: 1.8, width: 2.7, length: 14 },
-    { id: 'household', name: 'Household', department: 'Home Care', x: 6.9, z: 1.8, width: 2.7, length: 14 },
     { id: 'household', name: 'Household', department: 'Home Care', x: 7.0, z: 1.5, width: 2.7, length: 13.5 },
     { id: 'personal-care', name: 'Personal Care', department: 'Health & Beauty', x: 11.2, z: 2.5, width: 2.7, length: 11.5 }
   ],
