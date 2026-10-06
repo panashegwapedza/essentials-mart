@@ -69,10 +69,19 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     new HemisphericLight('walk-light',new Vector3(0,1,0),scene).intensity=.95;
     // CHECKOUT SECTION ONLY — the first isolated build section from the supplied reference.
     const ground=MeshBuilder.CreateGround('checkout-ground',{width:24,height:16},scene);
-    const floorMat=new StandardMaterial('checkout-floor-mat',scene);floorMat.diffuseColor=new Color3(.72,.73,.69);ground.material=floorMat;
-    const wallMat=new StandardMaterial('checkout-wall-mat',scene);wallMat.diffuseColor=new Color3(.28,.29,.27);
-    const counterMat=new StandardMaterial('checkout-counter-mat',scene);counterMat.diffuseColor=new Color3(.48,.49,.46);
-    const metalMat=new StandardMaterial('checkout-metal-mat',scene);metalMat.diffuseColor=new Color3(.64,.65,.62);
+    const floorMat=new StandardMaterial('checkout-floor-mat',scene);floorMat.diffuseColor=new Color3(.86,.87,.83);floorMat.specularColor=new Color3(.18,.18,.16);floorMat.roughness=.38;ground.material=floorMat;
+    const wallMat=new StandardMaterial('checkout-wall-mat',scene);wallMat.diffuseColor=new Color3(.18,.20,.18);wallMat.specularColor=new Color3(.08,.08,.07);
+    const counterMat=new StandardMaterial('checkout-counter-mat',scene);counterMat.diffuseColor=new Color3(.34,.38,.34);counterMat.specularColor=new Color3(.16,.17,.15);counterMat.roughness=.3;
+    const metalMat=new StandardMaterial('checkout-metal-mat',scene);metalMat.diffuseColor=new Color3(.72,.74,.70);metalMat.specularColor=new Color3(.65,.67,.63);metalMat.roughness=.18;
+    const accentMat=new StandardMaterial('checkout-accent-mat',scene);accentMat.diffuseColor=new Color3(.17,.45,.25);accentMat.specularColor=new Color3(.12,.16,.12);
+    const warmMat=new StandardMaterial('checkout-warm-mat',scene);warmMat.diffuseColor=new Color3(.76,.63,.40);warmMat.specularColor=new Color3(.22,.18,.12);warmMat.roughness=.28;
+
+    const hemi=new HemisphericLight('checkout-fill-light',new Vector3(0,1,0),scene);hemi.intensity=.72;hemi.diffuse=new Color3(.96,.98,.94);hemi.groundColor=new Color3(.28,.30,.27);
+    const key=new DirectionalLight('checkout-key-light',new Vector3(-.35,-1,.55),scene);key.position=new Vector3(-8,12,4);key.intensity=1.15;key.diffuse=new Color3(1,.93,.80);
+    const shadowGen=new ShadowGenerator(1024,key);shadowGen.useBlurExponentialShadowMap=true;shadowGen.blurKernel=24;shadowGen.bias=.001;shadowGen.normalBias=.02;
+    const ceiling=MeshBuilder.CreateBox('checkout-ceiling',{width:15,height:.18,depth:7},scene);ceiling.position.set(10.1,3.0,-10.0);ceiling.material=wallMat;ceiling.isPickable=false;
+    for(let i=0;i<5;i++){const light=MeshBuilder.CreateBox('checkout-light-'+i,{width:1.8,height:.08,depth:.32},scene);light.position.set(5.3+i*2.4,2.82,-9.1);light.material=warmMat;light.isPickable=false;}
+
 
     const checkoutBack=MeshBuilder.CreateBox('checkout-back-wall',{width:14.5,height:2.8,depth:.35},scene);checkoutBack.position.set(10.1,1.4,-13.25);checkoutBack.material=wallMat;checkoutBack.isPickable=false;
     const checkoutLeft=MeshBuilder.CreateBox('checkout-left-wall',{width:.35,height:2.8,depth:6.5},scene);checkoutLeft.position.set(3.0,1.4,-10.0);checkoutLeft.material=wallMat;checkoutLeft.isPickable=false;
@@ -81,15 +90,15 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
 
     for(let i=0;i<4;i++){
       const x=5.15+i*3.3;
-      const counter=MeshBuilder.CreateBox('checkout-counter-'+i,{width:2.65,height:.82,depth:1.35},scene);counter.position.set(x,.41,-11.25);counter.material=counterMat;counter.isPickable=false;
-      const conveyor=MeshBuilder.CreateBox('checkout-conveyor-'+i,{width:1.45,height:.12,depth:1.7},scene);conveyor.position.set(x-.15,.9,-11.22);conveyor.material=metalMat;conveyor.isPickable=false;
-      const register=MeshBuilder.CreateBox('checkout-register-'+i,{width:.45,height:.3,depth:.4},scene);register.position.set(x+.55,1.08,-11.0);register.material=wallMat;register.isPickable=false;
+      const counter=MeshBuilder.CreateBox('checkout-counter-'+i,{width:2.65,height:.82,depth:1.35},scene);counter.position.set(x,.41,-11.25);counter.material=counterMat;counter.isPickable=false;shadowGen.addShadowCaster(counter);
+      const conveyor=MeshBuilder.CreateBox('checkout-conveyor-'+i,{width:1.45,height:.12,depth:1.7},scene);conveyor.position.set(x-.15,.9,-11.22);conveyor.material=metalMat;conveyor.isPickable=false;shadowGen.addShadowCaster(conveyor);
+      const register=MeshBuilder.CreateBox('checkout-register-'+i,{width:.45,height:.3,depth:.4},scene);register.position.set(x+.55,1.08,-11.0);register.material=accentMat;register.isPickable=false;shadowGen.addShadowCaster(register);
       const divider=MeshBuilder.CreateBox('checkout-divider-'+i,{width:.08,height:1.15,depth:2.15},scene);divider.position.set(x+1.47,.58,-11.0);divider.material=wallMat;divider.isPickable=false;
       const queue=MeshBuilder.CreateBox('checkout-queue-'+i,{width:2.4,height:.025,depth:2.35},scene);queue.position.set(x,.025,-8.9);queue.material=floorMat;queue.isPickable=false;
       const postA=MeshBuilder.CreateBox('checkout-queue-post-a-'+i,{width:.10,height:.85,depth:.10},scene);postA.position.set(x-1.05,.43,-7.75);postA.material=wallMat;postA.isPickable=false;
       const postB=MeshBuilder.CreateBox('checkout-queue-post-b-'+i,{width:.10,height:.85,depth:.10},scene);postB.position.set(x+1.05,.43,-7.75);postB.material=wallMat;postB.isPickable=false;
     }
-    const checkoutSign=MeshBuilder.CreateBox('checkout-sign',{width:7.4,height:.5,depth:.18},scene);checkoutSign.position.set(10.1,2.35,-13.0);checkoutSign.material=wallMat;checkoutSign.isPickable=false;
+    const checkoutSign=MeshBuilder.CreateBox('checkout-sign',{width:7.4,height:.5,depth:.18},scene);checkoutSign.position.set(10.1,2.35,-13.0);checkoutSign.material=accentMat;checkoutSign.isPickable=false;shadowGen.addShadowCaster(checkoutSign);
     const entranceOpening=MeshBuilder.CreateBox('checkout-entrance-opening',{width:5.0,height:.08,depth:1.4},scene);entranceOpening.position.set(10.1,.08,-5.0);entranceOpening.material=counterMat;entranceOpening.isPickable=false;
     const highlight=new HighlightLayer('walk-highlights',scene);highlightRef.current=highlight;
     const pointer=scene.onPointerObservable.add(info=>{if(info.type!==PointerEventTypes.POINTERPICK)return;const id=info.pickInfo?.pickedMesh?.metadata?.productId as string|undefined;if(!id)return;const product=products.find(p=>p.id===id);if(product){setSelected(product);const mesh=info.pickInfo?.pickedMesh;if(mesh instanceof Mesh)highlight.addMesh(mesh,Color3.FromHexString('#238a4b'));onProductSelect(product);}});
