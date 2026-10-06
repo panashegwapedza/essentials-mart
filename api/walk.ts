@@ -35,6 +35,27 @@ export default async function handler(req:any,res:any){
           edges:(edges??[]).map(x=>({id:x.id,fromNodeId:x.from_node_id,toNodeId:x.to_node_id,distance:Number(x.distance),traversalType:x.traversal_type,status:x.status}))
         });
       }
+      if(resource==='actions'){
+        const sessionId=typeof req.query?.sessionId==='string'?req.query.sessionId:'';
+        const body=typeof req.body==='string'?JSON.parse(req.body):(req.body??{});
+        if(!sessionId)return fail(res,400,'VALIDATION_ERROR','sessionId is required.');
+        const action=typeof body.action==='string'?body.action:'';
+        if(!['MOVE','PAUSE','TAKE_OVER','RESUME','COMPLETE','CANCEL'].includes(action))return fail(res,400,'VALIDATION_ERROR','A valid Walk Mode action is required.');
+        const owned=await supabase<any[]>('walk_sessions','select=id,status,mode&id=eq.'+encodeURIComponent(sessionId)+'&limit=1');
+        if(!owned?.[0])return fail(res,404,'NOT_FOUND','Walk Mode session could not be found.');
+        const patch:any={updated_at:new Date().toISOString()};
+        if(action==='PAUSE')patch.status='PAUSED'; if(action==='TAKE_OVER')patch.status='TAKEN_OVER'; if(action==='RESUME')patch.status='ACTIVE'; if(action==='COMPLETE')patch.status='COMPLETED'; if(action==='CANCEL')patch.status='CANCELLED'; if(action==='MOVE'&&typeof body.nodeId==='string')patch.current_node_id=body.nodeId;
+        const updated=await supabase<any[]>('walk_sessions','id=eq.'+encodeURIComponent(sessionId),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(patch)});
+        return res.status(200).json({session:updated?.[0]??null});
+      }
+      if(resource==='mode'){
+        const sessionId=typeof req.query?.sessionId==='string'?req.query.sessionId:'';
+        const body=typeof req.body==='string'?JSON.parse(req.body):(req.body??{});
+        const mode=['MANUAL','AI_ASSISTED','AUTOPILOT'].includes(body.mode)?body.mode:null;
+        if(!sessionId||!mode)return fail(res,400,'VALIDATION_ERROR','A valid Walk Mode mode is required.');
+        const updated=await supabase<any[]>('walk_sessions','id=eq.'+encodeURIComponent(sessionId),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({mode,status:'ACTIVE',updated_at:new Date().toISOString()})});
+        return res.status(200).json({session:updated?.[0]??null});
+      }
       return fail(res,404,'NOT_FOUND','Unknown Walk Mode resource.');
     }
 
