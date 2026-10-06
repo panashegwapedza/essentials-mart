@@ -249,7 +249,7 @@ export default async function householdHandler(req: any, res: any) {
       // Consolidate trusted household signals into one actionable context. This is
       // descriptive context only: it does not add items to a basket or place orders.
       const now = Date.now();
-      const householdNeeds: Array<{needId:string;type:string;productId:string|null;productName:string|null;priority:'high'|'medium'|'low';reason:string;source:string;confidence?:number;expectedAt?:string;quantity?:number;recurringPurchase?:unknown}> = [
+      const householdNeeds: any[] = [
         ...pantryItems
           .filter(item => item.needsAttention)
           .map(item => ({
