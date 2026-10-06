@@ -33,7 +33,7 @@ export function generateHouseholdIntelligence(
   now = new Date(),
 ): HouseholdIntelligenceResult {
   // The Society owns the execution sequence. Engines remain specialised and bounded.
-  const householdNeeds = generateHouseholdNeeds(input.needs, now);
+  const householdNeeds = generateHouseholdNeeds(input.needs);
   const recommendations = generateHouseholdRecommendations(input.householdSignals, input.catalogue, householdNeeds.needs, now);
   const predictions = generateHouseholdPredictions(input.predictionSignals, householdNeeds.needs, now);
   const personalisation = generateHouseholdPersonalisation(input.personalisationSignals, householdNeeds.needs, now);
