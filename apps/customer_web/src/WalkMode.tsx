@@ -12,6 +12,7 @@ import { HighlightLayer } from '@babylonjs/core/Layers/highlightLayer';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import type { Product } from './api/commerce';
 import './WalkMode.css';
+import { REFERENCE_LAYOUT } from './store-layout-reference';
 
 type Layout = {
   layout:{id:string;storeId:string;version:number};
@@ -40,8 +41,8 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
   useEffect(()=>{let cancelled=false;
     fetch('/api/walk?resource=stores',{credentials:'include',headers:{Accept:'application/json'}})
       .then(async r=>{if(!r.ok)throw new Error('Walk Mode stores could not be loaded.');return r.json();})
-      .then(data=>{if(cancelled)return;const next=data.stores??[];setStores(next);setStoreId(next[0]?.id??'');})
-      .catch(e=>{if(!cancelled){setError(e instanceof Error?e.message:'Walk Mode could not be loaded.');setLoading(false);}});
+      .then(data=>{if(cancelled)return;const next=data.stores??[];if(next.length){setStores(next);setStoreId(next[0].id);}else{setStores([{id:'reference-store',name:'Essentials Mart · Reference Store',code:'REFERENCE'}]);setStoreId('reference-store');setLayout(REFERENCE_LAYOUT as unknown as Layout);setLoading(false);}})
+      .catch(e=>{if(!cancelled){setError('Using the reference store layout while the live layout service is unavailable.');setStores([{id:'reference-store',name:'Essentials Mart · Reference Store',code:'REFERENCE'}]);setStoreId('reference-store');setLayout(REFERENCE_LAYOUT as unknown as Layout);setLoading(false);}});
     return()=>{cancelled=true;};
   },[]);
 
@@ -49,12 +50,12 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     fetch('/api/walk?resource=layout&storeId='+encodeURIComponent(storeId),{credentials:'include',headers:{Accept:'application/json'}})
       .then(async r=>{if(!r.ok)throw new Error('The store layout could not be loaded.');return r.json();})
       .then(data=>{if(!cancelled)setLayout(data);})
-      .catch(e=>{if(!cancelled)setError(e instanceof Error?e.message:'The store layout could not be loaded.');})
+      .catch(e=>{if(!cancelled){setError('Live store layout unavailable — showing the configured reference layout.');setLayout(REFERENCE_LAYOUT as unknown as Layout);}})
       .finally(()=>{if(!cancelled)setLoading(false);});
     return()=>{cancelled=true;};
   },[storeId]);
 
-  useEffect(()=>{if(!storeId)return;
+  useEffect(()=>{if(!storeId||storeId==='reference-store')return;
     fetch('/api/walk',{method:'POST',credentials:'include',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({storeId,mode:'MANUAL'})}).catch(()=>{});
   },[storeId]);
 
@@ -66,10 +67,19 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     camera.setTarget(new Vector3(entrance?.x??0,1.65,entrance?.z??0));camera.speed=.32;camera.angularSensibility=3500;camera.minZ=.05;camera.attachControl(canvas,true);
     new HemisphericLight('walk-light',new Vector3(0,1,0),scene).intensity=.95;
     const ground=MeshBuilder.CreateGround('walk-ground',{width:44,height:38},scene);const groundMat=new StandardMaterial('walk-ground-mat',scene);groundMat.diffuseColor=new Color3(.91,.94,.89);ground.material=groundMat;
-    const makeMat=(name:string,color:Color3)=>{const m=new StandardMaterial(name,scene);m.diffuseColor=color;return m;};const shelfMat=makeMat('shelf-mat',new Color3(.33,.46,.35));const aisleMat=makeMat('aisle-mat',new Color3(.72,.82,.70));const productMat=makeMat('product-mat',new Color3(.86,.68,.28));const signMat=makeMat('sign-mat',new Color3(.16,.33,.21));
-    currentLayout.aisles.forEach(a=>{const shelf=MeshBuilder.CreateBox('aisle-'+a.id,{width:a.width,height:1.8,depth:a.length},scene);shelf.position.set(a.x,.9,a.z);shelf.material=shelfMat;const floor=MeshBuilder.CreateBox('aisle-floor-'+a.id,{width:a.width+1.4,height:.025,depth:a.length+.6},scene);floor.position.set(a.x,.015,a.z);floor.material=aisleMat;floor.isPickable=false;});
+    const makeMat=(name:string,color:Color3)=>{const m=new StandardMaterial(name,scene);m.diffuseColor=color;return m;};const shelfMat=makeMat('shelf-mat',new Color3(.30,.34,.30));const aisleMat=makeMat('aisle-mat',new Color3(.78,.80,.75));const productMat=makeMat('product-mat',new Color3(.86,.68,.28));const signMat=makeMat('sign-mat',new Color3(.12,.15,.13));const wallMat=makeMat('wall-mat',new Color3(.23,.24,.22));const counterMat=makeMat('counter-mat',new Color3(.38,.40,.36));const coldMat=makeMat('cold-case-mat',new Color3(.62,.69,.68));const freshMat=makeMat('fresh-case-mat',new Color3(.55,.38,.24));
+    const wallBack=MeshBuilder.CreateBox('back-wall',{width:39,height:2.8,depth:.35},scene);wallBack.position.set(0,1.4,15.7);wallBack.material=wallMat;wallBack.isPickable=false;
+    const wallLeft=MeshBuilder.CreateBox('left-wall',{width:.35,height:2.8,depth:32},scene);wallLeft.position.set(-19.7,1.4,0);wallLeft.material=wallMat;wallLeft.isPickable=false;
+    const wallRight=MeshBuilder.CreateBox('right-wall',{width:.35,height:2.8,depth:32},scene);wallRight.position.set(19.7,1.4,0);wallRight.material=wallMat;wallRight.isPickable=false;
+    currentLayout.aisles.forEach(a=>{const shelf=MeshBuilder.CreateBox('aisle-'+a.id,{width:a.width,height:a.id==='specials'?1.15:1.8,depth:a.length},scene);shelf.position.set(a.x,a.id==='specials'?.58:.9,a.z);shelf.material=a.id==='specials'?counterMat:shelfMat;const floor=MeshBuilder.CreateBox('aisle-floor-'+a.id,{width:a.width+1.4,height:.025,depth:a.length+.6},scene);floor.position.set(a.x,.015,a.z);floor.material=aisleMat;floor.isPickable=false;});
+    const backDepartments=[['dairy',-10.2,coldMat],['frozen',0,coldMat],['meat',10.2,freshMat]] as const;backDepartments.forEach(([id,x,mat])=>{const unit=MeshBuilder.CreateBox('back-'+id,{width:9.1,height:2.05,depth:.8},scene);unit.position.set(x,1.05,14.85);unit.material=mat;unit.isPickable=false;});
+    const sideCases=[[-18.2,7,5.5,1.6,freshMat],[18.2,7,5.5,1.6,freshMat]] as const;sideCases.forEach(([x,z,w,d,mat],i)=>{const unit=MeshBuilder.CreateBox('side-case-'+i,{width:w,height:1.55,depth:d},scene);unit.position.set(x,0.78,z);unit.material=mat;unit.isPickable=false;});
+    const checkoutBase=MeshBuilder.CreateBox('checkout-bank',{width:10.5,height:.9,depth:2.4},scene);checkoutBase.position.set(11.5,.45,-11.2);checkoutBase.material=counterMat;checkoutBase.isPickable=false;for(let i=0;i<4;i++){const lane=MeshBuilder.CreateBox('checkout-lane-'+i,{width:2.1,height:.35,depth:1.3},scene);lane.position.set(7.4+i*2.75,.95,-11.2);lane.material=signMat;lane.isPickable=false;}
+    const cartRack=MeshBuilder.CreateBox('cart-rack',{width:5.2,height:.55,depth:1.4},scene);cartRack.position.set(-14.2,.28,-11.4);cartRack.material=counterMat;cartRack.isPickable=false;for(let i=0;i<5;i++){const cart=MeshBuilder.CreateBox('cart-'+i,{width:.75,height:.32,depth:1.05},scene);cart.position.set(-16.1+i*.85,.62,-11.4);cart.material=signMat;cart.isPickable=false;}
+    const entranceMat=makeMat('entrance-mat',new Color3(.28,.62,.31));const entrance=MeshBuilder.CreateBox('entrance-zone',{width:3.2,height:.05,depth:1.4},scene);entrance.position.set(0,.05,-15.2);entrance.material=entranceMat;entrance.isPickable=false;
     const highlight=new HighlightLayer('walk-highlights',scene);highlightRef.current=highlight;
     currentLayout.products.forEach(p=>{const product=products.find(x=>x.id===p.productId);if(!product)return;const mesh=MeshBuilder.CreateBox('product-'+p.productId,{width:.52,height:.72,depth:.32},scene);mesh.position.set(p.positionX+(p.facing>0?1.7:-1.7),p.positionY,p.positionZ);mesh.material=productMat;mesh.metadata={productId:product.id};});
+    if(!currentLayout.products.length&&products.length){currentLayout.aisles.filter(a=>a.id!=='specials').forEach((a,i)=>{const product=products[i%products.length];const mesh=MeshBuilder.CreateBox('reference-product-'+i,{width:.55,height:.75,depth:.34},scene);mesh.position.set(a.x+a.width/2+.45,.62,a.z-2.5);mesh.material=productMat;mesh.metadata={productId:product.id};});}
     currentLayout.nodes.filter(n=>['ENTRANCE','CHECKOUT','EXIT'].includes(n.nodeType)).forEach(n=>{const marker=MeshBuilder.CreateBox('marker-'+n.id,{width:1.8,height:.08,depth:.55},scene);marker.position.set(n.x,.08,n.z);marker.material=signMat;marker.isPickable=false;});
     const pointer=scene.onPointerObservable.add(info=>{if(info.type!==PointerEventTypes.POINTERPICK)return;const id=info.pickInfo?.pickedMesh?.metadata?.productId as string|undefined;if(!id)return;const product=products.find(p=>p.id===id);if(product){setSelected(product);const mesh=info.pickInfo?.pickedMesh;if(mesh instanceof Mesh)highlight.addMesh(mesh,Color3.FromHexString('#238a4b'));onProductSelect(product);}});
     engine.runRenderLoop(()=>scene.render());const resize=()=>engine.resize();window.addEventListener('resize',resize);
