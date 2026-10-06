@@ -1,3 +1,5 @@
+import { runAISociety } from '../services/intelligence/ai-society-runtime.js';
+
 async function principal(req:any){ const auth=await import('../apps/customer_web/api/_auth.js'); return auth.principal(req); }
 import type { HouseholdNeed } from '../services/intelligence/household/household-needs-engine';
 import type { HouseholdSignal } from '../services/intelligence/household/household-recommendation-engine';
