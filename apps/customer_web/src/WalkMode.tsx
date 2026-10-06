@@ -9,6 +9,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { PointerEventTypes } from '@babylonjs/core/Events/pointerEvents';
 import { HighlightLayer } from '@babylonjs/core/Layers/highlightLayer';
+import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import type { Product } from './api/commerce';
 import './WalkMode.css';
 
@@ -69,7 +70,7 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     const highlight=new HighlightLayer('walk-highlights',scene);highlightRef.current=highlight;
     layout.products.forEach(p=>{const product=products.find(x=>x.id===p.productId);if(!product)return;const mesh=MeshBuilder.CreateBox('product-'+p.productId,{width:.52,height:.72,depth:.32},scene);mesh.position.set(p.positionX+(p.facing>0?1.7:-1.7),p.positionY,p.positionZ);mesh.material=productMat;mesh.metadata={productId:product.id};});
     layout.nodes.filter(n=>['ENTRANCE','CHECKOUT','EXIT'].includes(n.nodeType)).forEach(n=>{const marker=MeshBuilder.CreateBox('marker-'+n.id,{width:1.8,height:.08,depth:.55},scene);marker.position.set(n.x,.08,n.z);marker.material=signMat;marker.isPickable=false;});
-    const pointer=scene.onPointerObservable.add(info=>{if(info.type!==PointerEventTypes.POINTERPICK)return;const id=info.pickInfo?.pickedMesh?.metadata?.productId as string|undefined;if(!id)return;const product=products.find(p=>p.id===id);if(product){setSelected(product);const mesh=info.pickInfo?.pickedMesh;if(mesh)highlight.addMesh(mesh,Color3.FromHexString('#238a4b'));onProductSelect(product);}});
+    const pointer=scene.onPointerObservable.add(info=>{if(info.type!==PointerEventTypes.POINTERPICK)return;const id=info.pickInfo?.pickedMesh?.metadata?.productId as string|undefined;if(!id)return;const product=products.find(p=>p.id===id);if(product){setSelected(product);const mesh=info.pickInfo?.pickedMesh;if(mesh instanceof Mesh)highlight.addMesh(mesh,Color3.FromHexString('#238a4b'));onProductSelect(product);}});
     engine.runRenderLoop(()=>scene.render());const resize=()=>engine.resize();window.addEventListener('resize',resize);
     return()=>{scene.onPointerObservable.remove(pointer);window.removeEventListener('resize',resize);camera.detachControl();highlight.dispose();scene.dispose();cameraRef.current=null;highlightRef.current=null;engine.dispose();};
   },[layout,products,onProductSelect]);
@@ -77,6 +78,8 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
   function goToAisle(id:string){const a=layout?.aisles.find(x=>x.id===id);const camera=cameraRef.current;if(!a||!camera)return;camera.position=new Vector3(a.x,1.65,a.z-(a.length/2+3));camera.setTarget(new Vector3(a.x,1.65,a.z));setActiveAisle(id);const placement=layout.products.find(p=>p.aisleId===id);const product=placement&&products.find(p=>p.id===placement.productId);if(product)setSelected(product);}
   function goToNode(type:string){const n=layout?.nodes.find(x=>x.nodeType===type);const camera=cameraRef.current;if(!n||!camera)return;camera.position=new Vector3(n.x,1.65,n.z-2);camera.setTarget(new Vector3(n.x,1.65,n.z));setActiveAisle(null);}
   function findProduct(productId:string){const placement=layout?.products.find(p=>p.productId===productId);const product=products.find(p=>p.id===productId);if(!placement||!product)return;const aisle=layout?.aisles.find(a=>a.id===placement.aisleId);const camera=cameraRef.current;if(!aisle||!camera)return;camera.position=new Vector3(aisle.x,1.65,placement.positionZ-3);camera.setTarget(new Vector3(placement.positionX,1.65,placement.positionZ));setActiveAisle(aisle.id);setSelected(product);setFindOpen(false);}
+
+  if(!layout)return null;
 
   return <div className="walk-mode-shell" role="dialog" aria-modal="true" aria-label="Walk Mode">
     <div className="walk-mode-header"><div><p className="eyebrow">WALK MODE</p><h2>Living Digital Supermarket</h2><span>Manual Mode · spatial store experience</span></div><div className="walk-mode-controls">{stores.length>0&&<label><span className="sr-only">Store</span><select value={storeId} onChange={e=>setStoreId(e.target.value)}>{stores.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label>}<button type="button" className="quiet-button" onClick={onClose}>Exit Walk Mode</button></div></div>
