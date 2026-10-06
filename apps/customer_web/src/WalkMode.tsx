@@ -8,6 +8,7 @@ import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { PointerEventTypes } from '@babylonjs/core/Events/pointerEvents';
+import { HighlightLayer } from '@babylonjs/core/Layers/highlightLayer';
 import type { Product } from './api/commerce';
 
 type Layout = {
@@ -15,31 +16,34 @@ type Layout = {
   aisles:Array<{id:string;name:string;department:string;x:number;z:number;width:number;length:number}>;
   products:Array<{id:string;productId:string;aisleId:string;positionX:number;positionY:number;positionZ:number;facing:number}>;
   nodes:Array<{id:string;label:string;nodeType:string;x:number;y:number;z:number}>;
+  edges?:Array<{id:string;fromNodeId:string;toNodeId:string;distance:number;traversalType:string;status:string}>;
 };
 
 type Props = { onClose:()=>void; products:Product[]; onProductSelect:(product:Product)=>void; };
 
 export default function WalkMode({ onClose, products, onProductSelect }: Props) {
   const canvasRef=useRef<HTMLCanvasElement|null>(null);
+  const cameraRef=useRef<UniversalCamera|null>(null);
+  const highlightRef=useRef<HighlightLayer|null>(null);
+  const sceneRef=useRef<Scene|null>(null);
   const [stores,setStores]=useState<Array<{id:string;name:string;code:string}>>([]);
   const [storeId,setStoreId]=useState('');
   const [layout,setLayout]=useState<Layout|null>(null);
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState<string|null>(null);
   const [selected,setSelected]=useState<Product|null>(null);
+  const [activeAisle,setActiveAisle]=useState<string|null>(null);
 
   useEffect(()=>{let cancelled=false;
-    fetch('/api/walk?resource=stores',{credentials:'include',headers:{Accept:'application/json'}})
+    fetch('/api/walk/stores',{credentials:'include',headers:{Accept:'application/json'}})
       .then(async r=>{if(!r.ok)throw new Error('Walk Mode stores could not be loaded.');return r.json();})
       .then(data=>{if(cancelled)return;const next=data.stores??[];setStores(next);setStoreId(next[0]?.id??'');})
       .catch(e=>{if(!cancelled){setError(e instanceof Error?e.message:'Walk Mode could not be loaded.');setLoading(false);}});
     return()=>{cancelled=true;};
   },[]);
 
-  useEffect(()=>{if(!storeId)return;fetch('/api/walk/sessions',{method:'POST',credentials:'include',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({storeId,mode:'MANUAL'})}).catch(()=>{});},[storeId]);
-
-  useEffect(()=>{if(!storeId)return;let cancelled=false;setLoading(true);setError(null);
-    fetch('/api/walk?resource=layout&storeId='+encodeURIComponent(storeId),{credentials:'include',headers:{Accept:'application/json'}})
+  useEffect(()=>{if(!storeId)return;setLoading(true);setError(null);let cancelled=false;
+    fetch('/api/walk/stores/'+encodeURIComponent(storeId)+'/layout',{credentials:'include',headers:{Accept:'application/json'}})
       .then(async r=>{if(!r.ok)throw new Error('The store layout could not be loaded.');return r.json();})
       .then(data=>{if(!cancelled)setLayout(data);})
       .catch(e=>{if(!cancelled)setError(e instanceof Error?e.message:'The store layout could not be loaded.');})
@@ -47,22 +51,29 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     return()=>{cancelled=true;};
   },[storeId]);
 
+  useEffect(()=>{if(!storeId)return;
+    fetch('/api/walk/sessions',{method:'POST',credentials:'include',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({storeId,mode:'MANUAL'})}).catch(()=>{});
+  },[storeId]);
+
   useEffect(()=>{
     const canvas=canvasRef.current;
     if(!canvas||!layout)return;
     const engine=new Engine(canvas,true,{preserveDrawingBuffer:false,stencil:true});
     const scene=new Scene(engine);
+    sceneRef.current=scene;
     scene.clearColor=new Color3(0.965,0.975,0.955).toColor4(1);
 
-    const camera=new UniversalCamera('walk-camera',new Vector3(0,1.65,-12),scene);
-    camera.setTarget(new Vector3(0,1.65,0));
-    camera.speed=0.28;
+    const entrance=layout.nodes.find(n=>n.nodeType==='ENTRANCE');
+    const start=new Vector3(entrance?.x??0,1.65,(entrance?.z??-12)-2);
+    const camera=new UniversalCamera('walk-camera',start,scene);
+    cameraRef.current=camera;
+    camera.setTarget(new Vector3(entrance?.x??0,1.65,entrance?.z??0));
+    camera.speed=0.32;
     camera.angularSensibility=3500;
     camera.minZ=0.05;
     camera.attachControl(canvas,true);
 
     new HemisphericLight('walk-light',new Vector3(0,1,0),scene).intensity=0.95;
-
     const ground=MeshBuilder.CreateGround('walk-ground',{width:44,height:38},scene);
     const groundMat=new StandardMaterial('walk-ground-mat',scene);
     groundMat.diffuseColor=new Color3(0.91,0.94,0.89);
@@ -74,7 +85,7 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     const productMat=makeMat('product-mat',new Color3(0.86,0.68,0.28));
     const signMat=makeMat('sign-mat',new Color3(0.16,0.33,0.21));
 
-    layout.aisles.forEach((aisle)=>{
+    layout.aisles.forEach(aisle=>{
       const shelf=MeshBuilder.CreateBox('aisle-'+aisle.id,{width:aisle.width,height:1.8,depth:aisle.length},scene);
       shelf.position.set(aisle.x,0.9,aisle.z);
       shelf.material=shelfMat;
@@ -84,7 +95,9 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
       aisleFloor.isPickable=false;
     });
 
-    layout.products.forEach((placement)=>{
+    const highlight=new HighlightLayer('walk-highlights',scene);
+    highlightRef.current=highlight;
+    layout.products.forEach(placement=>{
       const p=products.find(x=>x.id===placement.productId);
       if(!p)return;
       const mesh=MeshBuilder.CreateBox('product-'+placement.productId,{width:0.52,height:0.72,depth:0.32},scene);
@@ -105,18 +118,44 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
       const productId=info.pickInfo?.pickedMesh?.metadata?.productId as string|undefined;
       if(!productId)return;
       const product=products.find(p=>p.id===productId);
-      if(product){setSelected(product);onProductSelect(product);}
+      if(product){
+        setSelected(product);
+        const mesh=info.pickInfo?.pickedMesh;
+        if(mesh)highlight.addMesh(mesh,Color3.FromHexString('#238a4b'));
+        onProductSelect(product);
+      }
     });
 
     engine.runRenderLoop(()=>scene.render());
     const resize=()=>engine.resize();
     window.addEventListener('resize',resize);
-    return()=>{scene.onPointerObservable.remove(pointer);window.removeEventListener('resize',resize);camera.detachControl();scene.dispose();engine.dispose();};
+    return()=>{scene.onPointerObservable.remove(pointer);window.removeEventListener('resize',resize);camera.detachControl();highlight.dispose();scene.dispose();sceneRef.current=null;cameraRef.current=null;highlightRef.current=null;engine.dispose();};
   },[layout,products,onProductSelect]);
+
+  function goToAisle(aisleId:string){
+    const aisle=layout?.aisles.find(a=>a.id===aisleId);
+    const camera=cameraRef.current;
+    if(!aisle||!camera)return;
+    camera.position=new Vector3(aisle.x,1.65,aisle.z-((aisle.length/2)+3));
+    camera.setTarget(new Vector3(aisle.x,1.65,aisle.z));
+    setActiveAisle(aisleId);
+    const placement=layout.products.find(p=>p.aisleId===aisleId);
+    const product=placement&&products.find(p=>p.id===placement.productId);
+    if(product)setSelected(product);
+  }
+
+  function goToNode(nodeType:string){
+    const node=layout?.nodes.find(n=>n.nodeType===nodeType);
+    const camera=cameraRef.current;
+    if(!node||!camera)return;
+    camera.position=new Vector3(node.x,1.65,node.z-2);
+    camera.setTarget(new Vector3(node.x,1.65,node.z));
+    setActiveAisle(null);
+  }
 
   return <div className="walk-mode-shell" role="dialog" aria-modal="true" aria-label="Walk Mode">
     <div className="walk-mode-header">
-      <div><p className="eyebrow">WALK MODE</p><h2>Living Digital Supermarket</h2><span>Manual Mode · Babylon.js spatial experience</span></div>
+      <div><p className="eyebrow">WALK MODE</p><h2>Living Digital Supermarket</h2><span>Manual Mode · spatial store experience</span></div>
       <div className="walk-mode-controls">
         {stores.length>0&&<label><span className="sr-only">Store</span><select value={storeId} onChange={e=>setStoreId(e.target.value)}>{stores.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label>}
         <button type="button" className="quiet-button" onClick={onClose}>Exit Walk Mode</button>
@@ -125,6 +164,13 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     {error&&<div className="walk-mode-error">{error}</div>}
     {loading?<div className="walk-mode-loading">Preparing the store layout…</div>:<div className="walk-mode-stage">
       <canvas ref={canvasRef} className="walk-mode-canvas"/>
+      <aside className="walk-mode-nav">
+        <div className="walk-mode-nav-title"><strong>Explore store</strong><span>{layout?.aisles.length??0} aisles</span></div>
+        <button type="button" onClick={()=>goToNode('ENTRANCE')}>Entrance</button>
+        {layout?.aisles.map(aisle=><button key={aisle.id} type="button" className={activeAisle===aisle.id?'active':''} onClick={()=>goToAisle(aisle.id)}><span>{aisle.name}</span><small>{aisle.department}</small></button>)}
+        <button type="button" onClick={()=>goToNode('CHECKOUT')}>Checkout</button>
+        <button type="button" onClick={()=>goToNode('EXIT')}>Exit</button>
+      </aside>
       <div className="walk-mode-help"><strong>Walk</strong><span>W A S D / arrow keys</span><span>Mouse to look</span><span>Click a product to open it</span></div>
       {selected&&<div className="walk-mode-product-card"><div><p className="eyebrow">PRODUCT</p><strong>{selected.name}</strong><span>{[selected.brand,selected.category,selected.sizeLabel].filter(Boolean).join(' · ')}</span></div><button type="button" onClick={()=>onProductSelect(selected)}>View product</button></div>}
       <div className="walk-mode-badge"><span>MANUAL</span><small>AI authority is not active</small></div>
