@@ -82,13 +82,14 @@ export default async function intelligenceHandler(req:any,res:any) {
         substitutionInventory,
       },
     });
-    const householdNeedsResult=householdIntelligence.householdNeeds;
-    const result=householdIntelligence.recommendations;
-    const predictions=householdIntelligence.predictions;
-    const personalisation=householdIntelligence.personalisation;
-    const inventory=householdIntelligence.inventory;
-    const substitutions=householdIntelligence.substitutions;
-    const unified=householdIntelligence.intelligenceLayer;
+    const householdIntelligenceResult = householdIntelligence as import('../services/intelligence/core/household-intelligence-orchestrator.js').HouseholdIntelligenceResult;
+    const householdNeedsResult=householdIntelligenceResult.householdNeeds;
+    const result=householdIntelligenceResult.recommendations;
+    const predictions=householdIntelligenceResult.predictions;
+    const personalisation=householdIntelligenceResult.personalisation;
+    const inventory=householdIntelligenceResult.inventory;
+    const substitutions=householdIntelligenceResult.substitutions;
+    const unified=householdIntelligenceResult.intelligenceLayer;
     return json(res,200,{householdNeeds:householdNeedsResult.needs,householdNeedsSummary:householdNeedsResult.summary,householdNeedsTrace:householdNeedsResult.trace,recommendations:result.recommendations,predictions:predictions.predictions,personalisation:personalisation.products,trace:result.trace,predictionTrace:predictions.trace,personalisationTrace:personalisation.trace,inventoryInsights:inventory.insights,inventoryTrace:inventory.trace,substitutions:substitutions.substitutions,substitutionTrace:substitutions.trace,intelligenceLayer:unified.items,intelligenceLayerSummary:unified.summary,intelligenceLayerTrace:unified.trace,generatedAt:new Date().toISOString()});
   } catch(error) { console.error('intelligence-api error',error); return json(res,500,{error:{code:'INTELLIGENCE_INTERNAL_ERROR',message:error instanceof Error?error.message:'Intelligence service unavailable.'}}); }
 }
