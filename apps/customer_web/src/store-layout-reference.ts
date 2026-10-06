@@ -6,8 +6,15 @@ export const REFERENCE_LAYOUT = {
     { id: 'snacks', name: 'Snacks', department: 'Grocery', x: -2.5, z: 1.8, width: 2.7, length: 14 },
     { id: 'beverages', name: 'Beverages', department: 'Drinks', x: 2.2, z: 1.8, width: 2.7, length: 14 },
     { id: 'household', name: 'Household', department: 'Home Care', x: 6.9, z: 1.8, width: 2.7, length: 14 },
-    { id: 'personal-care', name: 'Personal Care', department: 'Health & Beauty', x: 11.3, z: 1.8, width: 2.7, length: 10 },
-    { id: 'specials', name: 'Specials', department: 'Promotions', x: 0, z: -7.0, width: 13.5, length: 2.2 }
+    { id: 'household', name: 'Household', department: 'Home Care', x: 7.0, z: 1.5, width: 2.7, length: 13.5 },
+    { id: 'personal-care', name: 'Personal Care', department: 'Health & Beauty', x: 11.2, z: 2.5, width: 2.7, length: 11.5 }
+  ],
+  zones: [
+    { id: 'dairy', name: 'Dairy', type: 'REAR_DEPARTMENT', x: -10.2, z: 13.9, width: 8.4, depth: 1.8 },
+    { id: 'frozen', name: 'Frozen Food', type: 'REAR_DEPARTMENT', x: 0, z: 13.9, width: 8.4, depth: 1.8 },
+    { id: 'meat', name: 'Meat & Seafood', type: 'REAR_DEPARTMENT', x: 10.2, z: 13.9, width: 8.4, depth: 1.8 },
+    { id: 'bakery', name: 'Bakery', type: 'SIDE_DEPARTMENT', x: -17.5, z: 7.2, width: 3.2, depth: 9.0 },
+    { id: 'prepared', name: 'Prepared Foods', type: 'SIDE_DEPARTMENT', x: 17.5, z: 7.2, width: 3.2, depth: 9.0 }
   ],
   products: [],
   nodes: [
