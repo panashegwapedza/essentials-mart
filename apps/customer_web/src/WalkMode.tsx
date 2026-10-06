@@ -38,7 +38,7 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
   const [findOpen,setFindOpen]=useState(false);
 
   useEffect(()=>{let cancelled=false;
-    fetch('/api/walk/stores',{credentials:'include',headers:{Accept:'application/json'}})
+    fetch('/api/walk?resource=stores',{credentials:'include',headers:{Accept:'application/json'}})
       .then(async r=>{if(!r.ok)throw new Error('Walk Mode stores could not be loaded.');return r.json();})
       .then(data=>{if(cancelled)return;const next=data.stores??[];setStores(next);setStoreId(next[0]?.id??'');})
       .catch(e=>{if(!cancelled){setError(e instanceof Error?e.message:'Walk Mode could not be loaded.');setLoading(false);}});
@@ -46,7 +46,7 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
   },[]);
 
   useEffect(()=>{if(!storeId)return;setLoading(true);setError(null);let cancelled=false;
-    fetch('/api/walk/stores/'+encodeURIComponent(storeId)+'/layout',{credentials:'include',headers:{Accept:'application/json'}})
+    fetch('/api/walk?resource=layout&storeId='+encodeURIComponent(storeId),{credentials:'include',headers:{Accept:'application/json'}})
       .then(async r=>{if(!r.ok)throw new Error('The store layout could not be loaded.');return r.json();})
       .then(data=>{if(!cancelled)setLayout(data);})
       .catch(e=>{if(!cancelled)setError(e instanceof Error?e.message:'The store layout could not be loaded.');})
@@ -55,7 +55,7 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
   },[storeId]);
 
   useEffect(()=>{if(!storeId)return;
-    fetch('/api/walk/sessions',{method:'POST',credentials:'include',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({storeId,mode:'MANUAL'})}).catch(()=>{});
+    fetch('/api/walk',{method:'POST',credentials:'include',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({storeId,mode:'MANUAL'})}).catch(()=>{});
   },[storeId]);
 
   useEffect(()=>{
