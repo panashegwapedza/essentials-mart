@@ -111,6 +111,31 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     const signTrim=MeshBuilder.CreateBox('checkout-sign-trim',{width:7.65,height:.08,depth:.22},scene);signTrim.position.set(10.1,2.10,-13.0);signTrim.material=warmMat;signTrim.isPickable=false;shadowGen.addShadowCaster(signTrim);
     const laneHeader=MeshBuilder.CreateBox('checkout-lane-header',{width:13.6,height:.08,depth:.16},scene);laneHeader.position.set(10.1,2.78,-12.82);laneHeader.material=metalMat;laneHeader.isPickable=false;shadowGen.addShadowCaster(laneHeader);
     const entranceOpening=MeshBuilder.CreateBox('checkout-entrance-opening',{width:5.0,height:.08,depth:1.4},scene);entranceOpening.position.set(10.1,.08,-5.0);entranceOpening.material=counterMat;entranceOpening.isPickable=false;
+
+    // SECTION 02 — grocery aisle structure. Built as the next contiguous store zone.
+    const section02Floor=MeshBuilder.CreateGround('section02-floor',{width:24,height:12},scene);section02Floor.position.set(0,0,2);section02Floor.material=floorMat;section02Floor.isPickable=false;
+    const section02Back=MeshBuilder.CreateBox('section02-back-wall',{width:24,height:3,depth:.28},scene);section02Back.position.set(0,1.5,7.8);section02Back.material=wallMat;section02Back.isPickable=false;
+    const section02Left=MeshBuilder.CreateBox('section02-left-wall',{width:.28,height:3,depth:12},scene);section02Left.position.set(-11.85,1.5,2);section02Left.material=wallMat;section02Left.isPickable=false;
+    const section02Right=MeshBuilder.CreateBox('section02-right-wall',{width:.28,height:3,depth:12},scene);section02Right.position.set(11.85,1.5,2);section02Right.material=wallMat;section02Right.isPickable=false;
+    const section02Header=MeshBuilder.CreateBox('section02-header',{width:8.4,height:.42,depth:.18},scene);section02Header.position.set(0,2.45,7.58);section02Header.material=accentMat;section02Header.isPickable=false;shadowGen.addShadowCaster(section02Header);
+    const section02Trim=MeshBuilder.CreateBox('section02-header-trim',{width:8.65,height:.07,depth:.22},scene);section02Trim.position.set(0,2.21,7.58);section02Trim.material=warmMat;section02Trim.isPickable=false;
+
+    for(let aisle=0;aisle<3;aisle++){
+      const x=-7.2+aisle*7.2;
+      const rack=MeshBuilder.CreateBox('section02-rack-'+aisle,{width:3.9,height:2.15,depth:.38},scene);rack.position.set(x,1.08,2.0);rack.material=counterMat;rack.isPickable=false;shadowGen.addShadowCaster(rack);
+      const rackTop=MeshBuilder.CreateBox('section02-rack-top-'+aisle,{width:4.1,height:.10,depth:2.25},scene);rackTop.position.set(x,2.22,2.0);rackTop.material=metalMat;rackTop.isPickable=false;shadowGen.addShadowCaster(rackTop);
+      for(let level=0;level<4;level++){
+        const shelf=MeshBuilder.CreateBox('section02-shelf-'+aisle+'-'+level,{width:3.65,height:.08,depth:1.65},scene);shelf.position.set(x,.42+level*.48,2.0);shelf.material=metalMat;shelf.isPickable=false;shadowGen.addShadowCaster(shelf);
+      }
+      const endcap=MeshBuilder.CreateBox('section02-endcap-'+aisle,{width:.32,height:2.3,depth:1.85},scene);endcap.position.set(x-1.95,1.15,2.0);endcap.material=counterMat;endcap.isPickable=false;shadowGen.addShadowCaster(endcap);
+      const aisleSign=MeshBuilder.CreateBox('section02-aisle-sign-'+aisle,{width:1.05,height:.28,depth:.12},scene);aisleSign.position.set(x,2.48,2.0);aisleSign.material=accentMat;aisleSign.isPickable=false;
+      const aisleFloor=MeshBuilder.CreateBox('section02-aisle-floor-'+aisle,{width:4.6,height:.018,depth:7.8},scene);aisleFloor.position.set(x,0,3.0);aisleFloor.material=floorMat;aisleFloor.isPickable=false;
+    }
+    for(let row=0;row<3;row++){
+      const z=-.8+row*4.0;
+      const overhead=MeshBuilder.CreateBox('section02-overhead-'+row,{width:1.9,height:.08,depth:.34},scene);overhead.position.set(0,2.82,z);overhead.material=warmMat;overhead.isPickable=false;
+    }
+
     const highlight=new HighlightLayer('walk-highlights',scene);highlightRef.current=highlight;
     const pointer=scene.onPointerObservable.add(info=>{if(info.type!==PointerEventTypes.POINTERPICK)return;const id=info.pickInfo?.pickedMesh?.metadata?.productId as string|undefined;if(!id)return;const product=products.find(p=>p.id===id);if(product){setSelected(product);const mesh=info.pickInfo?.pickedMesh;if(mesh instanceof Mesh)highlight.addMesh(mesh,Color3.FromHexString('#238a4b'));onProductSelect(product);}});
     engine.runRenderLoop(()=>scene.render());const resize=()=>engine.resize();window.addEventListener('resize',resize);
@@ -129,7 +154,7 @@ export default function WalkMode({ onClose, products, onProductSelect }: Props) 
     {error&&<div className="walk-mode-error">{error}</div>}
     {loading?<div className="walk-mode-loading">Preparing the store layout…</div>:<div className="walk-mode-stage"><canvas ref={canvasRef} className="walk-mode-canvas"/>
       <div className="walk-mode-finder"><button type="button" className="walk-mode-finder-toggle" onClick={()=>setFindOpen(v=>!v)}>Find a product</button>{findOpen&&<div className="walk-mode-finder-panel"><input value={findQuery} onChange={e=>setFindQuery(e.target.value)} placeholder="Search products…" aria-label="Find a product"/><div className="walk-mode-find-results">{products.filter(p=>!findQuery.trim()||p.name.toLowerCase().includes(findQuery.toLowerCase())||p.category.toLowerCase().includes(findQuery.toLowerCase())||p.brand?.toLowerCase().includes(findQuery.toLowerCase())).slice(0,6).map(p=><button key={p.id} type="button" onClick={()=>findProduct(p.id)}><span>{p.name}</span><small>{[p.category,p.sizeLabel].filter(Boolean).join(' · ')}</small></button>)}</div></div>}</div>
-      <aside className="walk-mode-nav"><div className="walk-mode-nav-title"><strong>Checkout section</strong><span>Section 01</span></div><button type="button" className="active" onClick={()=>{const camera=cameraRef.current;if(camera){camera.position=new Vector3(10.1,1.65,-7.1);camera.setTarget(new Vector3(10.1,1.65,-11.2));}}}>Checkout bank</button><button type="button" onClick={()=>{const camera=cameraRef.current;if(camera){camera.position=new Vector3(10.1,1.65,-5.0);camera.setTarget(new Vector3(10.1,1.65,-9.0));}}}>Approach</button></aside>
+      <aside className="walk-mode-nav"><div className="walk-mode-nav-title"><strong>Store sections</strong><span>Walk Mode</span></div><button type="button" className="active" onClick={()=>{const camera=cameraRef.current;if(camera){camera.position=new Vector3(10.1,1.65,-7.1);camera.setTarget(new Vector3(10.1,1.65,-11.2));}}}>01 · Checkout</button><button type="button" onClick={()=>{const camera=cameraRef.current;if(camera){camera.position=new Vector3(0,1.65,9.2);camera.setTarget(new Vector3(0,1.35,2.0));}}}>02 · Grocery aisles</button></aside>
       <div className="walk-mode-help"><strong>Walk</strong><span>W A S D / arrow keys</span><span>Mouse to look</span><span>Click a product to open it</span></div>
       {selected&&<div className="walk-mode-product-card"><div><p className="eyebrow">PRODUCT</p><strong>{selected.name}</strong><span>{[selected.brand,selected.category,selected.sizeLabel].filter(Boolean).join(' · ')}</span></div><button type="button" onClick={()=>onProductSelect(selected)}>View product</button></div>}
       <div className="walk-mode-badge"><span>MANUAL</span><small>AI authority is not active</small></div>
