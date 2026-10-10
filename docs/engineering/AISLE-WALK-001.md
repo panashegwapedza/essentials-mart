@@ -1,18 +1,18 @@
 # AISLE-WALK-001 — Photographic aisle walk-through
 
-**Status:** Prototype, visual layer only. Consistent with ADR-014 (Walk Mode): the client is untrusted for price, stock and basket truth; product anchors will come from `walk_product_positions`.
+**Status:** Default Walk Mode (prototype, visual layer only). The Babylon 3D scene (`WalkMode.tsx`) is kept and reachable with `?walk=3d`; it is the only version with tap-to-open product selection. Consistent with ADR-014 (Walk Mode): the client is untrusted for price, stock and basket truth; product anchors will come from `walk_product_positions`.
 
 ## What it is
 `apps/customer_web/src/AisleWalk.tsx` renders a walk down one aisle from still photos ("stops"). The aisle is a box (floor, ceiling, two shelf walls, end wall); each stop photo is projected onto it from the stop's own camera position, and neighbouring stops are cross-faded as you walk. Surfaces a photo shows too coarsely fall back to a repeated near-field slice of the same photo, so detail only comes from real stops: **more stops = less repetition**.
 
-## Wire-in (non-invasive, opt-in via `?walk=aisle`)
+## Wire-in (default Walk Mode; legacy Babylon scene via `?walk=3d`)
 In `App.tsx`:
 ```tsx
 import AisleWalk from './AisleWalk';
-// replace the WalkMode render with:
-{walkModeOpen&&(new URLSearchParams(window.location.search).get('walk')==='aisle'
-  ?<AisleWalk onClose={()=>setWalkModeOpen(false)}/>
-  :<WalkMode products={products} onClose={()=>setWalkModeOpen(false)} onProductSelect={(product)=>{setWalkModeOpen(false);void openProduct(product);}}/>)}
+// the WalkMode render is replaced with:
+{walkModeOpen&&(new URLSearchParams(window.location.search).get('walk')==='3d'
+  ?<WalkMode products={products} onClose={()=>setWalkModeOpen(false)} onProductSelect={(product)=>{setWalkModeOpen(false);void openProduct(product);}}/>
+  :<AisleWalk onClose={()=>setWalkModeOpen(false)}/>)}
 ```
 
 ## Stops
