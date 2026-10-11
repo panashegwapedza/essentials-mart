@@ -18,8 +18,12 @@ type Pose = { z: number; x: number; yaw: number; pitch: number; phase: number; a
 // defaults (0.52, 0.39) and a 70° horizontal FOV match docs/engineering/AISLE-WALK-001.md.
 const STOP_SOURCES: StopSource[] = [
   { z: 0, src: '/walk/aisle/stop-0.jpg' },
-  { z: 6.5, src: '/walk/aisle/stop-7.jpg', vp: [0.445, 0.42] },
-  // Add generated stops here, e.g. { z: 3, src: '/walk/aisle/stop-1.jpg' }.
+  { z: 5.0, src: '/walk/aisle/stop-7.jpg', vp: [0.445, 0.42] },
+  // stop-8/9/10: generated approach views toward the fridges. z and vp are estimates (z from fridge height vs stop 0, +/-1.5 m); tune by eye.
+  { z: 6.5, src: '/walk/aisle/stop-8.jpg', vp: [0.44, 0.52] },
+  { z: 7.4, src: '/walk/aisle/stop-9.jpg', vp: [0.52, 0.556] },
+  { z: 8.0, src: '/walk/aisle/stop-10.jpg', vp: [0.48, 0.54] },
+  // Still missing: stops at z~2.5-3.5 and z~10+ (see docs/engineering/AISLE-WALK-001.md).
 ];
 const FULL_FROM_Z = 15, FULL_END = 17, FULL_ZB = 20, SPEED = 1.35;
 const CAPS_PARTIAL: Caption[] = [
