@@ -42,8 +42,8 @@ const CAPS_FULL: Caption[] = [
 const VS = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
 // Surfaces the photo shows too coarsely (you walked closer) fall back to a repeated/mirrored near-field slice of it.
 const FS = `precision highp float;
-uniform sampler2D uA,uB;uniform vec2 uRes,uZ;uniform vec3 uCa,uCb;uniform vec2 uSa,uSb;uniform vec4 uPose;uniform float uPitch,uZB;
-const float VPU=800.,VPV=400.,F=1097.,EYE=1.6,AL=1.10,AR=1.22,CEIL=3.0,ZNEAR=-4.0;
+uniform sampler2D uA,uB;uniform vec2 uRes,uZ;uniform vec3 uCa,uCb;uniform vec2 uSa,uSb;uniform vec4 uPose;uniform float uPitch,uZB;uniform vec3 uCalA,uCalB;
+const float EYE=1.6,AL=1.10,AR=1.22,CEIL=3.0,ZNEAR=-4.0;
 const vec2 IMG=vec2(1536.,1024.);
 vec2 pj(vec3 q,vec3 c,vec2 im){float z=max(q.z,.05);return vec2(c.x+c.z*q.x/z,c.y-c.z*q.y/z)/im;}
 vec3 tx(sampler2D s,vec3 q,vec3 c,vec2 im){return texture2D(s,clamp(pj(q,c,im),vec2(.0005),vec2(.9995))).rgb;}
@@ -63,13 +63,14 @@ vec3 viewFrom(sampler2D s,float zs,vec3 q,vec3 o,float kind,vec3 c,vec2 im){
 void main(){
  vec2 sp=vec2(gl_FragCoord.x,uRes.y-gl_FragCoord.y);float s=uRes.y/IMG.y;
  vec2 ph=vec2(768.,512.)+(sp-.5*uRes)/s;
- vec3 r=vec3(ph.x-VPU,VPV-ph.y+F*uPitch,F);
+ float d=uZ.y-uZ.x;float w=d>.01?smoothstep(uZ.x+.25*d,uZ.x+.75*d,uPose.z):0.;
+ vec3 cal=mix(uCalA,uCalB,w);
+ vec3 r=vec3(ph.x-cal.x,cal.y-ph.y+cal.z*uPitch,cal.z);
  float cy=cos(uPose.w),sy=sin(uPose.w);r=normalize(vec3(r.x*cy+r.z*sy,r.y,-r.x*sy+r.z*cy));
  vec3 o=uPose.xyz;
  float ax=tp(-AL,AR,o.x,r.x),ay=tp(-EYE,CEIL,o.y,r.y),az=tp(ZNEAR,uZB,o.z,r.z);
  float t=min(min(ax,ay),az);vec3 q=o+r*t;
  float kind=t==ay?(r.y<0.?1.:2.):(t==ax?0.:(r.z>0.?3.:0.));
- float d=uZ.y-uZ.x;float w=d>.01?smoothstep(uZ.x+.25*d,uZ.x+.75*d,o.z):0.;
  vec3 c=mix(viewFrom(uA,uZ.x,q,o,kind,uCa,uSa),viewFrom(uB,uZ.y,q,o,kind,uCb,uSb),w);
  vec2 n=(gl_FragCoord.xy/uRes-.5);c*=1.-.55*dot(n,n);
  gl_FragColor=vec4(c,1.);}`;
@@ -138,7 +139,7 @@ export default function AisleWalk({ onClose }: Props) {
     gl.vertexAttribPointer(attr, 2, gl.FLOAT, false, 0, 0);
 
     const U: Record<string, WebGLUniformLocation | null> = {};
-    for (const name of ['uA', 'uB', 'uRes', 'uZ', 'uPose', 'uPitch', 'uZB', 'uCa', 'uCb', 'uSa', 'uSb']) U[name] = gl.getUniformLocation(program, name);
+    for (const name of ['uA', 'uB', 'uRes', 'uZ', 'uPose', 'uPitch', 'uZB', 'uCa', 'uCb', 'uSa', 'uSb', 'uCalA', 'uCalB']) U[name] = gl.getUniformLocation(program, name);
     gl.uniform1i(U.uA, 0);
     gl.uniform1i(U.uB, 1);
 
@@ -219,6 +220,8 @@ export default function AisleWalk({ onClose }: Props) {
         gl.uniform3fv(U.uCb, B.cam);
         gl.uniform2fv(U.uSa, A.size);
         gl.uniform2fv(U.uSb, B.size);
+        gl.uniform3fv(U.uCalA, A.cam);
+        gl.uniform3fv(U.uCalB, B.cam);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, A.tex);
         gl.activeTexture(gl.TEXTURE1);
