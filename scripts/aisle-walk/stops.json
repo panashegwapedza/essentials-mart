@@ -1,0 +1,10 @@
+{
+  "depth": 13,
+  "_comment": "Landmarks in 1536x1024 pixel coordinates: panel = green 'Fresh Produce' panel [x,y,w,h]; fridge_top_y = top edge of the fridge bank; signs = centres of the green number tiles of signs 5 and 6. z is computed from the landmark zoom between consecutive stops (override with an explicit z).",
+  "stops": [
+    {"file": "stop-0.jpg",  "panel": [624, 348, 226, 72],  "fridge_top_y": 446, "signs": [[624, 268], [890, 268]]},
+    {"file": "stop-8.jpg",  "panel": [458, 270, 393, 117], "fridge_top_y": 437, "signs": [[398, 94], [941, 94]]},
+    {"file": "stop-9.jpg",  "panel": [462, 204, 494, 137], "fridge_top_y": 372, "signs": [[386, 73], [960, 73]]},
+    {"file": "stop-10.jpg", "panel": [370, 230, 550, 188], "fridge_top_y": 429, "signs": [[358, 86], [969, 85]]}
+  ]
+}

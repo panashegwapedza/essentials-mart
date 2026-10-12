@@ -1,80 +1,69 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './AisleWalk.css';
+import { MORPH_DEPTH, MORPH_PAIRS, MORPH_STOPS } from './aisleWalkMorph';
+import type { Tps } from './aisleWalkMorph';
 
 /**
- * AISLE-WALK-001 — photographic aisle walk-through.
- * Visual layer only (ADR-014): price, stock and basket truth stay server-side; product anchors
- * will come from walk_product_positions. The aisle is modelled as a box (floor, ceiling, two shelf
- * walls, end wall) textured by projecting each stop photo from its own camera position.
+ * AISLE-WALK-001 — photographic aisle walk-through (aligned morph).
+ * Visual layer only (ADR-014): price, stock and basket truth stay server-side.
+ *
+ * Neighbouring stop photos are registered with a thin-plate-spline warp built from shared landmarks
+ * (green panel corners, fridge top, sign tiles; see scripts/aisle-walk/build_morph.py), so the far wall,
+ * fridges, signs and floor coincide while one photo morphs into the next. Every frame uses a fixed,
+ * slightly zoomed 3:2 cut-out of the photo, so the view stays stable.
  */
 
 type Props = { onClose: () => void };
-type StopSource = { z: number; src: string; vp?: [number, number]; f?: number };
-type Stop = { z: number; tex: WebGLTexture; cam: [number, number, number]; size: [number, number] };
+type Stop = { z: number; tex: WebGLTexture };
 type Caption = [number, string];
-type Pose = { z: number; x: number; yaw: number; pitch: number; phase: number; auto: boolean; held: number; end: number; zb: number; caps: Caption[] };
+type Pose = { z: number; x: number; yaw: number; pitch: number; phase: number; auto: boolean; held: number };
+type Packed = { c: Float32Array; w: Float32Array; aff: Float32Array };
 
-// z = camera distance (metres) from the aisle entrance. vp = vanishing point as a fraction of the image;
-// defaults (0.52, 0.39) and a 70° horizontal FOV match docs/engineering/AISLE-WALK-001.md.
-const STOP_SOURCES: StopSource[] = [
-  { z: 0, src: '/walk/aisle/stop-0.jpg' },
-  { z: 5.0, src: '/walk/aisle/stop-7.jpg', vp: [0.445, 0.42] },
-  // stop-8/9/10: generated approach views toward the fridges. z and vp are estimates (z from fridge height vs stop 0, +/-1.5 m); tune by eye.
-  { z: 6.5, src: '/walk/aisle/stop-8.jpg', vp: [0.44, 0.52] },
-  { z: 7.4, src: '/walk/aisle/stop-9.jpg', vp: [0.52, 0.556] },
-  { z: 8.0, src: '/walk/aisle/stop-10.jpg', vp: [0.48, 0.54] },
-  // Still missing: stops at z~2.5-3.5 and z~10+ (see docs/engineering/AISLE-WALK-001.md).
-];
-const FULL_FROM_Z = 15, FULL_END = 17, FULL_ZB = 20, SPEED = 1.35;
-const CAPS_PARTIAL: Caption[] = [
-  [0.12, 'Aisle 3 · Cereal & Breakfast on your left, Aisle 4 · Beverages on your right'],
+const SPEED = 1.35;
+const EXTRA = 1.2; // metres walked past the last stop (slow zoom into it)
+const END = MORPH_STOPS[MORPH_STOPS.length - 1].z + EXTRA;
+const N = 19; // landmarks (7) + border anchors (12); must match build_morph.py
+const CAPS: Caption[] = [
+  [0.2, 'Aisle 3 · Cereal & Breakfast on your left, Aisle 4 · Beverages on your right'],
   [0.55, 'Walking down the aisle'],
-  [0.88, 'Snacks (5) and Personal Care (6) are ahead'],
-  [2, 'End of aisle · Fresh Produce ahead'],
-];
-const CAPS_FULL: Caption[] = [
-  [0.18, 'Aisle 3 · Cereal & Breakfast on your left, Aisle 4 · Beverages on your right'],
-  [0.53, 'Walking down the aisle'],
-  [0.76, 'Snacks (5) and Personal Care (6) are overhead ahead'],
-  [2, 'Fresh Produce · fruit and vegetable racks'],
+  [0.85, 'Snacks (5) and Personal Care (6) are ahead'],
+  [2, 'Fresh Produce ahead'],
 ];
 
 const VS = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
-// Surfaces the photo shows too coarsely (you walked closer) fall back to a repeated/mirrored near-field slice of it.
+// uA = source photo (iteration start), uB = destination photo; uS = warp progress from the source side,
+// uMix = weight of the destination. Coordinates are photo pixels / 1024 (x spans 0..1.5).
 const FS = `precision highp float;
-uniform sampler2D uA,uB;uniform vec2 uRes,uZ;uniform vec3 uCa,uCb;uniform vec2 uSa,uSb;uniform vec4 uPose;uniform float uPitch,uZB;
-const float VPU=800.,VPV=400.,F=1097.,EYE=1.6,AL=1.10,AR=1.22,CEIL=3.0,ZNEAR=-4.0;
-const vec2 IMG=vec2(1536.,1024.);
-vec2 pj(vec3 q,vec3 c,vec2 im){float z=max(q.z,.05);return vec2(c.x+c.z*q.x/z,c.y-c.z*q.y/z)/im;}
-vec3 tx(sampler2D s,vec3 q,vec3 c,vec2 im){return texture2D(s,clamp(pj(q,c,im),vec2(.0005),vec2(.9995))).rgb;}
-float ok(vec3 q,vec3 c,vec2 im){vec2 u=pj(q,c,im);float e=min(min(u.x,1.-u.x),min(u.y,1.-u.y));return smoothstep(0.,.04,e)*step(.3,q.z);}
-float tp(float lo,float hi,float o,float d){if(d>1e-5)return(hi-o)/d;if(d<-1e-5)return(lo-o)/d;return 1e9;}
-float fm(float z,float z0,float p){float s=mod(z-z0,2.*p);return z0+(s<p?s:2.*p-s);}
-vec3 wallTile(sampler2D s,vec3 q,vec3 c,vec2 im){float t=mod(q.z-2.1,2.0);vec3 a=tx(s,vec3(q.xy,2.1+t),c,im);vec3 b=tx(s,vec3(q.xy,4.1+t),c,im);return mix(b,a,smoothstep(0.,.5,t));}
-// What the stop whose camera sits at depth zs shows at surface point q (kind 0 wall,1 floor,2 ceiling,3 end wall).
-vec3 viewFrom(sampler2D s,float zs,vec3 q,vec3 o,float kind,vec3 c,vec2 im){
- q.z-=zs;o.z-=zs;
- vec3 base=tx(s,q,c,im);
- float M=pow(max(q.z,.1)/max(q.z-o.z,.25),2.);
- float k=max(smoothstep(1.6,4.,M),1.-ok(q,c,im));
- if(kind>2.5)k=1.-ok(q,c,im);
- vec3 det=kind<.5?wallTile(s,q,c,im):(kind<1.5?tx(s,vec3(q.x,q.y,fm(q.z,3.,2.4)),c,im):(kind<2.5?tx(s,vec3(q.x,q.y,fm(q.z,9.,3.5)),c,im):wallTile(s,q,c,im)));
- return mix(base,det,k);}
+uniform sampler2D uA,uB;
+uniform vec2 uRes,uLook;
+uniform float uZoom,uS,uMix;
+uniform vec2 uC[${N}],uW[${N}],uAff[3];
+vec2 tps(vec2 p){
+ vec2 r=uAff[0]+uAff[1]*p.x+uAff[2]*p.y;
+ for(int i=0;i<${N};i++){vec2 d=p-uC[i];float q=dot(d,d);if(q>1e-10)r+=uW[i]*(.5*q*log(q));}
+ return r;}
+float val(vec2 p){float e=min(min(p.x,1.5-p.x),min(p.y,1.-p.y));return smoothstep(0.,.05,e);}
+vec3 tx(sampler2D s,vec2 p){return texture2D(s,clamp(p*vec2(.6666667,1.),vec2(.0005),vec2(.9995))).rgb;}
 void main(){
- vec2 sp=vec2(gl_FragCoord.x,uRes.y-gl_FragCoord.y);float s=uRes.y/IMG.y;
- vec2 ph=vec2(768.,512.)+(sp-.5*uRes)/s;
- vec3 r=vec3(ph.x-VPU,VPV-ph.y+F*uPitch,F);
- float cy=cos(uPose.w),sy=sin(uPose.w);r=normalize(vec3(r.x*cy+r.z*sy,r.y,-r.x*sy+r.z*cy));
- vec3 o=uPose.xyz;
- float ax=tp(-AL,AR,o.x,r.x),ay=tp(-EYE,CEIL,o.y,r.y),az=tp(ZNEAR,uZB,o.z,r.z);
- float t=min(min(ax,ay),az);vec3 q=o+r*t;
- float kind=t==ay?(r.y<0.?1.:2.):(t==ax?0.:(r.z>0.?3.:0.));
- float d=uZ.y-uZ.x;float w=d>.01?smoothstep(uZ.x+.25*d,uZ.x+.75*d,o.z):0.;
- vec3 c=mix(viewFrom(uA,uZ.x,q,o,kind,uCa,uSa),viewFrom(uB,uZ.y,q,o,kind,uCb,uSb),w);
- vec2 n=(gl_FragCoord.xy/uRes-.5);c*=1.-.55*dot(n,n);
+ vec2 sp=vec2(gl_FragCoord.x,uRes.y-gl_FragCoord.y);
+ float s=max(uRes.x/1536.,uRes.y/1024.)*1.1;
+ vec2 pn=(vec2(768.,512.)+(sp-.5*uRes)/s+uLook)/1024.;
+ pn=vec2(.75,.52)+(pn-vec2(.75,.52))/uZoom;
+ vec2 ps=pn;
+ for(int k=0;k<4;k++){ps=pn-uS*(tps(ps)-ps);}
+ vec2 pd=tps(ps);
+ float ws=(1.-uMix)*val(ps)+1e-4,wd=uMix*val(pd)+1e-4;
+ vec3 c=(tx(uA,ps)*ws+tx(uB,pd)*wd)/(ws+wd);
+ vec2 n=gl_FragCoord.xy/uRes-.5;c*=1.-.35*dot(n,n);
  gl_FragColor=vec4(c,1.);}`;
 
+const IDENTITY: Packed = { c: new Float32Array(N * 2), w: new Float32Array(N * 2), aff: new Float32Array([0, 0, 1, 0, 0, 1]) };
+const pack = (t: Tps): Packed => ({ c: new Float32Array(t.c), w: new Float32Array(t.w), aff: new Float32Array(t.aff) });
+const PAIRS = MORPH_PAIRS.map((p) => ({ ab: pack(p.ab), ba: pack(p.ba) }));
+
 const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
+const smooth = (x: number): number => x * x * (3 - 2 * x);
+const inv = (z: number): number => 1 / (MORPH_DEPTH - z);
 const loadImage = (src: string): Promise<HTMLImageElement | null> =>
   new Promise((resolve) => {
     const img = new Image();
@@ -90,7 +79,7 @@ export default function AisleWalk({ onClose }: Props) {
   const distRef = useRef<HTMLSpanElement | null>(null);
   const progRef = useRef<HTMLElement | null>(null);
   const keys = useRef<Record<string, boolean>>({});
-  const pose = useRef<Pose>({ z: 0, x: 0, yaw: 0, pitch: 0, phase: 0, auto: true, held: 0, end: 9, zb: 12.8, caps: CAPS_PARTIAL });
+  const pose = useRef<Pose>({ z: 0, x: 0, yaw: 0, pitch: 0, phase: 0, auto: true, held: 0 });
   const [auto, setAuto] = useState(true);
   const [hint, setHint] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -138,7 +127,7 @@ export default function AisleWalk({ onClose }: Props) {
     gl.vertexAttribPointer(attr, 2, gl.FLOAT, false, 0, 0);
 
     const U: Record<string, WebGLUniformLocation | null> = {};
-    for (const name of ['uA', 'uB', 'uRes', 'uZ', 'uPose', 'uPitch', 'uZB', 'uCa', 'uCb', 'uSa', 'uSb']) U[name] = gl.getUniformLocation(program, name);
+    for (const name of ['uA', 'uB', 'uRes', 'uLook', 'uZoom', 'uS', 'uMix', 'uC', 'uW', 'uAff']) U[name] = gl.getUniformLocation(program, name);
     gl.uniform1i(U.uA, 0);
     gl.uniform1i(U.uB, 1);
 
@@ -160,29 +149,24 @@ export default function AisleWalk({ onClose }: Props) {
     };
 
     void Promise.all(
-      STOP_SOURCES.map(async (source): Promise<Stop | null> => {
+      MORPH_STOPS.map(async (source): Promise<Stop | null> => {
         const img = await loadImage(source.src);
         if (!img || disposed) return null;
         const tex = makeTexture(img);
         if (!tex) return null;
         textures.push(tex);
-        const w = img.naturalWidth, h = img.naturalHeight, vp = source.vp ?? [0.52, 0.39];
-        return { z: source.z, tex, cam: [vp[0] * w, vp[1] * h, source.f ?? (w / 2) / Math.tan((35 * Math.PI) / 180)], size: [w, h] };
+        return { z: source.z, tex };
       }),
     ).then((list) => {
       if (disposed) return;
-      const loaded = list.filter((s): s is Stop => s !== null).sort((a, b) => a.z - b.z);
-      if (!loaded.length) { setError('The aisle images failed to load.'); return; }
-      const p = pose.current;
-      if (loaded.length > 1) {
-        const lastZ = loaded[loaded.length - 1].z;
-        const full = lastZ >= FULL_FROM_Z;
-        p.end = full ? FULL_END : lastZ + 2;
-        p.zb = full ? FULL_ZB : lastZ + 5.5;
-        p.caps = full ? CAPS_FULL : CAPS_PARTIAL;
-      }
-      stops = loaded;
+      if (list.some((s) => s === null)) { setError('The aisle images failed to load.'); return; }
+      stops = list as Stop[];
     });
+
+    const bind = (unit: number, tex: WebGLTexture) => {
+      gl.activeTexture(unit === 0 ? gl.TEXTURE0 : gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+    };
 
     let last = performance.now();
     const frame = (now: number) => {
@@ -190,17 +174,17 @@ export default function AisleWalk({ onClose }: Props) {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       let mv = ((k.KeyW || k.ArrowUp) ? 1 : 0) - ((k.KeyS || k.ArrowDown) ? 1 : 0) + p.held;
-      if (p.auto && p.z < p.end) mv = 1;
-      p.z = clamp(p.z + mv * SPEED * dt, 0, p.end);
-      if (p.auto && p.z >= p.end) setMode(false);
+      if (p.auto && p.z < END) mv = 1;
+      p.z = clamp(p.z + mv * SPEED * dt, 0, END);
+      if (p.auto && p.z >= END) setMode(false);
       p.x = clamp(p.x + ((k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0)) * 0.8 * dt, -0.55, 0.55);
       if (mv || k.KeyA || k.KeyD) p.phase += dt * 7.5;
 
-      const f = p.z / p.end;
+      const f = p.z / END;
       if (progRef.current) progRef.current.style.width = `${f * 100}%`;
-      const cap = p.caps.find((c) => f < c[0]);
+      const cap = CAPS.find((c) => f < c[0]);
       if (capRef.current && cap) capRef.current.textContent = cap[1];
-      if (distRef.current) distRef.current.textContent = `${p.z.toFixed(1)} m of ${p.end.toFixed(1)} m`;
+      if (distRef.current) distRef.current.textContent = `${p.z.toFixed(1)} m of ${END.toFixed(1)} m`;
 
       if (stops.length) {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -208,21 +192,33 @@ export default function AisleWalk({ onClose }: Props) {
         if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
         gl.viewport(0, 0, w, h);
         gl.uniform2f(U.uRes, w, h);
-        gl.uniform4f(U.uPose, p.x, mv ? 0.028 * Math.sin(p.phase) : 0, p.z, p.yaw);
-        gl.uniform1f(U.uPitch, p.pitch);
-        gl.uniform1f(U.uZB, p.zb);
-        let ia = 0;
-        while (ia < stops.length - 2 && stops[ia + 1].z <= p.z) ia++;
-        const A = stops[ia], B = stops[Math.min(ia + 1, stops.length - 1)];
-        gl.uniform2f(U.uZ, A.z, B.z);
-        gl.uniform3fv(U.uCa, A.cam);
-        gl.uniform3fv(U.uCb, B.cam);
-        gl.uniform2fv(U.uSa, A.size);
-        gl.uniform2fv(U.uSb, B.size);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, A.tex);
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, B.tex);
+        gl.uniform2f(U.uLook, clamp(-p.yaw * 350 - p.x * 60, -70, 70), clamp(p.pitch * 500 + (mv ? 3 * Math.sin(p.phase) : 0), -40, 40));
+
+        const last = stops.length - 1;
+        if (last < 1) {
+          bind(0, stops[0].tex); bind(1, stops[0].tex);
+          gl.uniform1f(U.uZoom, 1); gl.uniform1f(U.uS, 0); gl.uniform1f(U.uMix, 0);
+          gl.uniform2fv(U.uC, IDENTITY.c); gl.uniform2fv(U.uW, IDENTITY.w); gl.uniform2fv(U.uAff, IDENTITY.aff);
+        } else {
+          let i = 0, t = 1, zoom = 1;
+          if (p.z >= stops[last].z) {
+            i = last - 1;
+            zoom = (MORPH_DEPTH - stops[last].z) / (MORPH_DEPTH - p.z);
+          } else {
+            while (i < last - 1 && stops[i + 1].z <= p.z) i++;
+            const a = inv(stops[i].z), b = inv(stops[i + 1].z);
+            t = clamp((inv(p.z) - a) / (b - a), 0, 1);
+          }
+          const wB = smooth(clamp((t - 0.3) / 0.4, 0, 1));
+          const forward = t <= 0.5; // solve the warp from the nearer photo so it never folds over
+          const tps = forward ? PAIRS[i].ab : PAIRS[i].ba;
+          bind(0, (forward ? stops[i] : stops[i + 1]).tex);
+          bind(1, (forward ? stops[i + 1] : stops[i]).tex);
+          gl.uniform1f(U.uZoom, zoom);
+          gl.uniform1f(U.uS, forward ? t : 1 - t);
+          gl.uniform1f(U.uMix, forward ? wB : 1 - wB);
+          gl.uniform2fv(U.uC, tps.c); gl.uniform2fv(U.uW, tps.w); gl.uniform2fv(U.uAff, tps.aff);
+        }
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
       raf = requestAnimationFrame(frame);
@@ -252,7 +248,7 @@ export default function AisleWalk({ onClose }: Props) {
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       setMode(false);
-      pose.current.z = clamp(pose.current.z - e.deltaY * 0.004, 0, pose.current.end);
+      pose.current.z = clamp(pose.current.z - e.deltaY * 0.004, 0, END);
     };
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
