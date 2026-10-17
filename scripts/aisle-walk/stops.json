@@ -1,0 +1,108 @@
+{
+ "depth": 19.63,
+ "stops": [
+  {
+   "file": "stop-0.jpg",
+   "z": 0.0,
+   "panel": [
+    520,
+    304,
+    388,
+    92
+   ],
+   "counter": [
+    859,
+    527,
+    125,
+    103
+   ],
+   "source": "A"
+  },
+  {
+   "file": "stop-1.jpg",
+   "z": 2.77,
+   "panel": [
+    480,
+    281,
+    465,
+    105
+   ],
+   "counter": [
+    920,
+    535,
+    73,
+    117
+   ],
+   "source": "B"
+  },
+  {
+   "file": "stop-2.jpg",
+   "z": 4.7,
+   "panel": [
+    484,
+    233,
+    564,
+    148
+   ],
+   "counter": [
+    951,
+    576,
+    95,
+    123
+   ],
+   "source": "C"
+  },
+  {
+   "file": "stop-3.jpg",
+   "z": 8.03,
+   "panel": [
+    456,
+    197,
+    621,
+    183
+   ],
+   "counter": [
+    1015,
+    621,
+    208,
+    185
+   ],
+   "source": "E"
+  },
+  {
+   "file": "stop-4.jpg",
+   "z": 9.6,
+   "panel": [
+    388,
+    80,
+    722,
+    214
+   ],
+   "counter": [
+    1079,
+    555,
+    114,
+    213
+   ],
+   "source": "D"
+  },
+  {
+   "file": "stop-5.jpg",
+   "z": 10.5,
+   "panel": [
+    450,
+    134,
+    729,
+    190
+   ],
+   "counter": [
+    1102,
+    633,
+    434,
+    254
+   ],
+   "source": "F"
+  }
+ ],
+ "_comment": "Landmarks in 1536x1024 pixel coordinates: panel = green 'Fresh Produce' panel [x,y,w,h]; counter = bounding box of the wooden counter's front face [x,y,w,h] (only its left edge, top and bottom are used). z is in metres from the entrance, derived from the measured growth of the panel and counter between frames. 'source' records which uploaded image each stop came from."
+}

@@ -30,7 +30,7 @@ export function generateInventoryIntelligence(signals:InventorySignal[]):Invento
   const insights=signals.filter(s=>s.productId&&s.storeId&&Number.isFinite(s.quantity)&&Number.isFinite(s.reservedQuantity))
     .map(s=>{
       const available=Math.max(0,s.quantity-s.reservedQuantity);
-      const type=available<=0?'out-of-stock':available<=5?'low-stock':'healthy-stock';
+      const type:InventoryInsight['type']=available<=0?'out-of-stock':available<=5?'low-stock':'healthy-stock';
       const confidence=clampConfidence(Math.min(1,0.7+(s.observedAt?0.3:0)));
       const reason=type==='out-of-stock'?'No unreserved units are currently available.':type==='low-stock'?'Available stock is low after reservations.':'Available stock is currently above the low-stock threshold.';
       return {insightId:'inventory:'+s.storeId+':'+s.productId,type,productId:s.productId,productName:s.productName,storeId:s.storeId,availableQuantity:available,reservedQuantity:Math.max(0,s.reservedQuantity),confidence,reason,authority:'recommendation-only' as const,sourceSignalId:s.signalId};

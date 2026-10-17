@@ -12,7 +12,7 @@ export type SearchInterpretation={
 };
 
 const UNIT_ALIASES:Record<string,string>={
- litre:'l',litre:'l',litres:'l',liter:'l',liters:'l',l:'l',
+ litre:'l',litres:'l',liter:'l',liters:'l',l:'l',
  millilitre:'ml',millilitres:'ml',milliliter:'ml',milliliters:'ml',ml:'ml',
  kilogram:'kg',kilograms:'kg',kg:'kg',gram:'g',grams:'g',g:'g',
  pack:'pack',packs:'pack'
@@ -22,7 +22,7 @@ const WORD_CORRECTIONS:Record<string,string>={
  milkk:'milk',milc:'milk',mikl:'milk',mlik:'milk',
  tomatos:'tomato',tomatoe:'tomato',tomatto:'tomato',
  bred:'bread',brad:'bread',eggs:'egg',eg:'egg',
- cheeze:'cheese',chesse:'cheese',suger:'sugar',suger:'sugar',
+ cheeze:'cheese',chesse:'cheese',suger:'sugar',
  ricee:'rice',detergentt:'detergent',soapp:'soap',shampo:'shampoo'
 };
 
