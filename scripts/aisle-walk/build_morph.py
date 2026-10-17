@@ -5,7 +5,7 @@
   python3 scripts/aisle-walk/build_morph.py detect apps/customer_web/public/walk/aisle/stop-11.jpg   # propose landmarks
 
 Each pair of neighbouring stops gets a thin-plate-spline warp (both directions) that maps the
-shared landmarks (green panel corners, fridge top, sign tiles) onto each other, so the far structure,
+shared landmarks (green panel outline, wooden counter left edge) onto each other, so the far structure,
 signs and floor coincide while the viewer morphs between the photos. Needs numpy (+ opencv-python for `detect`).
 """
 import json, sys, pathlib
@@ -16,8 +16,10 @@ OUT = HERE.parents[1] / 'apps/customer_web/src/aisleWalkMorph.ts'
 ANCHORS = [(0, 0), (1.5, 0), (0, 1), (1.5, 1), (.75, 0), (.75, 1), (0, .5), (1.5, .5), (.375, 0), (1.125, 0), (.375, 1), (1.125, 1)]
 
 def landmarks(s):
-    x, y, w, h = s['panel']
-    pts = [[x, y], [x + w, y], [x + w, y + h], [x, y + h], [x + w / 2, s['fridge_top_y']]] + s['signs']
+    # panel outline (4 corners) + left edge of the wooden counter (top-left, bottom-left): the structures that are
+    # consistent from photo to photo. Everything else is carried by the border anchors below.
+    x, y, w, h = s['panel']; cx, cy, cw, ch = s['counter']
+    pts = [[x, y], [x + w, y], [x + w, y + h], [x, y + h], [cx, cy], [cx, cy + ch]]
     return np.array(pts, float) / 1024.
 
 def similarity(a, b):
@@ -69,19 +71,19 @@ def build():
 
 def detect(path):
     import cv2
-    im = cv2.imread(path); H, W = im.shape[:2]
+    im = cv2.imread(path); H, W = im.shape[:2]; k = 1536 / W
+    im = cv2.resize(im, (1536, round(H * k))); H, W = im.shape[:2]
     hsv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
-    g = ((hsv[..., 0] >= 40) & (hsv[..., 0] <= 85) & (hsv[..., 1] >= 90) & (hsv[..., 2] >= 45)).astype(np.uint8)
-    g[int(.6 * H):] = 0
-    g = cv2.morphologyEx(cv2.morphologyEx(g, cv2.MORPH_CLOSE, np.ones((7, 7), np.uint8)), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+    g = ((hsv[..., 0] >= 40) & (hsv[..., 0] <= 85) & (hsv[..., 1] >= 100) & (hsv[..., 2] >= 50)).astype(np.uint8); g[int(.62 * H):] = 0
+    g = cv2.morphologyEx(cv2.morphologyEx(g, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8)), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
     n, _, st, _ = cv2.connectedComponentsWithStats(g)
-    panels = [tuple(map(int, st[i][:4])) for i in range(1, n) if st[i][2] / max(st[i][3], 1) > 1.8 and st[i][2] < .8 * W]
-    panels.sort(key=lambda p: -p[2] * p[3])
-    g2 = ((hsv[..., 0] >= 40) & (hsv[..., 0] <= 85) & (hsv[..., 1] >= 80) & (hsv[..., 2] >= 40)).astype(np.uint8); g2[int(.32 * H):] = 0
-    n, _, st, cen = cv2.connectedComponentsWithStats(cv2.morphologyEx(g2, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8)))
-    tiles = [(round(float(cen[i][0])), round(float(cen[i][1])), int(st[i][2])) for i in range(1, n) if .7 < st[i][2] / st[i][3] < 1.45 and st[i][4] >= 150]
-    print(json.dumps({'file': pathlib.Path(path).name, 'panel': list(panels[0]) if panels else None,
-                      'fridge_top_y': 'MEASURE BY EYE: top edge of the fridge bank', 'sign_tile_candidates(x,y,width)': tiles}, indent=1))
+    panels = sorted([tuple(int(v) for v in st[i][:5]) for i in range(1, n) if st[i][2] / max(st[i][3], 1) > 2.0 and st[i][2] > .08 * W], key=lambda p: -p[4])
+    m = ((hsv[..., 0] >= 6) & (hsv[..., 0] <= 24) & (hsv[..., 1] >= 80) & (hsv[..., 1] <= 235) & (hsv[..., 2] >= 70)).astype(np.uint8); m[:int(.38 * H)] = 0; m[:, :int(.45 * W)] = 0
+    m = cv2.morphologyEx(cv2.morphologyEx(m, cv2.MORPH_CLOSE, np.ones((7, 7), np.uint8)), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+    n, _, st, _ = cv2.connectedComponentsWithStats(m)
+    cs = sorted([tuple(int(v) for v in st[i][:5]) for i in range(1, n) if st[i][4] > 300], key=lambda p: -p[4])
+    print(json.dumps({'file': pathlib.Path(path).name, 'note': 'coordinates in a 1536-wide frame',
+                      'panel': list(panels[0][:4]) if panels else None, 'counter': list(cs[0][:4]) if cs else None}))
 
 if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'detect': detect(sys.argv[2])

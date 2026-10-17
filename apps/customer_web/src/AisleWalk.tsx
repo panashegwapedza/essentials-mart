@@ -8,7 +8,7 @@ import type { Tps } from './aisleWalkMorph';
  * Visual layer only (ADR-014): price, stock and basket truth stay server-side.
  *
  * Neighbouring stop photos are registered with a thin-plate-spline warp built from shared landmarks
- * (green panel corners, fridge top, sign tiles; see scripts/aisle-walk/build_morph.py), so the far wall,
+ * (green panel outline, wooden counter left edge; see scripts/aisle-walk/build_morph.py), so the far wall,
  * fridges, signs and floor coincide while one photo morphs into the next. Every frame uses a fixed,
  * slightly zoomed 3:2 cut-out of the photo, so the view stays stable.
  */
@@ -22,12 +22,12 @@ type Packed = { c: Float32Array; w: Float32Array; aff: Float32Array };
 const SPEED = 1.35;
 const EXTRA = 1.2; // metres walked past the last stop (slow zoom into it)
 const END = MORPH_STOPS[MORPH_STOPS.length - 1].z + EXTRA;
-const N = 19; // landmarks (7) + border anchors (12); must match build_morph.py
+const N = 18; // landmarks (6) + border anchors (12); must match build_morph.py
 const CAPS: Caption[] = [
-  [0.2, 'Aisle 3 · Cereal & Breakfast on your left, Aisle 4 · Beverages on your right'],
-  [0.55, 'Walking down the aisle'],
-  [0.85, 'Snacks (5) and Personal Care (6) are ahead'],
-  [2, 'Fresh Produce ahead'],
+  [0.22, 'Aisle 5 · Snacks & Baking on your left, Aisle 6 · Personal Care & Household on your right'],
+  [0.6, 'Walking toward Fresh Produce'],
+  [0.88, 'Fresh Produce and the chilled section are ahead'],
+  [2, 'Fresh Produce'],
 ];
 
 const VS = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
@@ -209,7 +209,7 @@ export default function AisleWalk({ onClose }: Props) {
             const a = inv(stops[i].z), b = inv(stops[i + 1].z);
             t = clamp((inv(p.z) - a) / (b - a), 0, 1);
           }
-          const wB = smooth(clamp((t - 0.3) / 0.4, 0, 1));
+          const wB = smooth(clamp((t - 0.35) / 0.3, 0, 1));
           const forward = t <= 0.5; // solve the warp from the nearer photo so it never folds over
           const tps = forward ? PAIRS[i].ab : PAIRS[i].ba;
           bind(0, (forward ? stops[i] : stops[i + 1]).tex);
@@ -290,7 +290,7 @@ export default function AisleWalk({ onClose }: Props) {
     <div className="aisle-walk" ref={rootRef} role="dialog" aria-label="Aisle walk">
       <canvas className="aisle-walk-canvas" ref={canvasRef} />
       <div className="aisle-walk-top">
-        <div className="aisle-walk-title"><strong>Walk Mode</strong><span>Aisle 3 · Cereal &amp; Breakfast / Aisle 4 · Beverages</span></div>
+        <div className="aisle-walk-title"><strong>Walk Mode</strong><span>Aisle 5 &amp; 6 · heading to Fresh Produce</span></div>
         <div className="aisle-walk-modes">
           <button type="button" className={auto ? '' : 'on'} onClick={() => setMode(false)}>Manual</button>
           <button type="button" className={auto ? 'on' : ''} onClick={() => setMode(true)}>Autopilot</button>
