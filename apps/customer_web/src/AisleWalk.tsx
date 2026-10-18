@@ -210,8 +210,12 @@ export default function AisleWalk({ onClose }: Props) {
         } else {
           let i = 0, t = 1, zoom = 1;
           if (p.z >= stops[last].z) {
+            // The final photo is the 10.5 m stop. Continue walking from there to
+            // END (11.7 m) with a smooth, eased camera advance rather than a
+            // sudden scale change at the last image.
             i = last - 1;
-            zoom = (MORPH_DEPTH - stops[last].z) / (MORPH_DEPTH - p.z);
+            const finalProgress = smooth(clamp((p.z - stops[last].z) / (END - stops[last].z), 0, 1));
+            zoom = 1 + 0.16 * finalProgress;
           } else {
             while (i < last - 1 && stops[i + 1].z <= p.z) i++;
             const a = inv(stops[i].z), b = inv(stops[i + 1].z);
