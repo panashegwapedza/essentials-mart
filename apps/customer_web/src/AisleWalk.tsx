@@ -67,6 +67,7 @@ const inv = (z: number): number => 1 / (MORPH_DEPTH - z);
 const loadImage = (src: string): Promise<HTMLImageElement | null> =>
   new Promise((resolve) => {
     const img = new Image();
+    img.crossOrigin = 'anonymous';
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
     img.src = src;
@@ -154,15 +155,19 @@ export default function AisleWalk({ onClose }: Props) {
       MORPH_STOPS.map(async (source): Promise<Stop | null> => {
         const img = await loadImage(source.src);
         if (!img || disposed) return null;
-        const tex = makeTexture(img);
+        let tex: WebGLTexture | null = null;
+        try { tex = makeTexture(img); } catch (err) { console.error('Walk Mode texture upload failed:', err); }
         if (!tex) return null;
         textures.push(tex);
         return { z: source.z, tex };
       }),
     ).then((list) => {
       if (disposed) return;
-      if (list.some((s) => s === null)) { setError('The aisle images failed to load.'); return; }
+      if (list.some((s) => s === null)) { setError('The aisle images failed to load. Check the connection and refresh Walk Mode.'); return; }
       stops = list as Stop[];
+    }).catch((err) => {
+      console.error('Walk Mode image initialization failed:', err);
+      if (!disposed) setError('The aisle scene could not be initialized. Refresh Walk Mode and try again.');
     });
 
     const bind = (unit: number, tex: WebGLTexture) => {
