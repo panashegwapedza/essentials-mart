@@ -49,11 +49,12 @@ void main(){
  float s=max(uRes.x/1536.,uRes.y/1024.)*1.1;
  vec2 pn=(vec2(768.,512.)+(sp-.5*uRes)/s+uLook)/1024.;
  pn=vec2(.75,.52)+(pn-vec2(.75,.52))/uZoom;
- // Cross-fade between stable, unwarped frames. The previous thin-plate-spline
- // deformation bent shelves and fridge edges during movement; a dissolve keeps each
- // photo geometrically intact while the next frame fades in.
- float ws=(1.-uMix),wd=uMix;
- vec3 c=tx(uA,pn)*ws+tx(uB,pn)*wd;
+ // Keep the source frame stable and gently register the destination frame
+ // while dissolving it in. This preserves a sense of forward motion without the
+ // full bidirectional warp that made shelves appear to fold.
+ vec2 pd=tps(pn);
+ float ws=1.-uMix, wd=uMix;
+ vec3 c=tx(uA,pn)*ws+tx(uB,pd)*wd;
  vec2 n=gl_FragCoord.xy/uRes-.5;c*=1.-.35*dot(n,n);
  gl_FragColor=vec4(c,1.);}`;
 
