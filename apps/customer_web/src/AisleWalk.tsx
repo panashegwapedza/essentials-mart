@@ -73,6 +73,8 @@ const loadImage = (src: string): Promise<HTMLImageElement | null> =>
   });
 
 export default function AisleWalk({ onClose }: Props) {
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   const rootRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const capRef = useRef<HTMLElement | null>(null);
@@ -226,7 +228,7 @@ export default function AisleWalk({ onClose }: Props) {
     raf = requestAnimationFrame(frame);
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Escape') { onClose(); return; }
+      if (e.code === 'Escape') { onCloseRef.current(); return; }
       keys.current[e.code] = true;
       if (/Arrow|Space/.test(e.code)) e.preventDefault();
       setMode(false);
@@ -274,7 +276,7 @@ export default function AisleWalk({ onClose }: Props) {
       gl.deleteShader(vs);
       gl.deleteShader(fs);
     };
-  }, [onClose, setMode]);
+  }, [setMode]);
 
   const hold = (direction: number) => ({
     onPointerDown: (e: React.PointerEvent<HTMLButtonElement>) => {
