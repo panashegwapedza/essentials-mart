@@ -161,6 +161,53 @@ def build_lighting_and_branding():
     box("Brand_Header", (1320, 0, 435), (520, 22, 90), MATS["green"])
     box("Brand_Header_Wood_Inlay", (1320, -14, 435), (220, 4, 90), MATS["wood"])
 
+
+def target_point(name, location, yaw=0.0):
+    actor = unreal.EditorLevelLibrary.spawn_actor_from_class(
+        unreal.TargetPoint, unreal.Vector(location[0], location[1], location[2]),
+        unreal.Rotator(0.0, yaw, 0.0)
+    )
+    actor.set_actor_label(PREFIX + name)
+    return actor
+
+def build_product_anchor_grid():
+    # Stable empty placement anchors. These are metadata points, not visible products.
+    # Each bay gets five shelf-level centres, ready for later catalogue placement.
+    for bay in range(BAY_COUNT):
+        x = 220.0 + bay * 410.0
+        for level, z in enumerate((48, 94, 140, 186, 228), start=1):
+            target_point(
+                "PRODUCT_ANCHOR_DRY_R_B%02d_L%02d" % (bay + 1, level),
+                (x, 302, z + 12)
+            )
+    for bay in range(4):
+        x = 250.0 + bay * 410.0
+        for level, z in enumerate((125, 175, 225, 275), start=1):
+            target_point(
+                "PRODUCT_ANCHOR_CHILL_L%02d_L%02d" % (bay + 1, level),
+                (x, -365, z + 12)
+            )
+    for bay in range(2):
+        x = 2050.0 + bay * 410.0
+        for level, z in enumerate((48, 94, 140, 186, 228), start=1):
+            target_point(
+                "PRODUCT_ANCHOR_DRY_L%02d_L%02d" % (bay + 1, level),
+                (x, -302, z + 12)
+            )
+
+def build_camera_rail():
+    # Consistent first-person camera nodes every 1.5 m along the aisle centreline.
+    for index, x in enumerate(range(-180, 2521, 150), start=0):
+        camera = unreal.EditorLevelLibrary.spawn_actor_from_class(
+            unreal.CineCameraActor,
+            unreal.Vector(float(x), 0.0, 170.0),
+            unreal.Rotator(0.0, 0.0, 0.0)
+        )
+        camera.set_actor_label(PREFIX + "CAMERA_NODE_%02d" % index)
+        camera.get_cine_camera_component().set_editor_property("field_of_view", 92.0)
+        camera.tags = ["WalkCameraNode", "Node_%02d" % index]
+    # A spline-free sequence of fixed nodes is deliberately easy to inspect and revise.
+
 def build_environment():
     unreal.EditorLevelLibrary.new_level(MAP_PATH)
     # Main polished floor, end wall, side walls and ceiling structure.
@@ -175,12 +222,9 @@ def build_environment():
     build_right_shelving()
     build_left_refrigeration()
     build_lighting_and_branding()
-    # First-person starting camera and a PlayerStart for later browser/engine integration.
-    camera = unreal.EditorLevelLibrary.spawn_actor_from_class(
-        unreal.CineCameraActor, unreal.Vector(-180, 0, 170), unreal.Rotator(0, 0, 0)
-    )
-    camera.set_actor_label(PREFIX + "Walk_Camera_Start")
-    camera.get_cine_camera_component().set_editor_property("field_of_view", 92.0)
+    build_product_anchor_grid()
+    build_camera_rail()
+    # PlayerStart for later engine integration; camera rail nodes are the stable view samples.
     player = unreal.EditorLevelLibrary.spawn_actor_from_class(
         unreal.PlayerStart, unreal.Vector(-220, 0, 110), unreal.Rotator(0, 0, 0)
     )
@@ -189,5 +233,6 @@ def build_environment():
     unreal.EditorAssetLibrary.save_directory(PROJECT_ROOT + "/Materials/WalkMode", only_if_is_dirty=False)
     unreal.log("Essentials Mart empty aisle created at " + MAP_PATH)
     unreal.log("Scene is intentionally empty: no products, price labels, or promotions.")
+    unreal.log("Created camera rail nodes at 1.5 m intervals and named future product anchors.")
 
 build_environment()
