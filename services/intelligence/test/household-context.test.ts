@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { resolveHouseholdSelection } from '../../api/_household-context.ts';
+import { resolveHouseholdSelection } from '../../../api/_household-context.ts';
 
 const memberships = [
   { household_id: 'h1', role: 'owner', status: 'active', households: { status: 'active', name: 'Home' } },
