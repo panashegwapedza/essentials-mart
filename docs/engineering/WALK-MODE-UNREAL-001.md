@@ -20,7 +20,7 @@ Create one persistent, product-free master aisle as the spatial source of truth 
 | Camera eye height | 1.7 m |
 | Coordinate unit | Unreal centimetres |
 
-The initial layout uses empty metal shelving on the right and empty glass-fronted refrigerator cabinets on the left, followed by two open shelf bays. It includes a polished floor, neutral walls/ceiling, repeated LED lighting, and restrained Essentials Mart green/wood branding.
+The initial layout uses empty metal shelving on the right and empty glass-fronted refrigerator cabinets on the left, followed by two open shelf bays. It includes a polished floor, neutral walls/ceiling, repeated LED lighting, and restrained Essentials Mart green/wood branding. The builder also creates fixed camera rail nodes every 1.5 m and named TargetPoint anchors at each empty shelf level for later catalogue placement.
 
 ## Explicit exclusions
 
@@ -47,7 +47,7 @@ Unreal Engine is the offline source environment and rendering studio. Babylon.js
 4. Refrigerator doors, interiors and shelves are empty.
 5. No SKU/product or pricing content is present.
 6. A camera at eye height looks down the aisle without shelf geometry shifting between views.
-7. A second builder run recreates the same level without duplicating actors.
+7. Camera rail nodes exist at 1.5 m intervals along the centreline and remain at 1.7 m eye height.\n8. Named product anchors exist at each intended shelf level but contain no product meshes.\n9. A second builder run recreates the same level without duplicating actors.
 8. Geometry dimensions and actor names remain stable for future product-slot metadata.
 
 ## Known implementation boundary
