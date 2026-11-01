@@ -15,6 +15,9 @@ export function generateInventorySubstitutions(signals:SubstitutionSignal[],prod
   const stock=new Map(inventory.map(i=>[i.productId+':'+i.storeId,Math.max(0,i.quantity-i.reservedQuantity)]));
   const substitutions:SubstitutionCandidate[]=[];
   for(const signal of signals){
+    // Only generate substitutions for genuinely constrained stock. The API may
+    // provide all inventory rows so this engine enforces the low-stock threshold.
+    if(!Number.isFinite(signal.availableQuantity)||signal.availableQuantity>5)continue;
     const original=active.find(p=>p.id===signal.productId); if(!original)continue;
     const originalSize=sizeTokens(original.size_label);
     for(const candidate of active){
