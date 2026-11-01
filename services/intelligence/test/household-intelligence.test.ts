@@ -161,3 +161,38 @@ test('household intelligence orchestrator composes bounded engines without grant
   assert.equal(result.predictions.predictions[0].authority, 'prediction-only');
   assert.ok(result.intelligenceLayer.items.some(item => item.productId === 'p1'));
 });
+
+
+import { generateInventorySubstitutions } from '../inventory/inventory-substitution-engine.ts';
+
+test('inventory substitutions are only generated for low or out-of-stock signals', () => {
+  const products = [
+    { id: 'p1', name: 'Milk Original', category: 'Dairy', product_family: 'Milk', brand: 'A', variant_label: 'Full cream', size_label: '1L', price: 2, currency: 'USD', is_active: true },
+    { id: 'p2', name: 'Milk Alternative', category: 'Dairy', product_family: 'Milk', brand: 'B', variant_label: 'Full cream', size_label: '1L', price: 2.1, currency: 'USD', is_active: true },
+  ];
+  const inventory = [
+    { productId: 'p1', storeId: 'store-1', quantity: 20, reservedQuantity: 0 },
+    { productId: 'p2', storeId: 'store-1', quantity: 10, reservedQuantity: 0 },
+  ];
+
+  const healthy = generateInventorySubstitutions([{
+    signalId: 'healthy-stock',
+    productId: 'p1',
+    productName: 'Milk Original',
+    storeId: 'store-1',
+    availableQuantity: 20,
+    reason: 'low-stock',
+  }], products, inventory, now);
+  assert.equal(healthy.substitutions.length, 0);
+
+  const constrained = generateInventorySubstitutions([{
+    signalId: 'low-stock',
+    productId: 'p1',
+    productName: 'Milk Original',
+    storeId: 'store-1',
+    availableQuantity: 3,
+    reason: 'low-stock',
+  }], products, inventory, now);
+  assert.equal(constrained.substitutions.length, 1);
+  assert.equal(constrained.substitutions[0].productId, 'p2');
+});
