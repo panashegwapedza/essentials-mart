@@ -1,3 +1,4 @@
+import { resolveHouseholdSelection } from './_household-context';
 async function principal(req:any){ const auth=await import('../apps/customer_web/api/_auth.js'); return auth.principal(req); }
 import type { HouseholdNeed } from '../services/intelligence/household/household-needs-engine';
 import type { HouseholdSignal } from '../services/intelligence/household/household-recommendation-engine';
@@ -19,9 +20,8 @@ async function customerIdForAuthUser(authUserId: string) {
   const rows = await supabase<Array<{ id: string }>>('customers?auth_user_id=eq.' + encodeURIComponent(authUserId) + '&select=id&limit=1');
   return rows[0]?.id ?? null;
 }
-async function householdSignals(customerId: string): Promise<HouseholdSignal[]> {
-  const memberships = await supabase<Array<{ household_id: string }>>('household_memberships?customer_id=eq.' + encodeURIComponent(customerId) + '&status=eq.active&select=household_id&limit=1');
-  const householdId = memberships[0]?.household_id; if (!householdId) return [];
+async function householdSignals(householdId: string | null): Promise<HouseholdSignal[]> {
+  if (!householdId) return [];
   const members = await supabase<Array<{ customer_id: string }>>('household_memberships?household_id=eq.' + encodeURIComponent(householdId) + '&status=eq.active&select=customer_id');
   const ids = members.map(row => row.customer_id); if (!ids.length) return [];
   const orders = await supabase<Array<{ id: string; created_at: string }>>('orders?customer_id=in.(' + ids.join(',') + ')&select=id,created_at&order=created_at.desc&limit=100');
