@@ -1,3 +1,4 @@
+import { resolveHouseholdSelection } from './_household-context';
 async function principal(req:any){ const auth=await import('../apps/customer_web/api/_auth.js'); return auth.principal(req); }
 
 type Row=Record<string,any>;
@@ -9,8 +10,13 @@ export default async function handler(req:any,res:any){
  try{
   const user=await principal(req);if(!user)return json(res,401,{error:{code:'UNAUTHENTICATED',message:'A valid Supabase Auth session is required.'}});
   const customers=await supabase<Array<{id:string}>>('customers?auth_user_id=eq.'+encodeURIComponent(user.authUserId)+'&select=id&limit=1');const customer=customers[0]?.id;if(!customer)return json(res,404,{error:{code:'CUSTOMER_NOT_FOUND',message:'Authenticated user has no customer identity.'}});
-  const memberships=await supabase<Array<{household_id:string}>>('household_memberships?customer_id=eq.'+encodeURIComponent(customer)+'&status=eq.active&select=household_id&limit=1');const householdId=memberships[0]?.household_id;if(!householdId)return json(res,404,{error:{code:'HOUSEHOLD_NOT_FOUND',message:'No active household exists.'}});
-  const body=typeof req.body==='string'?JSON.parse(req.body):(req.body??{}), id=String(req.query?.id??body.id??'').trim();
+  const body=typeof req.body==='string'?JSON.parse(req.body):(req.body??{});
+  const memberships=await supabase<Array<{household_id:string;role:string;status:string;households:{status:string;name:string|null}}>>('household_memberships?customer_id=eq.'+encodeURIComponent(customer)+'&status=eq.active&select=household_id,role,status,households!inner(status,name)');
+  const requestedHouseholdId=String(req.query?.householdId??body.householdId??'').trim()||null;
+  const resolution=resolveHouseholdSelection(memberships,requestedHouseholdId);
+  if(!resolution.ok)return json(res,resolution.status,{error:{code:resolution.code,message:resolution.message},households:resolution.households??[]});
+  const householdId=resolution.household?.id;if(!householdId)return json(res,404,{error:{code:'HOUSEHOLD_NOT_FOUND',message:'No active household exists.'}});
+  const id=String(req.query?.id??body.id??'').trim();
   if(req.method==='GET'){const items=await supabase<Row[]>('household_pantry_items?household_id=eq.'+encodeURIComponent(householdId)+'&select=id,household_id,product_id,product_name,quantity,unit,status,source,last_confirmed_at,created_at,updated_at&order=product_name.asc');return json(res,200,{pantry:items});}
   if(req.method==='POST'){const name=String(body.productName??'').trim();const rawQuantity=Number(body.quantity??1);if(!name)return json(res,400,{error:{code:'PANTRY_NAME_REQUIRED',message:'Product name is required.'}});if(name.length>200)return json(res,400,{error:{code:'PANTRY_NAME_TOO_LONG',message:'Product name must be 200 characters or fewer.'}});if(!Number.isFinite(rawQuantity)||rawQuantity<0)return json(res,400,{error:{code:'INVALID_PANTRY_QUANTITY',message:'Quantity must be a valid number greater than or equal to zero.'}});const quantity=rawQuantity;const status=['available','low','depleted'].includes(body.status)?body.status:(quantity<=0?'depleted':quantity<=1?'low':'available');const rows=await supabase<Row[]>('household_pantry_items',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({household_id:householdId,product_id:body.productId||null,product_name:name,quantity,unit:String(body.unit??'unit'),status,source:'manual',last_confirmed_at:new Date().toISOString()})});return json(res,201,{item:rows[0]});}
   if(!id)return json(res,400,{error:{code:'PANTRY_ID_REQUIRED',message:'Pantry item id is required.'}});
