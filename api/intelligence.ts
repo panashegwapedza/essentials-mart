@@ -43,9 +43,12 @@ export default async function intelligenceHandler(req:any,res:any) {
   try {
     const user=await principal(req); if(!user)return json(res,401,{error:{code:'UNAUTHENTICATED',message:'A valid Supabase Auth session is required.'}});
     const customerId=await customerIdForAuthUser(user.authUserId); if(!customerId)return json(res,404,{error:{code:'CUSTOMER_NOT_FOUND',message:'Authenticated user has no customer identity.'}});
-    const signals=await householdSignals(customerId);
-    const memberships=await supabase<Array<{household_id:string}>>('household_memberships?customer_id=eq.'+encodeURIComponent(customerId)+'&status=eq.active&select=household_id&limit=1');
-    const householdId=memberships[0]?.household_id;
+    const requestedHouseholdId=String(req.query?.householdId??'').trim()||null;
+    const memberships=await supabase<Array<{household_id:string;role:string;status:string;households:{status:string;name:string|null}}>>('household_memberships?customer_id=eq.'+encodeURIComponent(customerId)+'&status=eq.active&select=household_id,role,status,households!inner(status,name)');
+    const resolution=resolveHouseholdSelection(memberships,requestedHouseholdId);
+    if(!resolution.ok)return json(res,resolution.status,{error:{code:resolution.code,message:resolution.message},households:resolution.households??[]});
+    const householdId=resolution.household?.id??null;
+    const signals=await householdSignals(householdId);
     let householdNeeds: HouseholdNeed[]=[];
     if(householdId){
       const pantry=await supabase<Array<{id:string;product_id:string|null;product_name:string;status:string}>>('household_pantry_items?household_id=eq.'+encodeURIComponent(householdId)+'&select=id,product_id,product_name,status&limit=500');
