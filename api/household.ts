@@ -1,3 +1,4 @@
+import { resolveHouseholdSelection } from './_household-context';
 async function principal(req:any){ const auth=await import('../apps/customer_web/api/_auth.js'); return auth.principal(req); }
 
 type Row = Record<string, any>;
@@ -40,24 +41,11 @@ async function customerIdForAuthUser(authUserId: string) {
   return rows[0]?.id ?? null;
 }
 
-async function householdForCustomer(customerId: string) {
-  const rows = await supabase<Array<{
-    household_id: string;
-    role: string;
-    status: string;
-    households: { status: string; name: string | null };
-  }>>(
-    'household_memberships?customer_id=eq.' + encodeURIComponent(customerId) +
-    '&status=eq.active&select=household_id,role,status,households!inner(status,name)&limit=1',
+async function householdForCustomer(customerId: string, requestedHouseholdId?: string | null) {
+  const rows = await supabase<Array<{ household_id: string; role: string; status: string; households: { status: string; name: string | null } }>>(
+    'household_memberships?customer_id=eq.' + encodeURIComponent(customerId) + '&status=eq.active&select=household_id,role,status,households!inner(status,name)',
   );
-  const row = rows[0];
-  if (!row) return null;
-  return {
-    id: row.household_id,
-    name: row.households.name,
-    status: row.households.status,
-    role: row.role,
-  };
+  return resolveHouseholdSelection(rows, requestedHouseholdId);
 }
 
 export default async function householdHandler(req: any, res: any) {
@@ -73,7 +61,10 @@ export default async function householdHandler(req: any, res: any) {
     if (!customerId) return json(res, 404, { error: { code: 'CUSTOMER_NOT_FOUND', message: 'Authenticated user has no customer identity.' } });
 
     if (req.method === 'GET') {
-      const household = await householdForCustomer(customerId);
+      const requestedHouseholdId = String(req.query?.householdId ?? '').trim() || null;
+      const resolution = await householdForCustomer(customerId, requestedHouseholdId);
+      if (!resolution.ok) return json(res, resolution.status, { error: { code: resolution.code, message: resolution.message }, households: resolution.households ?? [] });
+      const household = resolution.household;
       if (!household) return json(res, 200, { household: null });
 
       const memberships = await supabase<Array<{ customer_id: string }>>(
@@ -316,7 +307,8 @@ export default async function householdHandler(req: any, res: any) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
     const requestedName = typeof body.name === 'string' ? body.name.trim() : '';
     const existing = await householdForCustomer(customerId);
-    if (existing) return json(res, 409, { error: { code: 'HOUSEHOLD_EXISTS', message: 'The authenticated customer already belongs to an active household.', household: existing } });
+    if (!existing.ok) return json(res, existing.status, { error: { code: existing.code, message: existing.message }, households: existing.households ?? [] });
+    if (existing.household) return json(res, 409, { error: { code: 'HOUSEHOLD_EXISTS', message: 'The authenticated customer already belongs to an active household.', household: existing.household } });
 
     const created = await supabase<Row[]>('households', {
       method: 'POST',
